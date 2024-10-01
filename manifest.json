@@ -1,18 +1,21 @@
 {
-  "vendor": "CHANGE_ME",
-  "name": "CHANGE_ME",
+  "vendor": "ssesandbox04",
+  "name": "checkout-b2b",
   "version": "0.0.0",
-  "title": "CHANGE_ME",
-  "description": "CHANGE_ME",
+  "title": "Checkout B2B",
+  "description": "Checkout for B2B Stores",
   "builders": {
     "react": "3.x",
     "messages": "1.x",
-    "docs": "0.x"
+    "docs": "0.x",
+    "store": "0.x"
   },
-  "dependencies": {},
-  "registries": [
-    "smartcheckout"
-  ],
+  "dependencies": {
+    "vtex.order-manager": "0.x",
+    "vtex.styleguide": "9.x",
+    "vtex.formatted-price": "0.x"
+  },
+  "registries": ["smartcheckout"],
   "policies": [],
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
