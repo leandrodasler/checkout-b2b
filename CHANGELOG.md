@@ -7,5 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Empty state of totalizers
+
 ### Added
+
 - Initial release.
+- Page and route /checkout-b2b

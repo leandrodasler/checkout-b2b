@@ -5,6 +5,7 @@ name: Danger actions
 jobs:
   danger-ci:
     name: Danger CI
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master

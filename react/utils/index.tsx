@@ -3,6 +3,8 @@ import { Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 
 export function getTotalizers(totalizers: Totalizer[], total: number) {
+  if (!totalizers.length) return null
+
   return [
     ...totalizers.map((t) => ({
       label: t.name,

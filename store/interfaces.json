@@ -1,4 +1,7 @@
 {
+  "store.checkout-b2b": {
+    "allowed": "*"
+  },
   "checkout-b2b": {
     "component": "CheckoutB2B"
   }
