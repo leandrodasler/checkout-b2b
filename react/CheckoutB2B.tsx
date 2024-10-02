@@ -1,47 +1,13 @@
 import React from 'react'
-import { FormattedPrice } from 'vtex.formatted-price'
-import { OrderForm } from 'vtex.order-manager'
 import { Table } from 'vtex.styleguide'
 
-type Totalizer = {
-  name: string
-  value: number
-}
+import useOrderFormCustom from './hooks/useOrderFormCustom'
+import { getTotalizers, tableSchema } from './utils'
 
 function CheckoutB2B() {
-  const { useOrderForm } = OrderForm
-  const { loading, orderForm } = useOrderForm()
+  const { loading, orderForm } = useOrderFormCustom()
   const { items, totalizers, value: total, ...rest } = orderForm
-
-  const defaultSchema = {
-    properties: {
-      skuName: {
-        title: 'Name',
-      },
-      quantity: {
-        title: 'Quantity',
-      },
-      sellingPrice: {
-        title: 'Price',
-        cellRenderer({ cellData }: { cellData: number }) {
-          return <FormattedPrice value={cellData / 100} />
-        },
-      },
-    },
-  }
-
-  const mappedTotalizers = loading
-    ? null
-    : [
-        ...totalizers.map((t: Totalizer) => ({
-          label: t.name,
-          value: <FormattedPrice value={t.value / 100} />,
-        })),
-        {
-          label: 'Total',
-          value: <FormattedPrice value={total / 100} />,
-        },
-      ]
+  const mappedTotalizers = loading ? null : getTotalizers(totalizers, total)
 
   // eslint-disable-next-line no-console
   console.log('ITEMS:', items)
@@ -54,7 +20,7 @@ function CheckoutB2B() {
       totalizers={mappedTotalizers}
       loading={loading}
       fullWidth
-      schema={defaultSchema}
+      schema={tableSchema}
       items={items}
       density="high"
     />

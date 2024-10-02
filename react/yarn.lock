@@ -4947,9 +4947,9 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@https://dev--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@0.0.0+build1727813322/public/@types/ssesandbox04.checkout-b2b":
+"ssesandbox04.checkout-b2b@https://dev--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@0.0.0+build1727828036/public/@types/ssesandbox04.checkout-b2b":
   version "0.0.0"
-  resolved "https://dev--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@0.0.0+build1727813322/public/@types/ssesandbox04.checkout-b2b#5a340eec7df4f3c1a4b822f59a5ab787711ab461"
+  resolved "https://dev--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@0.0.0+build1727828036/public/@types/ssesandbox04.checkout-b2b#fa8a2319e97193269a4f0533734d71997c07e020"
 
 sshpk@^1.7.0:
   version "1.17.0"
@@ -5340,6 +5340,10 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+"vtex.checkout-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql":
+  version "0.67.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql#28a28b8e5b1f39e45ac7fd57a06f05a2468e192e"
 
 "vtex.formatted-price@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price":
   version "0.7.0"
