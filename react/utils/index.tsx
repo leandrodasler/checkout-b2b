@@ -31,5 +31,13 @@ export const tableSchema = {
         return <FormattedPrice value={cellData / 100} />
       },
     },
+    productCategories: {
+      title: 'Category',
+      cellRenderer({ cellData }: { cellData: Record<string, string> }) {
+        const categories = Object.values(cellData).join(' ,  ')
+
+        return <span>{categories}</span>
+      },
+    },
   },
 }
