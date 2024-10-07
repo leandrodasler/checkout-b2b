@@ -1,4 +1,10 @@
 {
-  "admin/test": "test",
-  "store/test": "test"
+  "store/checkout.b2b.totalizer.selectedAddress": "Delivery address",
+  "store/checkout.b2b.totalizer.emptyAddress": "Address not provided",
+  "store/checkout.b2b.totalizer.total": "Total",
+
+  "store/checkout.b2b.column.name": "Name",
+  "store/checkout.b2b.column.quantity": "Quantity",
+  "store/checkout.b2b.column.price": "Price",
+  "store/checkout.b2b.column.category": "Category"
 }

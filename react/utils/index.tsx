@@ -1,17 +1,22 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import type { OrderForm, Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 
-export function getTotalizers(
+import { messages } from './messages'
+
+export function useTotalizers(
   totalizers: Totalizer[],
   shipping: OrderForm['shipping'],
   total: number
 ) {
+  const { formatMessage } = useIntl()
+
   if (!totalizers.length) return null
 
   const formattedAddress = shipping?.selectedAddress
     ? `${shipping.selectedAddress.street}, Nº ${shipping.selectedAddress.number} - ${shipping.selectedAddress.city}, ${shipping.selectedAddress.state}`
-    : 'Endereço não informado'
+    : formatMessage(messages.emptyAddress)
 
   return [
     ...totalizers.map((t) => ({
@@ -19,38 +24,46 @@ export function getTotalizers(
       value: <FormattedPrice value={t.value / 100} />,
     })),
     {
-      label: 'Endereço de entrega',
+      label: formatMessage(messages.selectedAddress),
       value: formattedAddress,
       isLoading: false,
     },
     {
-      label: 'Total',
+      label: formatMessage(messages.total),
       value: <FormattedPrice value={total / 100} />,
     },
   ]
 }
 
-export const tableSchema = {
-  properties: {
-    skuName: {
-      title: 'Name',
-    },
-    quantity: {
-      title: 'Quantity',
-    },
-    sellingPrice: {
-      title: 'Price',
-      cellRenderer({ cellData }: { cellData: number }) {
-        return <FormattedPrice value={cellData / 100} />
-      },
-    },
-    productCategories: {
-      title: 'Category',
-      cellRenderer({ cellData }: { cellData: Record<string, string> }) {
-        const categories = Object.values(cellData).join(' / ')
+export const useTableSchema = () => {
+  const { formatMessage } = useIntl()
 
-        return <span>{categories}</span>
+  return {
+    properties: {
+      skuName: {
+        minWidth: 300,
+        title: formatMessage(messages.name),
+      },
+      quantity: {
+        width: 100,
+        title: formatMessage(messages.quantity),
+      },
+      sellingPrice: {
+        width: 100,
+        title: formatMessage(messages.price),
+        cellRenderer({ cellData }: { cellData: number }) {
+          return <FormattedPrice value={cellData / 100} />
+        },
+      },
+      productCategories: {
+        width: 300,
+        title: formatMessage(messages.category),
+        cellRenderer({ cellData }: { cellData: Record<string, string> }) {
+          const categories = Object.values(cellData).join(' / ')
+
+          return <span>{categories}</span>
+        },
       },
     },
-  },
+  }
 }
