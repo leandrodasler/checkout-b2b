@@ -1,5 +1,5 @@
 import React from 'react'
-import { Totalizer } from 'vtex.checkout-graphql'
+import type { Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 
 export function getTotalizers(totalizers: Totalizer[], total: number) {
@@ -29,6 +29,14 @@ export const tableSchema = {
       title: 'Price',
       cellRenderer({ cellData }: { cellData: number }) {
         return <FormattedPrice value={cellData / 100} />
+      },
+    },
+    productCategories: {
+      title: 'Category',
+      cellRenderer({ cellData }: { cellData: Record<string, string> }) {
+        const categories = Object.values(cellData).join(' / ')
+
+        return <span>{categories}</span>
       },
     },
   },
