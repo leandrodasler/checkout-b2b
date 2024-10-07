@@ -14,9 +14,15 @@ export function useTotalizers(
 
   if (!totalizers.length) return null
 
-  const formattedAddress = shipping?.selectedAddress
-    ? `${shipping.selectedAddress.street}, Nº ${shipping.selectedAddress.number} - ${shipping.selectedAddress.city}, ${shipping.selectedAddress.state}`
-    : formatMessage(messages.emptyAddress)
+  let formattedAddress = formatMessage(messages.emptyAddress)
+
+  if (shipping?.selectedAddress) {
+    const { street, number, city, state } = shipping?.selectedAddress
+
+    formattedAddress = `${street}${
+      number ? `, ${number}` : ''
+    } - ${city}, ${state}`
+  }
 
   return [
     ...totalizers.map((t) => ({
@@ -43,6 +49,9 @@ export const useTableSchema = () => {
       skuName: {
         minWidth: 300,
         title: formatMessage(messages.name),
+        cellRenderer({ cellData }: { cellData: string }) {
+          return <span className="truncate">{cellData}</span>
+        },
       },
       quantity: {
         width: 100,
