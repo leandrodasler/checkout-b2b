@@ -6,11 +6,8 @@ import { getTotalizers, tableSchema } from './utils'
 
 function CheckoutB2B() {
   const { loading, orderForm } = useOrderFormCustom()
-  const { items, totalizers, value: total, ...rest } = orderForm
-  const mappedTotalizers = getTotalizers(totalizers, total)
-
-  // eslint-disable-next-line no-console
-  console.log('ITEMS:', items)
+  const { items, totalizers, shipping, value: total, ...rest } = orderForm
+  const mappedTotalizers = getTotalizers(totalizers, shipping, total)
 
   // eslint-disable-next-line no-console
   console.log('OUTROS OBJETOS NO ORDER FORM:', rest)
