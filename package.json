@@ -44,6 +44,5 @@
   "intl-equalizer": {
     "referenceLocale": "en",
     "localeDirectory": "messages"
-  },
-  "packageManager": "yarn@1.22.22"
+  }
 }
