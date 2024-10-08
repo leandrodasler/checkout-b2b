@@ -6,5 +6,10 @@
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",
   "store/checkout.b2b.column.price": "Price",
-  "store/checkout.b2b.column.category": "Category"
+  "store/checkout.b2b.column.category": "Category",
+  "store/checkout.b2b.column.brand": "Brand",
+
+  "store/checkout.b2b.main.pageTitle": "Checkout",
+
+  "store/checkout.b2b.button.backToHome": "Back to home page"
 }

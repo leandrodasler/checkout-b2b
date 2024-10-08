@@ -1,5 +1,5 @@
 {
-  "name": "CHANGE_ME",
+  "name": "checkout-b2b",
   "version": "0.0.0",
   "scripts": {
     "test": "vtex-test-tools test"

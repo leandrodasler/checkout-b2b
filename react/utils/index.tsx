@@ -50,12 +50,29 @@ export const useTableSchema = () => {
         minWidth: 300,
         title: formatMessage(messages.name),
         cellRenderer({ cellData }: { cellData: string }) {
-          return <span className="truncate">{cellData}</span>
+          return (
+            <span className="truncate" title={cellData}>
+              {cellData}
+            </span>
+          )
         },
       },
       quantity: {
         width: 100,
         title: formatMessage(messages.quantity),
+      },
+      additionalInfo: {
+        width: 150,
+        title: formatMessage(messages.brand),
+        cellRenderer({ cellData }: { cellData: { brandName: string } }) {
+          const brandName = cellData?.brandName ?? 'N/A'
+
+          return (
+            <span className="truncate" title={brandName}>
+              {brandName}
+            </span>
+          )
+        },
       },
       sellingPrice: {
         width: 100,
@@ -70,7 +87,7 @@ export const useTableSchema = () => {
         cellRenderer({ cellData }: { cellData: Record<string, string> }) {
           const categories = Object.values(cellData).join(' / ')
 
-          return <span>{categories}</span>
+          return <span title={categories}>{categories}</span>
         },
       },
     },
