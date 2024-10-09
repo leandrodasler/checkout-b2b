@@ -1,16 +1,5 @@
 {
   "store.checkout-b2b": {
-    "children": ["flex-layout.row#checkout-b2b"]
-  },
-  "flex-layout.row#checkout-b2b": {
-    "title": "Checkout B2B",
-    "children": ["flex-layout.col#checkout-b2b"],
-    "props": {
-      "marginTop": 8,
-      "marginBottom": 8
-    }
-  },
-  "flex-layout.col#checkout-b2b": {
     "children": ["checkout-b2b"]
   },
   "checkout-b2b": {
