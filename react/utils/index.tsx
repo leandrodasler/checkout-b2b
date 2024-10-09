@@ -82,7 +82,7 @@ export const useTableSchema = () => {
         },
       },
       sellingPrice: {
-        width: 100,
+        width: 150,
         title: formatMessage(messages.price),
         cellRenderer({ cellData }: { cellData: number }) {
           return <FormattedPrice value={cellData / 100} />
@@ -95,6 +95,15 @@ export const useTableSchema = () => {
           const categories = Object.values(cellData).join(' / ')
 
           return <span title={categories}>{categories}</span>
+        },
+      },
+      priceDefinition: {
+        width: 150,
+        title: formatMessage(messages.totalPrice),
+        cellRenderer({ cellData }: { cellData: Record<string, number> }) {
+          const totalPrice = cellData.total
+
+          return <FormattedPrice value={totalPrice / 100} />
         },
       },
     },
