@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { useRuntime } from 'vtex.render-runtime'
-import { PageBlock, Table, Layout, PageHeader } from 'vtex.styleguide'
+import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
+import { Layout, PageBlock, PageHeader, Table } from 'vtex.styleguide'
 
 import useOrderFormCustom from './hooks/useOrderFormCustom'
 import { useTableSchema, useTotalizers } from './utils'
@@ -24,7 +24,7 @@ function CheckoutB2B() {
       fullWidth
       pageHeader={
         <PageHeader
-          title={formatMessage(messages.pageTitle)}
+          title={<ExtensionPoint id="rich-text" />}
           linkLabel={formatMessage(messages.backToHome)}
           onLinkClick={() => navigate({ page: 'store.home' })}
         />

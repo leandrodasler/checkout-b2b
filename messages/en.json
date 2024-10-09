@@ -10,7 +10,5 @@
   "store/checkout.b2b.column.brand": "Brand",
   "store/checkout.b2b.column.refId": "SKU Reference",
 
-  "store/checkout.b2b.main.pageTitle": "Checkout",
-
   "store/checkout.b2b.button.backToHome": "Back to home page"
 }

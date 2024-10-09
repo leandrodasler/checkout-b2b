@@ -3,6 +3,7 @@
     "allowed": "*"
   },
   "checkout-b2b": {
-    "component": "CheckoutB2B"
+    "component": "CheckoutB2B",
+    "allowed": ["rich-text"]
   }
 }
