@@ -25,15 +25,15 @@ export function useTotalizers(
   }
 
   return [
-    ...totalizers.map((t) => ({
-      label: t.name,
-      value: <FormattedPrice value={t.value / 100} />,
-    })),
     {
       label: formatMessage(messages.selectedAddress),
       value: formattedAddress,
       isLoading: false,
     },
+    ...totalizers.map((t) => ({
+      label: t.name,
+      value: <FormattedPrice value={t.value / 100} />,
+    })),
     {
       label: formatMessage(messages.total),
       value: <FormattedPrice value={total / 100} />,
