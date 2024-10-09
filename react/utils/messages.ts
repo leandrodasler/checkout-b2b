@@ -8,5 +8,7 @@ export const messages = defineMessages({
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },
   category: { id: 'store/checkout.b2b.column.category' },
+  brand: { id: 'store/checkout.b2b.column.brand' },
+  backToHome: { id: 'store/checkout.b2b.button.backToHome' },
   refId: { id: 'store/checkout.b2b.column.refId' },
 })

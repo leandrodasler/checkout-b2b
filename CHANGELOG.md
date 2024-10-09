@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add Brand column on products list 
+
+### Added
+
+- Add SKU Reference column on products list
+
+### Added
+
 - Add Address information on totalizers
 
 ### Changed

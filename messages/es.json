@@ -7,5 +7,8 @@
   "store/checkout.b2b.column.quantity": "Cantidad",
   "store/checkout.b2b.column.price": "Precio",
   "store/checkout.b2b.column.category": "Categoría",
-  "store/checkout.b2b.column.refId": "Referencia SKU"
+  "store/checkout.b2b.column.brand": "Marca",
+  "store/checkout.b2b.column.refId": "Referencia SKU",
+
+  "store/checkout.b2b.button.backToHome": "Volver a la página principal"
 }
