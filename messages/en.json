@@ -5,6 +5,8 @@
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",
-  "store/checkout.b2b.column.price": "Price",
-  "store/checkout.b2b.column.category": "Category"
+  "store/checkout.b2b.column.price": "Unit price",
+  "store/checkout.b2b.column.totalPrice": "Total price",
+  "store/checkout.b2b.column.category": "Category",
+  "store/checkout.b2b.column.refId": "SKU Reference"
 }

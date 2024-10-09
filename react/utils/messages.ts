@@ -7,5 +7,6 @@ export const messages = defineMessages({
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },
+  totalPrice: { id: 'store/checkout.b2b.column.totalPrice' },
   category: { id: 'store/checkout.b2b.column.category' },
 })
