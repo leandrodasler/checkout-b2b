@@ -57,6 +57,13 @@ export const useTableSchema = () => {
           )
         },
       },
+      refId: {
+        title: formatMessage(messages.refId),
+        width: 170,
+        cellRenderer({ cellData }: { cellData: string }) {
+          return <span>{cellData}</span>
+        },
+      },
       quantity: {
         width: 100,
         title: formatMessage(messages.quantity),

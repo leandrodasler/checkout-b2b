@@ -8,6 +8,7 @@
   "store/checkout.b2b.column.price": "Preço",
   "store/checkout.b2b.column.category": "Categoria",
   "store/checkout.b2b.column.brand": "Marca",
+  "store/checkout.b2b.column.refId": "Referência de SKU",
 
   "store/checkout.b2b.main.pageTitle": "Finalizar compra",
 

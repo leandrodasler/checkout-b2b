@@ -11,4 +11,5 @@ export const messages = defineMessages({
   brand: { id: 'store/checkout.b2b.column.brand' },
   backToHome: { id: 'store/checkout.b2b.button.backToHome' },
   pageTitle: { id: 'store/checkout.b2b.main.pageTitle' },
+  refId: { id: 'store/checkout.b2b.column.refId' },
 })
