@@ -4,6 +4,7 @@ import { OrderForm } from 'vtex.order-manager'
 type UseOrderFormReturn = {
   loading: boolean
   orderForm: OrderFormType
+  setOrderForm: (orderForm: OrderFormType) => void
 }
 
 function useOrderFormCustom() {

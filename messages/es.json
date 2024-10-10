@@ -11,5 +11,8 @@
   "store/checkout.b2b.column.brand": "Marca",
   "store/checkout.b2b.column.refId": "Referencia SKU",
 
-  "store/checkout.b2b.button.backToHome": "Volver a la página de inicio"
+  "store/checkout.b2b.button.backToHome": "Volver a la página de inicio",
+  "store/checkout.b2b.button.clearCart": "Vaciar carrito",
+
+  "store/checkout.b2b.empty.cart": "El carrito está vacío."
 }

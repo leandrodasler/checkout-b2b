@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
+import { OrderItems } from 'vtex.order-items'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
-import { Layout, PageBlock, PageHeader, Table } from 'vtex.styleguide'
+import { Button, Layout, PageBlock, PageHeader, Table } from 'vtex.styleguide'
 
 import useOrderFormCustom from './hooks/useOrderFormCustom'
 import { useTableSchema, useTotalizers } from './utils'
@@ -10,8 +11,10 @@ import { messages } from './utils/messages'
 
 function CheckoutB2B() {
   const handles = useCssHandles(['container'])
-  const { loading, orderForm } = useOrderFormCustom()
+  const { loading, orderForm, setOrderForm } = useOrderFormCustom()
   const { items, totalizers, shipping, value: total, ...rest } = orderForm
+  const { useOrderItems } = OrderItems
+  const { removeItem } = useOrderItems()
   const mappedTotalizers = useTotalizers(totalizers, shipping, total)
   const schema = useTableSchema()
 
@@ -20,6 +23,15 @@ function CheckoutB2B() {
 
   // eslint-disable-next-line no-console
   console.log('OUTROS OBJETOS NO ORDER FORM:', rest)
+
+  const handleClearCart = useCallback(() => {
+    items.forEach(({ id, seller }) => removeItem({ id, seller: seller ?? '1' }))
+    setOrderForm({
+      ...orderForm,
+      items: [],
+      totalizers: [],
+    })
+  }, [items, orderForm, removeItem, setOrderForm])
 
   return (
     <div className={handles.container}>
@@ -41,8 +53,14 @@ function CheckoutB2B() {
             schema={schema}
             items={items}
             density="high"
+            emptyStateLabel={formatMessage(messages.emptyCart)}
           />
         </PageBlock>
+        {!!items.length && (
+          <Button variation="danger-tertiary" onClick={handleClearCart}>
+            {formatMessage(messages.clearCart)}
+          </Button>
+        )}
       </Layout>
     </div>
   )
