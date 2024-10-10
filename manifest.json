@@ -17,8 +17,8 @@
     "vtex.formatted-price": "0.x",
     "vtex.checkout-graphql": "0.x",
     "vtex.store": "2.x",
-    "vtex.flex-layout": "0.x",
-    "vtex.rich-text": "0.x"
+    "vtex.rich-text": "0.x",
+    "vtex.css-handles": "0.x"
   },
   "registries": ["smartcheckout"],
   "policies": [],
