@@ -11,7 +11,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "post-merge": "yarn --frozen-lockfile && cd ./react && yarn --frozen-lockfile && cd .."
+      "post-merge": "yarn && cd ./react && yarn && cd .."
     }
   },
   "lint-staged": {
