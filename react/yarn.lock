@@ -5341,9 +5341,9 @@ verror@1.10.0:
   version "0.67.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql#28a28b8e5b1f39e45ac7fd57a06f05a2468e192e"
 
-"vtex.flex-layout@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.3/public/@types/vtex.flex-layout":
-  version "0.21.3"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.3/public/@types/vtex.flex-layout#407f0e310545ff006f08afb35f5d38ace4546435"
+"vtex.css-handles@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles":
+  version "0.4.4"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles#8c45c6decf9acd2b944e07261686decff93d6422"
 
 "vtex.formatted-price@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price":
   version "0.7.0"
@@ -5353,17 +5353,17 @@ verror@1.10.0:
   version "0.12.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-manager@0.12.0/public/@types/vtex.order-manager#2cf6a9d2a31bc503b783c257695b0d17c09b5696"
 
-"vtex.render-runtime@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.134.8/public/@types/vtex.render-runtime":
-  version "8.134.8"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.134.8/public/@types/vtex.render-runtime#b54ce7a361a512237c57ae2ad254ba1958b22ef9"
+"vtex.render-runtime@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.134.11/public/@types/vtex.render-runtime":
+  version "8.134.11"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.134.11/public/@types/vtex.render-runtime#0e42a00ac9b26c34b5b18b7a080f7dc3a5ac9959"
 
 "vtex.rich-text@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text":
   version "0.16.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text#0cdcaccffb37ae0d025894ba7055f69bc3c9aa30"
 
-"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.136.0/public/@types/vtex.store":
-  version "2.136.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.136.0/public/@types/vtex.store#ca37894cda57c42eb577be935dff645dc3b320e0"
+"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.137.3/public/@types/vtex.store":
+  version "2.137.3"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.137.3/public/@types/vtex.store#c57f68491a538c3754893037420b4b5331820a76"
 
 "vtex.styleguide@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide":
   version "9.146.13"

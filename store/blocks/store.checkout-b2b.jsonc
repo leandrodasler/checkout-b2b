@@ -6,6 +6,7 @@
     "blocks": ["rich-text#checkout-b2b-title"]
   },
   "rich-text#checkout-b2b-title": {
+    "title": "Checkout B2B Title",
     "props": {
       "text": "# Checkout B2B",
       "blockClass": "checkout-b2b-title"
