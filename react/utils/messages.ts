@@ -12,6 +12,7 @@ export const messages = defineMessages({
   brand: { id: 'store/checkout.b2b.column.brand' },
   backToHome: { id: 'store/checkout.b2b.button.backToHome' },
   refId: { id: 'store/checkout.b2b.column.refId' },
+  seller: { id: 'store/checkout.b2b.column.seller' },
   emptyCart: { id: 'store/checkout.b2b.empty.cart' },
   clearCart: { id: 'store/checkout.b2b.button.clearCart' },
 })
