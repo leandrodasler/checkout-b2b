@@ -10,6 +10,7 @@
   "store/checkout.b2b.column.category": "Category",
   "store/checkout.b2b.column.brand": "Brand",
   "store/checkout.b2b.column.refId": "SKU Reference",
+  "store/checkout.b2b.column.seller": "Seller",
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.clearCart": "Clear cart",
