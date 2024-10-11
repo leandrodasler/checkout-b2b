@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Brand column on products list 
+- Add quantity input on product list
+
+### Added
+
+- Add Brand column on products list
 
 ### Added
 
