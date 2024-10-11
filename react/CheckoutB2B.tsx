@@ -23,12 +23,12 @@ function CheckoutB2B() {
 
   const { useOrderItems } = OrderItems
   const { removeItem } = useOrderItems()
-  const mappedTotalizers = useTotalizers(
+  const mappedTotalizers = useTotalizers({
     totalizers,
     shipping,
     total,
-    paymentData
-  )
+    paymentData,
+  })
 
   const schema = useTableSchema()
 

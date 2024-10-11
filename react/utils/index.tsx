@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { OrderForm, Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
@@ -9,6 +9,7 @@ import { messages } from './messages'
 function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
   const { formatMessage } = useIntl()
 
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null)
   const filteredPaymentSystems = data.paymentSystems.filter(
     (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
   )
@@ -18,25 +19,39 @@ function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
     label: paymentSystem.name,
   }))
 
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPayment(e.target.value)
+  }
+
   return (
     <div className="mb5">
       <Dropdown
-        placeholder={formatMessage(messages.selectPaymentMethods)}
+        placeholder={
+          selectedPayment
+            ? options.find((option) => option.value === selectedPayment)?.label
+            : formatMessage(messages.selectPaymentMethods)
+        }
         options={options}
-        value="visa"
-        onChange={() => {}}
+        value={selectedPayment ?? ''}
+        onChange={handleChange}
       />
     </div>
   )
 }
 
-// eslint-disable-next-line max-params
-export function useTotalizers(
-  totalizers: Totalizer[],
-  shipping: OrderForm['shipping'],
-  total: number,
+interface UseTotalizersParams {
+  totalizers: Totalizer[]
+  shipping: OrderForm['shipping']
+  total: number
   paymentData: OrderForm['paymentData']
-) {
+}
+
+export function useTotalizers({
+  totalizers,
+  shipping,
+  total,
+  paymentData,
+}: UseTotalizersParams) {
   const { formatMessage } = useIntl()
 
   if (!totalizers.length) return null
