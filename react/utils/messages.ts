@@ -4,6 +4,10 @@ export const messages = defineMessages({
   selectedAddress: { id: 'store/checkout.b2b.totalizer.selectedAddress' },
   emptyAddress: { id: 'store/checkout.b2b.totalizer.emptyAddress' },
   total: { id: 'store/checkout.b2b.totalizer.total' },
+  paymentMethods: { id: 'store/checkout.b2b.totalizer.paymentMethods' },
+  selectPaymentMethods: {
+    id: 'store/checkout.b2b.totalizer.selectPaymentMethods',
+  },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },

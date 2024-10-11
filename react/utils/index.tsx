@@ -2,13 +2,40 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import type { OrderForm, Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
+import { Dropdown } from 'vtex.styleguide'
 
 import { messages } from './messages'
 
+function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
+  const { formatMessage } = useIntl()
+
+  const filteredPaymentSystems = data.paymentSystems.filter(
+    (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+  )
+
+  const options = filteredPaymentSystems.map((paymentSystem) => ({
+    value: paymentSystem.id,
+    label: paymentSystem.name,
+  }))
+
+  return (
+    <div className="mb5">
+      <Dropdown
+        placeholder={formatMessage(messages.selectPaymentMethods)}
+        options={options}
+        value="visa"
+        onChange={() => {}}
+      />
+    </div>
+  )
+}
+
+// eslint-disable-next-line max-params
 export function useTotalizers(
   totalizers: Totalizer[],
   shipping: OrderForm['shipping'],
-  total: number
+  total: number,
+  paymentData: OrderForm['paymentData']
 ) {
   const { formatMessage } = useIntl()
 
@@ -37,6 +64,10 @@ export function useTotalizers(
     {
       label: formatMessage(messages.total),
       value: <FormattedPrice value={total / 100} />,
+    },
+    {
+      label: formatMessage(messages.paymentMethods),
+      value: <PaymentData data={paymentData} />,
     },
   ]
 }
