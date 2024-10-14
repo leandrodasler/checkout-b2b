@@ -2,6 +2,8 @@
   "store/checkout.b2b.totalizer.selectedAddress": "Endereço de entrega",
   "store/checkout.b2b.totalizer.emptyAddress": "Endereço não informado",
   "store/checkout.b2b.totalizer.total": "Total",
+  "store/checkout.b2b.totalizer.paymentMethods": "Formas de pagamento",
+  "store/checkout.b2b.totalizer.selectPaymentMethods": "Selecione uma forma de pagamento",
 
   "store/checkout.b2b.column.name": "Nome",
   "store/checkout.b2b.column.quantity": "Quantidade",

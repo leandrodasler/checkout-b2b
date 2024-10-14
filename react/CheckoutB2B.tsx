@@ -12,13 +12,21 @@ function CheckoutB2B() {
   const handles = useCssHandles(['container'])
 
   const { loading, orderForm, setOrderForm } = useOrderFormCustom()
-  const { items, totalizers, shipping, value: total, ...rest } = orderForm
-
   const { useOrderItems } = OrderItems
-  const schema = useTableSchema()
-  const { removeItem } = useOrderItems()
 
-  const mappedTotalizers = useTotalizers(totalizers, shipping, total)
+  const {
+    items,
+    totalizers,
+    shipping,
+    value: total,
+    paymentData,
+    ...rest
+  } = orderForm
+
+  const { removeItem } = useOrderItems()
+  const mappedTotalizers = useTotalizers(orderForm)
+
+  const schema = useTableSchema()
 
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
