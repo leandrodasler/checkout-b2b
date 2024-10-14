@@ -4,6 +4,7 @@
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Formas de pago",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Seleccione una forma de pago",
+  "store/checkout.b2b.totalizer.PONumber": "Número PO",
 
   "store/checkout.b2b.column.name": "Nombre",
   "store/checkout.b2b.column.quantity": "Cantidad",

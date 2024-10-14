@@ -8,6 +8,7 @@ export const messages = defineMessages({
   selectPaymentMethods: {
     id: 'store/checkout.b2b.totalizer.selectPaymentMethods',
   },
+  PONumber: { id: 'store/checkout.b2b.totalizer.PONumber' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },

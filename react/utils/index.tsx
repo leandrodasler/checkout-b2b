@@ -3,9 +3,30 @@ import { useIntl } from 'react-intl'
 import type { OrderForm, Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
-import { Dropdown } from 'vtex.styleguide'
+import { Dropdown, Input } from 'vtex.styleguide'
 
 import { messages } from './messages'
+
+function PONumber() {
+  const { formatMessage } = useIntl()
+  const [selectedPONumber, setSelectedPoNumber] = useState<string | null>(null)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedPoNumber(e.target.value)
+  }
+
+  return (
+    <div className="mb5">
+      <Input
+        placeholder={formatMessage(messages.PONumber)}
+        type="number"
+        value={selectedPONumber ?? ''}
+        dataAttributes={{ 'hj-white-list': true, test: 'string' }}
+        onChange={handleChange}
+      />
+    </div>
+  )
+}
 
 function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
   const { formatMessage } = useIntl()
@@ -72,6 +93,10 @@ export function useTotalizers({
     {
       label: formatMessage(messages.paymentMethods),
       value: <PaymentData data={paymentData} />,
+    },
+    {
+      label: formatMessage(messages.PONumber),
+      value: <PONumber />,
     },
     ...totalizers.map((t) => ({
       label: t.name,
