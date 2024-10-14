@@ -27,11 +27,7 @@ function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
   return (
     <div className="mb5">
       <Dropdown
-        placeholder={
-          selectedPayment
-            ? options.find((option) => option.value === selectedPayment)?.label
-            : formatMessage(messages.selectPaymentMethods)
-        }
+        placeholder={formatMessage(messages.selectPaymentMethods)}
         options={options}
         value={selectedPayment ?? ''}
         onChange={handleChange}
@@ -73,6 +69,10 @@ export function useTotalizers({
       value: formattedAddress,
       isLoading: false,
     },
+    {
+      label: formatMessage(messages.paymentMethods),
+      value: <PaymentData data={paymentData} />,
+    },
     ...totalizers.map((t) => ({
       label: t.name,
       value: <FormattedPrice value={t.value / 100} />,
@@ -80,10 +80,6 @@ export function useTotalizers({
     {
       label: formatMessage(messages.total),
       value: <FormattedPrice value={total / 100} />,
-    },
-    {
-      label: formatMessage(messages.paymentMethods),
-      value: <PaymentData data={paymentData} />,
     },
   ]
 }
