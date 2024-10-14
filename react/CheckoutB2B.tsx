@@ -12,10 +12,24 @@ import { messages } from './utils/messages'
 function CheckoutB2B() {
   const handles = useCssHandles(['container'])
   const { loading, orderForm, setOrderForm } = useOrderFormCustom()
-  const { items, totalizers, shipping, value: total, ...rest } = orderForm
+  const {
+    items,
+    totalizers,
+    shipping,
+    value: total,
+    paymentData,
+    ...rest
+  } = orderForm
+
   const { useOrderItems } = OrderItems
   const { removeItem } = useOrderItems()
-  const mappedTotalizers = useTotalizers(totalizers, shipping, total)
+  const mappedTotalizers = useTotalizers({
+    totalizers,
+    shipping,
+    total,
+    paymentData,
+  })
+
   const schema = useTableSchema()
 
   const { navigate } = useRuntime()

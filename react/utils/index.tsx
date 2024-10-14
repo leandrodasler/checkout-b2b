@@ -1,16 +1,54 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { OrderForm, Totalizer } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
+import { Dropdown } from 'vtex.styleguide'
 
 import { messages } from './messages'
 
-export function useTotalizers(
-  totalizers: Totalizer[],
-  shipping: OrderForm['shipping'],
+function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
+  const { formatMessage } = useIntl()
+
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null)
+  const filteredPaymentSystems = data.paymentSystems.filter(
+    (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+  )
+
+  const options = filteredPaymentSystems.map((paymentSystem) => ({
+    value: paymentSystem.id,
+    label: paymentSystem.name,
+  }))
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPayment(e.target.value)
+  }
+
+  return (
+    <div className="mb5">
+      <Dropdown
+        placeholder={formatMessage(messages.selectPaymentMethods)}
+        options={options}
+        value={selectedPayment ?? ''}
+        onChange={handleChange}
+      />
+    </div>
+  )
+}
+
+interface UseTotalizersParams {
+  totalizers: Totalizer[]
+  shipping: OrderForm['shipping']
   total: number
-) {
+  paymentData: OrderForm['paymentData']
+}
+
+export function useTotalizers({
+  totalizers,
+  shipping,
+  total,
+  paymentData,
+}: UseTotalizersParams) {
   const { formatMessage } = useIntl()
 
   if (!totalizers.length) return null
@@ -30,6 +68,10 @@ export function useTotalizers(
       label: formatMessage(messages.selectedAddress),
       value: formattedAddress,
       isLoading: false,
+    },
+    {
+      label: formatMessage(messages.paymentMethods),
+      value: <PaymentData data={paymentData} />,
     },
     ...totalizers.map((t) => ({
       label: t.name,
