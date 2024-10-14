@@ -13,26 +13,13 @@ function CheckoutB2B() {
 
   const { loading, orderForm, setOrderForm } = useOrderFormCustom()
   const { useOrderItems } = OrderItems
-
-  const {
-    items,
-    totalizers,
-    shipping,
-    value: total,
-    paymentData,
-    ...rest
-  } = orderForm
-
-  const { removeItem } = useOrderItems()
+  const { items, ...rest } = orderForm
   const mappedTotalizers = useTotalizers(orderForm)
-
   const schema = useTableSchema()
 
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
-
-  // eslint-disable-next-line no-console
-  console.log('OUTROS OBJETOS NO ORDER FORM:', rest)
+  const { removeItem } = useOrderItems()
 
   const handleClearCart = useCallback(() => {
     items.forEach(({ id, seller }) => removeItem({ id, seller: seller ?? '1' }))
@@ -42,6 +29,9 @@ function CheckoutB2B() {
       totalizers: [],
     })
   }, [items, orderForm, removeItem, setOrderForm])
+
+  // eslint-disable-next-line no-console
+  console.log('OUTROS OBJETOS NO ORDER FORM:', rest)
 
   return (
     <div className={handles.container}>
