@@ -7,10 +7,8 @@ type UseOrderFormReturn = {
   setOrderForm: (orderForm: OrderFormType) => void
 }
 
-function useOrderFormCustom() {
+export function useOrderFormCustom() {
   const { useOrderForm } = OrderForm
 
   return useOrderForm() as UseOrderFormReturn
 }
-
-export default useOrderFormCustom

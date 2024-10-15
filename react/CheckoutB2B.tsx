@@ -4,39 +4,23 @@ import { useCssHandles } from 'vtex.css-handles'
 import { OrderItems } from 'vtex.order-items'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import { Button, Layout, PageBlock, PageHeader, Table } from 'vtex.styleguide'
+import './styles.css'
 
-import useOrderFormCustom from './hooks/useOrderFormCustom'
-import { useTableSchema, useTotalizers } from './utils'
-import { messages } from './utils/messages'
+import { useOrderFormCustom, useTableSchema, useTotalizers } from './hooks'
+import { messages } from './utils'
 
 function CheckoutB2B() {
-  const handles = useCssHandles(['container'])
+  const handles = useCssHandles(['container', 'table'])
+
   const { loading, orderForm, setOrderForm } = useOrderFormCustom()
-  const {
-    items,
-    totalizers,
-    shipping,
-    value: total,
-    paymentData,
-    ...rest
-  } = orderForm
-
   const { useOrderItems } = OrderItems
-  const { removeItem } = useOrderItems()
-  const mappedTotalizers = useTotalizers({
-    totalizers,
-    shipping,
-    total,
-    paymentData,
-  })
-
+  const { items } = orderForm
+  const mappedTotalizers = useTotalizers(orderForm)
   const schema = useTableSchema()
 
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
-
-  // eslint-disable-next-line no-console
-  console.log('OUTROS OBJETOS NO ORDER FORM:', rest)
+  const { removeItem } = useOrderItems()
 
   const handleClearCart = useCallback(() => {
     items.forEach(({ id, seller }) => removeItem({ id, seller: seller ?? '1' }))
@@ -46,6 +30,9 @@ function CheckoutB2B() {
       totalizers: [],
     })
   }, [items, orderForm, removeItem, setOrderForm])
+
+  // eslint-disable-next-line no-console
+  console.log('ORDER FORM:', orderForm)
 
   return (
     <div className={handles.container}>
@@ -60,16 +47,19 @@ function CheckoutB2B() {
         }
       >
         <PageBlock>
-          <Table
-            totalizers={mappedTotalizers}
-            loading={loading}
-            fullWidth
-            schema={schema}
-            items={items}
-            density="high"
-            emptyStateLabel={formatMessage(messages.emptyCart)}
-          />
+          <div className={handles.table}>
+            <Table
+              totalizers={mappedTotalizers}
+              loading={loading}
+              fullWidth
+              schema={schema}
+              items={items}
+              density="high"
+              emptyStateLabel={formatMessage(messages.emptyCart)}
+            />
+          </div>
         </PageBlock>
+
         {!!items.length && (
           <Button variation="danger-tertiary" onClick={handleClearCart}>
             {formatMessage(messages.clearCart)}

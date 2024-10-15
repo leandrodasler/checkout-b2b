@@ -12,7 +12,7 @@
   "store/checkout.b2b.column.totalPrice": "Preço Total",
   "store/checkout.b2b.column.category": "Categoria",
   "store/checkout.b2b.column.brand": "Marca",
-  "store/checkout.b2b.column.refId": "Referência de SKU",
+  "store/checkout.b2b.column.refId": "Cód. de Referência",
   "store/checkout.b2b.column.seller": "Vendedor",
 
   "store/checkout.b2b.button.backToHome": "Voltar à página inicial",
