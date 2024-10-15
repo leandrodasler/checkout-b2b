@@ -1,10 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { Item } from 'vtex.checkout-graphql'
+import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { useRuntime } from 'vtex.render-runtime'
-import { FormattedPrice } from 'vtex.formatted-price'
-import { Tooltip, NumericStepper } from 'vtex.styleguide'
+import { NumericStepper } from 'vtex.styleguide'
 
+import { TruncatedColumn } from '../components/TruncatedColumn'
 import { messages } from '../utils'
 
 export function useTableSchema() {
@@ -16,22 +18,18 @@ export function useTableSchema() {
 
   return {
     properties: {
+      refId: {
+        title: formatMessage(messages.refId),
+        width: 150,
+        cellRenderer({ cellData }: { cellData: string }) {
+          return <span>{cellData}</span>
+        },
+      },
       skuName: {
         minWidth: 250,
         title: formatMessage(messages.name),
         cellRenderer({ cellData }: { cellData: string }) {
-          return (
-            <Tooltip label={cellData}>
-              <span className="truncate">{cellData}</span>
-            </Tooltip>
-          )
-        },
-      },
-      refId: {
-        title: formatMessage(messages.refId),
-        width: 170,
-        cellRenderer({ cellData }: { cellData: string }) {
-          return <span>{cellData}</span>
+          return <TruncatedColumn text={cellData} />
         },
       },
       additionalInfo: {
@@ -40,31 +38,22 @@ export function useTableSchema() {
         cellRenderer({ cellData }: { cellData: { brandName: string } }) {
           const brandName = cellData?.brandName ?? 'N/A'
 
-          return (
-            <span className="truncate" title={brandName}>
-              {brandName}
-            </span>
-          )
-        },
-      },
-      sellingPrice: {
-        width: 150,
-        title: formatMessage(messages.price),
-        cellRenderer({ cellData }: { cellData: number }) {
-          return <FormattedPrice value={cellData / 100} />
+          return <TruncatedColumn text={brandName} />
         },
       },
       productCategories: {
-        width: 300,
+        width: 200,
         title: formatMessage(messages.category),
         cellRenderer({ cellData }: { cellData: Record<string, string> }) {
-          const categories = Object.values(cellData).join(' / ')
+          const categoriesArray = Object.values(cellData)
+          const categories = categoriesArray.join(' / ')
+          const leadCategory = categoriesArray[categoriesArray.length - 1]
 
-          return <span title={categories}>{categories}</span>
+          return <TruncatedColumn label={categories} text={leadCategory} />
         },
       },
       seller: {
-        width: 150,
+        width: 200,
         title: formatMessage(messages.seller),
         cellRenderer({ cellData }: { cellData: string }) {
           const seller =
@@ -72,27 +61,25 @@ export function useTableSchema() {
               ? account.charAt(0).toUpperCase() + account.slice(1)
               : cellData
 
-          return <span>{seller}</span>
+          return <TruncatedColumn text={seller} />
         },
       },
-      priceDefinition: {
-        width: 150,
-        title: formatMessage(messages.totalPrice),
-        cellRenderer({ cellData }: { cellData: Record<string, number> }) {
-          const totalPrice = cellData.total
-
-          return <FormattedPrice value={totalPrice / 100} />
+      sellingPrice: {
+        width: 100,
+        title: formatMessage(messages.price),
+        cellRenderer({ cellData }: { cellData: number }) {
+          return <FormattedPrice value={cellData / 100} />
         },
       },
       quantity: {
-        width: 150,
+        width: 180,
         title: formatMessage(messages.quantity),
         cellRenderer({
           cellData,
           rowData,
         }: {
           cellData: number
-          rowData: { id: string; seller: string; refId: string }
+          rowData: Item
         }) {
           return (
             <NumericStepper
@@ -103,13 +90,22 @@ export function useTableSchema() {
                 if (value > 0) {
                   updateQuantity({
                     id: rowData.id,
-                    seller: rowData.seller,
+                    seller: rowData.seller as string,
                     quantity: value,
                   })
                 }
               }}
             />
           )
+        },
+      },
+      priceDefinition: {
+        width: 100,
+        title: formatMessage(messages.totalPrice),
+        cellRenderer({ cellData }: { cellData: Record<string, number> }) {
+          const totalPrice = cellData.total
+
+          return <FormattedPrice value={totalPrice / 100} />
         },
       },
     },

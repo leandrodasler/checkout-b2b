@@ -1,19 +1,20 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { OrderItems } from 'vtex.order-items'
 import { useCssHandles } from 'vtex.css-handles'
+import { OrderItems } from 'vtex.order-items'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import { Button, Layout, PageBlock, PageHeader, Table } from 'vtex.styleguide'
+import './styles.css'
 
+import { useOrderFormCustom, useTableSchema, useTotalizers } from './hooks'
 import { messages } from './utils'
-import { useTableSchema, useOrderFormCustom, useTotalizers } from './hooks'
 
 function CheckoutB2B() {
-  const handles = useCssHandles(['container'])
+  const handles = useCssHandles(['container', 'table'])
 
   const { loading, orderForm, setOrderForm } = useOrderFormCustom()
   const { useOrderItems } = OrderItems
-  const { items, ...rest } = orderForm
+  const { items } = orderForm
   const mappedTotalizers = useTotalizers(orderForm)
   const schema = useTableSchema()
 
@@ -31,7 +32,7 @@ function CheckoutB2B() {
   }, [items, orderForm, removeItem, setOrderForm])
 
   // eslint-disable-next-line no-console
-  console.log('OUTROS OBJETOS NO ORDER FORM:', rest)
+  console.log('ORDER FORM:', orderForm)
 
   return (
     <div className={handles.container}>
@@ -46,16 +47,17 @@ function CheckoutB2B() {
         }
       >
         <PageBlock>
-          <Table
-            fixFirstColumn
-            totalizers={mappedTotalizers}
-            loading={loading}
-            fullWidth
-            schema={schema}
-            items={items}
-            density="high"
-            emptyStateLabel={formatMessage(messages.emptyCart)}
-          />
+          <div className={handles.table}>
+            <Table
+              totalizers={mappedTotalizers}
+              loading={loading}
+              fullWidth
+              schema={schema}
+              items={items}
+              density="high"
+              emptyStateLabel={formatMessage(messages.emptyCart)}
+            />
+          </div>
         </PageBlock>
 
         {!!items.length && (
