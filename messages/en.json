@@ -2,7 +2,7 @@
   "store/checkout.b2b.totalizer.selectedAddress": "Delivery address",
   "store/checkout.b2b.totalizer.emptyAddress": "Address not provided",
   "store/checkout.b2b.totalizer.total": "Total",
-  "store/checkout.b2b.totalizer.paymentMethods": "Payment methods",
+  "store/checkout.b2b.totalizer.paymentMethods": "Payment method",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Select a payment method",
   "store/checkout.b2b.totalizer.PONumber": "PO Number",
 

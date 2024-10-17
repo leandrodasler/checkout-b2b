@@ -5376,6 +5376,10 @@ verror@1.10.0:
   version "0.67.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql#28a28b8e5b1f39e45ac7fd57a06f05a2468e192e"
 
+"vtex.checkout-resources@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-resources@0.50.0/public/@types/vtex.checkout-resources":
+  version "0.50.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-resources@0.50.0/public/@types/vtex.checkout-resources#753cbf0e0b2ed7030312ecea40e85a6cd7feccf4"
+
 "vtex.css-handles@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles":
   version "0.4.4"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles#8c45c6decf9acd2b944e07261686decff93d6422"

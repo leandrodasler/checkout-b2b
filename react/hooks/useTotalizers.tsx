@@ -33,7 +33,7 @@ export function useTotalizers(form: Partial<OrderForm>) {
     },
     {
       label: formatMessage(messages.paymentMethods),
-      value: form.paymentData ? <PaymentData data={form.paymentData} /> : null,
+      value: form.paymentData ? <PaymentData /> : null,
     },
     {
       label: formatMessage(messages.PONumber),
