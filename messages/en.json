@@ -5,6 +5,10 @@
   "store/checkout.b2b.totalizer.paymentMethods": "Payment method",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Select a payment method",
   "store/checkout.b2b.totalizer.PONumber": "PO Number",
+  "store/checkout.b2b.totalizer.companyName": "Company name",
+  "store/checkout.b2b.totalizer.buyerName": "Buyer name",
+  "store/checkout.b2b.totalizer.phone": "Phone",
+  "store/checkout.b2b.totalizer.email": "E-mail",
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",

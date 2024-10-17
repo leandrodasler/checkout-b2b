@@ -3,13 +3,13 @@ import { useIntl } from 'react-intl'
 import type { OrderForm } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 
+import { ContactInfos } from '../components/ContactInfos'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { messages } from '../utils'
 
 export function useTotalizers(form: Partial<OrderForm>) {
   const { formatMessage } = useIntl()
-
   const total = form.value ?? 0
   const totalizers = form.totalizers ?? []
 
@@ -26,6 +26,10 @@ export function useTotalizers(form: Partial<OrderForm>) {
   }
 
   return [
+    {
+      label: 'Infos de contato',
+      value: <ContactInfos clientProfileData={form.clientProfileData} />,
+    },
     {
       label: formatMessage(messages.selectedAddress),
       value: formattedAddress,
