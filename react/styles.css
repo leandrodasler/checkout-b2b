@@ -1,3 +1,8 @@
 .table {
   font-size: 80%;
 }
+
+.table :global(.vtex-styleguide-9-x-dropdown),
+.table :global(.vtex-styleguide-9-x-input) {
+  font-size: 1rem;
+}

@@ -6,21 +6,18 @@ import { messages } from '../utils'
 
 export function PONumber() {
   const { formatMessage } = useIntl()
-  const [selectedPONumber, setSelectedPoNumber] = useState<string | null>(null)
+  const [selectedPONumber, setSelectedPoNumber] = useState<string>()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedPoNumber(e.target.value)
   }
 
   return (
-    <div className="mb5">
-      <Input
-        placeholder={formatMessage(messages.PONumber)}
-        type="number"
-        value={selectedPONumber ?? ''}
-        dataAttributes={{ 'hj-white-list': true, test: 'string' }}
-        onChange={handleChange}
-      />
-    </div>
+    <Input
+      size="small"
+      placeholder={formatMessage(messages.PONumber)}
+      value={selectedPONumber}
+      onChange={handleChange}
+    />
   )
 }

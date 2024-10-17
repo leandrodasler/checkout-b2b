@@ -1,15 +1,34 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { OrderForm } from 'vtex.checkout-graphql'
-import { Dropdown } from 'vtex.styleguide'
+import { OrderForm, PaymentDataInput } from 'vtex.checkout-graphql'
+import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
+import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
+import { Dropdown, Spinner, withToast } from 'vtex.styleguide'
 
+import { useOrderFormCustom } from '../hooks'
+import { WithToast } from '../typings'
 import { messages } from '../utils'
 
-export function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
+function PaymentDataWrapper({ showToast }: WithToast) {
+  const { orderForm, setOrderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
 
-  const [selectedPayment, setSelectedPayment] = useState<string | null>(null)
-  const filteredPaymentSystems = data.paymentSystems.filter(
+  const [updatePayment, { loading }] = useMutation<
+    UpdateOrderFormPaymentMutation,
+    { paymentData: PaymentDataInput }
+  >(MutationUpdateOrderFormPayment, {
+    onCompleted({ updateOrderFormPayment }) {
+      setOrderForm(updateOrderFormPayment as OrderForm)
+    },
+    onError({ message }) {
+      showToast({ message })
+    },
+  })
+
+  const { paymentSystems, payments } = orderForm.paymentData
+
+  const filteredPaymentSystems = paymentSystems.filter(
     (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
   )
 
@@ -18,18 +37,41 @@ export function PaymentData({ data }: { data: OrderForm['paymentData'] }) {
     label: paymentSystem.name,
   }))
 
+  const selectedPayment = payments[0]?.paymentSystem
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedPayment(e.target.value)
+    updatePayment({
+      variables: {
+        paymentData: {
+          payments: [
+            {
+              paymentSystem: e.target.value,
+              referenceValue: orderForm.value,
+              value: orderForm.value,
+            },
+          ],
+        },
+      },
+    })
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center">
+        <Spinner size={32} />
+      </div>
+    )
   }
 
   return (
-    <div className="mb5">
-      <Dropdown
-        placeholder={formatMessage(messages.selectPaymentMethods)}
-        options={options}
-        value={selectedPayment ?? ''}
-        onChange={handleChange}
-      />
-    </div>
+    <Dropdown
+      size="small"
+      placeholder={formatMessage(messages.selectPaymentMethods)}
+      options={options}
+      value={selectedPayment}
+      onChange={handleChange}
+    />
   )
 }
+
+export const PaymentData = withToast(PaymentDataWrapper)
