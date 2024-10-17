@@ -1,10 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { FormattedPrice } from 'vtex.formatted-price'
 import type { OrderForm } from 'vtex.checkout-graphql'
+import { FormattedPrice } from 'vtex.formatted-price'
 
-import { messages } from '../utils'
 import { PaymentData } from '../components/PaymentData'
+import { PONumber } from '../components/PONumber'
+import { messages } from '../utils'
 
 export function useTotalizers(form: Partial<OrderForm>) {
   const { formatMessage } = useIntl()
@@ -33,6 +34,10 @@ export function useTotalizers(form: Partial<OrderForm>) {
     {
       label: formatMessage(messages.paymentMethods),
       value: form.paymentData ? <PaymentData data={form.paymentData} /> : null,
+    },
+    {
+      label: formatMessage(messages.PONumber),
+      value: <PONumber />,
     },
     ...totalizers.map((t) => ({
       label: t.name,
