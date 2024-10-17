@@ -39,6 +39,10 @@ export function useTotalizers(form: Partial<OrderForm>) {
       label: formatMessage(messages.PONumber),
       value: <PONumber />,
     },
+    {
+      label: formatMessage(messages.PONumber),
+      value: <PONumber />,
+    },
     ...totalizers.map((t) => ({
       label: t.name,
       value: <FormattedPrice value={t.value / 100} />,
