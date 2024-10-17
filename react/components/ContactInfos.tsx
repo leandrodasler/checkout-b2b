@@ -1,6 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import type { OrderForm } from 'vtex.checkout-graphql'
+import { Totalizer } from 'vtex.styleguide'
 
 import { messages } from '../utils'
 
@@ -21,19 +22,11 @@ export function ContactInfos({
     },
     { label: formatMessage(messages.phone), value: clientProfileData?.phone },
     { label: formatMessage(messages.email), value: clientProfileData?.email },
-  ]
+  ].filter((field) => field.value)
 
   return (
-    <div>
-      {contactFields.map(
-        (field) =>
-          field.value && (
-            <div key={field.label}>
-              <p className="t-action mw9">{field.label}:</p>
-              <p className="t-small mw9">{field.value}</p>
-            </div>
-          )
-      )}
+    <div className="mb4">
+      {contactFields.length && <Totalizer items={contactFields} isLoading />}
     </div>
   )
 }

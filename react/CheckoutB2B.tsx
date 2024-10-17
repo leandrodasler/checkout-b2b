@@ -13,6 +13,7 @@ import {
 } from 'vtex.styleguide'
 import './styles.css'
 
+import { ContactInfos } from './components/ContactInfos'
 import { useOrderFormCustom, useTableSchema, useTotalizers } from './hooks'
 import { messages } from './utils'
 
@@ -55,6 +56,7 @@ function CheckoutB2B() {
           }
         >
           <PageBlock>
+            <ContactInfos clientProfileData={orderForm.clientProfileData} />
             <div className={handles.table}>
               <Table
                 totalizers={mappedTotalizers}
