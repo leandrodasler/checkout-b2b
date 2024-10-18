@@ -7,7 +7,7 @@ import { useOrderFormCustom } from '../hooks'
 import { messages } from '../utils'
 
 type Props = {
-  organization?: Organization
+  organization?: Organization | null
 }
 
 export function ContactInfos({ organization }: Props) {
