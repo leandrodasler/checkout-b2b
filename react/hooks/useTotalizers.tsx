@@ -9,7 +9,6 @@ import { messages } from '../utils'
 
 export function useTotalizers(form: Partial<OrderForm>) {
   const { formatMessage } = useIntl()
-
   const total = form.value ?? 0
   const totalizers = form.totalizers ?? []
 

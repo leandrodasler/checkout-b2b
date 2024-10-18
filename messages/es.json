@@ -2,9 +2,13 @@
   "store/checkout.b2b.totalizer.selectedAddress": "Dirección de entrega",
   "store/checkout.b2b.totalizer.emptyAddress": "Dirección no proporcionada",
   "store/checkout.b2b.totalizer.total": "Total",
-  "store/checkout.b2b.totalizer.paymentMethods": "Forma de pago",
-  "store/checkout.b2b.totalizer.selectPaymentMethods": "Seleccione una forma de pago",
-  "store/checkout.b2b.totalizer.PONumber": "Número de orden",
+  "store/checkout.b2b.totalizer.paymentMethods": "Método de pago",
+  "store/checkout.b2b.totalizer.selectPaymentMethods": "Seleccione un método de pago",
+  "store/checkout.b2b.totalizer.PONumber": "Número de pedido",
+  "store/checkout.b2b.totalizer.companyName": "Organización",
+  "store/checkout.b2b.totalizer.buyerName": "Comprador",
+  "store/checkout.b2b.totalizer.phone": "Teléfono",
+  "store/checkout.b2b.totalizer.email": "E-mail",
 
   "store/checkout.b2b.column.name": "Nombre",
   "store/checkout.b2b.column.quantity": "Cantidad",
@@ -12,11 +16,11 @@
   "store/checkout.b2b.column.totalPrice": "Precio total",
   "store/checkout.b2b.column.category": "Categoría",
   "store/checkout.b2b.column.brand": "Marca",
-  "store/checkout.b2b.column.refId": "Cód. de Referencia",
+  "store/checkout.b2b.column.refId": "Código de referencia",
   "store/checkout.b2b.column.seller": "Vendedor",
 
   "store/checkout.b2b.button.backToHome": "Volver a la página de inicio",
-  "store/checkout.b2b.button.clearCart": "Vaciar carrito",
+  "store/checkout.b2b.button.clearCart": "Limpiar carrito",
 
   "store/checkout.b2b.empty.cart": "El carrito está vacío."
 }

@@ -1,0 +1,38 @@
+query GetOrganization($id: ID) {
+  getOrganizationById(id: $id)
+    @context(provider: "vtex.b2b-organizations-graphql") {
+    id
+    name
+    tradeName
+    status
+    created
+    collections {
+      id
+      name
+    }
+    paymentTerms {
+      id
+      name
+    }
+    priceTables
+    salesChannel
+    costCenters
+    sellers {
+      id
+      name
+    }
+    customFields {
+      name
+      value
+      type
+      dropdownValues {
+        value
+        label
+      }
+      useOnRegistration
+    }
+    permissions {
+      createQuote
+    }
+  }
+}
