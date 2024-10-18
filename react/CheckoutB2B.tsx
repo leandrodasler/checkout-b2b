@@ -15,12 +15,19 @@ import './styles.css'
 
 import { ContactInfos } from './components/ContactInfos'
 import { useOrderFormCustom, useTableSchema, useTotalizers } from './hooks'
+import { useOrganization } from './hooks/useOrganization'
 import { messages } from './utils'
 
 function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table'])
+  const { organization, loading: organizationLoading } = useOrganization()
+  const {
+    loading: orderFormLoading,
+    orderForm,
+    setOrderForm,
+  } = useOrderFormCustom()
 
-  const { loading, orderForm, setOrderForm } = useOrderFormCustom()
+  const loading = orderFormLoading || organizationLoading
   const { useOrderItems } = OrderItems
   const { items } = orderForm
   const mappedTotalizers = useTotalizers(orderForm)
@@ -56,10 +63,10 @@ function CheckoutB2B() {
           }
         >
           <PageBlock>
-            <ContactInfos clientProfileData={orderForm.clientProfileData} />
+            {!loading && <ContactInfos organization={organization} />}
             <div className={handles.table}>
               <Table
-                totalizers={mappedTotalizers}
+                totalizers={!loading && mappedTotalizers}
                 loading={loading}
                 fullWidth
                 schema={schema}
@@ -70,7 +77,7 @@ function CheckoutB2B() {
             </div>
           </PageBlock>
 
-          {!!items.length && (
+          {!!items.length && !loading && (
             <Button variation="danger-tertiary" onClick={handleClearCart}>
               {formatMessage(messages.clearCart)}
             </Button>

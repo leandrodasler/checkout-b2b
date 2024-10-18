@@ -1,20 +1,27 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import type { OrderForm } from 'vtex.checkout-graphql'
+import { Organization } from 'vtex.b2b-organizations-graphql'
 import { Totalizer } from 'vtex.styleguide'
 
+import { useOrderFormCustom } from '../hooks'
 import { messages } from '../utils'
 
-export function ContactInfos({
-  clientProfileData,
-}: {
-  clientProfileData?: OrderForm['clientProfileData']
-}) {
+type Props = {
+  organization?: Organization
+}
+
+export function ContactInfos({ organization }: Props) {
   const { formatMessage } = useIntl()
+  const {
+    orderForm: { clientProfileData },
+  } = useOrderFormCustom()
+
+  if (!organization || !clientProfileData) return null
+
   const contactFields = [
     {
       label: formatMessage(messages.companyName),
-      value: clientProfileData?.corporateName,
+      value: organization.tradeName,
     },
     {
       label: formatMessage(messages.buyerName),
@@ -22,11 +29,11 @@ export function ContactInfos({
     },
     { label: formatMessage(messages.phone), value: clientProfileData?.phone },
     { label: formatMessage(messages.email), value: clientProfileData?.email },
-  ].filter((field) => field.value)
+  ]
 
   return (
     <div className="mb4">
-      {contactFields.length && <Totalizer items={contactFields} isLoading />}
+      <Totalizer items={contactFields} />
     </div>
   )
 }
