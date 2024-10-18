@@ -4,7 +4,7 @@ import { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { useRuntime } from 'vtex.render-runtime'
-import { NumericStepper } from 'vtex.styleguide'
+import { NumericStepper, Button } from 'vtex.styleguide'
 
 import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
@@ -18,13 +18,13 @@ export function useTableSchema() {
   const { useOrderItems } = OrderItems
   const { account } = useRuntime()
   const { formatMessage } = useIntl()
-  const { updateQuantity } = useOrderItems()
+  const { updateQuantity, removeItem } = useOrderItems()
 
   return {
     properties: {
       refId: {
         title: formatMessage(messages.refId),
-        width: 120,
+        width: 140,
       },
       skuName: {
         minWidth: 250,
@@ -104,6 +104,25 @@ export function useTableSchema() {
           const totalPrice = cellData?.total
 
           return totalPrice && <FormattedPrice value={totalPrice / 100} />
+        },
+      },
+      removeItem: {
+        minWidth: 1,
+        title: formatMessage(messages.removeItem),
+        cellRenderer({ rowData }: CellRendererArgs) {
+          return (
+            <Button
+              variation="danger-tertiary"
+              aria-label={formatMessage(messages.removeItem)}
+              size="small"
+              type="button"
+              onClick={() => {
+                removeItem({ id: rowData.id, seller: rowData.seller ?? '1' })
+              }}
+            >
+              X
+            </Button>
+          )
         },
       },
     },

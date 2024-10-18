@@ -21,6 +21,7 @@
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.clearCart": "Clear cart",
+  "store/checkout.b2b.button.removeItem": "Remove item",
 
   "store/checkout.b2b.empty.cart": "Cart is empty."
 }

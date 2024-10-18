@@ -24,4 +24,5 @@ export const messages = defineMessages({
   seller: { id: 'store/checkout.b2b.column.seller' },
   emptyCart: { id: 'store/checkout.b2b.empty.cart' },
   clearCart: { id: 'store/checkout.b2b.button.clearCart' },
+  removeItem: { id: 'store/checkout.b2b.button.removeItem' },
 })
