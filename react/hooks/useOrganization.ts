@@ -1,28 +1,16 @@
 import { useQuery } from 'react-apollo'
-import type {
-  Query,
-  QueryGetOrganizationByIdArgs,
-} from 'vtex.b2b-organizations-graphql'
-import { SessionSuccess, useFullSession } from 'vtex.session-client'
+import type { Query } from 'vtex.b2b-organizations-graphql'
 
 import GET_ORGANIZATION from '../graphql/getOrganization.graphql'
 
-export function useOrganization() {
-  const { data: sessionData, loading: sessionLoading } = useFullSession()
-  const session = sessionData?.session as SessionSuccess | undefined
-  const storefrontPermissions = session?.namespaces['storefront-permissions']
-  const organizationId: string = storefrontPermissions?.organization.value
+type GetOrganizationQuery = Pick<Query, 'getOrganizationByIdStorefront'>
 
-  const { data: organization, loading: organizationLoading } = useQuery<
-    Pick<Query, 'getOrganizationById'>,
-    QueryGetOrganizationByIdArgs
-  >(GET_ORGANIZATION, {
-    variables: { id: organizationId },
-    skip: !organizationId,
+export function useOrganization() {
+  const { data, loading } = useQuery<GetOrganizationQuery>(GET_ORGANIZATION, {
+    ssr: false,
   })
 
-  return {
-    organization: organization?.getOrganizationById,
-    loading: organizationLoading || sessionLoading,
-  }
+  const organization = data?.getOrganizationByIdStorefront
+
+  return { organization, loading }
 }

@@ -1,8 +1,29 @@
 .table {
-  font-size: 80%;
+  --small-font-size: 13px;
+  font-size: var(--small-font-size);
 }
 
 .table :global(.vtex-styleguide-9-x-dropdown),
 .table :global(.vtex-styleguide-9-x-input) {
   font-size: 1rem;
+}
+
+.table :global(.vtex-numeric-stepper__minus-button),
+.table :global(.vtex-numeric-stepper__plus-button),
+.table :global(.vtex-numeric-stepper__input) {
+  height: 25px;
+  max-width: 25px;
+  font-size: var(--small-font-size);
+  line-height: 1;
+}
+
+.table :global(.vtex-numeric-stepper__input) {
+  max-width: 40px;
+}
+
+.price,
+:local([data-testid='totalizer-label']) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -1,5 +1,5 @@
-query GetOrganization($id: ID) {
-  getOrganizationById(id: $id)
+query getOrganization {
+  getOrganizationByIdStorefront
     @context(provider: "vtex.b2b-organizations-graphql") {
     id
     name

@@ -5,6 +5,7 @@ import { FormattedPrice } from 'vtex.formatted-price'
 
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
+import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
 export function useTotalizers(form: Partial<OrderForm>) {
@@ -14,25 +15,10 @@ export function useTotalizers(form: Partial<OrderForm>) {
 
   if (!totalizers.length) return null
 
-  let formattedAddress = formatMessage(messages.emptyAddress)
-
-  if (form.shipping?.selectedAddress) {
-    const { street, number, city, state } = form.shipping?.selectedAddress
-
-    formattedAddress = `${street}${
-      number ? `, ${number}` : ''
-    } - ${city}, ${state}`
-  }
-
   return [
     {
-      label: formatMessage(messages.selectedAddress),
-      value: formattedAddress,
-      isLoading: false,
-    },
-    {
       label: formatMessage(messages.paymentMethods),
-      value: form.paymentData ? <PaymentData /> : null,
+      value: <PaymentData />,
     },
     {
       label: formatMessage(messages.PONumber),
@@ -40,11 +26,11 @@ export function useTotalizers(form: Partial<OrderForm>) {
     },
     ...totalizers.map((t) => ({
       label: t.name,
-      value: <FormattedPrice value={t.value / 100} />,
+      value: <TruncatedText text={<FormattedPrice value={t.value / 100} />} />,
     })),
     {
       label: formatMessage(messages.total),
-      value: <FormattedPrice value={total / 100} />,
+      value: <TruncatedText text={<FormattedPrice value={total / 100} />} />,
     },
   ]
 }

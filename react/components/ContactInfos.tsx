@@ -5,6 +5,7 @@ import { Totalizer } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
 import { messages } from '../utils'
+import { TruncatedText } from './TruncatedText'
 
 type Props = {
   organization?: Organization | null
@@ -13,22 +14,48 @@ type Props = {
 export function ContactInfos({ organization }: Props) {
   const { formatMessage } = useIntl()
   const {
-    orderForm: { clientProfileData },
+    orderForm: { clientProfileData, shipping },
   } = useOrderFormCustom()
 
   if (!organization || !clientProfileData) return null
 
+  let formattedAddress = formatMessage(messages.emptyAddress)
+
+  if (shipping?.selectedAddress) {
+    const { street, number, city, state } = shipping?.selectedAddress
+
+    formattedAddress = `${street}${
+      number ? `, ${number}` : ''
+    } - ${city}, ${state}`
+  }
+
   const contactFields = [
     {
       label: formatMessage(messages.companyName),
-      value: organization.tradeName,
+      value: (
+        <TruncatedText
+          text={(organization.tradeName ?? '') || organization.name}
+        />
+      ),
     },
     {
       label: formatMessage(messages.buyerName),
-      value: `${clientProfileData?.firstName} ${clientProfileData?.lastName}`,
+      value: (
+        <TruncatedText
+          text={`${clientProfileData?.firstName} ${
+            clientProfileData?.lastName ?? ''
+          }`}
+        />
+      ),
     },
-    { label: formatMessage(messages.phone), value: clientProfileData?.phone },
-    { label: formatMessage(messages.email), value: clientProfileData?.email },
+    {
+      label: formatMessage(messages.email),
+      value: <TruncatedText text={clientProfileData?.email} />,
+    },
+    {
+      label: formatMessage(messages.selectedAddress),
+      value: <TruncatedText text={formattedAddress} />,
+    },
   ]
 
   return (
