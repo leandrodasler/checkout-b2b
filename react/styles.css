@@ -1,29 +1,38 @@
-.table {
-  --small-font-size: 13px;
+.container {
+  --base-font-size: 1rem;
+  --small-font-size: calc(var(--base-font-size) * 0.8);
+}
+
+.container .table {
   font-size: var(--small-font-size);
 }
 
-.table :global(.vtex-styleguide-9-x-dropdown),
-.table :global(.vtex-styleguide-9-x-input) {
-  font-size: 1rem;
+.container .table :global(.vtex-styleguide-9-x-dropdown),
+.container .table :global(.vtex-styleguide-9-x-input) {
+  font-size: var(--base-font-size);
 }
 
-.table :global(.vtex-numeric-stepper__minus-button),
-.table :global(.vtex-numeric-stepper__plus-button),
-.table :global(.vtex-numeric-stepper__input) {
+.container .table :global(.vtex-numeric-stepper__minus-button),
+.container .table :global(.vtex-numeric-stepper__plus-button),
+.container .table :global(.vtex-numeric-stepper__input) {
   height: 25px;
   max-width: 25px;
   font-size: var(--small-font-size);
   line-height: 1;
 }
 
-.table :global(.vtex-numeric-stepper__input) {
+.container .table :global(.vtex-numeric-stepper__input) {
   max-width: 40px;
 }
 
-.price,
-:local([data-testid='totalizer-label']) {
+.container .price,
+.container :local([data-testid='totalizer-label']) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.container
+  :local([data-testid='totalizer-container'] > [data-testid^='totalizer-']) {
+  flex: 1;
 }
