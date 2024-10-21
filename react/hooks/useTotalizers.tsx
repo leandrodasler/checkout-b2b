@@ -8,12 +8,12 @@ import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
-export function useTotalizers(form: Partial<OrderForm>) {
+export function useTotalizers(orderForm: Partial<OrderForm>) {
   const { formatMessage } = useIntl()
-  const total = form.value ?? 0
-  const totalizers = form.totalizers ?? []
+  const total = orderForm.value ?? 0
+  const totalizers = orderForm.totalizers ?? []
 
-  if (!totalizers.length) return null
+  if (!totalizers.length || !orderForm.items?.length) return null
 
   return [
     {

@@ -18,6 +18,8 @@ import { useOrderFormCustom, useTableSchema, useTotalizers } from './hooks'
 import { useOrganization } from './hooks/useOrganization'
 import { messages } from './utils'
 
+const { useOrderItems } = OrderItems
+
 function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table'])
   const { organization, loading: organizationLoading } = useOrganization()
@@ -28,7 +30,6 @@ function CheckoutB2B() {
   } = useOrderFormCustom()
 
   const loading = orderFormLoading || organizationLoading
-  const { useOrderItems } = OrderItems
   const { items } = orderForm
   const mappedTotalizers = useTotalizers(orderForm)
   const schema = useTableSchema()

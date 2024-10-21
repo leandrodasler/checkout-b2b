@@ -1,28 +1,27 @@
 .container {
   --base-font-size: 1rem;
   --small-font-size: calc(var(--base-font-size) * 0.8);
+  --numeric-stepper-button-size: 25px;
+  --numeric-stepper-input-size: 40px;
+  --disabled-color: #bbb;
 }
 
-.container .table {
-  font-size: var(--small-font-size);
+.container :global(.vtex-rich-text-0-x-heading) {
+  margin: var(--base-font-size) 0 0;
 }
 
-.container .table :global(.vtex-styleguide-9-x-dropdown),
-.container .table :global(.vtex-styleguide-9-x-input) {
+.container
+  :local([data-testid='totalizer-container'] > [data-testid^='totalizer-']) {
+  flex: 1;
+}
+
+.container :global(.vtex-dropdown__help-text) {
+  margin-top: calc(var(--base-font-size) / 4);
+}
+
+.container :local([data-testid='totalizer-value']),
+.container :global(.vtex-styleguide-9-x-input) {
   font-size: var(--base-font-size);
-}
-
-.container .table :global(.vtex-numeric-stepper__minus-button),
-.container .table :global(.vtex-numeric-stepper__plus-button),
-.container .table :global(.vtex-numeric-stepper__input) {
-  height: 25px;
-  max-width: 25px;
-  font-size: var(--small-font-size);
-  line-height: 1;
-}
-
-.container .table :global(.vtex-numeric-stepper__input) {
-  max-width: 40px;
 }
 
 .container .price,
@@ -32,7 +31,29 @@
   text-overflow: ellipsis;
 }
 
-.container
-  :local([data-testid='totalizer-container'] > [data-testid^='totalizer-']) {
-  flex: 1;
+.container .table {
+  font-size: var(--small-font-size);
+}
+
+.container .table :global(.vtex-numeric-stepper__minus-button),
+.container .table :global(.vtex-numeric-stepper__plus-button),
+.container .table :global(.vtex-numeric-stepper__input) {
+  height: var(--numeric-stepper-button-size);
+  max-width: var(--numeric-stepper-button-size);
+  font-size: var(--small-font-size);
+  line-height: 1;
+}
+
+.container .table :global(.vtex-numeric-stepper__input) {
+  max-width: var(--numeric-stepper-input-size);
+}
+
+.container :global(.strike) {
+  color: var(--disabled-color);
+}
+
+.container .shippingEstimates {
+  padding: 0;
+  list-style-position: inside;
+  margin: 0 0 0 calc(var(--base-font-size) / 2);
 }

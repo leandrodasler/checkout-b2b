@@ -1,6 +1,8 @@
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { OrderForm } from 'vtex.order-manager'
 
+const { useOrderForm } = OrderForm
+
 type UseOrderFormReturn = {
   loading: boolean
   orderForm: OrderFormType
@@ -8,7 +10,5 @@ type UseOrderFormReturn = {
 }
 
 export function useOrderFormCustom() {
-  const { useOrderForm } = OrderForm
-
   return useOrderForm() as UseOrderFormReturn
 }

@@ -4,12 +4,13 @@ import { Tooltip } from 'vtex.styleguide'
 type Props = {
   text?: React.ReactNode | null
   label?: React.ReactNode | null
+  strike?: boolean
 }
 
-export function TruncatedText({ text, label = text }: Props) {
+export function TruncatedText({ text, label = text, strike = false }: Props) {
   return (
     <Tooltip label={label}>
-      <div className="truncate">{text}</div>
+      <div className={`truncate${strike ? ' strike' : ''}`}>{text}</div>
     </Tooltip>
   )
 }

@@ -4,11 +4,12 @@ import { useIntl } from 'react-intl'
 import { OrderForm, PaymentDataInput } from 'vtex.checkout-graphql'
 import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
-import { Dropdown, Spinner, withToast } from 'vtex.styleguide'
+import { Dropdown, withToast } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
 import { WithToast } from '../typings'
 import { messages } from '../utils'
+import { TotalizerSpinner } from './TotalizerSpinner'
 
 function PaymentDataWrapper({ showToast }: WithToast) {
   const { orderForm, setOrderForm } = useOrderFormCustom()
@@ -56,11 +57,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center">
-        <Spinner size={32} />
-      </div>
-    )
+    return <TotalizerSpinner />
   }
 
   return (
