@@ -21,6 +21,8 @@ export function useToolbar() {
       onSubmit: console.log,
     },
     newLine: {
+      disabled: false,
+      isLoading: false,
       label: formatMessage(messages.placeOrder),
       // eslint-disable-next-line no-console
       handleCallback: () => console.log(formatMessage(messages.placeOrder)),
