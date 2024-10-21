@@ -17,6 +17,7 @@ import { Dropdown, withToast } from 'vtex.styleguide'
 
 import GET_SHIPPING from '../graphql/getShipping.graphql'
 import { useOrderFormCustom } from '../hooks'
+import { useFormatPrice } from '../hooks/useFomatPrice'
 import { WithToast } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
@@ -28,6 +29,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const { selectedAddress, deliveryOptions } = orderForm.shipping
+  const formatPrice = useFormatPrice()
 
   const { data: shippingData, loading: shippingLoading } = useQuery<
     QueryShipping,
@@ -64,7 +66,10 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
 
   const loading = shippingLoading || selectLoading
   const selectedOption = deliveryOptions?.find((option) => option.isSelected)
-  const options = deliveryOptions?.map(({ id }) => ({ value: id, label: id }))
+  const options = deliveryOptions?.map(({ id, price }) => ({
+    value: id,
+    label: `${id} - ${formatPrice(price / 100)}`,
+  }))
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     selectOption({
