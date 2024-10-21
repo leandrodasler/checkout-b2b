@@ -21,7 +21,6 @@
     "vtex.rich-text": "0.x",
     "vtex.css-handles": "0.x",
     "vtex.checkout-resources": "0.x",
-    "vtex.session-client": "1.x",
     "vtex.b2b-organizations-graphql": "0.x",
     "vtex.shipping-estimate-translator": "2.x",
     "vtex.store-graphql": "2.x"
