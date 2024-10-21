@@ -57,3 +57,7 @@
   list-style-position: inside;
   margin: 0 0 0 calc(var(--base-font-size) / 2);
 }
+
+.container .table :global(#toolbar) :global(.vtex-button) :global(.mr3) {
+  display: none;
+}

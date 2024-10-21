@@ -16,8 +16,7 @@ import type {
 import { Dropdown, withToast } from 'vtex.styleguide'
 
 import GET_SHIPPING from '../graphql/getShipping.graphql'
-import { useOrderFormCustom } from '../hooks'
-import { useFormatPrice } from '../hooks/useFomatPrice'
+import { useFormatPrice, useOrderFormCustom } from '../hooks'
 import { WithToast } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'

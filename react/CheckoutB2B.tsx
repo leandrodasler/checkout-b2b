@@ -10,12 +10,18 @@ import {
   PageHeader,
   Table,
   ToastProvider,
+  Totalizer,
 } from 'vtex.styleguide'
 import './styles.css'
 
 import { ContactInfos } from './components/ContactInfos'
-import { useOrderFormCustom, useTableSchema, useTotalizers } from './hooks'
-import { useOrganization } from './hooks/useOrganization'
+import {
+  useOrderFormCustom,
+  useOrganization,
+  useTableSchema,
+  useToolbar,
+  useTotalizers,
+} from './hooks'
 import { messages } from './utils'
 
 const { useOrderItems } = OrderItems
@@ -31,20 +37,16 @@ function CheckoutB2B() {
 
   const loading = orderFormLoading || organizationLoading
   const { items } = orderForm
-  const mappedTotalizers = useTotalizers(orderForm)
+  const totalizers = useTotalizers()
   const schema = useTableSchema()
-
+  const toolbar = useToolbar()
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
 
   const handleClearCart = useCallback(() => {
     items.forEach(({ id, seller }) => removeItem({ id, seller: seller ?? '1' }))
-    setOrderForm({
-      ...orderForm,
-      items: [],
-      totalizers: [],
-    })
+    setOrderForm({ ...orderForm, items: [], totalizers: [] })
   }, [items, orderForm, removeItem, setOrderForm])
 
   // eslint-disable-next-line no-console
@@ -64,16 +66,22 @@ function CheckoutB2B() {
           }
         >
           <PageBlock>
-            {!loading && <ContactInfos organization={organization} />}
+            {!loading && (
+              <div className="mb4">
+                <ContactInfos organization={organization} />
+                <Totalizer items={totalizers} />
+              </div>
+            )}
+
             <div className={handles.table}>
               <Table
-                totalizers={!loading && mappedTotalizers}
                 loading={loading}
                 fullWidth
                 schema={schema}
                 items={items}
                 density="high"
                 emptyStateLabel={formatMessage(messages.emptyCart)}
+                toolbar={toolbar}
               />
             </div>
           </PageBlock>

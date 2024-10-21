@@ -30,4 +30,6 @@ export const messages = defineMessages({
   withoutStock: { id: 'store/checkout.b2b.withoutStock' },
   emptyCart: { id: 'store/checkout.b2b.empty.cart' },
   clearCart: { id: 'store/checkout.b2b.button.clearCart' },
+  searchPlaceholder: { id: 'store/checkout.b2b.search.placeholder' },
+  placeOrder: { id: 'store/checkout.b2b.button.placeOrder' },
 })
