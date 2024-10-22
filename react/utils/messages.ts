@@ -1,7 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  selectedAddress: { id: 'store/checkout.b2b.totalizer.selectedAddress' },
+  shippingAddress: { id: 'store/checkout.b2b.totalizer.shippingAddress' },
+  shippingOption: { id: 'store/checkout.b2b.totalizer.shippingOption' },
+  shippingOptionEmpty: {
+    id: 'store/checkout.b2b.totalizer.shippingOption.empty',
+  },
+  shippingOptionPackages: {
+    id: 'store/checkout.b2b.totalizer.shippingOption.packages',
+  },
   emptyAddress: { id: 'store/checkout.b2b.totalizer.emptyAddress' },
   total: { id: 'store/checkout.b2b.totalizer.total' },
   paymentMethods: { id: 'store/checkout.b2b.totalizer.paymentMethods' },
@@ -11,8 +18,6 @@ export const messages = defineMessages({
   PONumber: { id: 'store/checkout.b2b.totalizer.PONumber' },
   companyName: { id: 'store/checkout.b2b.totalizer.companyName' },
   buyerName: { id: 'store/checkout.b2b.totalizer.buyerName' },
-  phone: { id: 'store/checkout.b2b.totalizer.phone' },
-  email: { id: 'store/checkout.b2b.totalizer.email' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },
@@ -22,7 +27,10 @@ export const messages = defineMessages({
   backToHome: { id: 'store/checkout.b2b.button.backToHome' },
   refId: { id: 'store/checkout.b2b.column.refId' },
   seller: { id: 'store/checkout.b2b.column.seller' },
+  withoutStock: { id: 'store/checkout.b2b.withoutStock' },
   emptyCart: { id: 'store/checkout.b2b.empty.cart' },
   clearCart: { id: 'store/checkout.b2b.button.clearCart' },
   removeItem: { id: 'store/checkout.b2b.button.removeItem' },
+  searchPlaceholder: { id: 'store/checkout.b2b.search.placeholder' },
+  placeOrder: { id: 'store/checkout.b2b.button.placeOrder' },
 })

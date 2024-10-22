@@ -1,27 +1,31 @@
 {
-  "store/checkout.b2b.totalizer.selectedAddress": "Delivery address",
+  "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
+  "store/checkout.b2b.totalizer.shippingOption": "Shipping Option",
+  "store/checkout.b2b.totalizer.shippingOption.empty": "No shipping options available",
+  "store/checkout.b2b.totalizer.shippingOption.packages": "{packages} packages",
   "store/checkout.b2b.totalizer.emptyAddress": "Address not provided",
   "store/checkout.b2b.totalizer.total": "Total",
-  "store/checkout.b2b.totalizer.paymentMethods": "Payment method",
+  "store/checkout.b2b.totalizer.paymentMethods": "Payment Method",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Select a payment method",
   "store/checkout.b2b.totalizer.PONumber": "PO Number",
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
-  "store/checkout.b2b.totalizer.phone": "Phone",
-  "store/checkout.b2b.totalizer.email": "E-mail",
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",
-  "store/checkout.b2b.column.price": "Unit price",
-  "store/checkout.b2b.column.totalPrice": "Total price",
+  "store/checkout.b2b.withoutStock": "Out of stock",
+  "store/checkout.b2b.column.price": "Unit Price",
+  "store/checkout.b2b.column.totalPrice": "Total Price",
   "store/checkout.b2b.column.category": "Category",
   "store/checkout.b2b.column.brand": "Brand",
-  "store/checkout.b2b.column.refId": "Reference code",
+  "store/checkout.b2b.column.refId": "#",
   "store/checkout.b2b.column.seller": "Seller",
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.clearCart": "Clear cart",
   "store/checkout.b2b.button.removeItem": "Remove item",
+  "store/checkout.b2b.button.placeOrder": "Place Order",
 
+  "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
   "store/checkout.b2b.empty.cart": "Cart is empty."
 }

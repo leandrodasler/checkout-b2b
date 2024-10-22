@@ -1,19 +1,20 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import type { OrderForm } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
+import { useOrderFormCustom } from './useOrderFormCustom'
 
-export function useTotalizers(form: Partial<OrderForm>) {
+export function useTotalizers() {
   const { formatMessage } = useIntl()
-  const total = form.value ?? 0
-  const totalizers = form.totalizers ?? []
+  const { orderForm } = useOrderFormCustom()
+  const total = orderForm.value ?? 0
+  const totalizers = orderForm.totalizers ?? []
 
-  if (!totalizers.length) return null
+  if (!totalizers.length || !orderForm.items?.length) return []
 
   return [
     {

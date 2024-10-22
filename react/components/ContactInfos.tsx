@@ -5,6 +5,8 @@ import { Totalizer } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
 import { messages } from '../utils'
+import { Address } from './Address'
+import { ShippingOption } from './ShippingOption'
 import { TruncatedText } from './TruncatedText'
 
 type Props = {
@@ -14,49 +16,67 @@ type Props = {
 export function ContactInfos({ organization }: Props) {
   const { formatMessage } = useIntl()
   const {
-    orderForm: { clientProfileData, shipping },
+    orderForm: { clientProfileData, items },
   } = useOrderFormCustom()
 
-  if (!organization || !clientProfileData) return null
+  if (!clientProfileData) return null
 
-  let formattedAddress = formatMessage(messages.emptyAddress)
+  const {
+    firstName,
+    lastName,
+    email,
+    corporatePhone,
+    phone,
+  } = clientProfileData
 
-  if (shipping?.selectedAddress) {
-    const { street, number, city, state } = shipping?.selectedAddress
+  const contactFields: Array<{ label: string; value: React.ReactNode }> = []
 
-    formattedAddress = `${street}${
-      number ? `, ${number}` : ''
-    } - ${city}, ${state}`
-  }
-
-  const contactFields = [
-    {
+  if (organization) {
+    contactFields.push({
       label: formatMessage(messages.companyName),
       value: (
         <TruncatedText
           text={(organization.tradeName ?? '') || organization.name}
         />
       ),
-    },
-    {
-      label: formatMessage(messages.buyerName),
-      value: (
-        <TruncatedText
-          text={`${clientProfileData?.firstName} ${
-            clientProfileData?.lastName ?? ''
-          }`}
-        />
-      ),
-    },
-    {
-      label: formatMessage(messages.email),
-      value: <TruncatedText text={clientProfileData?.email} />,
-    },
-    {
-      label: formatMessage(messages.selectedAddress),
-      value: <TruncatedText text={formattedAddress} />,
-    },
-  ]
+    })
+  }
+
+  contactFields.push({
+    label: formatMessage(messages.buyerName),
+    value: (
+      <TruncatedText
+        text={
+          <>
+            {firstName} {lastName ?? ''}
+            <br />
+            <span className="t-mini">{email}</span>
+            {(corporatePhone || phone) && (
+              <>
+                <br />
+                <span className="t-mini">
+                  {corporatePhone ? `${corporatePhone} / ` : ''}
+                  {phone}
+                </span>
+              </>
+            )}
+          </>
+        }
+      />
+    ),
+  })
+
+  contactFields.push({
+    label: formatMessage(messages.shippingAddress),
+    value: <TruncatedText text={<Address />} />,
+  })
+
+  if (items.length) {
+    contactFields.push({
+      label: formatMessage(messages.shippingOption),
+      value: <ShippingOption />,
+    })
+  }
 
   return (
     <div className="mb4">

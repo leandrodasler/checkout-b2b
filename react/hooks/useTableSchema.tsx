@@ -1,115 +1,132 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { Button } from 'vtex.styleguide'
 import { Item } from 'vtex.checkout-graphql'
-import { FormattedPrice } from 'vtex.formatted-price'
-import { OrderItems } from 'vtex.order-items'
+import { useOrderItems } from '@vtex/order-items'
 import { useRuntime } from 'vtex.render-runtime'
-import { NumericStepper, Button } from 'vtex.styleguide'
+import { FormattedPrice } from 'vtex.formatted-price'
 
+import { TableSchema } from '../typings'
 import { TruncatedText } from '../components/TruncatedText'
-import { messages } from '../utils'
+import { QuantitySelector } from '../components/QuantitySelector'
+import { isWithoutStock, messages, normalizeString } from '../utils'
 
-type CellRendererArgs<T = undefined> = {
-  cellData: T
-  rowData: Item
+function getStrike(item: Item) {
+  return { strike: isWithoutStock(item) }
 }
 
-export function useTableSchema() {
-  const { useOrderItems } = OrderItems
+export function useTableSchema(): TableSchema<Item> {
   const { account } = useRuntime()
   const { formatMessage } = useIntl()
-  const { updateQuantity, removeItem } = useOrderItems()
+  const { removeItem } = useOrderItems()
 
   return {
     properties: {
       refId: {
         title: formatMessage(messages.refId),
-        width: 140,
+        width: 120,
+        cellRenderer({ rowData }) {
+          return <TruncatedText text={rowData.refId} {...getStrike(rowData)} />
+        },
       },
       skuName: {
         minWidth: 250,
         title: formatMessage(messages.name),
-        cellRenderer({ rowData }: CellRendererArgs) {
+        cellRenderer({ rowData }) {
           const { name, skuName } = rowData
-          const displayName = name === skuName ? name : `${name} - ${skuName}`
+          const displayName = normalizeString(skuName).includes(
+            normalizeString(name)
+          )
+            ? skuName
+            : `${name} - ${skuName}`
 
-          return <TruncatedText text={displayName as string} />
+          return <TruncatedText text={displayName} {...getStrike(rowData)} />
         },
       },
       additionalInfo: {
         width: 120,
         title: formatMessage(messages.brand),
-        cellRenderer({ cellData }: CellRendererArgs<Item['additionalInfo']>) {
-          const brandName = cellData?.brandName ?? 'N/A'
+        cellRenderer({ rowData }) {
+          const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
 
-          return <TruncatedText text={brandName} />
+          return <TruncatedText text={brandName} {...getStrike(rowData)} />
         },
       },
       productCategories: {
         width: 150,
         title: formatMessage(messages.category),
-        cellRenderer({ cellData }: CellRendererArgs<Record<string, string>>) {
-          const categoriesArray = Object.values(cellData)
+        cellRenderer({ rowData }) {
+          const categoriesArray = Object.values(
+            rowData.productCategories as Record<string, string>
+          )
+
           const categories = categoriesArray.join(' / ')
           const leadCategory = categoriesArray[categoriesArray.length - 1]
 
-          return <TruncatedText label={categories} text={leadCategory} />
+          return (
+            <TruncatedText
+              label={categories}
+              text={leadCategory}
+              {...getStrike(rowData)}
+            />
+          )
         },
       },
       seller: {
-        width: 200,
+        width: 150,
         title: formatMessage(messages.seller),
-        cellRenderer({ cellData }: CellRendererArgs<Item['seller']>) {
+        cellRenderer({ rowData }) {
           const seller =
-            cellData === '1'
+            rowData.seller === '1'
               ? account.charAt(0).toUpperCase() + account.slice(1)
-              : cellData
+              : rowData.seller
 
-          return <TruncatedText text={seller ?? 'N/A'} />
+          return (
+            <TruncatedText text={seller ?? 'N/A'} {...getStrike(rowData)} />
+          )
         },
       },
       sellingPrice: {
-        width: 100,
+        width: 120,
         title: formatMessage(messages.price),
-        cellRenderer({ cellData }: CellRendererArgs<Item['sellingPrice']>) {
-          return !!cellData && <FormattedPrice value={cellData / 100} />
+        cellRenderer({ rowData }) {
+          return (
+            rowData.sellingPrice && (
+              <TruncatedText
+                text={<FormattedPrice value={rowData.sellingPrice / 100} />}
+                {...getStrike(rowData)}
+              />
+            )
+          )
         },
       },
       quantity: {
         width: 110,
         title: <div className="tc">{formatMessage(messages.quantity)}</div>,
-        cellRenderer({ rowData }: CellRendererArgs<Item['quantity']>) {
-          return (
-            <NumericStepper
-              size="small"
-              value={rowData.quantity}
-              minValue={1}
-              onChange={({ value }: { value: number }) => {
-                if (value > 0) {
-                  updateQuantity({
-                    id: rowData.id,
-                    seller: rowData.seller as string,
-                    quantity: value,
-                  })
-                }
-              }}
-            />
-          )
+        cellRenderer({ rowData }) {
+          return <QuantitySelector item={rowData} />
         },
       },
       priceDefinition: {
         width: 120,
         title: formatMessage(messages.totalPrice),
-        cellRenderer({ cellData }: CellRendererArgs<Item['priceDefinition']>) {
-          const totalPrice = cellData?.total
+        cellRenderer({ rowData }) {
+          const totalPrice = rowData?.priceDefinition?.total
 
-          return totalPrice && <FormattedPrice value={totalPrice / 100} />
+          return (
+            totalPrice && (
+              <TruncatedText
+                text={<FormattedPrice value={totalPrice / 100} />}
+                {...getStrike(rowData)}
+              />
+            )
+          )
         },
       },
-      removeItem: {
+      options: {
         minWidth: 1,
         title: formatMessage(messages.removeItem),
-        cellRenderer({ rowData }: CellRendererArgs) {
+        cellRenderer({ rowData }) {
           return (
             <Button
               variation="danger-tertiary"
