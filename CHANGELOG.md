@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add remove item button on product list
+
+### Added
+
 - Add quantity input on product list
 
 ### Added

@@ -23,6 +23,7 @@
 
   "store/checkout.b2b.button.backToHome": "Volver a la página de inicio",
   "store/checkout.b2b.button.clearCart": "Limpiar carrito",
+  "store/checkout.b2b.button.removeItem": "Eliminar",
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",

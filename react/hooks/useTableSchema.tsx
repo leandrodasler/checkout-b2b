@@ -1,12 +1,14 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 import { Item } from 'vtex.checkout-graphql'
-import { FormattedPrice } from 'vtex.formatted-price'
+import { OrderItems } from 'vtex.order-items'
 import { useRuntime } from 'vtex.render-runtime'
+import { FormattedPrice } from 'vtex.formatted-price'
 
-import { QuantitySelector } from '../components/QuantitySelector'
-import { TruncatedText } from '../components/TruncatedText'
 import { TableSchema } from '../typings'
+import { TruncatedText } from '../components/TruncatedText'
+import { QuantitySelector } from '../components/QuantitySelector'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 
 function getStrike(item: Item) {
@@ -16,6 +18,10 @@ function getStrike(item: Item) {
 export function useTableSchema(): TableSchema<Item> {
   const { account } = useRuntime()
   const { formatMessage } = useIntl()
+
+  const { useOrderItems } = OrderItems
+
+  const { removeItem } = useOrderItems()
 
   return {
     properties: {
@@ -117,6 +123,21 @@ export function useTableSchema(): TableSchema<Item> {
                 {...getStrike(rowData)}
               />
             )
+          )
+        },
+      },
+      id: {
+        width: 50,
+        title: ' ',
+        cellRenderer({ rowData }) {
+          return (
+            <ButtonWithIcon
+              icon={<IconDelete />}
+              variation="danger-tertiary"
+              onClick={() => {
+                removeItem({ id: rowData.id, seller: rowData.seller ?? '1' })
+              }}
+            />
           )
         },
       },
