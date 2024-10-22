@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Button, IconDelete } from 'vtex.styleguide'
+import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 import { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
 import { useRuntime } from 'vtex.render-runtime'
@@ -126,23 +126,18 @@ export function useTableSchema(): TableSchema<Item> {
           )
         },
       },
-      options: {
-        minWidth: 1,
-        title: formatMessage(messages.removeItem),
+      id: {
+        width: 50,
+        title: ' ',
         cellRenderer({ rowData }) {
           return (
-            <Button
-              icon
+            <ButtonWithIcon
+              icon={<IconDelete />}
               variation="danger-tertiary"
-              aria-label={formatMessage(messages.removeItem)}
-              size="small"
-              type="button"
               onClick={() => {
                 removeItem({ id: rowData.id, seller: rowData.seller ?? '1' })
               }}
-            >
-              <IconDelete title={formatMessage(messages.removeItem)} />
-            </Button>
+            />
           )
         },
       },
