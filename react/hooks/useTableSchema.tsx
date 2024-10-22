@@ -1,8 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Button } from 'vtex.styleguide'
+import { Button, IconDelete } from 'vtex.styleguide'
 import { Item } from 'vtex.checkout-graphql'
-import { useOrderItems } from '@vtex/order-items'
+import { OrderItems } from 'vtex.order-items'
 import { useRuntime } from 'vtex.render-runtime'
 import { FormattedPrice } from 'vtex.formatted-price'
 
@@ -18,6 +18,9 @@ function getStrike(item: Item) {
 export function useTableSchema(): TableSchema<Item> {
   const { account } = useRuntime()
   const { formatMessage } = useIntl()
+
+  const { useOrderItems } = OrderItems
+
   const { removeItem } = useOrderItems()
 
   return {
@@ -129,6 +132,7 @@ export function useTableSchema(): TableSchema<Item> {
         cellRenderer({ rowData }) {
           return (
             <Button
+              icon
               variation="danger-tertiary"
               aria-label={formatMessage(messages.removeItem)}
               size="small"
@@ -137,7 +141,7 @@ export function useTableSchema(): TableSchema<Item> {
                 removeItem({ id: rowData.id, seller: rowData.seller ?? '1' })
               }}
             >
-              X
+              <IconDelete title={formatMessage(messages.removeItem)} />
             </Button>
           )
         },
