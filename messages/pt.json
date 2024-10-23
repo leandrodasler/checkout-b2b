@@ -25,6 +25,7 @@
   "store/checkout.b2b.button.clearCart": "Limpar carrinho",
   "store/checkout.b2b.button.removeItem": "Remover",
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
+  "store/checkout.b2b.button.placeOrder.error": "Erro ao processar pedido",
 
   "store/checkout.b2b.search.placeholder": "Pesquisar por nome do SKU ou EAN",
   "store/checkout.b2b.empty.cart": "O carrinho está vazio."

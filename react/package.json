@@ -5,6 +5,7 @@
     "test": "vtex-test-tools test"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.32.5",
     "@vtex/order-items": "^0.7.0",
     "apollo-client": "^2.6.8",
     "react": "^16.12.0",
