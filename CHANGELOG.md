@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add checkout B2B permissions
+
+### Added
+
 - Add remove item button on product list
 
 ### Added
