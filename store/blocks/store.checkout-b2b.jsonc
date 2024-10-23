@@ -16,15 +16,19 @@
         "customer-approver"
       ]
     },
-    "blocks": ["allowed-content#checkout-b2b"]
+    "blocks": [
+      "allowed-content#checkout-b2b",
+      "disallowed-content#checkout-b2b",
+      "loading-content#checkout-b2b"
+    ]
   },
   "allowed-content#checkout-b2b": {
     "children": ["checkout-b2b"]
   },
-  "disallowed-content#carousel": {
+  "disallowed-content#checkout-b2b": {
     "children": ["rich-text#disallowed"]
   },
-  "loading-content#carousel": {
+  "loading-content#checkout-b2b": {
     "children": ["rich-text#loading"]
   },
   "rich-text#disallowed": {
