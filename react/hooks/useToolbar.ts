@@ -1,10 +1,13 @@
 import { useIntl } from 'react-intl'
 
+import type { WithToast } from '../typings'
 import { messages } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
+import { usePlaceOrder } from './usePlaceOrder'
 
-export function useToolbar() {
+export function useToolbar(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
+  const { placeOrder, isLoading } = usePlaceOrder(showToast)
   const { orderForm } = useOrderFormCustom()
 
   if (!orderForm?.items?.length) return null
@@ -22,10 +25,9 @@ export function useToolbar() {
     },
     newLine: {
       disabled: false,
-      isLoading: false,
+      isLoading,
       label: formatMessage(messages.placeOrder),
-      // eslint-disable-next-line no-console
-      handleCallback: () => console.log(formatMessage(messages.placeOrder)),
+      handleCallback: placeOrder,
     },
   }
 }

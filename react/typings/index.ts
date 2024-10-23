@@ -4,7 +4,7 @@ type ShowToastArgs = {
 }
 
 export type WithToast<T = unknown> = T & {
-  showToast: (args: ShowToastArgs) => void
+  showToast?: (args: ShowToastArgs) => void
 }
 
 export type TableSchema<RowType> = {
@@ -19,4 +19,26 @@ export type TableSchema<RowType> = {
       }) => React.ReactNode
     }
   }
+}
+
+export type ApiResponse = {
+  code?: string
+  message?: string
+  response?: { data?: { error?: string } | string }
+  error?: { message?: string }
+}
+
+export type TransactionResponse = ApiResponse & {
+  id: string
+  gatewayCallbackTemplatePath: string
+  orderGroup: string
+}
+
+export type TransactionBody = {
+  referenceId: string
+  savePersonalData: boolean
+  optinNewsLetter: boolean
+  value: number
+  referenceValue?: number | null
+  interestValue?: number | null
 }

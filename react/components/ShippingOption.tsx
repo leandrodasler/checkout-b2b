@@ -17,7 +17,7 @@ import { Dropdown, withToast } from 'vtex.styleguide'
 
 import GET_SHIPPING from '../graphql/getShipping.graphql'
 import { useFormatPrice, useOrderFormCustom } from '../hooks'
-import { WithToast } from '../typings'
+import type { WithToast } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
@@ -47,7 +47,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
       })),
     },
     onError({ message }) {
-      showToast({ message })
+      showToast?.({ message })
     },
   })
 
@@ -59,7 +59,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
       setOrderForm(selectDeliveryOption as OrderForm)
     },
     onError({ message }) {
-      showToast({ message })
+      showToast?.({ message })
     },
   })
 
