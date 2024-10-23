@@ -1,10 +1,43 @@
 {
   "store.checkout-b2b": {
-    "children": ["checkout-b2b"]
+    "children": ["check-permission#checkout-b2b"]
   },
   "checkout-b2b": {
     "blocks": ["rich-text#checkout-b2b-title"]
   },
+  "check-permission#checkout-b2b": {
+    "props": {
+      "roles": [
+        "store-admin",
+        "sales-admin",
+        "sales-manager",
+        "sales-representative",
+        "customer-admin",
+        "customer-approver"
+      ]
+    },
+    "blocks": ["allowed-content#checkout-b2b"]
+  },
+  "allowed-content#checkout-b2b": {
+    "children": ["checkout-b2b"]
+  },
+  "disallowed-content#carousel": {
+    "children": ["rich-text#disallowed"]
+  },
+  "loading-content#carousel": {
+    "children": ["rich-text#loading"]
+  },
+  "rich-text#disallowed": {
+    "props": {
+      "text": "**You don't have access to this content**"
+    }
+  },
+  "rich-text#loading": {
+    "props": {
+      "text": "Waiting for permissions..."
+    }
+  },
+
   "rich-text#checkout-b2b-title": {
     "title": "Checkout B2B Title",
     "props": {
