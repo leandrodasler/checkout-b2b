@@ -1,0 +1,16 @@
+mutation setOrderFormCustomData(
+  $appId: String
+  $field: String
+  $value: String
+) {
+  setOrderFormCustomData(appId: $appId, field: $field, value: $value)
+    @context(provider: "vtex.checkout-grapqhl") {
+    customData {
+      customApps {
+        fields
+        id
+        major
+      }
+    }
+  }
+}

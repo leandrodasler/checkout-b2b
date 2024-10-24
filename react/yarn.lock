@@ -5438,6 +5438,10 @@ verror@1.10.0:
   version "2.137.3"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.137.3/public/@types/vtex.store#c57f68491a538c3754893037420b4b5331820a76"
 
+"vtex.storefront-permissions-ui@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui":
+  version "1.2.2"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui#e23c33d1d7deee3dc0a6f6295891b441db115911"
+
 "vtex.styleguide@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide":
   version "9.146.13"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide#f4ccbc54621bf5114ddd115b6032ae320f2eba55"
