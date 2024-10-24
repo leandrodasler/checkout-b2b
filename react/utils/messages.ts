@@ -16,6 +16,9 @@ export const messages = defineMessages({
     id: 'store/checkout.b2b.totalizer.selectPaymentMethods',
   },
   PONumber: { id: 'store/checkout.b2b.totalizer.PONumber' },
+  PONumberPlaceholder: {
+    id: 'store/checkout.b2b.totalizer.PONumber.placeholder',
+  },
   companyName: { id: 'store/checkout.b2b.totalizer.companyName' },
   buyerName: { id: 'store/checkout.b2b.totalizer.buyerName' },
   name: { id: 'store/checkout.b2b.column.name' },

@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useIntl } from 'react-intl'
+import { useRuntime } from 'vtex.render-runtime'
 
 import { apiRequest } from '../services'
 import type {
@@ -25,6 +26,7 @@ function getGatewayCallbackUrl(orderGroup: string) {
 
 export function usePlaceOrder(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
+  const { navigate } = useRuntime()
   const { orderForm } = useOrderFormCustom()
   const { id, paymentData, value, storePreferencesData, shipping } = orderForm
   const { installmentOptions, payments } = paymentData
@@ -43,10 +45,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
     interestValue: installment?.interestRate,
   }
 
-  const { mutate, data, isLoading, isSuccess, error } = useMutation<
-    string,
-    Error
-  >({
+  const { mutate, isLoading, isSuccess } = useMutation<string, Error>({
     mutationFn: async () => {
       const transactionResponse = await apiRequest<TransactionResponse>(
         getStartTransactionUrl(id),
@@ -70,8 +69,8 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
           installments: payment?.installments,
           currencyCode: storePreferencesData?.currencyCode,
           value: payment?.value ?? value,
-          installmentsInterestRate: 0,
-          installmentsValue: 0,
+          installmentsInterestRate: installment?.interestRate ?? 0,
+          installmentsValue: installment?.value ?? 0,
           referenceValue: payment?.referenceValue,
           fields: {
             accountId: payment?.accountId,
@@ -95,6 +94,9 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
 
       return orderGroup
     },
+    onSuccess(orderGroup) {
+      navigate({ to: `/checkout/orderPlaced?og=${orderGroup}` })
+    },
     onError(e) {
       showToast?.({
         message: `${formatMessage(messages.placeOrderError)}: ${e.message}`,
@@ -102,5 +104,5 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
     },
   })
 
-  return { placeOrder: mutate, orderGroup: data, isLoading, isSuccess, error }
+  return { placeOrder: mutate, isLoading, isSuccess }
 }

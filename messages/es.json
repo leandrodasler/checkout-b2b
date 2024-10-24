@@ -7,7 +7,8 @@
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Método de Pago",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Seleccione un método de pago",
-  "store/checkout.b2b.totalizer.PONumber": "Número de Pedido",
+  "store/checkout.b2b.totalizer.PONumber": "Número de Pedido (opcional)",
+  "store/checkout.b2b.totalizer.PONumber.placeholder": "Introduzca el número de pedido",
   "store/checkout.b2b.totalizer.companyName": "Organización",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
 

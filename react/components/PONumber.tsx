@@ -15,7 +15,7 @@ export function PONumber() {
   return (
     <Input
       size="small"
-      placeholder={formatMessage(messages.PONumber)}
+      placeholder={formatMessage(messages.PONumberPlaceholder)}
       value={selectedPONumber}
       onChange={handleChange}
     />
