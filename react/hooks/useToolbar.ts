@@ -1,4 +1,5 @@
 import { useIntl } from 'react-intl'
+import { useRuntime } from 'vtex.render-runtime'
 
 import type { WithToast } from '../typings'
 import { messages } from '../utils'
@@ -6,9 +7,17 @@ import { useOrderFormCustom } from './useOrderFormCustom'
 import { usePlaceOrder } from './usePlaceOrder'
 
 export function useToolbar(showToast: WithToast['showToast']) {
+  const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
-  const { placeOrder, isLoading } = usePlaceOrder(showToast)
+  const { placeOrder, orderGroup, isLoading, isSuccess } = usePlaceOrder(
+    showToast
+  )
+
   const { orderForm } = useOrderFormCustom()
+
+  if (isSuccess) {
+    navigate({ to: `/checkout/orderPlaced?og=${orderGroup}` })
+  }
 
   if (!orderForm?.items?.length) return null
 

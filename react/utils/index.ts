@@ -1,4 +1,4 @@
-import { Item } from 'vtex.checkout-graphql'
+import { Item, PaymentData } from 'vtex.checkout-graphql'
 
 export * from './messages'
 
@@ -13,4 +13,15 @@ export function normalizeString(str?: string | null) {
 
 export function isWithoutStock(item: Item) {
   return item.availability === 'withoutStock'
+}
+
+export function getFirstInstallmentByPaymentSystem(
+  installmentOptions: PaymentData['installmentOptions'],
+  paymentSystem?: string | null
+) {
+  const installmentOption = installmentOptions.find(
+    (option) => option.paymentSystem === paymentSystem
+  )
+
+  return installmentOption?.installments[0]
 }

@@ -8,7 +8,7 @@ import { Dropdown, withToast } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
 import type { WithToast } from '../typings'
-import { messages } from '../utils'
+import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 function PaymentDataWrapper({ showToast }: WithToast) {
@@ -27,7 +27,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
     },
   })
 
-  const { paymentSystems, payments } = orderForm.paymentData
+  const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
 
   const filteredPaymentSystems = paymentSystems.filter(
     (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
@@ -38,18 +38,28 @@ function PaymentDataWrapper({ showToast }: WithToast) {
     label: paymentSystem.name,
   }))
 
-  const selectedPayment = payments[0]?.paymentSystem
+  const [selectedPayment] = payments
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPaymentSystem = e.target.value
+
+    const installment = getFirstInstallmentByPaymentSystem(
+      installmentOptions,
+      newPaymentSystem
+    )
+
+    if (!installment) return
+
     updatePayment({
       variables: {
         paymentData: {
           payments: [
             {
-              paymentSystem: e.target.value,
-              referenceValue: orderForm.value,
-              installments: 1,
-              value: orderForm.value,
+              paymentSystem: newPaymentSystem,
+              referenceValue: installment.value,
+              installmentsInterestRate: installment.interestRate,
+              installments: installment.count,
+              value: installment.total,
             },
           ],
         },
@@ -66,7 +76,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
       size="small"
       placeholder={formatMessage(messages.selectPaymentMethods)}
       options={options}
-      value={selectedPayment}
+      value={selectedPayment?.paymentSystem}
       onChange={handleChange}
     />
   )

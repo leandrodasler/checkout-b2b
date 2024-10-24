@@ -1,3 +1,5 @@
+import { Address } from 'vtex.checkout-graphql'
+
 type ShowToastArgs = {
   message: string
   horizontalPosition?: 'left' | 'right'
@@ -30,8 +32,9 @@ export type ApiResponse = {
 
 export type TransactionResponse = ApiResponse & {
   id: string
-  gatewayCallbackTemplatePath: string
   orderGroup: string
+  merchantTransactions?: Array<{ merchantName: string }>
+  messages: Array<{ text?: string }>
 }
 
 export type TransactionBody = {
@@ -42,3 +45,29 @@ export type TransactionBody = {
   referenceValue?: number | null
   interestValue?: number | null
 }
+
+export type PaymentsBody = Array<
+  Partial<{
+    paymentSystem: number | null
+    installments: number | null
+    currencyCode: string | null
+    value: number
+    installmentsInterestRate: number
+    installmentsValue: number
+    referenceValue: number | null
+    fields: Partial<{
+      holderName: string
+      cardNumber: string
+      validationCode: string
+      dueDate: string
+      document: string
+      accountId: string | null
+      address: Address | null
+      callbackUrl: string
+    }>
+    transaction: {
+      id: string
+      merchantName?: string
+    }
+  }>
+>

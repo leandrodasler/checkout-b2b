@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 
 import { apiRequest } from '../services'
 import type {
-  ApiResponse,
+  PaymentsBody,
   TransactionBody,
   TransactionResponse,
   WithToast,
 } from '../typings'
-import { messages } from '../utils'
+import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
 
 function getStartTransactionUrl(orderFormId: string) {
@@ -26,19 +26,25 @@ function getGatewayCallbackUrl(orderGroup: string) {
 export function usePlaceOrder(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
-  const { id, value, paymentData } = orderForm
+  const { id, paymentData, value, storePreferencesData, shipping } = orderForm
+  const { installmentOptions, payments } = paymentData
+  const [payment] = payments
+  const installment = getFirstInstallmentByPaymentSystem(
+    installmentOptions,
+    payment?.paymentSystem
+  )
 
   const args: TransactionBody = {
     referenceId: id,
     optinNewsLetter: true,
     savePersonalData: true,
-    value: paymentData.payments[0]?.value ?? value,
-    referenceValue: paymentData.payments[0]?.referenceValue,
-    interestValue: 0,
+    value: installment?.total ?? value,
+    referenceValue: payment?.referenceValue,
+    interestValue: installment?.interestRate,
   }
 
-  const { mutate: placeOrder, data, isLoading, error } = useMutation<
-    ApiResponse,
+  const { mutate, data, isLoading, isSuccess, error } = useMutation<
+    string,
     Error
   >({
     mutationFn: async () => {
@@ -48,24 +54,46 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
         args
       )
 
-      // eslint-disable-next-line no-console
-      console.log({ transactionResponse })
+      const {
+        id: transactionId,
+        orderGroup,
+        messages: transactionMessages,
+      } = transactionResponse
 
-      const { id: transactionId, orderGroup } = transactionResponse
+      if (transactionMessages?.length) {
+        throw new Error(transactionMessages[0].text)
+      }
 
-      // TODO: montar um body para o request de pagamentos
-      const paymentsResponse = await apiRequest<ApiResponse & unknown>(
+      const paymentsBody: PaymentsBody = [
+        {
+          paymentSystem: +(payment?.paymentSystem ?? 0),
+          installments: payment?.installments,
+          currencyCode: storePreferencesData?.currencyCode,
+          value: payment?.value ?? value,
+          installmentsInterestRate: 0,
+          installmentsValue: 0,
+          referenceValue: payment?.referenceValue,
+          fields: {
+            accountId: payment?.accountId,
+            address: shipping.selectedAddress,
+          },
+          transaction: {
+            id: transactionId,
+            merchantName:
+              transactionResponse.merchantTransactions?.[0]?.merchantName,
+          },
+        },
+      ]
+
+      await apiRequest<never>(
         getPaymentsUrl(transactionId, orderGroup),
-        'POST'
+        'POST',
+        paymentsBody
       )
 
-      // eslint-disable-next-line no-console
-      console.log({ paymentsResponse })
+      await apiRequest<never>(getGatewayCallbackUrl(orderGroup), 'POST')
 
-      return apiRequest<TransactionResponse>(
-        getGatewayCallbackUrl(orderGroup),
-        'POST'
-      )
+      return orderGroup
     },
     onError(e) {
       showToast?.({
@@ -74,5 +102,5 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
     },
   })
 
-  return { placeOrder, data, isLoading, error }
+  return { placeOrder: mutate, orderGroup: data, isLoading, isSuccess, error }
 }

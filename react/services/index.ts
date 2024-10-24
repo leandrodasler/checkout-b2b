@@ -29,8 +29,13 @@ export async function apiRequest<Response extends ApiResponse, Body = unknown>(
   method: string,
   body?: Body
 ) {
-  const response = await fetch(url, { method, body: JSON.stringify(body) })
-  const json: Response = await response.json()
+  const response = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  const json: Response = await response.json().catch(() => null)
 
   if (!response.ok) {
     console.error('ERRO NO API REQUEST FACTORY:', json)
