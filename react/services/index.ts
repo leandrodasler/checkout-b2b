@@ -38,8 +38,6 @@ export async function apiRequest<Response extends ApiResponse, Body = unknown>(
   const json: Response = await response.json().catch(() => null)
 
   if (!response.ok) {
-    console.error('ERRO NO API REQUEST FACTORY:', json)
-
     throw new Error(
       typeof json?.error === 'object'
         ? json?.error?.message
