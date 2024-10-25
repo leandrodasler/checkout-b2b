@@ -25,7 +25,6 @@
     "vtex.shipping-estimate-translator": "2.x",
     "vtex.store-graphql": "2.x",
     "vtex.storefront-permissions-ui": "1.x",
-    "vtex.store-graphql": "2.x",
     "vtex.search-graphql": "0.x"
   },
   "registries": ["smartcheckout"],

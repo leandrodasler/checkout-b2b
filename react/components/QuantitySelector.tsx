@@ -3,7 +3,7 @@ import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
-import { NumericStepper, withToast } from 'vtex.styleguide'
+import { NumericStepper, Spinner, withToast } from 'vtex.styleguide'
 
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
@@ -25,9 +25,9 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
   const { orderForm } = useOrderFormCustom()
   const { items } = orderForm
 
-  useQuery(GET_PRODUCTS, {
+  const { loading } = useQuery(GET_PRODUCTS, {
     skip: !items?.length,
-    variables: { values: items.map(() => item.productId) },
+    variables: { values: items.map((orderItem) => orderItem.productId) },
     onCompleted: (data) => {
       data.productsByIdentifier.forEach(
         (product: {
@@ -43,7 +43,7 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
             return
           }
 
-          const [minQuantityValue] = minQuantityProp.values
+          const minQuantityValue = Number(minQuantityProp.values)
 
           setMinQuantity(Number(minQuantityValue))
 
@@ -69,6 +69,10 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
       setNewQuantity(item.quantity)
     }
   }, [item.quantity, minQuantity])
+
+  if (loading) {
+    return <Spinner />
+  }
 
   if (isWithoutStock(item)) {
     return (
