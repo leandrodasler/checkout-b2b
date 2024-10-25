@@ -26,5 +26,6 @@
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
 
   "store/checkout.b2b.search.placeholder": "Pesquisar por nome do SKU ou EAN",
-  "store/checkout.b2b.empty.cart": "O carrinho está vazio."
+  "store/checkout.b2b.empty.cart": "O carrinho está vazio.",
+  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "A quantidade foi ajustada para o valor mínimo permitido para este produto."
 }
