@@ -7,7 +7,8 @@
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Payment Method",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Select a payment method",
-  "store/checkout.b2b.totalizer.PONumber": "PO Number",
+  "store/checkout.b2b.totalizer.PONumber": "PO Number (optional)",
+  "store/checkout.b2b.totalizer.PONumber.placeholder": "Enter the PO number",
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
 
@@ -23,7 +24,9 @@
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.clearCart": "Clear cart",
+  "store/checkout.b2b.button.removeItem": "Remove item",
   "store/checkout.b2b.button.placeOrder": "Place Order",
+  "store/checkout.b2b.button.placeOrder.error": "Error processing order",
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
   "store/checkout.b2b.empty.cart": "Cart is empty.",

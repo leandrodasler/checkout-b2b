@@ -1,14 +1,14 @@
 import React from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { OrderForm, PaymentDataInput } from 'vtex.checkout-graphql'
+import type { OrderForm, PaymentDataInput } from 'vtex.checkout-graphql'
 import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
 import { Dropdown, withToast } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
-import { WithToast } from '../typings'
-import { messages } from '../utils'
+import type { WithToast } from '../typings'
+import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 function PaymentDataWrapper({ showToast }: WithToast) {
@@ -23,11 +23,11 @@ function PaymentDataWrapper({ showToast }: WithToast) {
       setOrderForm(updateOrderFormPayment as OrderForm)
     },
     onError({ message }) {
-      showToast({ message })
+      showToast?.({ message })
     },
   })
 
-  const { paymentSystems, payments } = orderForm.paymentData
+  const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
 
   const filteredPaymentSystems = paymentSystems.filter(
     (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
@@ -38,17 +38,28 @@ function PaymentDataWrapper({ showToast }: WithToast) {
     label: paymentSystem.name,
   }))
 
-  const selectedPayment = payments[0]?.paymentSystem
+  const [selectedPayment] = payments
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPaymentSystem = e.target.value
+
+    const installment = getFirstInstallmentByPaymentSystem(
+      installmentOptions,
+      newPaymentSystem
+    )
+
+    if (!installment) return
+
     updatePayment({
       variables: {
         paymentData: {
           payments: [
             {
-              paymentSystem: e.target.value,
-              referenceValue: orderForm.value,
-              value: orderForm.value,
+              paymentSystem: newPaymentSystem,
+              referenceValue: installment.value,
+              installmentsInterestRate: installment.interestRate,
+              installments: installment.count,
+              value: installment.total,
             },
           ],
         },
@@ -65,7 +76,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
       size="small"
       placeholder={formatMessage(messages.selectPaymentMethods)}
       options={options}
-      value={selectedPayment}
+      value={selectedPayment?.paymentSystem}
       onChange={handleChange}
     />
   )

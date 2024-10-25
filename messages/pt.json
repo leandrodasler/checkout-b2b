@@ -7,7 +7,8 @@
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Forma de Pagamento",
   "store/checkout.b2b.totalizer.selectPaymentMethods": "Selecione uma forma de pagamento",
-  "store/checkout.b2b.totalizer.PONumber": "Número do Pedido",
+  "store/checkout.b2b.totalizer.PONumber": "Número do Pedido (opcional)",
+  "store/checkout.b2b.totalizer.PONumber.placeholder": "Insira o número do pedido",
   "store/checkout.b2b.totalizer.companyName": "Organização",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
 
@@ -23,7 +24,9 @@
 
   "store/checkout.b2b.button.backToHome": "Voltar à página inicial",
   "store/checkout.b2b.button.clearCart": "Limpar carrinho",
+  "store/checkout.b2b.button.removeItem": "Remover",
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
+  "store/checkout.b2b.button.placeOrder.error": "Erro ao processar pedido",
 
   "store/checkout.b2b.search.placeholder": "Pesquisar por nome do SKU ou EAN",
   "store/checkout.b2b.empty.cart": "O carrinho está vazio.",

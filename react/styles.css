@@ -3,6 +3,7 @@
   --small-font-size: calc(var(--base-font-size) * 0.8);
   --numeric-stepper-button-size: 25px;
   --numeric-stepper-input-size: 40px;
+  --input-height: calc(var(--base-font-size) * 2);
   --disabled-color: #bbb;
 }
 
@@ -56,6 +57,16 @@
   padding: 0;
   list-style-position: inside;
   margin: 0 0 0 calc(var(--base-font-size) / 2);
+}
+
+.container .table :global(#toolbar) {
+  align-items: center;
+}
+
+.container :global(.vtex-input-prefix__group),
+.container .table :global(#toolbar) :global(.vtex-button) {
+  min-height: var(--input-height);
+  max-height: var(--input-height);
 }
 
 .container .table :global(#toolbar) :global(.vtex-button) :global(.mr3) {

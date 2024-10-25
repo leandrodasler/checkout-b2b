@@ -16,6 +16,9 @@ export const messages = defineMessages({
     id: 'store/checkout.b2b.totalizer.selectPaymentMethods',
   },
   PONumber: { id: 'store/checkout.b2b.totalizer.PONumber' },
+  PONumberPlaceholder: {
+    id: 'store/checkout.b2b.totalizer.PONumber.placeholder',
+  },
   companyName: { id: 'store/checkout.b2b.totalizer.companyName' },
   buyerName: { id: 'store/checkout.b2b.totalizer.buyerName' },
   name: { id: 'store/checkout.b2b.column.name' },
@@ -30,8 +33,10 @@ export const messages = defineMessages({
   withoutStock: { id: 'store/checkout.b2b.withoutStock' },
   emptyCart: { id: 'store/checkout.b2b.empty.cart' },
   clearCart: { id: 'store/checkout.b2b.button.clearCart' },
+  removeItem: { id: 'store/checkout.b2b.button.removeItem' },
   searchPlaceholder: { id: 'store/checkout.b2b.search.placeholder' },
   placeOrder: { id: 'store/checkout.b2b.button.placeOrder' },
+  placeOrderError: { id: 'store/checkout.b2b.button.placeOrder.error' },
   changeMinimumQuantity: {
     id: 'store/checkout.b2b.quantitySelector.changedMinimumQuantity',
   },
