@@ -23,7 +23,8 @@
     "vtex.checkout-resources": "0.x",
     "vtex.b2b-organizations-graphql": "0.x",
     "vtex.shipping-estimate-translator": "2.x",
-    "vtex.store-graphql": "2.x"
+    "vtex.store-graphql": "2.x",
+    "vtex.search-graphql": "0.x"
   },
   "registries": ["smartcheckout"],
   "policies": [],
