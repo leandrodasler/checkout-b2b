@@ -3,13 +3,13 @@ import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
-import { useRuntime } from 'vtex.render-runtime'
 import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 
 import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
+import { useOrderFormCustom } from './useOrderFormCustom'
 
 const { useOrderItems } = OrderItems
 
@@ -18,7 +18,7 @@ function getStrike(item: Item) {
 }
 
 export function useTableSchema(): TableSchema<Item> {
-  const { account } = useRuntime()
+  const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
 
@@ -78,14 +78,13 @@ export function useTableSchema(): TableSchema<Item> {
         width: 150,
         title: formatMessage(messages.seller),
         cellRenderer({ rowData }) {
-          const seller =
-            rowData.seller === '1'
-              ? account.charAt(0).toUpperCase() + account.slice(1)
-              : rowData.seller
-
-          return (
-            <TruncatedText text={seller ?? 'N/A'} {...getStrike(rowData)} />
+          const seller = orderForm.sellers?.find(
+            (s) => rowData.seller === s?.id
           )
+
+          const sellerName = seller?.name ?? rowData.seller ?? 'N/A'
+
+          return <TruncatedText text={sellerName} {...getStrike(rowData)} />
         },
       },
       sellingPrice: {

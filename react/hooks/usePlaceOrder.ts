@@ -37,17 +37,21 @@ function getGatewayCallbackUrl(orderGroup: string) {
   return `/api/checkout/pub/gatewayCallback/${orderGroup}`
 }
 
+function getOrderPlacedUrl(orderGroup: string) {
+  return `/checkout/orderPlaced?og=${orderGroup}`
+}
+
 export function usePlaceOrder(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
   const { navigate } = useRuntime()
   const { orderForm } = useOrderFormCustom()
   const {
+    customData,
     id,
     paymentData,
-    value,
-    storePreferencesData,
     shipping,
-    customData,
+    storePreferencesData,
+    value,
   } = orderForm
 
   const poNumberCustomData = customData?.customApps.find(
@@ -68,7 +72,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
     MutationSetOrderFormCustomDataArgs
   >(SET_ORDER_FORM_CUSTOM_DATA)
 
-  const args: TransactionBody = {
+  const startTransactionBody: TransactionBody = {
     referenceId: id,
     optinNewsLetter: true,
     savePersonalData: true,
@@ -92,7 +96,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
       const transactionResponse = await apiRequest<TransactionResponse>(
         getStartTransactionUrl(id),
         'POST',
-        args
+        startTransactionBody
       )
 
       const {
@@ -137,7 +141,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
       return orderGroup
     },
     onSuccess(orderGroup) {
-      navigate({ to: `/checkout/orderPlaced?og=${orderGroup}` })
+      navigate({ to: getOrderPlacedUrl(orderGroup) })
     },
     onError(e) {
       showToast?.({

@@ -46,7 +46,7 @@ export async function apiRequest<Response extends ApiResponse, Body = unknown>(
         : json?.response?.data ??
           json?.message ??
           json?.code ??
-          response.status.toString()
+          `${response.status.toString()}: ${response.statusText}`
     )
   }
 
