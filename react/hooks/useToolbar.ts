@@ -1,27 +1,52 @@
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { Item } from 'vtex.checkout-graphql'
 
-import type { WithToast } from '../typings'
-import { messages } from '../utils'
-import { useOrderFormCustom } from './useOrderFormCustom'
 import { usePlaceOrder } from './usePlaceOrder'
+import { useOrderFormCustom } from './useOrderFormCustom'
+import { messages } from '../utils'
+import type { WithToast } from '../typings'
 
 export function useToolbar(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
-  const { placeOrder, isLoading, isSuccess } = usePlaceOrder(showToast)
   const { orderForm } = useOrderFormCustom()
+  const { placeOrder, isLoading, isSuccess } = usePlaceOrder(showToast)
+
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   if (!orderForm?.items?.length) return null
 
+  const handleFilterItems = (items: Item[]) => {
+    return items.filter(
+      (item) =>
+        item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.skuName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.refId?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const handleClearSearch = () => {
+    setSearchTerm('')
+  }
+
+  const handleSubmit = () => {
+    handleFilterItems(orderForm.items)
+  }
+
+  const filteredItems = handleFilterItems(orderForm.items)
+
   return {
+    filteredItems,
     inputSearch: {
-      value: '',
+      value: searchTerm,
       placeholder: formatMessage(messages.searchPlaceholder),
-      // eslint-disable-next-line no-console
-      onChange: console.log,
-      // eslint-disable-next-line no-console
-      onClear: console.log,
-      // eslint-disable-next-line no-console
-      onSubmit: console.log,
+      onChange: handleSearchChange,
+      onClear: handleClearSearch,
+      onSubmit: handleSubmit,
     },
     newLine: {
       disabled: isLoading || isSuccess,
