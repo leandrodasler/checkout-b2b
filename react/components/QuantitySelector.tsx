@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { Item } from 'vtex.checkout-graphql'
@@ -18,66 +18,66 @@ type Props = { item: Item } & WithToast
 
 function QuantitySelectorComponent({ item, showToast }: Props) {
   const { formatMessage } = useIntl()
-  const [newQuantity, setNewQuantity] = React.useState(item.quantity)
-  const [minQuantity, setMinQuantity] = React.useState<number>(1)
   const timeout = useRef<number>()
   const { updateQuantity } = useOrderItems()
-
   const { orderForm } = useOrderFormCustom()
   const { items } = orderForm
+
+  const [newQuantity, setNewQuantity] = React.useState(item.quantity)
+  const [minQuantity, setMinQuantity] = React.useState<number>(1)
+
+  const handleQuantityChange = useCallback(
+    ({ value }: { value: number }) => {
+      setNewQuantity(value)
+      if (value > 0) {
+        clearTimeout(timeout.current)
+        timeout.current = window.setTimeout(() => {
+          updateQuantity({
+            id: item.id,
+            seller: item.seller ?? '1',
+            quantity: value,
+          })
+        }, DELAY)
+      }
+    },
+    [item.id, item.seller, updateQuantity]
+  )
 
   const { loading } = useQuery(GET_PRODUCTS, {
     skip: !items?.length,
     variables: { values: items.map((orderItem) => orderItem.productId) },
     onCompleted: (data) => {
-      data.productsByIdentifier.forEach(
-        (product: {
-          properties?: Array<{ originalName: string; values: string[] }>
-          productId?: string
-        }) => {
-          if (product.productId !== item.productId) {
-            return
-          }
-
-          const minQuantityProp = product?.properties?.find(
-            (prop: { originalName: string }) =>
-              prop.originalName === 'minQuantity'
-          )
-
-          if (!minQuantityProp || minQuantityProp.values.length === 0) {
-            return
-          }
-
-          const minQuantityValue = Number(minQuantityProp.values)
-
-          setMinQuantity(minQuantityValue)
-
-          if (item.quantity < minQuantityValue) {
-            showToast?.({
-              message: formatMessage(messages.changeMinimumQuantity),
-            })
-            updateQuantity({
-              id: item.id,
-              seller: item.seller ?? '1',
-              quantity: minQuantityValue,
-            })
-          }
-        }
+      const product = data.productsByIdentifier.find(
+        (p: { productId?: string }) => p.productId === item.productId
       )
+
+      if (!product) return
+
+      const minQuantityProp = product.properties?.find(
+        (prop: { originalName: string }) => prop.originalName === 'minQuantity'
+      )
+
+      const minQuantityValue = Number(minQuantityProp?.values[0] || 1)
+
+      setMinQuantity(minQuantityValue)
+      if (item.quantity < minQuantityValue) {
+        showToast?.({
+          message: formatMessage(messages.changeMinimumQuantity),
+        })
+        updateQuantity({
+          id: item.id,
+          seller: item.seller ?? '1',
+          quantity: minQuantityValue,
+        })
+      }
     },
   })
 
   useEffect(() => {
-    if (item.quantity < minQuantity) {
-      setNewQuantity(minQuantity)
-    } else {
-      setNewQuantity(item.quantity)
-    }
+    setNewQuantity(item.quantity < minQuantity ? minQuantity : item.quantity)
   }, [item.quantity, minQuantity])
 
-  if (loading) {
-    return <TotalizerSpinner />
-  }
+  if (loading) return <TotalizerSpinner />
 
   if (isWithoutStock(item)) {
     return (
@@ -92,21 +92,7 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
       size="small"
       value={newQuantity}
       minValue={minQuantity}
-      onChange={({ value }: { value: number }) => {
-        setNewQuantity(value)
-
-        if (value > 0) {
-          clearTimeout(timeout.current)
-
-          timeout.current = window.setTimeout(() => {
-            updateQuantity({
-              id: item.id,
-              seller: item.seller ?? '1',
-              quantity: value,
-            })
-          }, DELAY)
-        }
-      }}
+      onChange={handleQuantityChange}
     />
   )
 }
