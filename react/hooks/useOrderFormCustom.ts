@@ -17,7 +17,10 @@ type UseOrderFormReturn = {
 
 export function useOrderFormCustom() {
   const { data, loading: sellersLoading } = useQuery<OrderFormQuery>(
-    GET_ORDER_FORM_SELLERS
+    GET_ORDER_FORM_SELLERS,
+    {
+      ssr: false,
+    }
   )
 
   const sellers = data?.orderForm?.sellers

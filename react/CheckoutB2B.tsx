@@ -14,7 +14,6 @@ import {
   Totalizer,
   withToast,
 } from 'vtex.styleguide'
-import './styles.css'
 
 import { ContactInfos } from './components/ContactInfos'
 import {
@@ -28,6 +27,8 @@ import { queryClient } from './services'
 import { WithToast } from './typings'
 import { messages } from './utils'
 
+import './styles.css'
+
 const { useOrderItems } = OrderItems
 
 function CheckoutB2B({ showToast }: WithToast) {
@@ -40,13 +41,15 @@ function CheckoutB2B({ showToast }: WithToast) {
   } = useOrderFormCustom()
 
   const loading = orderFormLoading || organizationLoading
-  const { items } = orderForm
   const totalizers = useTotalizers()
   const schema = useTableSchema()
   const toolbar = useToolbar(showToast)
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
+
+  const { items } = orderForm
+  const filteredItems = toolbar?.filteredItems ?? items
 
   const handleClearCart = useCallback(() => {
     items.forEach(({ id, seller }) => removeItem({ id, seller: seller ?? '1' }))
@@ -81,7 +84,7 @@ function CheckoutB2B({ showToast }: WithToast) {
               loading={loading}
               fullWidth
               schema={schema}
-              items={items}
+              items={filteredItems}
               density="high"
               emptyStateLabel={formatMessage(messages.emptyCart)}
               toolbar={toolbar}
