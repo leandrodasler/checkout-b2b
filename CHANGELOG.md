@@ -10,36 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add search items on product list
-
-### Added
-
+- Place order logic and redirect to native order placed screen
+- Possibility of change payment method and shipping option
 - Add checkout B2B permissions
-
-### Added
-
 - Add remove item button on product list
-
-### Added
-
 - Add quantity input on product list
-
-### Added
-
 - Add Brand column on products list
-
-### Added
-
 - Add SKU Reference column on products list
-
-### Added
-
 - Add Address information on totalizers
-
-### Changed
-
 - Empty state of totalizers
-
-### Added
-
-- Initial release.
 - Page and route /checkout-b2b
+- Initial release.
