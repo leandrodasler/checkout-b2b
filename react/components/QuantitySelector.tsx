@@ -3,12 +3,13 @@ import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
-import { NumericStepper, Spinner, withToast } from 'vtex.styleguide'
+import { NumericStepper, withToast } from 'vtex.styleguide'
 
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
 import { WithToast } from '../typings'
 import { isWithoutStock, messages } from '../utils'
+import { TotalizerSpinner } from './TotalizerSpinner'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
@@ -34,6 +35,10 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
           properties?: Array<{ originalName: string; values: string[] }>
           productId?: string
         }) => {
+          if (product.productId !== item.productId) {
+            return
+          }
+
           const minQuantityProp = product?.properties?.find(
             (prop: { originalName: string }) =>
               prop.originalName === 'minQuantity'
@@ -45,16 +50,16 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
 
           const minQuantityValue = Number(minQuantityProp.values)
 
-          setMinQuantity(Number(minQuantityValue))
+          setMinQuantity(minQuantityValue)
 
-          if (item.quantity < Number(minQuantityValue)) {
+          if (item.quantity < minQuantityValue) {
             showToast?.({
               message: formatMessage(messages.changeMinimumQuantity),
             })
             updateQuantity({
               id: item.id,
               seller: item.seller ?? '1',
-              quantity: Number(minQuantityValue),
+              quantity: minQuantityValue,
             })
           }
         }
@@ -71,7 +76,7 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
   }, [item.quantity, minQuantity])
 
   if (loading) {
-    return <Spinner />
+    return <TotalizerSpinner />
   }
 
   if (isWithoutStock(item)) {
