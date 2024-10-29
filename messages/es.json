@@ -30,5 +30,5 @@
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",
   "store/checkout.b2b.empty.cart": "El carrito está vacío.",
-  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "La cantidad se ha ajustado al mínimo permitido para este producto."
+  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "La cantidad se ha ajustado al valor mínimo permitido para este artículo: "
 }

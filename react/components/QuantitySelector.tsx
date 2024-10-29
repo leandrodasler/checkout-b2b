@@ -62,7 +62,9 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
       setMinQuantity(minQuantityValue)
       if (item.quantity < minQuantityValue) {
         showToast?.({
-          message: formatMessage(messages.changeMinimumQuantity),
+          message: `${formatMessage(messages.changeMinimumQuantity)} ${
+            item.name
+          }`,
         })
         updateQuantity({
           id: item.id,
