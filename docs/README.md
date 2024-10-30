@@ -21,16 +21,20 @@ To use the checkout-b2b app in your store, install the package using the followi
 
 After installation, the `/checkout` URL will automatically redirect to `/checkout-b2b`, taking the customer to the customized B2B checkout interface.
 
-Next, add the app as a dependency in your `manifest.json`:
-
-`"dependencies": {
-  "ssesandbox04.checkout-b2b": "0.x"
-}`
 
 ## Customization
 
 In order to apply CSS customizations in this and other blocks, follow the instructions given in the recipe on [Using CSS Handles for store customization](https://developers.vtex.com/docs/guides/vtex-io-documentation-using-css-handles-for-store-customization).
 
+### CSS Handles
+
+The following CSS handles are available for customization in the checkout-b2b app:
+
+| CSS Handle          | Description                               |
+|---------------------|-------------------------------------------|
+| `container`         | Wrapper container for the B2B checkout    |
+| `table`             | Table styling for bulk ordering sections  |
+| `shippingEstimates` | Styles for displaying shipping estimates  |
 
 <!-- DOCS-IGNORE:start -->
 
