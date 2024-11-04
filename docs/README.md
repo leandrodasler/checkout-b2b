@@ -4,7 +4,9 @@
 
 <!-- DOCS-IGNORE:start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
@@ -12,15 +14,13 @@ The checkout-b2b app is a custom checkout solution designed for B2B stores on th
 
 ![Captura de tela 2024-10-29 101949](https://github.com/user-attachments/assets/c796c2ed-b118-48ed-9e88-0e151b749317)
 
-
-## Configuration 
+## Configuration
 
 To use the checkout-b2b app in your store, install the package using the following command in the VTEX terminal:
 
 `vtex install ssesandbox04.checkout-b2b@0.x`
 
 After installation, the `/checkout` URL will automatically redirect to `/checkout-b2b`, taking the customer to the customized B2B checkout interface.
-
 
 ## Customization
 
@@ -30,11 +30,11 @@ In order to apply CSS customizations in this and other blocks, follow the instru
 
 The following CSS handles are available for customization in the checkout-b2b app:
 
-| CSS Handle          | Description                               |
-|---------------------|-------------------------------------------|
-| `container`         | Wrapper container for the B2B checkout    |
-| `table`             | Table styling for bulk ordering sections  |
-| `shippingEstimates` | Styles for displaying shipping estimates  |
+| CSS Handle          | Description                              |
+| ------------------- | ---------------------------------------- |
+| `container`         | Wrapper container for the B2B checkout   |
+| `table`             | Table styling for bulk ordering sections |
+| `shippingEstimates` | Styles for displaying shipping estimates |
 
 <!-- DOCS-IGNORE:start -->
 
@@ -63,12 +63,3 @@ Thanks goes to these wonderful people:
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
 
 <!-- DOCS-IGNORE:end -->
-
----- 
-
-Check out some documentation models that are already live: 
-- [Breadcrumb](https://github.com/vtex-apps/breadcrumb)
-- [Image](https://vtex.io/docs/components/general/vtex.store-components/image)
-- [Condition Layout](https://vtex.io/docs/components/all/vtex.condition-layout@1.1.6/)
-- [Add To Cart Button](https://vtex.io/docs/components/content-blocks/vtex.add-to-cart-button@0.9.0/)
-- [Store Form](https://vtex.io/docs/components/all/vtex.store-form@0.3.4/)
