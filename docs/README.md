@@ -1,4 +1,4 @@
-📢 Use this project, [contribute](https://github.com/cubos-vtex/checkout-b2b) to it or open issues to help evolve it using [Store Discussion](https://github.com/cubos-vtex/checkout-b2b/issues).
+📢 Use this project, [contribute](https://github.com/cubos-vtex/checkout-b2b) to it or open issues to help evolve it using [repository issues](https://github.com/cubos-vtex/checkout-b2b/issues).
 
 # Checkout B2B
 
