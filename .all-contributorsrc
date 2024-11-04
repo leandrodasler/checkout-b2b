@@ -1,6 +1,6 @@
 {
-  "projectName": "react-app-template",
-  "projectOwner": "vtex-apps",
+  "projectName": "checkout-b2b",
+  "projectOwner": "cubos-vtex",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -9,6 +9,17 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "none",
-  "contributors": [],
-  "contributorsPerLine": 7
+  "contributors": [
+    {
+      "login": "icaroov",
+      "name": "Ícaro Oliveira",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20347877?v=4",
+      "profile": "https://icaro.dev.br/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "commitType": "docs"
 }
