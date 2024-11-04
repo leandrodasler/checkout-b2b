@@ -29,5 +29,6 @@
   "store/checkout.b2b.button.placeOrder.error": "Error processing order",
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
-  "store/checkout.b2b.empty.cart": "Cart is empty."
+  "store/checkout.b2b.empty.cart": "Cart is empty.",
+  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "The quantity has been adjusted to the minimum allowed for this item: "
 }

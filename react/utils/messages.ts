@@ -37,4 +37,7 @@ export const messages = defineMessages({
   searchPlaceholder: { id: 'store/checkout.b2b.search.placeholder' },
   placeOrder: { id: 'store/checkout.b2b.button.placeOrder' },
   placeOrderError: { id: 'store/checkout.b2b.button.placeOrder.error' },
+  changeMinimumQuantity: {
+    id: 'store/checkout.b2b.quantitySelector.changedMinimumQuantity',
+  },
 })
