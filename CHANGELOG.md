@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Possible null pointer on get valid payment system
+
 ## [0.0.3] - 2024-11-06
 
 ### Changed

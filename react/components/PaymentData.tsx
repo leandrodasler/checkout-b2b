@@ -79,7 +79,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
   )
 
   const validPaymentSystem = filteredPaymentSystems.find(
-    (paymentSystem) => paymentSystem.id === selectedPayment.paymentSystem
+    (paymentSystem) => paymentSystem.id === selectedPayment?.paymentSystem
   )
 
   useEffect(() => {
