@@ -141,7 +141,10 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
       return orderGroup
     },
     onSuccess(orderGroup) {
-      navigate({ to: getOrderPlacedUrl(orderGroup) })
+      navigate({
+        to: getOrderPlacedUrl(orderGroup),
+        fallbackToWindowLocation: true,
+      })
     },
     onError(e) {
       showToast?.({

@@ -67,7 +67,9 @@ function CheckoutB2B({ showToast }: WithToast) {
           <PageHeader
             title={<ExtensionPoint id="rich-text" />}
             linkLabel={formatMessage(messages.backToHome)}
-            onLinkClick={() => navigate({ page: 'store.home' })}
+            onLinkClick={() =>
+              navigate({ page: 'store.home', fallbackToWindowLocation: true })
+            }
           />
         }
       >
