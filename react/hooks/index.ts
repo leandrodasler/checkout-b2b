@@ -1,3 +1,4 @@
+export * from './useClearCart'
 export * from './useFomatPrice'
 export * from './useOrderFormCustom'
 export * from './useOrganization'

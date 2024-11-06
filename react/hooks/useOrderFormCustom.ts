@@ -9,7 +9,7 @@ const { useOrderForm } = OrderForm
 
 type OrderFormQuery = Pick<Query, 'orderForm'>
 
-type UseOrderFormReturn = {
+export type UseOrderFormReturn = {
   loading: boolean
   orderForm: OrderFormType & Pick<OrderFormSeller, 'sellers'>
   setOrderForm: (orderForm: OrderFormType) => void

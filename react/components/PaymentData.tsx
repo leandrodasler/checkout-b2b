@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { OrderForm, PaymentDataInput } from 'vtex.checkout-graphql'
@@ -12,7 +12,12 @@ import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 function PaymentDataWrapper({ showToast }: WithToast) {
-  const { orderForm, setOrderForm } = useOrderFormCustom()
+  const {
+    orderForm,
+    setOrderForm,
+    loading: orderFormLoading,
+  } = useOrderFormCustom()
+
   const { formatMessage } = useIntl()
 
   const [updatePayment, { loading }] = useMutation<
@@ -40,32 +45,59 @@ function PaymentDataWrapper({ showToast }: WithToast) {
 
   const [selectedPayment] = payments
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPaymentSystem = e.target.value
+  const setPayment = useCallback(
+    (newPaymentSystem: string) => {
+      const installment = getFirstInstallmentByPaymentSystem(
+        installmentOptions,
+        newPaymentSystem
+      )
 
-    const installment = getFirstInstallmentByPaymentSystem(
-      installmentOptions,
-      newPaymentSystem
-    )
+      if (!installment) return
 
-    if (!installment) return
-
-    updatePayment({
-      variables: {
-        paymentData: {
-          payments: [
-            {
-              paymentSystem: newPaymentSystem,
-              referenceValue: installment.value,
-              installmentsInterestRate: installment.interestRate,
-              installments: installment.count,
-              value: installment.total,
-            },
-          ],
+      updatePayment({
+        variables: {
+          paymentData: {
+            payments: [
+              {
+                paymentSystem: newPaymentSystem,
+                referenceValue: installment.value,
+                installmentsInterestRate: installment.interestRate,
+                installments: installment.count,
+                value: installment.total,
+              },
+            ],
+          },
         },
-      },
-    })
-  }
+      })
+    },
+    [installmentOptions, updatePayment]
+  )
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => setPayment(e.target.value),
+    [setPayment]
+  )
+
+  const validPaymentSystem = filteredPaymentSystems.find(
+    (paymentSystem) => paymentSystem.id === selectedPayment.paymentSystem
+  )
+
+  useEffect(() => {
+    if (
+      !loading &&
+      !orderFormLoading &&
+      filteredPaymentSystems.length &&
+      !validPaymentSystem
+    ) {
+      setPayment(filteredPaymentSystems[0].id)
+    }
+  }, [
+    filteredPaymentSystems,
+    loading,
+    orderFormLoading,
+    setPayment,
+    validPaymentSystem,
+  ])
 
   if (loading) {
     return <TotalizerSpinner />

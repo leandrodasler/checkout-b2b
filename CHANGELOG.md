@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- If selected payment is empty, set first payment system as selected
+- Using checkout api endpoint for clear cart
+
 ## [0.0.2] - 2024-11-05
+
+### Changed
+
+- Fallback to window location on navigate usage
 
 ## [0.0.1] - 2024-10-28
 

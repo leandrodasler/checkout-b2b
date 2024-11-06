@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Item } from 'vtex.checkout-graphql'
 
-import { usePlaceOrder } from './usePlaceOrder'
-import { useOrderFormCustom } from './useOrderFormCustom'
-import { messages } from '../utils'
 import type { WithToast } from '../typings'
+import { messages } from '../utils'
+import { useOrderFormCustom } from './useOrderFormCustom'
+import { usePlaceOrder } from './usePlaceOrder'
 
 export function useToolbar(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
@@ -18,10 +18,10 @@ export function useToolbar(showToast: WithToast['showToast']) {
 
   const handleFilterItems = (items: Item[]) => {
     return items.filter(
-      (item) =>
-        item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.skuName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.refId?.toLowerCase().includes(searchTerm.toLowerCase())
+      ({ name, skuName, refId }) =>
+        (name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+        (skuName?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+        (refId?.toLowerCase() ?? '').includes(searchTerm.toLowerCase())
     )
   }
 
