@@ -21,6 +21,7 @@
   "store/checkout.b2b.column.brand": "Marca",
   "store/checkout.b2b.column.refId": "#",
   "store/checkout.b2b.column.seller": "Vendedor",
+  "store/checkout.b2b.column.margin": "Margem",
 
   "store/checkout.b2b.button.backToHome": "Voltar à página inicial",
   "store/checkout.b2b.button.clearCart": "Limpar carrinho",
