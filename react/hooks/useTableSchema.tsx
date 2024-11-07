@@ -105,6 +105,23 @@ export function useTableSchema(): TableSchema<Item> {
             )
           },
         },
+        listPrice: {
+          width: 120,
+          title: formatMessage(messages.margin),
+          cellRenderer({ rowData }) {
+            return (
+              <TruncatedText
+                text={
+                  <MarginProductPrice
+                    itemId={rowData.id}
+                    sellingPrice={rowData.sellingPrice ?? 0}
+                  />
+                }
+                {...getStrike(rowData)}
+              />
+            )
+          },
+        },
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
@@ -128,23 +145,7 @@ export function useTableSchema(): TableSchema<Item> {
             )
           },
         },
-        listPrice: {
-          width: 120,
-          title: formatMessage(messages.margin),
-          cellRenderer({ rowData }) {
-            return (
-              <TruncatedText
-                text={
-                  <MarginProductPrice
-                    itemId={rowData.id}
-                    sellingPrice={rowData.sellingPrice ?? 0}
-                  />
-                }
-                {...getStrike(rowData)}
-              />
-            )
-          },
-        },
+
         id: {
           width: 50,
           title: ' ',
