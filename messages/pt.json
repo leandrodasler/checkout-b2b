@@ -1,5 +1,25 @@
 {
+  "store/checkout.b2b.country.BRA": "Brasil",
+  "store/checkout.b2b.country.USA": "Estados Unidos",
+  "store/checkout.b2b.country.FRA": "França",
+
+  "store/checkout.b2b.confirm": "Confirmar",
+  "store/checkout.b2b.cancel": "Cancelar",
+
+  "store/checkout.b2b.modal.editBillingAddress": "Editar Endereço de Cobrança",
+
+  "store/checkout.b2b.address.street": "Rua",
+  "store/checkout.b2b.address.number": "Número",
+  "store/checkout.b2b.address.complement": "Complemento",
+  "store/checkout.b2b.address.neighborhood": "Bairro",
+  "store/checkout.b2b.address.city": "Cidade",
+  "store/checkout.b2b.address.state": "Estado",
+  "store/checkout.b2b.address.postalCode": "CEP",
+  "store/checkout.b2b.address.country": "País",
+
   "store/checkout.b2b.totalizer.shippingAddress": "Endereço de Entrega",
+  "store/checkout.b2b.totalizer.billingAddress": "Endereço de Cobrança",
+  "store/checkout.b2b.totalizer.editAddress": "Editar",
   "store/checkout.b2b.totalizer.shippingOption": "Opção de Entrega",
   "store/checkout.b2b.totalizer.shippingOption.empty": "Nenhuma opção de entrega disponível",
   "store/checkout.b2b.totalizer.shippingOption.packages": "{packages} pacotes",

@@ -8,6 +8,7 @@ import { messages } from '../utils'
 import { Address } from './Address'
 import { ShippingOption } from './ShippingOption'
 import { TruncatedText } from './TruncatedText'
+import { BillingAddress } from './BillingAddress'
 
 type Props = {
   organization?: Organization | null
@@ -69,6 +70,11 @@ export function ContactInfos({ organization }: Props) {
   contactFields.push({
     label: formatMessage(messages.shippingAddress),
     value: <TruncatedText text={<Address />} />,
+  })
+
+  contactFields.push({
+    label: formatMessage(messages.billingAddress),
+    value: <BillingAddress />,
   })
 
   if (items.length) {

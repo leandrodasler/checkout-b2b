@@ -17,6 +17,7 @@ export function PONumber() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrderForm({
       ...orderForm,
+      paymentAddress: orderForm.paymentAddress,
       customData: !e.target.value
         ? null
         : {

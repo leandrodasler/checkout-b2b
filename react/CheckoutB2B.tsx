@@ -44,9 +44,6 @@ function CheckoutB2B({ showToast }: WithToast) {
   const loading = orderFormLoading || organizationLoading
   const filteredItems = toolbar?.filteredItems ?? items
 
-  // eslint-disable-next-line no-console
-  console.log('ORDER FORM:', orderForm)
-
   return (
     <div className={handles.container}>
       <Layout
