@@ -106,7 +106,7 @@ export function useTableSchema(): TableSchema<Item> {
           },
         },
         listPrice: {
-          width: 120,
+          width: 100,
           title: formatMessage(messages.margin),
           cellRenderer({ rowData }) {
             return (
@@ -145,7 +145,6 @@ export function useTableSchema(): TableSchema<Item> {
             )
           },
         },
-
         id: {
           width: 50,
           title: ' ',

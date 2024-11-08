@@ -1,4 +1,5 @@
-import { Address } from 'vtex.checkout-graphql'
+import type { Query } from 'vtex.b2b-organizations-graphql'
+import type { Address } from 'vtex.checkout-graphql'
 
 type ShowToastArgs = {
   message: string
@@ -71,3 +72,17 @@ export type PaymentsBody = Array<
     }
   }>
 >
+
+export type SessionOrganizationData = {
+  organization: { value: string }
+  costcenter: { value: string }
+}
+
+export type GetOrganizationQuery = Pick<
+  Query,
+  'getOrganizationByIdStorefront' | 'getUsers'
+>
+
+export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStorefront'] & {
+  users: GetOrganizationQuery['getUsers']
+}

@@ -1,16 +1,16 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Organization } from 'vtex.b2b-organizations-graphql'
 import { Totalizer } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
+import type { CustomOrganization } from '../typings'
 import { messages } from '../utils'
 import { Address } from './Address'
 import { ShippingOption } from './ShippingOption'
 import { TruncatedText } from './TruncatedText'
 
 type Props = {
-  organization?: Organization | null
+  organization?: CustomOrganization
 }
 
 export function ContactInfos({ organization }: Props) {

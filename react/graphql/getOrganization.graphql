@@ -1,22 +1,16 @@
-query getOrganization {
+query getOrganization($organizationId: ID, $costCenterId: ID) {
   getOrganizationByIdStorefront
     @context(provider: "vtex.b2b-organizations-graphql") {
     id
     name
     tradeName
     status
-    created
-    collections {
-      id
-      name
-    }
     paymentTerms {
       id
       name
     }
     priceTables
     salesChannel
-    costCenters
     sellers {
       id
       name
@@ -33,6 +27,19 @@ query getOrganization {
     }
     permissions {
       createQuote
+    }
+  }
+
+  getUsers(organizationId: $organizationId, costCenterId: $costCenterId)
+    @context(provider: "vtex.b2b-organizations-graphql") {
+    organizationName
+    costCenterName
+    roleId
+    orgId
+    name
+    email
+    role {
+      name
     }
   }
 }
