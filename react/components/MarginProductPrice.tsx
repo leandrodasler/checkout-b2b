@@ -17,7 +17,7 @@ export function MarginProductPrice({
   const { data } = useFetchPrices(itemId, organizationPrice)
   const formatPrice = useFormatPrice()
 
-  if (!data?.costPrice) return null
+  if (!data?.costPrice) return <>---</>
 
   const marginPrice = sellingPrice / 100 - data?.costPrice
 

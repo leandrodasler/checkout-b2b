@@ -11,6 +11,7 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Introduzca el número de pedido",
   "store/checkout.b2b.totalizer.companyName": "Organización",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
+  "store/checkout.b2b.totalizer.quotationDiscount": "El valor de este descuento se originó a partir de una cotización.",
 
   "store/checkout.b2b.column.name": "Nombre",
   "store/checkout.b2b.column.quantity": "Cantidad",
