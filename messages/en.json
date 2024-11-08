@@ -31,6 +31,7 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Enter the PO number",
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
+  "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation.",
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",
@@ -41,6 +42,7 @@
   "store/checkout.b2b.column.brand": "Brand",
   "store/checkout.b2b.column.refId": "#",
   "store/checkout.b2b.column.seller": "Seller",
+  "store/checkout.b2b.column.margin": "Margin",
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.clearCart": "Clear cart",

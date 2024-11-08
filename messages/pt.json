@@ -31,6 +31,7 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Insira o número do pedido",
   "store/checkout.b2b.totalizer.companyName": "Organização",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
+  "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado pela cotação.",
 
   "store/checkout.b2b.column.name": "Nome",
   "store/checkout.b2b.column.quantity": "Quantidade",
@@ -41,6 +42,7 @@
   "store/checkout.b2b.column.brand": "Marca",
   "store/checkout.b2b.column.refId": "#",
   "store/checkout.b2b.column.seller": "Vendedor",
+  "store/checkout.b2b.column.margin": "Margem",
 
   "store/checkout.b2b.button.backToHome": "Voltar à página inicial",
   "store/checkout.b2b.button.clearCart": "Limpar carrinho",

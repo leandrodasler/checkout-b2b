@@ -1,7 +1,7 @@
 {
   "vendor": "ssesandbox04",
   "name": "checkout-b2b",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "title": "Checkout B2B",
   "description": "Checkout for B2B Stores",
   "builders": {
@@ -27,7 +27,8 @@
     "vtex.storefront-permissions-ui": "1.x",
     "vtex.search-graphql": "0.x",
     "vtex.address-form": "4.x",
-    "vtex.country-codes": "2.x"
+    "vtex.country-codes": "2.x",
+    "vtex.session-client": "1.x"
   },
   "registries": ["smartcheckout"],
   "policies": [],
