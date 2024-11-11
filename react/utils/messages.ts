@@ -42,4 +42,6 @@ export const messages = defineMessages({
   changeMinimumQuantity: {
     id: 'store/checkout.b2b.quantitySelector.changedMinimumQuantity',
   },
+  salesRepresentative: { id: ' store/checkout.b2b.totalizer.salesRep' },
+  salesAdmin: { id: ' store/checkout.b2b.totalizer.salesAdm' },
 })

@@ -12,6 +12,8 @@
   "store/checkout.b2b.totalizer.companyName": "Organização",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
   "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado pela cotação.",
+  "store/checkout.b2b.totalizer.salesRep": "Rep. de Vendas:",
+  "store/checkout.b2b.totalizer.salesAdm": "Adm. de vendas:",
 
   "store/checkout.b2b.column.name": "Nome",
   "store/checkout.b2b.column.quantity": "Quantidade",
