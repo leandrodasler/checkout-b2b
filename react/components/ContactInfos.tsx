@@ -31,13 +31,30 @@ export function ContactInfos({ organization }: Props) {
 
   const contactFields: Array<{ label: string; value: React.ReactNode }> = []
 
-  if (organization) {
+  if (organization?.users) {
+    const getUsersByRole = (role: string) =>
+      organization.users
+        ?.filter((user) => user?.roleId === role)
+        .map((user) => user?.name)
+        .join(', ') ?? 'N/A'
+
     contactFields.push({
       label: formatMessage(messages.companyName),
       value: (
-        <TruncatedText
-          text={(organization.tradeName ?? '') || organization.name}
-        />
+        <>
+          <TruncatedText text={organization.tradeName ?? organization.name} />
+          <span className="t-mini">
+            <span className="b">
+              {formatMessage(messages.salesRepresentative)},
+            </span>
+            {getUsersByRole('sales-representative')}
+            <br />
+            <span className="b">
+              {formatMessage(messages.salesRepresentative)}
+            </span>
+            {getUsersByRole('sales-admin')}
+          </span>
+        </>
       ),
     })
   }
@@ -48,7 +65,7 @@ export function ContactInfos({ organization }: Props) {
       <TruncatedText
         text={
           <>
-            {firstName} {lastName ?? ''}
+            {firstName} {lastName}
             <br />
             <span className="t-mini">{email}</span>
             {(corporatePhone || phone) && (
