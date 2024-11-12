@@ -32,6 +32,8 @@
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
   "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation.",
+  "store/checkout.b2b.totalizer.salesRep": "Sales rep.:",
+  "store/checkout.b2b.totalizer.salesAdm": "Sales adm.:",
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",
