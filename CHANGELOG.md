@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Display organization users for the Sales Representative and Sales Admin roles.
+
 ## [0.0.6] - 2024-11-08
 
 ### Added
