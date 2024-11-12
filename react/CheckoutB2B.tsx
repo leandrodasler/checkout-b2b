@@ -14,6 +14,8 @@ import {
   withToast,
 } from 'vtex.styleguide'
 
+import 'vtex.country-codes/locales'
+
 import { ContactInfos } from './components/ContactInfos'
 import {
   useClearCart,

@@ -1,16 +1,14 @@
 {
-  "store/checkout.b2b.country.BRA": "Brasil",
-  "store/checkout.b2b.country.USA": "Estados Unidos",
-  "store/checkout.b2b.country.FRA": "França",
-
   "store/checkout.b2b.confirm": "Confirmar",
   "store/checkout.b2b.cancel": "Cancelar",
 
   "store/checkout.b2b.modal.editBillingAddress": "Editar Dirección de Facturación",
+  "store/checkout.b2b.modal.sameAsShipping": "Misma dirección de entrega",
 
   "store/checkout.b2b.address.street": "Calle",
   "store/checkout.b2b.address.number": "Número",
   "store/checkout.b2b.address.complement": "Complemento",
+  "store/checkout.b2b.address.noComplement": "Sin complemento",
   "store/checkout.b2b.address.neighborhood": "Barrio",
   "store/checkout.b2b.address.city": "Ciudad",
   "store/checkout.b2b.address.state": "Estado",

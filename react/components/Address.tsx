@@ -25,10 +25,13 @@ export function Address() {
     country,
   } = shipping.selectedAddress
 
-  const numberFormatted = number ? `, ${number}` : ''
-  const complementFormatted = complement ? `, ${complement}` : ''
-  const postalCodeFormatted = postalCode ? ` - ${postalCode}` : ''
-  const neighborhoodFormatted = neighborhood ? `${neighborhood}, ` : ''
+  const numberFormatted = number ? `, ${number}` : ', N/A'
+  const complementFormatted = complement
+    ? `, ${complement}`
+    : `, ${formatMessage(messages.noComplement)}`
+
+  const postalCodeFormatted = postalCode ? ` - ${postalCode}` : ' - N/A'
+  const neighborhoodFormatted = neighborhood ? `${neighborhood}, ` : 'N/A'
 
   return (
     <>
@@ -38,7 +41,7 @@ export function Address() {
       {postalCodeFormatted}
       <br />
       {neighborhoodFormatted}
-      {city}, {state}, {country}
+      {city}, {state}, {formatMessage({ id: `country.${country}` })}
     </>
   )
 }

@@ -86,3 +86,17 @@ export type GetOrganizationQuery = Pick<
 export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStorefront'] & {
   users: GetOrganizationQuery['getUsers']
 }
+
+export type PaymentAddresType = {
+  addressId: { value: Address['addressId'] }
+  city: { value: Address['city'] }
+  complement: { value: Address['complement'] }
+  country: { value: Address['country'] }
+  neighborhood: { value: Address['neighborhood'] }
+  number: { value: Address['number'] }
+  postalCode: { value: Address['postalCode'] }
+  receiverName: { value: Address['receiverName'] }
+  reference: { value: Address['reference'] }
+  state: { value: Address['state'] }
+  street: { value: Address['street'] }
+}

@@ -1,16 +1,15 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
-  BRA: { id: 'store/checkout.b2b.country.BRA' },
-  USA: { id: 'store/checkout.b2b.country.USA' },
-  FRA: { id: 'store/checkout.b2b.country.FRA' },
   cancel: { id: 'store/checkout.b2b.cancel' },
   confirm: { id: 'store/checkout.b2b.confirm' },
   editBillingAddress: { id: 'store/checkout.b2b.modal.editBillingAddress' },
+  sameAsShipping: { id: 'store/checkout.b2b.modal.sameAsShipping' },
   billingAddress: { id: 'store/checkout.b2b.totalizer.billingAddress' },
   street: { id: 'store/checkout.b2b.address.street' },
   number: { id: 'store/checkout.b2b.address.number' },
   complement: { id: 'store/checkout.b2b.address.complement' },
+  noComplement: { id: 'store/checkout.b2b.address.noComplement' },
   neighborhood: { id: 'store/checkout.b2b.address.neighborhood' },
   city: { id: 'store/checkout.b2b.address.city' },
   state: { id: 'store/checkout.b2b.address.state' },
