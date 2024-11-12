@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Redirection to order placed with full page reload to update cart.
+
 ## [0.0.7] - 2024-11-12
 
 ### Added
