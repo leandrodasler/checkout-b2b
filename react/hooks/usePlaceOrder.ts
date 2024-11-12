@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useMutation as useGraphQLMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { useRuntime } from 'vtex.render-runtime'
 import type {
   Mutation,
   MutationSetOrderFormCustomDataArgs,
@@ -43,7 +42,6 @@ function getOrderPlacedUrl(orderGroup: string) {
 
 export function usePlaceOrder(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()
-  const { navigate } = useRuntime()
   const { orderForm } = useOrderFormCustom()
   const {
     customData,
@@ -141,10 +139,9 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
       return orderGroup
     },
     onSuccess(orderGroup) {
-      navigate({
-        to: getOrderPlacedUrl(orderGroup),
-        fallbackToWindowLocation: true,
-      })
+      const orderPlacedUrl = getOrderPlacedUrl(orderGroup)
+
+      window.location.assign(orderPlacedUrl)
     },
     onError(e) {
       showToast?.({
