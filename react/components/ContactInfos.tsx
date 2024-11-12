@@ -45,13 +45,11 @@ export function ContactInfos({ organization }: Props) {
           <TruncatedText text={organization.tradeName ?? organization.name} />
           <span className="t-mini">
             <span className="b">
-              {formatMessage(messages.salesRepresentative)},
+              {formatMessage(messages.salesRepresentative)}{' '}
             </span>
             {getUsersByRole('sales-representative')}
             <br />
-            <span className="b">
-              {formatMessage(messages.salesRepresentative)}
-            </span>
+            <span className="b">{formatMessage(messages.salesAdmin)}</span>{' '}
             {getUsersByRole('sales-admin')}
           </span>
         </>
