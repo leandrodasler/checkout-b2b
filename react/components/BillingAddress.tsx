@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import {
   AddressContainer,
@@ -10,7 +11,6 @@ import {
 import { addValidation } from 'vtex.address-form/helpers'
 import { StyleguideInput } from 'vtex.address-form/inputs'
 import { Button, Modal } from 'vtex.styleguide'
-import { useQuery } from 'react-apollo'
 
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import { useOrderFormCustom } from '../hooks'
@@ -76,12 +76,10 @@ export function BillingAddress() {
   })
 
   const [newBillingAddressState, setNewBillingAddressState] = useState(
-    addValidation(
-      getEmptyAddress(orderForm.shipping.selectedAddress?.country ?? '')
-    )
+    addValidation(getEmptyAddress(orderForm.paymentAddress?.country ?? ''))
   )
 
-  if (!orderForm.shipping?.selectedAddress) {
+  if (!orderForm.paymentAddress) {
     return <>{formatMessage(messages.emptyAddress)}</>
   }
 
@@ -94,7 +92,7 @@ export function BillingAddress() {
     city,
     state,
     country,
-  } = orderForm.shipping.selectedAddress
+  } = orderForm.paymentAddress
 
   const numberFormatted = number ? `, ${number}` : ''
   const complementFormatted = complement ? `, ${complement}` : ''
@@ -103,7 +101,7 @@ export function BillingAddress() {
 
   const handleOpenModal = () => {
     setEditAddressModalState({
-      addressId: orderForm.shipping.selectedAddress?.addressId ?? '',
+      addressId: orderForm.paymentAddress?.addressId ?? '',
       isOpen: true,
     })
   }
