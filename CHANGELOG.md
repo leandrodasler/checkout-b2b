@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add new column for payment address
 
+## [0.0.8] - 2024-11-12
+
+### Added
+
+- Redirection to order placed with full page reload to update cart.
+
+## [0.0.7] - 2024-11-12
+
+### Added
+
+- Display organization users for the Sales Representative and Sales Admin roles.
+
 ## [0.0.6] - 2024-11-08
 
 ### Added

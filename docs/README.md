@@ -12,13 +12,13 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
-The checkout-b2b app is a custom checkout solution designed for B2B stores on the VTEX platform. It offers functionalities specifically for business buyers, such as bulk ordering, organization and buyer information, and custom payment methods tailored to B2B needs.
+The **Checkout B2B** app is a custom checkout solution designed for B2B stores on the VTEX platform. It offers functionalities specifically for business buyers, such as bulk ordering, organization and buyer information, and custom payment methods tailored to B2B needs.
 
 ![Captura de tela 2024-10-29 101949](https://github.com/user-attachments/assets/c796c2ed-b118-48ed-9e88-0e151b749317)
 
 ## Configuration
 
-To use the checkout-b2b app in your store, install the package using the following command in the VTEX terminal:
+To use the **Checkout B2B** in your store, install the app using the following command in the VTEX terminal:
 
 `vtex install ssesandbox04.checkout-b2b@0.x`
 
@@ -30,7 +30,7 @@ In order to apply CSS customizations in this and other blocks, follow the instru
 
 ### CSS Handles
 
-The following CSS handles are available for customization in the checkout-b2b app:
+The following CSS handles are available for customization of **Checkout B2B** app:
 
 | CSS Handle          | Description                              |
 | ------------------- | ---------------------------------------- |
