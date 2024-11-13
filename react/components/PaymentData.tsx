@@ -6,19 +6,20 @@ import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
 import { Dropdown, withToast } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { useOrderFormCustom } from '../hooks'
 import type { WithToast } from '../typings'
 import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 function PaymentDataWrapper({ showToast }: WithToast) {
+  const { formatMessage } = useIntl()
+  const { setPending } = useCheckoutB2BContext()
   const {
     orderForm,
     setOrderForm,
     loading: orderFormLoading,
   } = useOrderFormCustom()
-
-  const { formatMessage } = useIntl()
 
   const [updatePayment, { loading }] = useMutation<
     UpdateOrderFormPaymentMutation,
@@ -54,6 +55,8 @@ function PaymentDataWrapper({ showToast }: WithToast) {
 
       if (!installment) return
 
+      setPending(true)
+
       updatePayment({
         variables: {
           paymentData: {
@@ -68,9 +71,9 @@ function PaymentDataWrapper({ showToast }: WithToast) {
             ],
           },
         },
-      })
+      }).finally(() => setPending(false))
     },
-    [installmentOptions, updatePayment]
+    [installmentOptions, setPending, updatePayment]
   )
 
   const handleChange = useCallback(

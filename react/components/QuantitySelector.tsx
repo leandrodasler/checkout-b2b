@@ -5,11 +5,11 @@ import { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
 import { NumericStepper, withToast } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
 import { WithToast } from '../typings'
 import { isWithoutStock, messages } from '../utils'
-import { TotalizerSpinner } from './TotalizerSpinner'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
@@ -20,30 +20,36 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
   const { updateQuantity } = useOrderItems()
+  const { setPending } = useCheckoutB2BContext()
   const { orderForm } = useOrderFormCustom()
   const { items } = orderForm
 
   const [newQuantity, setNewQuantity] = React.useState(item.quantity)
   const [minQuantity, setMinQuantity] = React.useState<number>(1)
 
+  const handleFinish = useCallback(() => setPending(false), [setPending])
+
   const handleQuantityChange = useCallback(
     ({ value }: { value: number }) => {
       setNewQuantity(value)
-      if (value > 0) {
-        clearTimeout(timeout.current)
-        timeout.current = window.setTimeout(() => {
-          updateQuantity({
-            id: item.id,
-            seller: item.seller ?? '1',
-            quantity: value,
-          })
-        }, DELAY)
-      }
+
+      if (!value) return
+
+      setPending(true)
+      clearTimeout(timeout.current)
+
+      timeout.current = window.setTimeout(() => {
+        updateQuantity({
+          id: item.id,
+          seller: item.seller ?? '1',
+          quantity: value,
+        }).then(handleFinish, handleFinish)
+      }, DELAY)
     },
-    [item.id, item.seller, updateQuantity]
+    [handleFinish, item.id, item.seller, setPending, updateQuantity]
   )
 
-  const { loading } = useQuery(GET_PRODUCTS, {
+  useQuery(GET_PRODUCTS, {
     skip: !items?.length,
     variables: { values: items.map((orderItem) => orderItem.productId) },
     onCompleted: (data) => {
@@ -63,7 +69,7 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
       if (item.quantity < minQuantityValue) {
         showToast?.({
           message: `${formatMessage(messages.changeMinimumQuantity)} ${
-            item.name
+            item.skuName
           }`,
         })
         updateQuantity({
@@ -78,8 +84,6 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
   useEffect(() => {
     setNewQuantity(item.quantity < minQuantity ? minQuantity : item.quantity)
   }, [item.quantity, minQuantity])
-
-  if (loading) return <TotalizerSpinner />
 
   if (isWithoutStock(item)) {
     return (
