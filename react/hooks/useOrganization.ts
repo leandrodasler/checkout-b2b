@@ -46,8 +46,5 @@ export function useOrganization() {
 
   const loading = sessionLoading || organizationLoading
 
-  // eslint-disable-next-line no-console
-  console.log('ORGANIZATION:', organization.users)
-
   return { organization, loading }
 }

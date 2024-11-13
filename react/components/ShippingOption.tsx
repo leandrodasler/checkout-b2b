@@ -15,6 +15,7 @@ import type {
 } from 'vtex.store-graphql'
 import { Dropdown, withToast } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_SHIPPING from '../graphql/getShipping.graphql'
 import { useFormatPrice, useOrderFormCustom } from '../hooks'
 import type { WithToast } from '../typings'
@@ -27,6 +28,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
   const handles = useCssHandles(['shippingEstimates'])
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
+  const { setPending } = useCheckoutB2BContext()
   const { selectedAddress, deliveryOptions } = orderForm.shipping
   const formatPrice = useFormatPrice()
 
@@ -71,11 +73,13 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
   }))
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPending(true)
+
     selectOption({
       variables: {
         deliveryOptionId: e.target.value,
       },
-    })
+    }).finally(() => setPending(false))
   }
 
   if (loading) {

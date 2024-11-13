@@ -14,6 +14,7 @@ import {
   withToast,
 } from 'vtex.styleguide'
 
+import { CheckoutB2BProvider } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
 import {
   useClearCart,
@@ -102,7 +103,9 @@ function CheckoutB2BWrapper() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider positioning="window">
-        <CheckoutB2BWithToast />
+        <CheckoutB2BProvider>
+          <CheckoutB2BWithToast />
+        </CheckoutB2BProvider>
       </ToastProvider>
     </QueryClientProvider>
   )
