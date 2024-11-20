@@ -5390,6 +5390,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
+"vtex.address-form@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.0/public/@types/vtex.address-form":
+  version "4.26.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.0/public/@types/vtex.address-form#758d5251ad042fba523ffc7aaf35f512a8d6a203"
+
 "vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.61.1/public/@types/vtex.b2b-organizations-graphql":
   version "0.61.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.61.1/public/@types/vtex.b2b-organizations-graphql#b3e5656acf2f0c8938396ab46ed0b64789833a45"
@@ -5401,6 +5405,10 @@ verror@1.10.0:
 "vtex.checkout-resources@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-resources@0.50.0/public/@types/vtex.checkout-resources":
   version "0.50.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-resources@0.50.0/public/@types/vtex.checkout-resources#753cbf0e0b2ed7030312ecea40e85a6cd7feccf4"
+
+"vtex.country-codes@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.country-codes@2.0.1/public/_types/react":
+  version "0.0.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.country-codes@2.0.1/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
 
 "vtex.css-handles@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles":
   version "0.4.4"

@@ -1,6 +1,10 @@
 import { useQuery } from 'react-apollo'
-import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { OrderForm } from 'vtex.order-manager'
+import type {
+  OrderForm as OrderFormType,
+  Address,
+  Maybe,
+} from 'vtex.checkout-graphql'
 import type { OrderForm as OrderFormSeller, Query } from 'vtex.store-graphql'
 
 import GET_ORDER_FORM_SELLERS from '../graphql/getOrderFormSellers.graphql'
@@ -9,10 +13,14 @@ const { useOrderForm } = OrderForm
 
 type OrderFormQuery = Pick<Query, 'orderForm'>
 
+type PaymentAddress = {
+  paymentAddress?: Maybe<Address> | undefined
+}
+
 export type UseOrderFormReturn = {
   loading: boolean
-  orderForm: OrderFormType & Pick<OrderFormSeller, 'sellers'>
-  setOrderForm: (orderForm: OrderFormType) => void
+  orderForm: OrderFormType & Pick<OrderFormSeller, 'sellers'> & PaymentAddress
+  setOrderForm: (orderForm: OrderFormType & PaymentAddress) => void
 }
 
 export function useOrderFormCustom() {
@@ -31,9 +39,11 @@ export function useOrderFormCustom() {
     setOrderForm,
   } = useOrderForm() as UseOrderFormReturn
 
+  const { paymentAddress = orderForm?.shipping?.selectedAddress } = orderForm
+
   return {
     loading: loading || sellersLoading,
-    orderForm: { ...orderForm, sellers },
+    orderForm: { ...orderForm, sellers, paymentAddress },
     setOrderForm,
   }
 }

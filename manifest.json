@@ -26,6 +26,8 @@
     "vtex.store-graphql": "2.x",
     "vtex.storefront-permissions-ui": "1.x",
     "vtex.search-graphql": "0.x",
+    "vtex.address-form": "4.x",
+    "vtex.country-codes": "2.x",
     "vtex.session-client": "1.x"
   },
   "registries": ["smartcheckout"],

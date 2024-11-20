@@ -50,6 +50,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
     shipping,
     storePreferencesData,
     value,
+    paymentAddress,
   } = orderForm
 
   const poNumberCustomData = customData?.customApps.find(
@@ -118,7 +119,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
           referenceValue: payment?.referenceValue,
           fields: {
             accountId: payment?.accountId,
-            address: shipping.selectedAddress,
+            address: paymentAddress ?? shipping.selectedAddress,
           },
           transaction: {
             id: transactionId,

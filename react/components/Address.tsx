@@ -1,16 +1,15 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import type { Address as AddressType } from 'vtex.checkout-graphql'
 
-import { useOrderFormCustom } from '../hooks'
 import { messages } from '../utils'
 
-export function Address() {
-  const { formatMessage } = useIntl()
-  const {
-    orderForm: { shipping },
-  } = useOrderFormCustom()
+type Props = { address?: AddressType | null }
 
-  if (!shipping?.selectedAddress) {
+export function Address({ address }: Props) {
+  const { formatMessage } = useIntl()
+
+  if (!address) {
     return <>{formatMessage(messages.emptyAddress)}</>
   }
 
@@ -23,7 +22,7 @@ export function Address() {
     city,
     state,
     country,
-  } = shipping.selectedAddress
+  } = address
 
   const numberFormatted = number ? `, ${number}` : ''
   const complementFormatted = complement ? `, ${complement}` : ''
@@ -38,7 +37,7 @@ export function Address() {
       {postalCodeFormatted}
       <br />
       {neighborhoodFormatted}
-      {city}, {state}, {country}
+      {city}, {state}, {formatMessage({ id: `country.${country}` })}
     </>
   )
 }

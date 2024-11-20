@@ -1,4 +1,6 @@
-import { Item, PaymentData } from 'vtex.checkout-graphql'
+import { Item, Maybe, PaymentData } from 'vtex.checkout-graphql'
+
+import { PaymentAddresType } from '../typings'
 
 export * from './messages'
 
@@ -28,4 +30,73 @@ export function getFirstInstallmentByPaymentSystem(
   )
 
   return installmentOption?.installments[0]
+}
+
+type AddressData = {
+  [key: string]: {
+    value:
+      | string
+      | number[]
+      | number
+      | null
+      | undefined
+      | Array<Maybe<number>>
+      | boolean
+    disabled?: boolean
+  }
+}
+
+type ExtractedValues = {
+  [key: string]:
+    | string
+    | number[]
+    | number
+    | null
+    | undefined
+    | Array<Maybe<number>>
+    | boolean
+}
+
+export function extractAddressValues(data: AddressData): ExtractedValues {
+  const extractedValues: ExtractedValues = {}
+
+  for (const key in data) {
+    if (data[key].value !== undefined && data[key].value !== null) {
+      extractedValues[key] = data[key].value
+    }
+  }
+
+  return extractedValues
+}
+
+export function toggleAddress(
+  data: PaymentAddresType,
+  enabled: boolean
+): PaymentAddresType {
+  const newAddresss = { ...data }
+
+  for (const key in newAddresss) {
+    newAddresss[key as keyof PaymentAddresType].disabled = !enabled
+  }
+
+  return newAddresss
+}
+
+export const getEmptyAddress = (country: string) => {
+  return {
+    addressId: '0',
+    addressType: 'commercial',
+    city: null,
+    complement: null,
+    country,
+    receiverName: '',
+    geoCoordinates: [],
+    neighborhood: null,
+    number: null,
+    postalCode: null,
+    reference: null,
+    state: null,
+    street: null,
+    addressQuery: null,
+  }
 }
