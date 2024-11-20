@@ -1,5 +1,7 @@
 import { Item, Maybe, PaymentData } from 'vtex.checkout-graphql'
 
+import { PaymentAddresType } from '../typings'
+
 export * from './messages'
 
 export const B2B_CUSTOM_APP_ID = 'b2b-checkout-settings'
@@ -40,6 +42,7 @@ type AddressData = {
       | undefined
       | Array<Maybe<number>>
       | boolean
+    disabled?: boolean
   }
 }
 
@@ -64,6 +67,19 @@ export function extractAddressValues(data: AddressData): ExtractedValues {
   }
 
   return extractedValues
+}
+
+export function toggleAddress(
+  data: PaymentAddresType,
+  enabled: boolean
+): PaymentAddresType {
+  const newAddresss = { ...data }
+
+  for (const key in newAddresss) {
+    newAddresss[key as keyof PaymentAddresType].disabled = !enabled
+  }
+
+  return newAddresss
 }
 
 export const getEmptyAddress = (country: string) => {

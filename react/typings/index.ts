@@ -88,15 +88,16 @@ export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStoref
 }
 
 export type PaymentAddresType = {
-  addressId: { value: Address['addressId'] }
-  city: { value: Address['city'] }
-  complement: { value: Address['complement'] }
-  country: { value: Address['country'] }
-  neighborhood: { value: Address['neighborhood'] }
-  number: { value: Address['number'] }
-  postalCode: { value: Address['postalCode'] }
-  receiverName: { value: Address['receiverName'] }
-  reference: { value: Address['reference'] }
-  state: { value: Address['state'] }
-  street: { value: Address['street'] }
+  addressId: { value: Address['addressId']; disabled?: boolean }
+  city: { value: Address['city']; disabled?: boolean }
+  complement: { value: Address['complement']; disabled?: boolean }
+  country: { value: Address['country']; disabled?: boolean }
+  neighborhood: { value: Address['neighborhood']; disabled?: boolean }
+  number: { value: Address['number']; disabled?: boolean }
+  postalCode: { value: Address['postalCode']; disabled?: boolean }
+  geoCoordinates: { value: Address['geoCoordinates']; disabled?: boolean }
+  receiverName: { value: Address['receiverName']; disabled?: boolean }
+  reference: { value: Address['reference']; disabled?: boolean }
+  state: { value: Address['state']; disabled?: boolean }
+  street: { value: Address['street']; disabled?: boolean }
 }

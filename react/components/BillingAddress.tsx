@@ -10,12 +10,14 @@ import {
 } from 'vtex.address-form'
 import { addValidation } from 'vtex.address-form/helpers'
 import { StyleguideInput } from 'vtex.address-form/inputs'
-import { Toggle, Button, Modal, Tooltip } from 'vtex.styleguide'
+import { Button, ButtonPlain, Modal, Toggle } from 'vtex.styleguide'
 
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import { useOrderFormCustom } from '../hooks'
 import { PaymentAddresType } from '../typings'
-import { extractAddressValues, getEmptyAddress, messages } from '../utils'
+import { extractAddressValues, messages, toggleAddress } from '../utils'
+import { Address } from './Address'
+import { TruncatedText } from './TruncatedText'
 
 interface AddressFormFields {
   [key: string]: {
@@ -29,66 +31,44 @@ interface AddressFormFields {
 export function BillingAddress() {
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
-
-  const [toggle, setToggle] = useState({ checked: false })
-
+  const [toggle, setToggle] = useState(false)
   const { data: logisticsData } = useQuery(GET_LOGISTICS, { ssr: false })
-
-  const [editAddressModalState, setEditAddressModalState] = useState({
-    addressId: '',
-    isOpen: false,
-  })
+  const [modalOpen, setModalOpen] = useState(false)
+  const { paymentAddress, shipping } = orderForm
 
   const [
     newBillingAddressState,
     setNewBillingAddressState,
   ] = useState<PaymentAddresType>(
-    addValidation(getEmptyAddress(orderForm.paymentAddress?.country ?? ''))
+    addValidation({
+      ...paymentAddress,
+      addressQuery: null,
+      addressType: 'commercial',
+    })
   )
 
-  const street = orderForm.paymentAddress?.street
-  const number = orderForm.paymentAddress?.number
-  const complement = orderForm.paymentAddress?.complement
-  const postalCode = orderForm.paymentAddress?.postalCode
-  const neighborhood = orderForm.paymentAddress?.neighborhood
-  const city = orderForm.paymentAddress?.city
-  const state = orderForm.paymentAddress?.state
-  const country = orderForm.paymentAddress?.country
-
-  const streetFormatted = street ? `${street}` : 'N/A'
-  const numberFormatted = number ? `, ${number}` : ', N/A'
-  const complementFormatted = complement
-    ? `, ${complement}`
-    : `, ${formatMessage(messages.noComplement)}`
-
-  const postalCodeFormatted = postalCode ? ` - ${postalCode}` : ' - N/A'
-  const neighborhoodFormatted = neighborhood ? `${neighborhood}, ` : 'N/A'
-
-  const translateCountries = () => {
+  const translateCountries = useCallback(() => {
     const { shipsTo = [] } = logisticsData?.logistics ?? {}
 
     return shipsTo.map((code: string) => ({
       label: formatMessage({ id: `country.${code}` }),
       value: code,
     }))
-  }
+  }, [formatMessage, logisticsData?.logistics])
 
-  const handleOpenModal = () => {
-    setEditAddressModalState({
-      addressId: orderForm.paymentAddress?.addressId ?? '',
-      isOpen: true,
-    })
-  }
-
-  const handleCloseModal = useCallback(() => {
-    setEditAddressModalState((prev) => ({ ...prev, isOpen: false }))
+  const handleOpenModal = useCallback(() => {
+    setModalOpen(true)
   }, [])
 
-  const handleConfirm = () => {
-    if (toggle.checked) {
+  const handleCloseModal = useCallback(() => {
+    setModalOpen(false)
+  }, [])
+
+  const handleConfirm = useCallback(() => {
+    if (toggle) {
       setOrderForm({
         ...orderForm,
-        paymentAddress: orderForm.shipping?.selectedAddress,
+        paymentAddress: shipping?.selectedAddress,
       })
     } else {
       setOrderForm({
@@ -97,52 +77,58 @@ export function BillingAddress() {
       })
     }
 
-    setToggle({ checked: false })
     handleCloseModal()
-  }
+  }, [
+    handleCloseModal,
+    newBillingAddressState,
+    orderForm,
+    setOrderForm,
+    shipping?.selectedAddress,
+    toggle,
+  ])
 
-  const handleNewBillingAddressChange = (changedAddress: AddressFormFields) => {
-    const currentAddress = newBillingAddressState
+  const handleNewBillingAddressChange = useCallback(
+    (changedAddress: AddressFormFields) => {
+      const currentAddress = newBillingAddressState
+      const newAddress = { ...currentAddress, ...changedAddress }
 
-    const newAddress = { ...currentAddress, ...changedAddress }
-
-    setNewBillingAddressState(addValidation(newAddress))
-  }
+      setNewBillingAddressState(addValidation(newAddress))
+    },
+    [newBillingAddressState]
+  )
 
   const disabled = useMemo(() => {
-    if (toggle.checked) return false
+    if (toggle) return false
 
-    const address = extractAddressValues(newBillingAddressState)
-
-    delete address.addressQuery
-    delete address.complement
+    const { addressQuery, complement, ...address } = extractAddressValues(
+      newBillingAddressState
+    )
 
     return Object.values(address).some((field) => !field)
-  }, [newBillingAddressState, toggle.checked])
+  }, [newBillingAddressState, toggle])
 
-  const formattedAddres = useMemo(
-    () => (
-      <>
-        {streetFormatted}
-        {numberFormatted}
-        {complementFormatted}
-        {postalCodeFormatted}
-        <br />
-        {neighborhoodFormatted}
-        {city}, {state}, {formatMessage({ id: `country.${country}` })}
-      </>
-    ),
-    [
-      streetFormatted,
-      numberFormatted,
-      complementFormatted,
-      postalCodeFormatted,
-      neighborhoodFormatted,
-      city,
-      state,
-      country,
-      formatMessage,
-    ]
+  const handleToggle = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setToggle(e.target.checked)
+
+      if (e.target.checked) {
+        setNewBillingAddressState(
+          toggleAddress(
+            addValidation({
+              ...shipping.selectedAddress,
+              addressQuery: null,
+              addressType: 'commercial',
+            }),
+            false
+          )
+        )
+      } else {
+        setNewBillingAddressState(
+          toggleAddress(addValidation(newBillingAddressState), true)
+        )
+      }
+    },
+    [newBillingAddressState, shipping.selectedAddress]
   )
 
   if (!orderForm.paymentAddress) {
@@ -151,18 +137,20 @@ export function BillingAddress() {
 
   return (
     <div>
-      <Tooltip label={formattedAddres}>
-        <div className="mb3 truncate">{formattedAddres}</div>
-      </Tooltip>
+      <TruncatedText text={<Address address={paymentAddress} />} />
 
-      <div className="w-100">
-        <Button variation="tertiary" size="small" onClick={handleOpenModal}>
+      <div className="w-100 mt3">
+        <ButtonPlain
+          variation="tertiary"
+          size="small"
+          onClick={handleOpenModal}
+        >
           {formatMessage(messages.editAddress)}
-        </Button>
+        </ButtonPlain>
       </div>
 
       <Modal
-        isOpen={editAddressModalState.isOpen}
+        isOpen={modalOpen}
         onClose={handleCloseModal}
         size="small"
         title={formatMessage(messages.editBillingAddress)}
@@ -171,15 +159,7 @@ export function BillingAddress() {
         bottomBar={
           <div className="flex items-center justify-between w-100">
             <div className="flex items-center">
-              <Toggle
-                checked={toggle.checked}
-                onChange={() =>
-                  setToggle((prev) => ({
-                    ...prev,
-                    checked: !prev.checked,
-                  }))
-                }
-              />
+              <Toggle checked={toggle} onChange={handleToggle} />
               <span className="ml4 c-action-secondary t-mini mw9">
                 {formatMessage(messages.sameAsShipping)}
               </span>
@@ -205,7 +185,7 @@ export function BillingAddress() {
         }
       >
         <AddressRules
-          country={country}
+          country={paymentAddress?.country}
           shouldUseIOFetching
           useGeolocation={false}
         >

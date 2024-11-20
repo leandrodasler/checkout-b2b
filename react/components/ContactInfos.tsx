@@ -5,10 +5,10 @@ import { Totalizer } from 'vtex.styleguide'
 import { useOrderFormCustom } from '../hooks'
 import type { CustomOrganization } from '../typings'
 import { messages } from '../utils'
-import { Address } from './Address'
+import { BillingAddress } from './BillingAddress'
+import { ShippingAddress } from './ShippingAddress'
 import { ShippingOption } from './ShippingOption'
 import { TruncatedText } from './TruncatedText'
-import { BillingAddress } from './BillingAddress'
 
 type Props = {
   organization?: CustomOrganization
@@ -84,7 +84,7 @@ export function ContactInfos({ organization }: Props) {
 
   contactFields.push({
     label: formatMessage(messages.shippingAddress),
-    value: <TruncatedText text={<Address />} />,
+    value: <TruncatedText text={<ShippingAddress />} />,
   })
 
   contactFields.push({
