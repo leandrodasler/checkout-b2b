@@ -24,6 +24,10 @@ import { useOrderFormCustom } from './useOrderFormCustom'
 
 type MutationSetOrderFormCustomData = Pick<Mutation, 'setOrderFormCustomData'>
 
+function getInvoiceDataUrl(orderFormId: string) {
+  return `/api/checkout/pub/orderForm/${orderFormId}/attachments/invoiceData`
+}
+
 function getStartTransactionUrl(orderFormId: string) {
   return `/api/checkout/pub/orderForm/${orderFormId}/transaction`
 }
@@ -47,7 +51,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
     customData,
     id,
     paymentData,
-    shipping,
+    shipping: { selectedAddress },
     storePreferencesData,
     value,
     paymentAddress,
@@ -82,15 +86,19 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
 
   const { mutate, isLoading, isSuccess } = useMutation<string, Error>({
     mutationFn: async () => {
-      if (poNumberCustomData) {
-        await setOrderFormCustomData({
-          variables: {
-            appId: poNumberCustomData?.id,
-            field: PO_NUMBER_CUSTOM_FIELD,
-            value: poNumberCustomData?.fields[PO_NUMBER_CUSTOM_FIELD],
-          },
-        })
-      }
+      await Promise.all([
+        poNumberCustomData &&
+          setOrderFormCustomData({
+            variables: {
+              appId: poNumberCustomData?.id,
+              field: PO_NUMBER_CUSTOM_FIELD,
+              value: poNumberCustomData?.fields[PO_NUMBER_CUSTOM_FIELD],
+            },
+          }),
+        apiRequest(getInvoiceDataUrl(id), 'POST', {
+          address: paymentAddress ?? selectedAddress,
+        }),
+      ])
 
       const transactionResponse = await apiRequest<TransactionResponse>(
         getStartTransactionUrl(id),
@@ -117,9 +125,11 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
           installmentsInterestRate: installment?.interestRate ?? 0,
           installmentsValue: installment?.value ?? 0,
           referenceValue: payment?.referenceValue,
+          isBillingAddressDifferent:
+            paymentAddress?.addressId !== selectedAddress?.addressId,
           fields: {
             accountId: payment?.accountId,
-            address: paymentAddress ?? shipping.selectedAddress,
+            address: paymentAddress ?? selectedAddress,
           },
           transaction: {
             id: transactionId,

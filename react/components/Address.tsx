@@ -26,18 +26,21 @@ export function Address({ address }: Props) {
 
   const numberFormatted = number ? `, ${number}` : ''
   const complementFormatted = complement ? `, ${complement}` : ''
-  const postalCodeFormatted = postalCode ? ` - ${postalCode}` : ''
-  const neighborhoodFormatted = neighborhood ? `${neighborhood}, ` : ''
+  const neighborhoodFormatted = neighborhood ? `, ${neighborhood}` : ''
+  const postalCodeFormatted = postalCode
+    ? ` - ${formatMessage({
+        id: 'address-form.field.postalCode',
+      })}: ${postalCode}`
+    : ''
 
   return (
     <>
       {street}
       {numberFormatted}
       {complementFormatted}
+      {neighborhoodFormatted}, {city}, {state},{' '}
+      {formatMessage({ id: `country.${country}` })}
       {postalCodeFormatted}
-      <br />
-      {neighborhoodFormatted}
-      {city}, {state}, {formatMessage({ id: `country.${country}` })}
     </>
   )
 }

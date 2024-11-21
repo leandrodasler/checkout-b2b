@@ -1,1 +1,1 @@
-window.location.href = '/checkout-b2b'
+window.location.assign('/checkout-b2b')

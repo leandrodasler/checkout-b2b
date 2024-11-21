@@ -33,6 +33,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
     },
   })
 
+  const { value } = orderForm
   const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
 
   const filteredPaymentSystems = paymentSystems.filter(
@@ -53,8 +54,6 @@ function PaymentDataWrapper({ showToast }: WithToast) {
         newPaymentSystem
       )
 
-      if (!installment) return
-
       setPending(true)
 
       updatePayment({
@@ -63,17 +62,17 @@ function PaymentDataWrapper({ showToast }: WithToast) {
             payments: [
               {
                 paymentSystem: newPaymentSystem,
-                referenceValue: installment.value,
-                installmentsInterestRate: installment.interestRate,
-                installments: installment.count,
-                value: installment.total,
+                referenceValue: installment?.value ?? value,
+                installmentsInterestRate: installment?.interestRate ?? 0,
+                installments: installment?.count ?? 1,
+                value: installment?.total ?? value,
               },
             ],
           },
         },
       }).finally(() => setPending(false))
     },
-    [installmentOptions, setPending, updatePayment]
+    [installmentOptions, setPending, updatePayment, value]
   )
 
   const handleChange = useCallback(

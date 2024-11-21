@@ -8,7 +8,6 @@ import { messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
 import { ShippingAddress } from './ShippingAddress'
 import { ShippingOption } from './ShippingOption'
-import { TruncatedText } from './TruncatedText'
 
 type Props = {
   organization?: CustomOrganization
@@ -43,7 +42,9 @@ export function ContactInfos({ organization }: Props) {
       label: formatMessage(messages.companyName),
       value: (
         <>
-          <TruncatedText text={organization.tradeName ?? organization.name} />
+          <div className="mb1">
+            {organization.tradeName ?? organization.name}
+          </div>
           <span className="t-mini">
             <span className="b">
               {formatMessage(messages.salesRepresentative)}{' '}
@@ -61,30 +62,27 @@ export function ContactInfos({ organization }: Props) {
   contactFields.push({
     label: formatMessage(messages.buyerName),
     value: (
-      <TruncatedText
-        text={
+      <>
+        <div className="mb1">
+          {firstName} {lastName}
+        </div>
+        <span className="t-mini">{email}</span>
+        {(corporatePhone || phone) && (
           <>
-            {firstName} {lastName}
             <br />
-            <span className="t-mini">{email}</span>
-            {(corporatePhone || phone) && (
-              <>
-                <br />
-                <span className="t-mini">
-                  {corporatePhone ? `${corporatePhone} / ` : ''}
-                  {phone}
-                </span>
-              </>
-            )}
+            <span className="t-mini">
+              {corporatePhone ? `${corporatePhone} / ` : ''}
+              {phone}
+            </span>
           </>
-        }
-      />
+        )}
+      </>
     ),
   })
 
   contactFields.push({
     label: formatMessage(messages.shippingAddress),
-    value: <TruncatedText text={<ShippingAddress />} />,
+    value: <ShippingAddress />,
   })
 
   contactFields.push({

@@ -8,16 +8,15 @@ import {
   CountrySelector,
   PostalCodeGetter,
 } from 'vtex.address-form'
-import { addValidation } from 'vtex.address-form/helpers'
+import { addValidation, removeValidation } from 'vtex.address-form/helpers'
 import { StyleguideInput } from 'vtex.address-form/inputs'
 import { Button, ButtonPlain, Modal, Toggle } from 'vtex.styleguide'
 
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import { useOrderFormCustom } from '../hooks'
-import { PaymentAddresType } from '../typings'
-import { extractAddressValues, messages, toggleAddress } from '../utils'
+import { PaymentAddressType } from '../typings'
+import { buildBillingAddress, messages, toggleAddress } from '../utils'
 import { Address } from './Address'
-import { TruncatedText } from './TruncatedText'
 
 interface AddressFormFields {
   [key: string]: {
@@ -31,20 +30,23 @@ interface AddressFormFields {
 export function BillingAddress() {
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
-  const [toggle, setToggle] = useState(false)
   const { data: logisticsData } = useQuery(GET_LOGISTICS, { ssr: false })
   const [modalOpen, setModalOpen] = useState(false)
   const { paymentAddress, shipping } = orderForm
+  const [toggle, setToggle] = useState(
+    paymentAddress?.addressId === shipping.selectedAddress?.addressId
+  )
 
   const [
     newBillingAddressState,
     setNewBillingAddressState,
-  ] = useState<PaymentAddresType>(
-    addValidation({
-      ...paymentAddress,
-      addressQuery: null,
-      addressType: 'commercial',
-    })
+  ] = useState<PaymentAddressType>(
+    toggleAddress(
+      addValidation(
+        buildBillingAddress(paymentAddress, shipping.selectedAddress)
+      ),
+      !toggle
+    )
   )
 
   const translateCountries = useCallback(() => {
@@ -65,31 +67,17 @@ export function BillingAddress() {
   }, [])
 
   const handleConfirm = useCallback(() => {
-    if (toggle) {
-      setOrderForm({
-        ...orderForm,
-        paymentAddress: shipping?.selectedAddress,
-      })
-    } else {
-      setOrderForm({
-        ...orderForm,
-        paymentAddress: extractAddressValues(newBillingAddressState),
-      })
-    }
+    setOrderForm({
+      ...orderForm,
+      paymentAddress: removeValidation(newBillingAddressState),
+    })
 
     handleCloseModal()
-  }, [
-    handleCloseModal,
-    newBillingAddressState,
-    orderForm,
-    setOrderForm,
-    shipping?.selectedAddress,
-    toggle,
-  ])
+  }, [handleCloseModal, newBillingAddressState, orderForm, setOrderForm])
 
   const handleNewBillingAddressChange = useCallback(
     (changedAddress: AddressFormFields) => {
-      const currentAddress = newBillingAddressState
+      const { addressType, ...currentAddress } = newBillingAddressState
       const newAddress = { ...currentAddress, ...changedAddress }
 
       setNewBillingAddressState(addValidation(newAddress))
@@ -100,9 +88,15 @@ export function BillingAddress() {
   const disabled = useMemo(() => {
     if (toggle) return false
 
-    const { addressQuery, complement, ...address } = extractAddressValues(
-      newBillingAddressState
-    )
+    const {
+      addressQuery,
+      complement,
+      reference,
+      number,
+      neighborhood,
+      isDisposable,
+      ...address
+    } = removeValidation(newBillingAddressState)
 
     return Object.values(address).some((field) => !field)
   }, [newBillingAddressState, toggle])
@@ -114,11 +108,7 @@ export function BillingAddress() {
       if (e.target.checked) {
         setNewBillingAddressState(
           toggleAddress(
-            addValidation({
-              ...shipping.selectedAddress,
-              addressQuery: null,
-              addressType: 'commercial',
-            }),
+            addValidation(buildBillingAddress(shipping.selectedAddress)),
             false
           )
         )
@@ -137,7 +127,7 @@ export function BillingAddress() {
 
   return (
     <div>
-      <TruncatedText text={<Address address={paymentAddress} />} />
+      <Address address={paymentAddress} />
 
       <div className="w-100 mt3">
         <ButtonPlain

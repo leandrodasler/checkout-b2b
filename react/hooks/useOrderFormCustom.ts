@@ -1,37 +1,40 @@
-import { useQuery } from 'react-apollo'
-import { OrderForm } from 'vtex.order-manager'
+import { useQuery } from '@tanstack/react-query'
 import type {
-  OrderForm as OrderFormType,
   Address,
   Maybe,
+  OrderForm as OrderFormType,
 } from 'vtex.checkout-graphql'
-import type { OrderForm as OrderFormSeller, Query } from 'vtex.store-graphql'
+import { OrderForm } from 'vtex.order-manager'
+import type { OrderForm as OrderFormStore } from 'vtex.store-graphql'
 
-import GET_ORDER_FORM_SELLERS from '../graphql/getOrderFormSellers.graphql'
+import { apiRequest } from '../services'
+import type { ApiResponse } from '../typings'
 
 const { useOrderForm } = OrderForm
 
-type OrderFormQuery = Pick<Query, 'orderForm'>
+type InvoiceAndSellersData = ApiResponse &
+  Pick<OrderFormStore, 'sellers'> & {
+    invoiceData?: { address?: Maybe<Address> }
+  }
 
 type PaymentAddress = {
-  paymentAddress?: Maybe<Address> | undefined
+  paymentAddress?: Maybe<Address>
 }
+
+type CompleteOrderForm = OrderFormType & PaymentAddress & InvoiceAndSellersData
 
 export type UseOrderFormReturn = {
   loading: boolean
-  orderForm: OrderFormType & Pick<OrderFormSeller, 'sellers'> & PaymentAddress
-  setOrderForm: (orderForm: OrderFormType & PaymentAddress) => void
+  orderForm: CompleteOrderForm
+  setOrderForm: (orderForm: CompleteOrderForm) => void
 }
 
 export function useOrderFormCustom() {
-  const { data, loading: sellersLoading } = useQuery<OrderFormQuery>(
-    GET_ORDER_FORM_SELLERS,
-    {
-      ssr: false,
-    }
-  )
-
-  const sellers = data?.orderForm?.sellers
+  const { data, isLoading } = useQuery<InvoiceAndSellersData, Error>({
+    queryKey: ['invoiceData'],
+    queryFn: () =>
+      apiRequest<InvoiceAndSellersData>(`/api/checkout/pub/orderForm`, 'GET'),
+  })
 
   const {
     orderForm,
@@ -39,11 +42,30 @@ export function useOrderFormCustom() {
     setOrderForm,
   } = useOrderForm() as UseOrderFormReturn
 
-  const { paymentAddress = orderForm?.shipping?.selectedAddress } = orderForm
+  const invoiceAddress = data?.invoiceData?.address
+  const shippingAddress = orderForm?.shipping?.selectedAddress
+
+  const isInvoiceSameAsShipping =
+    (invoiceAddress?.city ?? '') === (shippingAddress?.city ?? '') &&
+    (invoiceAddress?.state ?? '') === (shippingAddress?.state ?? '') &&
+    (invoiceAddress?.country ?? '') === (shippingAddress?.country ?? '') &&
+    (invoiceAddress?.street ?? '') === (shippingAddress?.street ?? '') &&
+    (invoiceAddress?.number ?? '') === (shippingAddress?.number ?? '') &&
+    (invoiceAddress?.complement ?? '') ===
+      (shippingAddress?.complement ?? '') &&
+    (invoiceAddress?.neighborhood ?? '') ===
+      (shippingAddress?.neighborhood ?? '') &&
+    (invoiceAddress?.postalCode ?? '') === (shippingAddress?.postalCode ?? '')
+
+  const {
+    paymentAddress = invoiceAddress && isInvoiceSameAsShipping
+      ? shippingAddress
+      : invoiceAddress,
+  } = orderForm
 
   return {
-    loading: loading || sellersLoading,
-    orderForm: { ...orderForm, sellers, paymentAddress },
+    loading: loading || isLoading,
+    orderForm: { ...data, ...orderForm, paymentAddress },
     setOrderForm,
   }
 }

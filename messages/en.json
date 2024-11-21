@@ -5,16 +5,6 @@
   "store/checkout.b2b.modal.editBillingAddress": "Edit Billing Address",
   "store/checkout.b2b.modal.sameAsShipping": "Same as shipping address",
 
-  "store/checkout.b2b.address.street": "Street",
-  "store/checkout.b2b.address.number": "Number",
-  "store/checkout.b2b.address.complement": "Complement",
-  "store/checkout.b2b.address.noComplement": "No complement",
-  "store/checkout.b2b.address.neighborhood": "Neighborhood",
-  "store/checkout.b2b.address.city": "City",
-  "store/checkout.b2b.address.state": "State",
-  "store/checkout.b2b.address.postalCode": "Postal Code",
-  "store/checkout.b2b.address.country": "Country",
-
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",
   "store/checkout.b2b.totalizer.editAddress": "Edit",
