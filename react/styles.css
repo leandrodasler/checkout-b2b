@@ -23,6 +23,7 @@
 .container :local([data-testid='totalizer-value']),
 .container :global(.vtex-styleguide-9-x-input) {
   font-size: var(--base-font-size);
+  word-break: break-word;
 }
 
 .container .price,

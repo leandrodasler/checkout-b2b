@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Word break style for totalizer values
+
 ## [0.0.11] - 2024-11-20
 
 ### Fixed
