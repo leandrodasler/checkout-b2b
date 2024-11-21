@@ -60,7 +60,7 @@ export function useOrderFormCustom() {
   const {
     paymentAddress = invoiceAddress && isInvoiceSameAsShipping
       ? shippingAddress
-      : invoiceAddress,
+      : invoiceAddress ?? shippingAddress,
   } = orderForm
 
   return {

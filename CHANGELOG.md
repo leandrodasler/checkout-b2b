@@ -7,30 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Shipping address as last fallback
+
 ## [0.0.10] - 2024-11-20
 
 ### Added
 
-- Using invoiceData of orderForm.
+- Using invoiceData of orderForm
 
 ## [0.0.9] - 2024-11-19
 
 ### Added
 
-- New field for billing address.
-- Pending state for order placed button.
+- New field for billing address
+- Pending state for order placed button
 
 ## [0.0.8] - 2024-11-12
 
 ### Added
 
-- Redirection to order placed with full page reload to update cart.
+- Redirection to order placed with full page reload to update cart
 
 ## [0.0.7] - 2024-11-12
 
 ### Added
 
-- Display organization users for the Sales Representative and Sales Admin roles.
+- Display organization users for the Sales Representative and Sales Admin roles
 
 ## [0.0.6] - 2024-11-08
 
@@ -73,4 +77,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Address information on totalizers
 - Empty state of totalizers
 - Page and route /checkout-b2b
-- Initial release.
+- Initial release
