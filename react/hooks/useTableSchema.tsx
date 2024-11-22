@@ -5,6 +5,7 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 
+import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
@@ -18,7 +19,10 @@ function getStrike(item: Item) {
   return { strike: isWithoutStock(item) }
 }
 
-export function useTableSchema(): TableSchema<Item> {
+export function useTableSchema(
+  isEditing: boolean,
+  discount: number
+): TableSchema<Item> {
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
@@ -92,16 +96,15 @@ export function useTableSchema(): TableSchema<Item> {
           },
         },
         sellingPrice: {
-          width: 120,
+          width: 150,
           title: formatMessage(messages.price),
           cellRenderer({ rowData }) {
             return (
-              rowData.sellingPrice && (
-                <TruncatedText
-                  text={<FormattedPrice value={rowData.sellingPrice / 100} />}
-                  {...getStrike(rowData)}
-                />
-              )
+              <ManualPrice
+                rowData={rowData}
+                isEditing={isEditing}
+                sliderValue={discount}
+              />
             )
           },
         },
@@ -163,6 +166,6 @@ export function useTableSchema(): TableSchema<Item> {
         },
       },
     }),
-    [orderForm, formatMessage, removeItem]
+    [orderForm, formatMessage, removeItem, isEditing, discount]
   )
 }

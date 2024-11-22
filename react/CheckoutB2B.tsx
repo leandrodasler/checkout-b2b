@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
@@ -8,6 +8,7 @@ import {
   Layout,
   PageBlock,
   PageHeader,
+  Slider,
   Table,
   ToastProvider,
   Totalizer,
@@ -38,14 +39,20 @@ function CheckoutB2B({ showToast }: WithToast) {
   const { loading: orderFormLoading, orderForm } = useOrderFormCustom()
   const { clearCart, isLoading: clearCartLoading } = useClearCart(showToast)
   const totalizers = useTotalizers()
-  const schema = useTableSchema()
+  const [isEditing, setIsEditing] = useState(false)
+  const [discount, setDesconto] = useState(0)
+
+  const schema = useTableSchema(isEditing, discount)
+
   const toolbar = useToolbar(showToast)
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
-
   const { items } = orderForm
   const loading = orderFormLoading || organizationLoading
   const filteredItems = toolbar?.filteredItems ?? items
+  const toggleEditMode = () => {
+    setIsEditing((prev) => !prev)
+  }
 
   return (
     <div className={handles.container}>
@@ -81,7 +88,26 @@ function CheckoutB2B({ showToast }: WithToast) {
             />
           </div>
         </PageBlock>
-
+        {isEditing && (
+          <Slider
+            onChange={(values: number[]) => {
+              setDesconto(values[0])
+            }}
+            min={0}
+            max={100}
+            step={1}
+            disabled={false}
+            defaultValues={[0]}
+            alwaysShowCurrentValue={false}
+            formatValue={(a: number) => a + 1}
+          />
+        )}
+        <Button
+          variation={isEditing ? 'danger' : 'primary'}
+          onClick={toggleEditMode}
+        >
+          {isEditing ? 'Parar edição' : 'editar todos'}
+        </Button>
         {!!items.length && !loading && (
           <Button
             variation="danger-tertiary"
