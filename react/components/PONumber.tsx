@@ -4,8 +4,8 @@ import { Input } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
 import {
-  B2B_CUSTOM_APP_ID,
-  B2B_CUSTOM_APP_MAJOR,
+  B2B_CHECKOUT_CUSTOM_APP_ID,
+  B2B_CHECKOUT_CUSTOM_APP_MAJOR,
   messages,
   PO_NUMBER_CUSTOM_FIELD,
 } from '../utils'
@@ -24,8 +24,8 @@ export function PONumber() {
             ...orderForm.customData,
             customApps: [
               {
-                id: B2B_CUSTOM_APP_ID,
-                major: B2B_CUSTOM_APP_MAJOR,
+                id: B2B_CHECKOUT_CUSTOM_APP_ID,
+                major: B2B_CHECKOUT_CUSTOM_APP_MAJOR,
                 fields: {
                   [PO_NUMBER_CUSTOM_FIELD]: e.target.value,
                 },

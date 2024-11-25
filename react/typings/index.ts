@@ -81,11 +81,12 @@ export type SessionOrganizationData = {
 
 export type GetOrganizationQuery = Pick<
   Query,
-  'getOrganizationByIdStorefront' | 'getUsers'
+  'getOrganizationByIdStorefront' | 'getUsers' | 'getCostCenterByIdStorefront'
 >
 
 export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStorefront'] & {
   users: GetOrganizationQuery['getUsers']
+  costCenter: GetOrganizationQuery['getCostCenterByIdStorefront']
 }
 
 type PaymentField<T> = {

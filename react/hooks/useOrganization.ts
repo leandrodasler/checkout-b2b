@@ -10,9 +10,7 @@ import type {
   GetOrganizationQuery,
   SessionOrganizationData,
 } from '../typings'
-
-const SESSION_NAMESPACE = 'storefront-permissions'
-const NAMESPACE_ITEMS = ['organization', 'costcenter']
+import { NAMESPACE_ITEMS, SESSION_NAMESPACE } from '../utils'
 
 export function useOrganization() {
   const { data: sessionData, loading: sessionLoading } = useFullSession({
@@ -22,7 +20,7 @@ export function useOrganization() {
   })
 
   const session = sessionData?.session as SessionSuccess | undefined
-  const organizationData: SessionOrganizationData =
+  const organizationData: SessionOrganizationData | undefined =
     session?.namespaces[SESSION_NAMESPACE]
 
   const organizationId = organizationData?.organization.value
@@ -41,6 +39,7 @@ export function useOrganization() {
     return {
       ...data?.getOrganizationByIdStorefront,
       users: data?.getUsers,
+      costCenter: data?.getCostCenterByIdStorefront,
     }
   }, [data])
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Using cost center data
+
 ## [0.0.12] - 2024-11-20
 
 ### Fixed

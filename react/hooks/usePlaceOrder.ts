@@ -15,7 +15,7 @@ import type {
   WithToast,
 } from '../typings'
 import {
-  B2B_CUSTOM_APP_ID,
+  B2B_CHECKOUT_CUSTOM_APP_ID,
   getFirstInstallmentByPaymentSystem,
   messages,
   PO_NUMBER_CUSTOM_FIELD,
@@ -59,7 +59,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
 
   const poNumberCustomData = customData?.customApps.find(
     (customApp) =>
-      customApp.id === B2B_CUSTOM_APP_ID &&
+      customApp.id === B2B_CHECKOUT_CUSTOM_APP_ID &&
       !!customApp.fields?.[PO_NUMBER_CUSTOM_FIELD]
   )
 

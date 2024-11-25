@@ -5,10 +5,9 @@ type CheckoutB2BContextData = {
   setPending: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CheckoutB2BContext = React.createContext<CheckoutB2BContextData>({
-  pending: false,
-  setPending: () => {},
-})
+const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
+  null
+)
 
 export function CheckoutB2BProvider({
   children,
@@ -23,5 +22,13 @@ export function CheckoutB2BProvider({
 }
 
 export function useCheckoutB2BContext() {
-  return React.useContext(CheckoutB2BContext)
+  const context = React.useContext(CheckoutB2BContext)
+
+  if (!context) {
+    throw new Error(
+      'useCheckoutB2BContext must be used within a CheckoutB2BProvider'
+    )
+  }
+
+  return context
 }

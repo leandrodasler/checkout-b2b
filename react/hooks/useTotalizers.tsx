@@ -6,18 +6,18 @@ import { IconHelp, Tooltip } from 'vtex.styleguide'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
-import { messages } from '../utils'
+import { B2B_QUOTES_CUSTOM_APP_ID, messages } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
 
 export function useTotalizers() {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
-  const { totalizers = [], value: total = 0, items } = orderForm
+  const { totalizers = [], customData, value: total = 0, items } = orderForm
 
   if (!totalizers.length || !items?.length) return []
 
-  const hasQuotationDiscount = items.some(
-    (item) => item.manualPrice && item.manualPrice < (item.price ?? 0)
+  const hasQuotationDiscount = customData?.customApps.find(
+    (app) => app.id === B2B_QUOTES_CUSTOM_APP_ID && app.fields?.quoteId
   )
 
   return [

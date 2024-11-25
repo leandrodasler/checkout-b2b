@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
@@ -34,7 +34,7 @@ import './styles.css'
 
 function CheckoutB2B({ showToast }: WithToast) {
   const handles = useCssHandles(['container', 'table'])
-  const { organization, loading: organizationLoading } = useOrganization()
+  const { loading: organizationLoading } = useOrganization()
   const { loading: orderFormLoading, orderForm } = useOrderFormCustom()
   const { clearCart, isLoading: clearCartLoading } = useClearCart(showToast)
   const totalizers = useTotalizers()
@@ -44,7 +44,11 @@ function CheckoutB2B({ showToast }: WithToast) {
   const { formatMessage } = useIntl()
 
   const { items } = orderForm
-  const loading = orderFormLoading || organizationLoading
+  const loading = useMemo(() => orderFormLoading || organizationLoading, [
+    orderFormLoading,
+    organizationLoading,
+  ])
+
   const filteredItems = toolbar?.filteredItems ?? items
 
   return (
@@ -64,7 +68,7 @@ function CheckoutB2B({ showToast }: WithToast) {
         <PageBlock>
           {!loading && (
             <div className="mb4">
-              <ContactInfos organization={organization} />
+              <ContactInfos />
               <Totalizer items={totalizers} />
             </div>
           )}
