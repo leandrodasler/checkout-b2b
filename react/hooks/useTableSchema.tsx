@@ -12,6 +12,7 @@ import { TruncatedText } from '../components/TruncatedText'
 import type { TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 
 const { useOrderItems } = OrderItems
 
@@ -26,6 +27,7 @@ export function useTableSchema(
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
+  const { getSellingPrice, getDiscountedPrice } = useCheckoutB2BContext()
 
   return useMemo(
     () => ({
@@ -112,17 +114,14 @@ export function useTableSchema(
           width: 100,
           title: formatMessage(messages.margin),
           cellRenderer({ rowData }) {
-            const sellingPrice =
-              discount > 0 && rowData.sellingPrice
-                ? rowData.sellingPrice - (rowData.sellingPrice * discount) / 100
-                : rowData.sellingPrice
+            const sellingPrice = getSellingPrice(rowData, discount)
 
             return (
               <TruncatedText
                 text={
                   <MarginProductPrice
                     itemId={rowData.id}
-                    sellingPrice={sellingPrice ?? 0}
+                    sellingPrice={sellingPrice}
                   />
                 }
                 {...getStrike(rowData)}
@@ -141,14 +140,7 @@ export function useTableSchema(
           width: 120,
           title: formatMessage(messages.totalPrice),
           cellRenderer({ rowData }) {
-            const totalPrice = rowData?.priceDefinition?.total
-            const quantity = rowData?.quantity ?? 1
-            const sellingPrice = rowData?.sellingPrice ?? 0
-
-            const discountedPrice =
-              discount > 0
-                ? (sellingPrice - (sellingPrice * discount) / 100) * quantity
-                : totalPrice
+            const discountedPrice = getDiscountedPrice(rowData, discount)
 
             return (
               discountedPrice && (
@@ -178,6 +170,14 @@ export function useTableSchema(
         },
       },
     }),
-    [orderForm, formatMessage, removeItem, isEditing, discount]
+    [
+      orderForm,
+      formatMessage,
+      removeItem,
+      isEditing,
+      discount,
+      getSellingPrice,
+      getDiscountedPrice,
+    ]
   )
 }
