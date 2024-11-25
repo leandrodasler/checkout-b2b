@@ -127,7 +127,11 @@ export function BillingAddress() {
 
   return (
     <div>
-      <Address address={paymentAddress} />
+      {toggle ? (
+        formatMessage(messages.sameAsShipping)
+      ) : (
+        <Address address={paymentAddress} />
+      )}
 
       <div className="w-100 mt3">
         <ButtonPlain
