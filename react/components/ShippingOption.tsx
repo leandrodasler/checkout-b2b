@@ -1,7 +1,6 @@
 import React from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { OrderForm } from 'vtex.checkout-graphql'
 import type {
   SelectDeliveryOptionMutation,
   SelectDeliveryOptionMutationVariables,
@@ -18,7 +17,7 @@ import { Dropdown, withToast } from 'vtex.styleguide'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_SHIPPING from '../graphql/getShipping.graphql'
 import { useFormatPrice, useOrderFormCustom } from '../hooks'
-import type { WithToast } from '../typings'
+import type { CompleteOrderForm, WithToast } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
@@ -58,7 +57,10 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
     SelectDeliveryOptionMutationVariables
   >(MutationSelectDeliveryOption, {
     onCompleted({ selectDeliveryOption }) {
-      setOrderForm(selectDeliveryOption as OrderForm)
+      setOrderForm({
+        ...orderForm,
+        ...selectDeliveryOption,
+      } as CompleteOrderForm)
     },
     onError({ message }) {
       showToast?.({ message })

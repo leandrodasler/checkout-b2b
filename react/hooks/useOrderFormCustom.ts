@@ -1,27 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import type {
-  Address,
-  Maybe,
-  OrderForm as OrderFormType,
-} from 'vtex.checkout-graphql'
 import { OrderForm } from 'vtex.order-manager'
-import type { OrderForm as OrderFormStore } from 'vtex.store-graphql'
 
 import { apiRequest } from '../services'
-import type { ApiResponse } from '../typings'
+import type { CompleteOrderForm, CompleteOrderFormData } from '../typings'
 
 const { useOrderForm } = OrderForm
-
-type InvoiceAndSellersData = ApiResponse &
-  Pick<OrderFormStore, 'sellers'> & {
-    invoiceData?: { address?: Maybe<Address> }
-  }
-
-type PaymentAddress = {
-  paymentAddress?: Maybe<Address>
-}
-
-type CompleteOrderForm = OrderFormType & PaymentAddress & InvoiceAndSellersData
 
 export type UseOrderFormReturn = {
   loading: boolean
@@ -30,10 +13,10 @@ export type UseOrderFormReturn = {
 }
 
 export function useOrderFormCustom() {
-  const { data, isLoading } = useQuery<InvoiceAndSellersData, Error>({
+  const { data, isLoading } = useQuery<CompleteOrderFormData, Error>({
     queryKey: ['invoiceData'],
     queryFn: () =>
-      apiRequest<InvoiceAndSellersData>(`/api/checkout/pub/orderForm`, 'GET'),
+      apiRequest<CompleteOrderFormData>(`/api/checkout/pub/orderForm`, 'GET'),
   })
 
   const {
@@ -65,7 +48,12 @@ export function useOrderFormCustom() {
 
   return {
     loading: loading || isLoading,
-    orderForm: { ...data, ...orderForm, paymentAddress },
+    orderForm: {
+      ...data,
+      ...orderForm,
+      clientProfileData: data?.clientProfileData,
+      paymentAddress,
+    },
     setOrderForm,
   }
 }

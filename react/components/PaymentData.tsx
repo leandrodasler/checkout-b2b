@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { OrderForm, PaymentDataInput } from 'vtex.checkout-graphql'
+import type { PaymentDataInput } from 'vtex.checkout-graphql'
 import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
 import { Dropdown, withToast } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { useOrderFormCustom } from '../hooks'
-import type { WithToast } from '../typings'
+import type { CompleteOrderForm, WithToast } from '../typings'
 import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
@@ -26,7 +26,10 @@ function PaymentDataWrapper({ showToast }: WithToast) {
     { paymentData: PaymentDataInput }
   >(MutationUpdateOrderFormPayment, {
     onCompleted({ updateOrderFormPayment }) {
-      setOrderForm(updateOrderFormPayment as OrderForm)
+      setOrderForm({
+        ...orderForm,
+        ...updateOrderFormPayment,
+      } as CompleteOrderForm)
     },
     onError({ message }) {
       showToast?.({ message })

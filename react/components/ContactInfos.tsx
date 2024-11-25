@@ -1,5 +1,11 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
+import type {
+  UpdateOrderFormProfileMutation,
+  UpdateOrderFormProfileMutationVariables,
+} from 'vtex.checkout-resources'
+import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
 import { Tag, Totalizer } from 'vtex.styleguide'
 
 import { useOrderFormCustom, useOrganization } from '../hooks'
@@ -10,18 +16,47 @@ import { ShippingOption } from './ShippingOption'
 
 export function ContactInfos() {
   const { formatMessage } = useIntl()
+  const { organization } = useOrganization()
   const {
     orderForm: { clientProfileData, items },
   } = useOrderFormCustom()
 
-  const { organization } = useOrganization()
-  const { costCenter, users } = organization
+  const { costCenter, users, tradeName, name } = organization
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
+
+  const organizationName = useMemo(() => (tradeName ?? '') || name, [
+    name,
+    tradeName,
+  ])
+
   const phone = useMemo(() => costCenterPhone || clientProfilePhone, [
     clientProfilePhone,
     costCenterPhone,
   ])
+
+  const [updateProfile] = useMutation<
+    UpdateOrderFormProfileMutation,
+    UpdateOrderFormProfileMutationVariables
+  >(MutationUpdateOrderFormProfile)
+
+  useEffect(() => {
+    if (!clientProfileData || clientProfileData?.tradeName) return
+
+    const {
+      corporatePhone,
+      profileCompleteOnLoading,
+      profileErrorOnLoading,
+      customerClass,
+      ...inputProfileData
+    } = clientProfileData
+
+    updateProfile({
+      variables: {
+        profile: { ...inputProfileData, tradeName: organizationName },
+      },
+    })
+  }, [clientProfileData, organizationName, phone, updateProfile])
 
   const getUsersByRole = useCallback(
     (role: string) =>
@@ -45,7 +80,7 @@ export function ContactInfos() {
       value: (
         <>
           <div className="mb1 flex items-center flex-wrap">
-            {(organization.tradeName ?? '') || organization.name}
+            {organizationName}
             {costCenter?.name && <Tag size="small">{costCenter?.name}</Tag>}
           </div>
           {(!!salesRepresentative?.length || !!salesAdmin?.length) && (

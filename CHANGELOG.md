@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Set client profile trade name with organization name if empty
+
 ## [0.0.16] - 2024-11-25
 
 ### Changed

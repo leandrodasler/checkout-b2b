@@ -14,7 +14,7 @@ import { Button, ButtonPlain, Modal, Toggle } from 'vtex.styleguide'
 
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import { useOrderFormCustom } from '../hooks'
-import { PaymentAddressType } from '../typings'
+import { CompleteOrderForm, PaymentAddressType } from '../typings'
 import { buildBillingAddress, messages, toggleAddress } from '../utils'
 import { Address } from './Address'
 
@@ -70,7 +70,7 @@ export function BillingAddress() {
     setOrderForm({
       ...orderForm,
       paymentAddress: removeValidation(newBillingAddressState),
-    })
+    } as CompleteOrderForm)
 
     handleCloseModal()
   }, [handleCloseModal, newBillingAddressState, orderForm, setOrderForm])

@@ -1,5 +1,10 @@
 import type { Query } from 'vtex.b2b-organizations-graphql'
-import type { Address } from 'vtex.checkout-graphql'
+import type {
+  Address,
+  Maybe,
+  OrderForm as OrderFormType,
+} from 'vtex.checkout-graphql'
+import type { OrderForm as OrderFormStore } from 'vtex.store-graphql'
 
 type ShowToastArgs = {
   message: string
@@ -30,6 +35,24 @@ export type ApiResponse = {
   response?: { data?: { error?: string } | string }
   error?: { message?: string }
 }
+
+export type CompleteOrderFormData = ApiResponse &
+  Pick<OrderFormStore, 'sellers'> & {
+    invoiceData?: { address?: Maybe<Address> }
+    clientProfileData: OrderFormStore['clientProfileData'] & {
+      profileCompleteOnLoading?: string | null
+      profileErrorOnLoading?: string | null
+      customerClass?: string | null
+    }
+  }
+
+export type PaymentAddress = {
+  paymentAddress?: Maybe<Address>
+}
+
+export type CompleteOrderForm = OrderFormType &
+  PaymentAddress &
+  CompleteOrderFormData
 
 export type TransactionResponse = ApiResponse & {
   id: string
