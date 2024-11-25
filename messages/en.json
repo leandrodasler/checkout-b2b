@@ -19,7 +19,7 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Enter the PO number",
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
-  "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation.",
+  "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation. Any discounts expected due to the payment method are not cumulative.",
   "store/checkout.b2b.totalizer.salesRep": "Sales rep.:",
   "store/checkout.b2b.totalizer.salesAdm": "Sales adm.:",
 

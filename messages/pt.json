@@ -19,7 +19,7 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Insira o número do pedido",
   "store/checkout.b2b.totalizer.companyName": "Organização",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
-  "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado pela cotação.",
+  "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado pela cotação. Eventuais descontos esperados pela forma de pagamento não são cumulativos.",
   "store/checkout.b2b.totalizer.salesRep": "Rep. de vendas:",
   "store/checkout.b2b.totalizer.salesAdm": "Adm. de vendas:",
 
