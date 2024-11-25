@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Handle empty organization trade name
+
 ## [0.0.14] - 2024-11-24
 
 ### Changed

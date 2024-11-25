@@ -45,7 +45,7 @@ export function ContactInfos() {
       value: (
         <>
           <div className="mb1 flex items-center flex-wrap">
-            {organization.tradeName ?? organization.name}
+            {(organization.tradeName ?? '') || organization.name}
             {costCenter?.name && <Tag size="small">{costCenter?.name}</Tag>}
           </div>
           {(!!salesRepresentative?.length || !!salesAdmin?.length) && (
