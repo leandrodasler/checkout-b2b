@@ -5,6 +5,7 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
@@ -12,7 +13,6 @@ import { TruncatedText } from '../components/TruncatedText'
 import type { TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
-import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 
 const { useOrderItems } = OrderItems
 
@@ -22,7 +22,8 @@ function getStrike(item: Item) {
 
 export function useTableSchema(
   isEditing: boolean,
-  discount: number
+  discount: number,
+  onUpdatePrice: (id: string, newPrice: number) => void
 ): TableSchema<Item> {
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
@@ -106,6 +107,7 @@ export function useTableSchema(
                 rowData={rowData}
                 isEditing={isEditing}
                 sliderValue={discount}
+                onUpdatePrice={onUpdatePrice}
               />
             )
           },
@@ -178,6 +180,7 @@ export function useTableSchema(
       discount,
       getSellingPrice,
       getDiscountedPrice,
+      onUpdatePrice,
     ]
   )
 }

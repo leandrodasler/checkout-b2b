@@ -42,7 +42,18 @@ function CheckoutB2B({ showToast }: WithToast) {
   const [isEditing, setIsEditing] = useState(false)
   const [discount, setDesconto] = useState(0)
 
-  const schema = useTableSchema(isEditing, discount)
+  const [prices, setPrices] = useState<Record<string, number>>({})
+
+  const handleSavePrices = () => {
+    // eslint-disable-next-line no-console
+    console.log('Novos preços:', prices)
+  }
+
+  const updatePrice = React.useCallback((id: string, newPrice: number) => {
+    setPrices((prevPrices) => ({ ...prevPrices, [id]: newPrice }))
+  }, [])
+
+  const schema = useTableSchema(isEditing, discount, updatePrice)
 
   const toolbar = useToolbar(showToast)
   const { navigate } = useRuntime()
@@ -108,6 +119,7 @@ function CheckoutB2B({ showToast }: WithToast) {
         >
           {isEditing ? 'Parar edição' : 'editar todos'}
         </Button>
+        <Button onClick={handleSavePrices}>Salvar Preços</Button>
         {!!items.length && !loading && (
           <Button
             variation="danger-tertiary"
