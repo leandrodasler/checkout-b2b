@@ -27,8 +27,10 @@ export default function ManualPrice({
   useEffect(() => {
     if (sliderValue !== 0) {
       onUpdatePrice(rowData.id, discountedPrice)
+    } else {
+      onUpdatePrice(rowData.id, Number(customPrice))
     }
-  }, [discountedPrice, onUpdatePrice, rowData.id, sliderValue])
+  }, [discountedPrice, onUpdatePrice, rowData.id, sliderValue, customPrice])
 
   useEffect(() => {
     setIsInputVisible(isEditing)
