@@ -81,7 +81,7 @@ function CheckoutB2B({ showToast }: WithToast) {
               items={filteredItems}
               density="high"
               emptyStateLabel={formatMessage(messages.emptyCart)}
-              toolbar={toolbar}
+              toolbar={!loading && toolbar}
             />
           </div>
         </PageBlock>

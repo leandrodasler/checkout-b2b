@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Do not show toolbar when order form is loading
+
 ## [0.0.18] - 2024-11-27
 
 ### Added
