@@ -11,6 +11,7 @@ import { TruncatedText } from '../components/TruncatedText'
 import type { TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
+import { usePermissions } from './usePermissions'
 
 const { useOrderItems } = OrderItems
 
@@ -22,6 +23,7 @@ export function useTableSchema(): TableSchema<Item> {
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
+  const { canViewMargin } = usePermissions()
 
   return useMemo(
     () => ({
@@ -105,23 +107,25 @@ export function useTableSchema(): TableSchema<Item> {
             )
           },
         },
-        listPrice: {
-          width: 100,
-          title: formatMessage(messages.margin),
-          cellRenderer({ rowData }) {
-            return (
-              <TruncatedText
-                text={
-                  <MarginProductPrice
-                    itemId={rowData.id}
-                    sellingPrice={rowData.sellingPrice ?? 0}
-                  />
-                }
-                {...getStrike(rowData)}
-              />
-            )
+        ...(canViewMargin && {
+          listPrice: {
+            width: 100,
+            title: formatMessage(messages.margin),
+            cellRenderer({ rowData }) {
+              return (
+                <TruncatedText
+                  text={
+                    <MarginProductPrice
+                      itemId={rowData.id}
+                      sellingPrice={rowData.sellingPrice ?? 0}
+                    />
+                  }
+                  {...getStrike(rowData)}
+                />
+              )
+            },
           },
-        },
+        }),
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
@@ -163,6 +167,6 @@ export function useTableSchema(): TableSchema<Item> {
         },
       },
     }),
-    [orderForm, formatMessage, removeItem]
+    [formatMessage, canViewMargin, orderForm.sellers, removeItem]
   )
 }

@@ -110,6 +110,7 @@ export type GetOrganizationQuery = Pick<
 export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStorefront'] & {
   users: GetOrganizationQuery['getUsers']
   costCenter: GetOrganizationQuery['getCostCenterByIdStorefront']
+  role: string
 }
 
 type PaymentField<T> = {

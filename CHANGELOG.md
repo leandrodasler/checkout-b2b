@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New totalizer for margin total
+- Users with customer role can not view margin column or margin total
+
 ## [0.0.17] - 2024-11-25
 
 ### Changed

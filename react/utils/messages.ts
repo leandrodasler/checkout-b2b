@@ -28,6 +28,7 @@ export const messages = defineMessages({
   companyName: { id: 'store/checkout.b2b.totalizer.companyName' },
   buyerName: { id: 'store/checkout.b2b.totalizer.buyerName' },
   quotationDiscount: { id: 'store/checkout.b2b.totalizer.quotationDiscount' },
+  totalMargin: { id: 'store/checkout.b2b.totalizer.totalMargin' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },

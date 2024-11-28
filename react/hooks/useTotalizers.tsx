@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
@@ -7,18 +7,25 @@ import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
 import { B2B_QUOTES_CUSTOM_APP_ID, messages } from '../utils'
+import { useTotalMargin } from './useFetchPrices'
 import { useOrderFormCustom } from './useOrderFormCustom'
 
 export function useTotalizers() {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
   const { totalizers = [], customData, value: total = 0, items } = orderForm
+  const customApps = customData?.customApps
+  const hasQuotationDiscount = useMemo(
+    () =>
+      customApps?.find(
+        (app) => app.id === B2B_QUOTES_CUSTOM_APP_ID && app.fields?.quoteId
+      ),
+    [customApps]
+  )
+
+  const { data: totalMargin } = useTotalMargin()
 
   if (!totalizers.length || !items?.length) return []
-
-  const hasQuotationDiscount = customData?.customApps.find(
-    (app) => app.id === B2B_QUOTES_CUSTOM_APP_ID && app.fields?.quoteId
-  )
 
   return [
     {
@@ -44,6 +51,16 @@ export function useTotalizers() {
         </div>
       ),
     })),
+    ...(totalMargin
+      ? [
+          {
+            label: formatMessage(messages.totalMargin),
+            value: (
+              <TruncatedText text={<FormattedPrice value={totalMargin} />} />
+            ),
+          },
+        ]
+      : []),
     {
       label: formatMessage(messages.total),
       value: <TruncatedText text={<FormattedPrice value={total / 100} />} />,

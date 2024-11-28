@@ -24,6 +24,7 @@
     "vtex.b2b-organizations-graphql": "0.x",
     "vtex.shipping-estimate-translator": "2.x",
     "vtex.store-graphql": "2.x",
+    "vtex.storefront-permissions": "1.x",
     "vtex.storefront-permissions-ui": "1.x",
     "vtex.search-graphql": "0.x",
     "vtex.address-form": "4.x",

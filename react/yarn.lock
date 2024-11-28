@@ -5458,6 +5458,10 @@ verror@1.10.0:
   version "1.2.2"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui#e23c33d1d7deee3dc0a6f6295891b441db115911"
 
+"vtex.storefront-permissions@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions@1.45.1/public/@types/vtex.storefront-permissions":
+  version "1.45.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions@1.45.1/public/@types/vtex.storefront-permissions#cadc6a1860a6cf3ac750827b4c86529be0ed3272"
+
 "vtex.styleguide@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide":
   version "9.146.13"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide#f4ccbc54621bf5114ddd115b6032ae320f2eba55"
