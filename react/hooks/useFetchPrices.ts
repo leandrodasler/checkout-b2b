@@ -49,10 +49,12 @@ export function useTotalMargin() {
           apiRequest<PriceResponse>(
             getPriceUrl({ skuId: item.id, priceTable }),
             'GET'
-          ).then(
-            (r) =>
-              ((item.sellingPrice ?? 0) / 100 - r.costPrice) * item.quantity
           )
+            .then(
+              (r) =>
+                ((item.sellingPrice ?? 0) / 100 - r.costPrice) * item.quantity
+            )
+            .catch(() => 0)
         )
       )
 
