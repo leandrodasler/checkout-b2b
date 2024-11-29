@@ -14,7 +14,7 @@ import { Button, ButtonPlain, Modal, Toggle } from 'vtex.styleguide'
 
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import { useOrderFormCustom } from '../hooks'
-import { CompleteOrderForm, PaymentAddressType } from '../typings'
+import type { CompleteOrderForm, PaymentAddressType } from '../typings'
 import { buildBillingAddress, messages, toggleAddress } from '../utils'
 import { Address } from './Address'
 

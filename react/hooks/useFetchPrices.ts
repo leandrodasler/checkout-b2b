@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { apiRequest } from '../services'
 import type { ApiResponse } from '../typings'
@@ -8,10 +9,7 @@ import { usePermissions } from './usePermissions'
 
 interface PriceResponse extends ApiResponse {
   itemId: string
-  listPrice: number | null
-  costPrice: number
-  markup: number
-  basePrice: number
+  costPrice?: number | null
 }
 
 interface PriceTable {
@@ -40,25 +38,38 @@ export function useTotalMargin() {
   const { items } = orderForm
   const priceTable = organization?.priceTables?.[0] ?? '1'
 
-  return useQuery<number, Error>({
+  const { data } = useQuery<PriceResponse[], Error>({
     queryKey: ['fetchPrices', priceTable],
     enabled: canViewMargin && !!items.length,
-    queryFn: async () => {
-      const margins = await Promise.all(
+    queryFn: async () =>
+      Promise.all(
         items.map((item) =>
           apiRequest<PriceResponse>(
             getPriceUrl({ skuId: item.id, priceTable }),
             'GET'
           )
-            .then(
-              (r) =>
-                ((item.sellingPrice ?? 0) / 100 - r.costPrice) * item.quantity
-            )
-            .catch(() => 0)
+            .then((r) => ({ ...r, itemId: item.id }))
+            .catch(() => ({ itemId: item.id, costPrice: null }))
         )
-      )
-
-      return margins.reduce((acc, margin) => acc + margin)
-    },
+      ),
   })
+
+  const totalMargin = useMemo(
+    () =>
+      data
+        ?.map((item) => {
+          const cartItem = items.find((i) => i.id === item.itemId)
+
+          if (!item?.costPrice) return 0
+
+          return (
+            ((cartItem?.sellingPrice ?? 0) / 100 - item.costPrice) *
+            (cartItem?.quantity ?? 0)
+          )
+        })
+        .reduce((acc, margin) => acc + margin),
+    [data, items]
+  )
+
+  return totalMargin
 }

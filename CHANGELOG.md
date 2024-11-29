@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Cost center default address as fallback for shipping address
+- Keep total margin updated with order form
+
 ## [0.0.20] - 2024-11-27
 
 ### Fixed

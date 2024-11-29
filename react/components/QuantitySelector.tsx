@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { Item } from 'vtex.checkout-graphql'
+import type { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
 import { NumericStepper, withToast } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
-import { WithToast } from '../typings'
+import type { WithToast } from '../typings'
 import { isWithoutStock, messages } from '../utils'
 
 const { useOrderItems } = OrderItems

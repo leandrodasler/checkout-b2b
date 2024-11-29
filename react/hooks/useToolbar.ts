@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Item } from 'vtex.checkout-graphql'
+import type { Item } from 'vtex.checkout-graphql'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import type { WithToast } from '../typings'

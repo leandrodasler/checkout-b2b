@@ -23,7 +23,7 @@ export function useTotalizers() {
     [customApps]
   )
 
-  const { data: totalMargin } = useTotalMargin()
+  const totalMargin = useTotalMargin()
 
   if (!totalizers.length || !items?.length) return []
 

@@ -19,7 +19,7 @@ export function MarginProductPrice({
 
   if (!data?.costPrice) return <>---</>
 
-  const marginPrice = sellingPrice / 100 - data?.costPrice
+  const marginPrice = sellingPrice / 100 - data.costPrice
 
   return <>{formatPrice(marginPrice)}</>
 }

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Input } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
-import { CompleteOrderForm } from '../typings'
+import type { CompleteOrderForm } from '../typings'
 import {
   B2B_CHECKOUT_CUSTOM_APP_ID,
   B2B_CHECKOUT_CUSTOM_APP_MAJOR,

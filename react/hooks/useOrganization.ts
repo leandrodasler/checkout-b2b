@@ -3,7 +3,7 @@ import { useQuery } from 'react-apollo'
 import type { QueryGetUsersArgs } from 'vtex.b2b-organizations-graphql'
 import type { SessionSuccess } from 'vtex.session-client'
 import { useFullSession } from 'vtex.session-client'
-import { Query } from 'vtex.storefront-permissions'
+import type { Query } from 'vtex.storefront-permissions'
 
 import GET_ORGANIZATION from '../graphql/getOrganization.graphql'
 import GET_PERMISSIONS from '../graphql/getPermissions.graphql'
