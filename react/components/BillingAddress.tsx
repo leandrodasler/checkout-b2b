@@ -121,7 +121,7 @@ export function BillingAddress() {
     [newBillingAddressState, shipping.selectedAddress]
   )
 
-  if (!orderForm.paymentAddress) {
+  if (!paymentAddress) {
     return <>{formatMessage(messages.emptyAddress)}</>
   }
 
@@ -179,7 +179,7 @@ export function BillingAddress() {
         }
       >
         <AddressRules
-          country={paymentAddress?.country}
+          country={paymentAddress.country}
           shouldUseIOFetching
           useGeolocation={false}
         >

@@ -33,6 +33,9 @@ export function ShippingAddressWrapper({ showToast }: WithToast) {
     onCompleted({ updateSelectedAddress }) {
       setOrderForm({
         ...orderForm,
+        paymentAddress:
+          orderForm.paymentAddress ??
+          updateSelectedAddress.shipping.selectedAddress,
         ...updateSelectedAddress,
       } as CompleteOrderForm)
     },
@@ -45,26 +48,26 @@ export function ShippingAddressWrapper({ showToast }: WithToast) {
   const [costCenterAddress] = organization.costCenter?.addresses ?? []
 
   useEffect(() => {
-    if (!shippingAddress && costCenterAddress) {
-      setPending(true)
+    if (shippingAddress || !costCenterAddress) return
 
-      updateShippingAddress({
-        variables: {
-          address: {
-            ...costCenterAddress,
-            city: costCenterAddress.city ?? '',
-            complement: costCenterAddress.complement ?? '',
-            country: costCenterAddress.country ?? '',
-            neighborhood: costCenterAddress.neighborhood ?? '',
-            number: costCenterAddress.number ?? '',
-            postalCode: costCenterAddress.postalCode ?? '',
-            state: costCenterAddress.state ?? '',
-            street: costCenterAddress.street ?? '',
-            addressType: costCenterAddress.addressType as AddressType,
-          },
+    setPending(true)
+
+    updateShippingAddress({
+      variables: {
+        address: {
+          ...costCenterAddress,
+          city: costCenterAddress.city ?? '',
+          complement: costCenterAddress.complement ?? '',
+          country: costCenterAddress.country ?? '',
+          neighborhood: costCenterAddress.neighborhood ?? '',
+          number: costCenterAddress.number ?? '',
+          postalCode: costCenterAddress.postalCode ?? '',
+          state: costCenterAddress.state ?? '',
+          street: costCenterAddress.street ?? '',
+          addressType: costCenterAddress.addressType as AddressType,
         },
-      }).finally(() => setPending(false))
-    }
+      },
+    }).finally(() => setPending(false))
   }, [costCenterAddress, setPending, shippingAddress, updateShippingAddress])
 
   if (loading) {

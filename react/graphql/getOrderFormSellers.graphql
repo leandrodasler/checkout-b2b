@@ -1,8 +1,0 @@
-query getOrderFormSellers {
-  orderForm @context(provider: "vtex.store-graphql") {
-    sellers {
-      id
-      name
-    }
-  }
-}
