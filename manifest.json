@@ -28,13 +28,26 @@
     "vtex.search-graphql": "0.x",
     "vtex.address-form": "4.x",
     "vtex.country-codes": "2.x",
-    "vtex.session-client": "1.x"
+    "vtex.session-client": "1.x",
+    "vtex.apps-graphql": "3.x"
   },
   "registries": ["smartcheckout"],
   "policies": [],
   "billingOptions": {
     "type": "free",
     "availableCountries": ["*"]
+  },
+  "settingsSchema": {
+    "title": "Configurações de Checkout B2B",
+    "type": "object",
+    "properties": {
+      "salesVendedor": {
+        "title": "Desconto do Vendedor",
+        "description": "Configure o valor do desconto que será aplicado pelo vendedor",
+        "type": "number",
+        "default": 0
+      }
+    }
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
