@@ -1,11 +1,12 @@
 import { useMutation } from '@tanstack/react-query'
 
-import { useOrderFormCustom } from '.'
+import { useOrderFormCustom, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { apiRequest } from '../services'
-import type { ApiResponse, CompleteOrderForm, WithToast } from '../typings'
+import type { ApiResponse, CompleteOrderForm } from '../typings'
 
-export function useClearCart(showToast: WithToast['showToast']) {
+export function useClearCart() {
+  const showToast = useToast()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const { setPending } = useCheckoutB2BContext()
 
@@ -23,7 +24,7 @@ export function useClearCart(showToast: WithToast['showToast']) {
       setOrderForm(newOrderForm)
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 

@@ -12,18 +12,19 @@ import type {
   QueryShippingArgs,
   Query as StoreGraphqlQuery,
 } from 'vtex.store-graphql'
-import { Dropdown, withToast } from 'vtex.styleguide'
+import { Dropdown } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_SHIPPING from '../graphql/getShipping.graphql'
-import { useFormatPrice, useOrderFormCustom } from '../hooks'
-import type { CompleteOrderForm, WithToast } from '../typings'
+import { useFormatPrice, useOrderFormCustom, useToast } from '../hooks'
+import type { CompleteOrderForm } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 type QueryShipping = Pick<StoreGraphqlQuery, 'shipping'>
 
-function ShippingOptionWrapper({ showToast }: WithToast) {
+export function ShippingOption() {
+  const showToast = useToast()
   const handles = useCssHandles(['shippingEstimates'])
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
@@ -48,7 +49,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
       })),
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -63,7 +64,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
       } as CompleteOrderForm)
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -144,7 +145,5 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
     )
   }
 
-  return formatMessage(messages.shippingOptionEmpty)
+  return <>{formatMessage(messages.shippingOptionEmpty)}</>
 }
-
-export const ShippingOption = withToast(ShippingOptionWrapper)

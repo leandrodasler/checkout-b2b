@@ -7,16 +7,16 @@ import type {
   UpdateSelectedAddressMutationVariables,
 } from 'vtex.checkout-resources'
 import { MutationUpdateSelectedAddress } from 'vtex.checkout-resources'
-import { withToast } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { useOrderFormCustom, useOrganization } from '../hooks'
-import type { CompleteOrderForm, WithToast } from '../typings'
+import { useOrderFormCustom, useOrganization, useToast } from '../hooks'
+import type { CompleteOrderForm } from '../typings'
 import { messages } from '../utils'
 import { Address } from './Address'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
-export function ShippingAddressWrapper({ showToast }: WithToast) {
+export function ShippingAddress() {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
   const { organization } = useOrganization()
@@ -40,7 +40,7 @@ export function ShippingAddressWrapper({ showToast }: WithToast) {
       } as CompleteOrderForm)
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -80,5 +80,3 @@ export function ShippingAddressWrapper({ showToast }: WithToast) {
 
   return <Address address={shippingAddress} />
 }
-
-export const ShippingAddress = withToast(ShippingAddressWrapper)

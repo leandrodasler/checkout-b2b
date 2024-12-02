@@ -3,20 +3,20 @@ import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
-import { NumericStepper, withToast } from 'vtex.styleguide'
+import { NumericStepper } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
-import { useOrderFormCustom } from '../hooks'
-import type { WithToast } from '../typings'
+import { useOrderFormCustom, useToast } from '../hooks'
 import { isWithoutStock, messages } from '../utils'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
 
-type Props = { item: Item } & WithToast
+type Props = { item: Item }
 
-function QuantitySelectorComponent({ item, showToast }: Props) {
+export function QuantitySelector({ item }: Props) {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
   const { updateQuantity } = useOrderItems()
@@ -67,7 +67,7 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
 
       setMinQuantity(minQuantityValue)
       if (item.quantity < minQuantityValue) {
-        showToast?.({
+        showToast({
           message: `${formatMessage(messages.changeMinimumQuantity)} ${
             item.skuName
           }`,
@@ -102,5 +102,3 @@ function QuantitySelectorComponent({ item, showToast }: Props) {
     />
   )
 }
-
-export const QuantitySelector = withToast(QuantitySelectorComponent)

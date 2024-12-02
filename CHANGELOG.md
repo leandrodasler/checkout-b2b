@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Node and graphql setup for saved carts
 
+### Changed
+
+- Putting showToast in CheckoutB2BContext and new hook useToast consuming it
+
 ## [0.0.21] - 2024-11-29
 
 ### Fixed

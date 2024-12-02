@@ -6,14 +6,13 @@ import type {
   MutationSetOrderFormCustomDataArgs,
 } from 'vtex.store-graphql'
 
-import { useOrderFormCustom } from '.'
+import { useOrderFormCustom, useToast } from '.'
 import SET_ORDER_FORM_CUSTOM_DATA from '../graphql/setOrderFormCustomData.graphql'
 import { apiRequest } from '../services'
 import type {
   PaymentsBody,
   TransactionBody,
   TransactionResponse,
-  WithToast,
 } from '../typings'
 import {
   B2B_CHECKOUT_CUSTOM_APP_ID,
@@ -44,7 +43,8 @@ function getOrderPlacedUrl(orderGroup: string) {
   return `/checkout/orderPlaced?og=${orderGroup}`
 }
 
-export function usePlaceOrder(showToast: WithToast['showToast']) {
+export function usePlaceOrder() {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
   const {
@@ -155,7 +155,7 @@ export function usePlaceOrder(showToast: WithToast['showToast']) {
       window.location.assign(orderPlacedUrl)
     },
     onError(e) {
-      showToast?.({
+      showToast({
         message: `${formatMessage(messages.placeOrderError)}: ${e.message}`,
       })
     },

@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { Mutation, MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
-import { ActionMenu, withToast } from 'vtex.styleguide'
+import { ActionMenu } from 'vtex.styleguide'
 
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
 import SAVE_CART_MUTATION from '../graphql/saveCart.graphql'
-import { usePermissions } from '../hooks'
-import type { WithToast } from '../typings'
+import { usePermissions, useToast } from '../hooks'
 import { messages } from '../utils'
 import { SavedCartsModal } from './SavedCartsModal'
 
 type SaveCardMutation = Pick<Mutation, 'saveCart'>
 
-export function SavedCartsWrapper({ showToast }: WithToast) {
+export function SavedCarts() {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { isSaleUser } = usePermissions()
   const [open, setOpen] = useState(false)
@@ -23,10 +23,10 @@ export function SavedCartsWrapper({ showToast }: WithToast) {
   >(SAVE_CART_MUTATION, {
     refetchQueries: [{ query: GET_SAVED_CARTS }],
     onCompleted() {
-      showToast?.({ message: formatMessage(messages.savedCartsSaveSuccess) })
+      showToast({ message: formatMessage(messages.savedCartsSaveSuccess) })
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -57,5 +57,3 @@ export function SavedCartsWrapper({ showToast }: WithToast) {
     </>
   )
 }
-
-export const SavedCarts = withToast(SavedCartsWrapper)

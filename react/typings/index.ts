@@ -12,7 +12,7 @@ type ShowToastArgs = {
 }
 
 export type WithToast<T = unknown> = T & {
-  showToast?: (args: ShowToastArgs) => void
+  showToast: (args: ShowToastArgs) => void
 }
 
 export type TableSchema<RowType> = {

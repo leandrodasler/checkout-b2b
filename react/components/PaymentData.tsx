@@ -4,15 +4,16 @@ import { useIntl } from 'react-intl'
 import type { PaymentDataInput } from 'vtex.checkout-graphql'
 import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
-import { Dropdown, withToast } from 'vtex.styleguide'
+import { Dropdown } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { useOrderFormCustom } from '../hooks'
-import type { CompleteOrderForm, WithToast } from '../typings'
+import { useOrderFormCustom, useToast } from '../hooks'
+import type { CompleteOrderForm } from '../typings'
 import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
-function PaymentDataWrapper({ showToast }: WithToast) {
+export function PaymentData() {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
   const {
@@ -32,7 +33,7 @@ function PaymentDataWrapper({ showToast }: WithToast) {
       } as CompleteOrderForm)
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -118,5 +119,3 @@ function PaymentDataWrapper({ showToast }: WithToast) {
     />
   )
 }
-
-export const PaymentData = withToast(PaymentDataWrapper)

@@ -2,22 +2,22 @@ import React, { useMemo, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { Query, SavedCart } from 'ssesandbox04.checkout-b2b'
-import { Button, Dropdown, Modal, withToast } from 'vtex.styleguide'
+import { Button, Dropdown, Modal } from 'vtex.styleguide'
 
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
-import { useOrderFormCustom } from '../hooks'
-import type { WithToast } from '../typings'
+import { useOrderFormCustom, useToast } from '../hooks'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 type GetSavedCartsQuery = Pick<Query, 'getSavedCarts'>
 
-type Props = WithToast & {
+type Props = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function SavedCartsModalWrapper({ showToast, open, setOpen }: Props) {
+export function SavedCartsModal({ open, setOpen }: Props) {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
   const [orderFormId, setOrderFormId] = useState<string>(orderForm.orderFormId)
@@ -25,7 +25,7 @@ function SavedCartsModalWrapper({ showToast, open, setOpen }: Props) {
   const { data, loading } = useQuery<GetSavedCartsQuery>(GET_SAVED_CARTS, {
     ssr: false,
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -91,5 +91,3 @@ function SavedCartsModalWrapper({ showToast, open, setOpen }: Props) {
     </Modal>
   )
 }
-
-export const SavedCartsModal = withToast(SavedCartsModalWrapper)

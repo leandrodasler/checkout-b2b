@@ -11,7 +11,6 @@ import {
   Table,
   ToastProvider,
   Totalizer,
-  withToast,
 } from 'vtex.styleguide'
 
 import 'vtex.country-codes/locales'
@@ -28,19 +27,18 @@ import {
   useTotalizers,
 } from './hooks'
 import { queryClient } from './services'
-import { WithToast } from './typings'
 import { messages } from './utils'
 
 import './styles.css'
 
-function CheckoutB2B({ showToast }: WithToast) {
+function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table'])
   const { loading: organizationLoading } = useOrganization()
   const { loading: orderFormLoading, orderForm } = useOrderFormCustom()
-  const { clearCart, isLoading: clearCartLoading } = useClearCart(showToast)
+  const { clearCart, isLoading: clearCartLoading } = useClearCart()
   const totalizers = useTotalizers()
   const schema = useTableSchema()
-  const toolbar = useToolbar(showToast)
+  const toolbar = useToolbar()
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
 
@@ -103,14 +101,12 @@ function CheckoutB2B({ showToast }: WithToast) {
   )
 }
 
-const CheckoutB2BWithToast = withToast(CheckoutB2B)
-
 function CheckoutB2BWrapper() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider positioning="window">
         <CheckoutB2BProvider>
-          <CheckoutB2BWithToast />
+          <CheckoutB2B />
         </CheckoutB2BProvider>
       </ToastProvider>
     </QueryClientProvider>
