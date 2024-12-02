@@ -1,0 +1,12 @@
+query getSavedCarts {
+  getSavedCarts @context(provider: "ssesandbox04.checkout-b2b") {
+    id
+    createdIn
+    lastInteractionIn
+    title
+    email
+    orderFormId
+    organizationId
+    costCenterId
+  }
+}

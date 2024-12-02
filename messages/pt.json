@@ -5,6 +5,13 @@
   "store/checkout.b2b.modal.editBillingAddress": "Editar Endereço de Cobrança",
   "store/checkout.b2b.modal.sameAsShipping": "Mesmo endereço de entrega",
 
+  "store/checkout.b2b.savedCarts.title": "Gerenciar carrinhos salvos",
+  "store/checkout.b2b.savedCarts.save-cart.title": "Título para o carrinho",
+  "store/checkout.b2b.savedCarts.save-cart.label": "Salvar carrinho atual",
+  "store/checkout.b2b.savedCarts.save-cart.success": "O carrinho foi salvo com sucesso",
+  "store/checkout.b2b.savedCarts.use-cart.label": "Utilizar um carrinho salvo",
+  "store/checkout.b2b.savedCarts.use-cart.select.label": "Selecione um carrinho",
+
   "store/checkout.b2b.totalizer.shippingAddress": "Endereço de Entrega",
   "store/checkout.b2b.totalizer.billingAddress": "Endereço de Cobrança",
   "store/checkout.b2b.totalizer.editAddress": "Editar",

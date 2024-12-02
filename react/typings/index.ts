@@ -38,6 +38,7 @@ export type ApiResponse = {
 
 export type CompleteOrderFormData = ApiResponse &
   Pick<OrderFormStore, 'sellers'> & {
+    orderFormId: string
     invoiceData?: { address?: Maybe<Address> }
     clientProfileData: OrderFormStore['clientProfileData'] & {
       profileCompleteOnLoading?: string | null
@@ -111,6 +112,7 @@ export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStoref
   users: GetOrganizationQuery['getUsers']
   costCenter: GetOrganizationQuery['getCostCenterByIdStorefront']
   role: string
+  roleName: string
 }
 
 type PaymentField<T> = {

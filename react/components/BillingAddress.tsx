@@ -151,8 +151,8 @@ export function BillingAddress() {
         aria-label={formatMessage(messages.editBillingAddress)}
         aria-describedby="modal-billing-address"
         bottomBar={
-          <div className="flex items-center justify-between w-100">
-            <div className="flex items-center">
+          <div className="flex flex-wrap items-center justify-around justify-between-ns w-100">
+            <div className="flex items-center mb3 mb0-ns">
               <Toggle checked={toggle} onChange={handleToggle} />
               <span className="ml4 c-action-secondary t-mini mw9">
                 {formatMessage(messages.sameAsShipping)}

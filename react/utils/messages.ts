@@ -51,4 +51,14 @@ export const messages = defineMessages({
   },
   salesRepresentative: { id: 'store/checkout.b2b.totalizer.salesRep' },
   salesAdmin: { id: 'store/checkout.b2b.totalizer.salesAdm' },
+  savedCartsTitle: { id: 'store/checkout.b2b.savedCarts.title' },
+  savedCartsSaveTitle: { id: 'store/checkout.b2b.savedCarts.save-cart.title' },
+  savedCartsSaveLabel: { id: 'store/checkout.b2b.savedCarts.save-cart.label' },
+  savedCartsSaveSuccess: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.success',
+  },
+  savedCartsUseLabel: { id: 'store/checkout.b2b.savedCarts.use-cart.label' },
+  savedCartsSelectLabel: {
+    id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
+  },
 })

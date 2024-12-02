@@ -7,7 +7,7 @@ import { NumericStepper, withToast } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
-import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
+import { useOrderFormCustom } from '../hooks'
 import type { WithToast } from '../typings'
 import { isWithoutStock, messages } from '../utils'
 

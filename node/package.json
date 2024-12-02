@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@vtex/clients": "^2.21.0",
+    "co-body": "^6.0.0",
+    "ramda": "^0.25.0"
+  },
+  "devDependencies": {
+    "@types/co-body": "^0.0.3",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^20.0.0",
+    "@types/ramda": "types/npm-ramda#dist",
+    "@vtex/api": "6.48.0",
+    "@vtex/test-tools": "^1.0.0",
+    "@vtex/tsconfig": "^0.5.6",
+    "typescript": "5.5.3"
+  },
+  "resolutions": {
+    "@types/testing-library__dom": "6.12.1",
+    "@types/express": "4.16.0",
+    "@types/express-serve-static-core": "4.16.0"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit --pretty"
+  },
+  "version": "0.3.0",
+  "license": "UNLICENSED"
+}

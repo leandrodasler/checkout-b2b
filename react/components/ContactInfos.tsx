@@ -21,7 +21,7 @@ export function ContactInfos() {
     orderForm: { clientProfileData, items },
   } = useOrderFormCustom()
 
-  const { costCenter, users, tradeName, name } = organization
+  const { costCenter, users, tradeName, name, roleName } = organization
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
 
@@ -113,8 +113,11 @@ export function ContactInfos() {
     label: formatMessage(messages.buyerName),
     value: (
       <>
-        <div className="mb1">
-          {firstName} {lastName}
+        <div className="mb1 flex items-center flex-wrap">
+          <span>
+            {firstName} {lastName}
+          </span>
+          <Tag size="small">{roleName}</Tag>
         </div>
         <span className="t-mini">{email}</span>
         {phone && phone !== '+10000000000' && (

@@ -52,6 +52,7 @@ export function useOrganization() {
       users: data?.getUsers,
       costCenter: data?.getCostCenterByIdStorefront,
       role: permissionsData?.checkUserPermission?.role?.id ?? '',
+      roleName: permissionsData?.checkUserPermission?.role?.name ?? '',
     }
   }, [data, permissionsData])
 

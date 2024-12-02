@@ -3,12 +3,11 @@ import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
+import { useOrderFormCustom, useTotalMargin } from '.'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
 import { B2B_QUOTES_CUSTOM_APP_ID, messages } from '../utils'
-import { useTotalMargin } from './useFetchPrices'
-import { useOrderFormCustom } from './useOrderFormCustom'
 
 export function useTotalizers() {
   const { formatMessage } = useIntl()

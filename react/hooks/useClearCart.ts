@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query'
 
+import { useOrderFormCustom } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { apiRequest } from '../services'
 import type { ApiResponse, CompleteOrderForm, WithToast } from '../typings'
-import { useOrderFormCustom } from './useOrderFormCustom'
 
 export function useClearCart(showToast: WithToast['showToast']) {
   const { orderForm, setOrderForm } = useOrderFormCustom()

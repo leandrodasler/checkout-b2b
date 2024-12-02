@@ -5,13 +5,12 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 
+import { useOrderFormCustom, usePermissions } from '.'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
-import { useOrderFormCustom } from './useOrderFormCustom'
-import { usePermissions } from './usePermissions'
 
 const { useOrderItems } = OrderItems
 
@@ -23,7 +22,7 @@ export function useTableSchema(): TableSchema<Item> {
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
-  const { canViewMargin } = usePermissions()
+  const { isSaleUser } = usePermissions()
 
   return useMemo(
     () => ({
@@ -107,7 +106,7 @@ export function useTableSchema(): TableSchema<Item> {
             )
           },
         },
-        ...(canViewMargin && {
+        ...(isSaleUser && {
           listPrice: {
             width: 100,
             title: formatMessage(messages.margin),
@@ -167,6 +166,6 @@ export function useTableSchema(): TableSchema<Item> {
         },
       },
     }),
-    [formatMessage, canViewMargin, orderForm.sellers, removeItem]
+    [formatMessage, isSaleUser, orderForm.sellers, removeItem]
   )
 }

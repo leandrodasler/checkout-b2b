@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
+import { useOrderFormCustom, useOrganization, usePermissions } from '.'
 import { apiRequest } from '../services'
 import type { ApiResponse } from '../typings'
-import { useOrderFormCustom } from './useOrderFormCustom'
-import { useOrganization } from './useOrganization'
-import { usePermissions } from './usePermissions'
 
 interface PriceResponse extends ApiResponse {
   itemId: string
@@ -34,13 +32,13 @@ export function useFetchPrices(skuId: string, priceTable: string) {
 export function useTotalMargin() {
   const { orderForm } = useOrderFormCustom()
   const { organization } = useOrganization()
-  const { canViewMargin } = usePermissions()
+  const { isSaleUser } = usePermissions()
   const { items } = orderForm
   const priceTable = organization?.priceTables?.[0] ?? '1'
 
   const { data } = useQuery<PriceResponse[], Error>({
     queryKey: ['fetchPrices', priceTable],
-    enabled: canViewMargin && !!items.length,
+    enabled: isSaleUser && !!items.length,
     queryFn: async () =>
       Promise.all(
         items.map((item) =>

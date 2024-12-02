@@ -6,6 +6,7 @@ import type {
   MutationSetOrderFormCustomDataArgs,
 } from 'vtex.store-graphql'
 
+import { useOrderFormCustom } from '.'
 import SET_ORDER_FORM_CUSTOM_DATA from '../graphql/setOrderFormCustomData.graphql'
 import { apiRequest } from '../services'
 import type {
@@ -20,7 +21,6 @@ import {
   messages,
   PO_NUMBER_CUSTOM_FIELD,
 } from '../utils'
-import { useOrderFormCustom } from './useOrderFormCustom'
 
 type MutationSetOrderFormCustomData = Pick<Mutation, 'setOrderFormCustomData'>
 

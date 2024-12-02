@@ -18,6 +18,7 @@ import 'vtex.country-codes/locales'
 
 import { CheckoutB2BProvider } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
+import { SavedCarts } from './components/SavedCarts'
 import {
   useClearCart,
   useOrderFormCustom,
@@ -62,7 +63,9 @@ function CheckoutB2B({ showToast }: WithToast) {
             onLinkClick={() =>
               navigate({ page: 'store.home', fallbackToWindowLocation: true })
             }
-          />
+          >
+            <SavedCarts />
+          </PageHeader>
         }
       >
         <PageBlock>

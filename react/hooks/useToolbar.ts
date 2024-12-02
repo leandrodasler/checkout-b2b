@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 
+import { useOrderFormCustom, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import type { WithToast } from '../typings'
 import { messages } from '../utils'
-import { useOrderFormCustom } from './useOrderFormCustom'
-import { usePlaceOrder } from './usePlaceOrder'
 
 export function useToolbar(showToast: WithToast['showToast']) {
   const { formatMessage } = useIntl()

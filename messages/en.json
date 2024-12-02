@@ -5,6 +5,13 @@
   "store/checkout.b2b.modal.editBillingAddress": "Edit Billing Address",
   "store/checkout.b2b.modal.sameAsShipping": "Same as shipping address",
 
+  "store/checkout.b2b.savedCarts.title": "Manage saved carts",
+  "store/checkout.b2b.savedCarts.save-cart.title": "Cart title",
+  "store/checkout.b2b.savedCarts.save-cart.label": "Save current cart",
+  "store/checkout.b2b.savedCarts.save-cart.success": "Cart saved successfully",
+  "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
+  "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
+
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",
   "store/checkout.b2b.totalizer.editAddress": "Edit",

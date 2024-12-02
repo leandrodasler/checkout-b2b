@@ -1,0 +1,18 @@
+type SavedCart {
+  id: ID!
+  createdIn: String!
+  lastInteractionIn: String!
+  title: String!
+  email: String!
+  orderFormId: String!
+  organizationId: String!
+  costCenterId: String!
+}
+
+type Query {
+  getSavedCarts: [SavedCart!]!
+}
+
+type Mutation {
+  saveCart(title: String): ID!
+}
