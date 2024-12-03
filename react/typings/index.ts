@@ -123,3 +123,8 @@ type PaymentField<T> = {
 export type PaymentAddressType = {
   [K in keyof Address]: PaymentField<Address[K]>
 }
+
+export type ModalProps = {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}

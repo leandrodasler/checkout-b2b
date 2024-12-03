@@ -6,9 +6,11 @@
   "store/checkout.b2b.modal.sameAsShipping": "Mesmo endereço de entrega",
 
   "store/checkout.b2b.savedCarts.title": "Gerenciar carrinhos salvos",
-  "store/checkout.b2b.savedCarts.save-cart.title": "Título para o carrinho",
+  "store/checkout.b2b.savedCarts.save-cart.title": "Título para o carrinho (opcional)",
+  "store/checkout.b2b.savedCarts.save-cart.placeholder": "Escreva um título que facilite a futura busca por este carrinho",
   "store/checkout.b2b.savedCarts.save-cart.label": "Salvar carrinho atual",
   "store/checkout.b2b.savedCarts.save-cart.success": "O carrinho foi salvo com sucesso",
+  "store/checkout.b2b.savedCarts.save-cart.default.title": "Carrinho {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Utilizar um carrinho salvo",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Selecione um carrinho",
 

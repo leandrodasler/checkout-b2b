@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { Query, SavedCart } from 'ssesandbox04.checkout-b2b'
@@ -6,17 +6,13 @@ import { Button, Dropdown, Modal } from 'vtex.styleguide'
 
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
 import { useOrderFormCustom, useToast } from '../hooks'
+import type { ModalProps } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 type GetSavedCartsQuery = Pick<Query, 'getSavedCarts'>
 
-type Props = {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-export function SavedCartsModal({ open, setOpen }: Props) {
+export function SavedCartsListModal({ open, setOpen }: ModalProps) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
@@ -39,15 +35,15 @@ export function SavedCartsModal({ open, setOpen }: Props) {
   const options = useMemo(
     () =>
       savedCarts?.map((cart: SavedCart) => ({
-        label: cart.title,
+        label: `${new Date(cart.createdIn).toLocaleString()} - ${cart.title}`,
         value: cart.orderFormId,
       })),
     [savedCarts]
   )
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setOpen(false)
-  }
+  }, [setOpen])
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOrderFormId(e.target.value)

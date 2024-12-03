@@ -1,59 +1,50 @@
 import React, { useState } from 'react'
-import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { Mutation, MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
 import { ActionMenu } from 'vtex.styleguide'
 
-import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
-import SAVE_CART_MUTATION from '../graphql/saveCart.graphql'
-import { usePermissions, useToast } from '../hooks'
+import { usePermissions } from '../hooks'
 import { messages } from '../utils'
-import { SavedCartsModal } from './SavedCartsModal'
-
-type SaveCardMutation = Pick<Mutation, 'saveCart'>
+import { SavedCartsFormModal } from './SavedCartsFormModal'
+import { SavedCartsListModal } from './SavedCartsListModal'
 
 export function SavedCarts() {
-  const showToast = useToast()
   const { formatMessage } = useIntl()
-  const { isSaleUser } = usePermissions()
-  const [open, setOpen] = useState(false)
-  const [saveCart, { loading }] = useMutation<
-    SaveCardMutation,
-    MutationSaveCartArgs
-  >(SAVE_CART_MUTATION, {
-    refetchQueries: [{ query: GET_SAVED_CARTS }],
-    onCompleted() {
-      showToast({ message: formatMessage(messages.savedCartsSaveSuccess) })
-    },
-    onError({ message }) {
-      showToast({ message })
-    },
-  })
+  const { isSalesUser } = usePermissions()
+  const [openList, setOpenList] = useState(false)
+  const [openForm, setOpenForm] = useState(false)
 
-  const handleOpenModal = () => {
-    setOpen(true)
+  const handleOpenListModal = () => {
+    setOpenList(true)
   }
 
-  if (!isSaleUser) return null
+  const handleOpenFormModal = () => {
+    setOpenForm(true)
+  }
+
+  if (!isSalesUser) return null
 
   return (
     <>
       <ActionMenu
-        loading={loading}
         label={formatMessage(messages.savedCartsTitle)}
-        buttonProps={{ variation: 'tertiary', isLoading: loading }}
+        buttonProps={{ variation: 'tertiary' }}
         options={[
           {
             label: formatMessage(messages.savedCartsSaveLabel),
-            onClick: saveCart,
+            onClick: handleOpenFormModal,
           },
           {
             label: formatMessage(messages.savedCartsUseLabel),
-            onClick: handleOpenModal,
+            onClick: handleOpenListModal,
           },
         ]}
       />
-      {open && <SavedCartsModal open={open} setOpen={setOpen} />}
+      {openList && (
+        <SavedCartsListModal open={openList} setOpen={setOpenList} />
+      )}
+      {openForm && (
+        <SavedCartsFormModal open={openForm} setOpen={setOpenForm} />
+      )}
     </>
   )
 }

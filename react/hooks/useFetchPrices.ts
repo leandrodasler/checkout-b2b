@@ -32,13 +32,13 @@ export function useFetchPrices(skuId: string, priceTable: string) {
 export function useTotalMargin() {
   const { orderForm } = useOrderFormCustom()
   const { organization } = useOrganization()
-  const { isSaleUser } = usePermissions()
+  const { isSalesUser } = usePermissions()
   const { items } = orderForm
   const priceTable = organization?.priceTables?.[0] ?? '1'
 
   const { data } = useQuery<PriceResponse[], Error>({
     queryKey: ['fetchPrices', priceTable],
-    enabled: isSaleUser && !!items.length,
+    enabled: isSalesUser && !!items.length,
     queryFn: async () =>
       Promise.all(
         items.map((item) =>

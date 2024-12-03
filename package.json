@@ -11,6 +11,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "vtex setup --typings -i && git add package.json react/package.json node/package.json yarn.lock react/yarn.lock node/yarn.lock react/tsconfig.json node/tsconfig.json && lint-staged",
+      "post-commit": "vtex setup --typings && yarn format",
       "post-merge": "yarn && vtex setup --typings && yarn format"
     }
   },

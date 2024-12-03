@@ -22,7 +22,7 @@ export function useTableSchema(): TableSchema<Item> {
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
-  const { isSaleUser } = usePermissions()
+  const { isSalesUser } = usePermissions()
 
   return useMemo(
     () => ({
@@ -106,7 +106,7 @@ export function useTableSchema(): TableSchema<Item> {
             )
           },
         },
-        ...(isSaleUser && {
+        ...(isSalesUser && {
           listPrice: {
             width: 100,
             title: formatMessage(messages.margin),
@@ -166,6 +166,6 @@ export function useTableSchema(): TableSchema<Item> {
         },
       },
     }),
-    [formatMessage, isSaleUser, orderForm.sellers, removeItem]
+    [formatMessage, isSalesUser, orderForm.sellers, removeItem]
   )
 }

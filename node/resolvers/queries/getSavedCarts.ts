@@ -29,10 +29,8 @@ export const getSavedCarts = async (
       pageSize: 100,
     },
     where: `(organizationId='${organizationId}') AND (costCenterId='${costCenterId}')`,
-    sort: 'title ASC',
+    sort: 'createdIn DESC',
   })
-
-  clients.checkout.newOrderForm
 
   return savedCarts
 }

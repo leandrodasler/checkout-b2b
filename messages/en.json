@@ -6,9 +6,11 @@
   "store/checkout.b2b.modal.sameAsShipping": "Same as shipping address",
 
   "store/checkout.b2b.savedCarts.title": "Manage saved carts",
-  "store/checkout.b2b.savedCarts.save-cart.title": "Cart title",
+  "store/checkout.b2b.savedCarts.save-cart.title": "Cart title (optional)",
+  "store/checkout.b2b.savedCarts.save-cart.placeholder": "Write a title that makes it easy to find this cart in the future",
   "store/checkout.b2b.savedCarts.save-cart.label": "Save current cart",
   "store/checkout.b2b.savedCarts.save-cart.success": "Cart saved successfully",
+  "store/checkout.b2b.savedCarts.save-cart.default.title": "Cart {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
 

@@ -12,6 +12,7 @@ export const SAVED_CART_FIELDS = [
   'orderFormId',
   'organizationId',
   'costCenterId',
+  'data',
 ]
 export const SAVED_CART_SCHEMA_VERSION = 'v0.0.1'
 
@@ -26,6 +27,7 @@ export const schemas = [
         orderFormId: { type: 'string' },
         organizationId: { type: 'string' },
         costCenterId: { type: 'string' },
+        data: { type: 'string' },
       },
       'v-indexed': [
         'title',

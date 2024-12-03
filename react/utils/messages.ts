@@ -53,6 +53,12 @@ export const messages = defineMessages({
   salesAdmin: { id: 'store/checkout.b2b.totalizer.salesAdm' },
   savedCartsTitle: { id: 'store/checkout.b2b.savedCarts.title' },
   savedCartsSaveTitle: { id: 'store/checkout.b2b.savedCarts.save-cart.title' },
+  savedCartsSavePlaceholder: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.placeholder',
+  },
+  savedCartsSaveDefaultTitle: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.default.title',
+  },
   savedCartsSaveLabel: { id: 'store/checkout.b2b.savedCarts.save-cart.label' },
   savedCartsSaveSuccess: {
     id: 'store/checkout.b2b.savedCarts.save-cart.success',

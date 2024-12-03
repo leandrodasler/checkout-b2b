@@ -1,5 +1,5 @@
 import { ServiceContext } from '@vtex/api'
-import type { MutationSaveCartArgs, SavedCart } from 'ssesandbox04.checkout-b2b'
+import type { MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
@@ -11,7 +11,7 @@ import {
 
 export const saveCart = async (
   _: unknown,
-  { title: inputTitle }: MutationSaveCartArgs,
+  { id, title, additionalData }: MutationSaveCartArgs,
   context: ServiceContext<Clients>
 ) => {
   const {
@@ -23,22 +23,18 @@ export const saveCart = async (
 
   await saveSchemas(context)
 
-  const { clients, vtex } = context
+  const { clients } = context
 
-  const currentSavedCart = await clients.masterdata.searchDocuments<SavedCart>({
-    schema: SAVED_CART_SCHEMA_VERSION,
-    dataEntity: SAVED_CART_ENTITY,
-    fields: ['id'],
-    pagination: {
-      page: 1,
-      pageSize: 1,
-    },
-    where: `orderFormId='${orderFormId}'`,
-  })
+  const orderForm = await clients.checkout.orderForm(orderFormId)
+  let additionalDataObject = {}
 
-  const id = currentSavedCart[0]?.id
-  const title =
-    (inputTitle ?? '') || `Cart ${new Date().toLocaleString(vtex.locale)}`
+  try {
+    additionalDataObject = JSON.parse(additionalData ?? '{}')
+  } catch {
+    /**/
+  }
+
+  const data = JSON.stringify({ ...orderForm, ...additionalDataObject })
 
   const { DocumentId } = await clients.masterdata.createOrUpdateEntireDocument({
     ...(id && { id }),
@@ -50,6 +46,7 @@ export const saveCart = async (
       orderFormId,
       organizationId,
       costCenterId,
+      data,
     },
   })
 
