@@ -1,0 +1,6 @@
+query getSettings {
+  publicSettingsForApp(app: "ssesandbox04.checkout-b2b", version: "0.x")
+    @context(provider: "vtex.apps-graphql") {
+    message
+  }
+}
