@@ -4,8 +4,11 @@ import { PaymentAddressType } from '../typings'
 
 export * from './messages'
 
-export const B2B_CUSTOM_APP_ID = 'b2b-checkout-settings'
-export const B2B_CUSTOM_APP_MAJOR = 1
+export const SESSION_NAMESPACE = 'storefront-permissions'
+export const NAMESPACE_ITEMS = ['organization', 'costcenter']
+export const B2B_QUOTES_CUSTOM_APP_ID = 'b2b-quotes-graphql'
+export const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
+export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 
 export function normalizeString(str?: string | null) {

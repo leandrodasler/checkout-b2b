@@ -10,8 +10,9 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "post-merge": "yarn && cd ./react && yarn && cd .."
+      "pre-commit": "vtex setup --typings -i && git add package.json react/package.json node/package.json yarn.lock react/yarn.lock node/yarn.lock react/tsconfig.json node/tsconfig.json && lint-staged",
+      "post-commit": "vtex setup --typings && yarn format",
+      "post-merge": "yarn && vtex setup --typings && yarn format"
     }
   },
   "lint-staged": {
@@ -30,6 +31,7 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "12.12.21",
     "@vtex/danger": "^0.2.7",
     "@vtex/intl-equalizer": "^2.5.0",
     "@vtex/prettier-config": "^0.3.5",

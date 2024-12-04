@@ -1,0 +1,10 @@
+query getPermissions {
+  checkUserPermission @context(provider: "vtex.storefront-permissions") {
+    role {
+      id
+      name
+      slug
+    }
+    permissions
+  }
+}

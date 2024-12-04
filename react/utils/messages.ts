@@ -28,6 +28,7 @@ export const messages = defineMessages({
   companyName: { id: 'store/checkout.b2b.totalizer.companyName' },
   buyerName: { id: 'store/checkout.b2b.totalizer.buyerName' },
   quotationDiscount: { id: 'store/checkout.b2b.totalizer.quotationDiscount' },
+  totalMargin: { id: 'store/checkout.b2b.totalizer.totalMargin' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },
@@ -50,4 +51,20 @@ export const messages = defineMessages({
   },
   salesRepresentative: { id: 'store/checkout.b2b.totalizer.salesRep' },
   salesAdmin: { id: 'store/checkout.b2b.totalizer.salesAdm' },
+  savedCartsTitle: { id: 'store/checkout.b2b.savedCarts.title' },
+  savedCartsSaveTitle: { id: 'store/checkout.b2b.savedCarts.save-cart.title' },
+  savedCartsSavePlaceholder: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.placeholder',
+  },
+  savedCartsSaveDefaultTitle: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.default.title',
+  },
+  savedCartsSaveLabel: { id: 'store/checkout.b2b.savedCarts.save-cart.label' },
+  savedCartsSaveSuccess: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.success',
+  },
+  savedCartsUseLabel: { id: 'store/checkout.b2b.savedCarts.use-cart.label' },
+  savedCartsSelectLabel: {
+    id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
+  },
 })

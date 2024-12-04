@@ -1,23 +1,25 @@
 import React, { useCallback, useMemo } from 'react'
 import type { Item } from 'vtex.checkout-graphql'
+import { withToast } from 'vtex.styleguide'
+
+import type { WithToast } from './typings'
 
 type CheckoutB2BContextData = {
   pending: boolean
   setPending: React.Dispatch<React.SetStateAction<boolean>>
+  showToast: WithToast['showToast']
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
 }
 
-const CheckoutB2BContext = React.createContext<CheckoutB2BContextData>({
-  pending: false,
-  setPending: () => {},
-  getSellingPrice: () => 0,
-  getDiscountedPrice: () => 0,
-})
+const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
+  null
+)
 
-export function CheckoutB2BProvider({
+function CheckoutB2BProviderWrapper({
   children,
-}: React.PropsWithChildren<unknown>) {
+  showToast,
+}: React.PropsWithChildren<WithToast>) {
   const [pending, setPending] = React.useState(false)
 
   const getSellingPrice = useCallback(
@@ -45,10 +47,11 @@ export function CheckoutB2BProvider({
     () => ({
       pending,
       setPending,
+      showToast,
       getSellingPrice,
       getDiscountedPrice,
     }),
-    [pending, getSellingPrice, getDiscountedPrice]
+    [pending, setPending, showToast, getSellingPrice, getDiscountedPrice]
   )
 
   return (
@@ -58,6 +61,16 @@ export function CheckoutB2BProvider({
   )
 }
 
+export const CheckoutB2BProvider = withToast(CheckoutB2BProviderWrapper)
+
 export function useCheckoutB2BContext() {
-  return React.useContext(CheckoutB2BContext)
+  const context = React.useContext(CheckoutB2BContext)
+
+  if (!context) {
+    throw new Error(
+      'useCheckoutB2BContext must be used within a CheckoutB2BProvider'
+    )
+  }
+
+  return context
 }

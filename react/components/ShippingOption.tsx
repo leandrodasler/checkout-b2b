@@ -1,7 +1,6 @@
 import React from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { OrderForm } from 'vtex.checkout-graphql'
 import type {
   SelectDeliveryOptionMutation,
   SelectDeliveryOptionMutationVariables,
@@ -13,18 +12,19 @@ import type {
   QueryShippingArgs,
   Query as StoreGraphqlQuery,
 } from 'vtex.store-graphql'
-import { Dropdown, withToast } from 'vtex.styleguide'
+import { Dropdown } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_SHIPPING from '../graphql/getShipping.graphql'
-import { useFormatPrice, useOrderFormCustom } from '../hooks'
-import type { WithToast } from '../typings'
+import { useFormatPrice, useOrderFormCustom, useToast } from '../hooks'
+import type { CompleteOrderForm } from '../typings'
 import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 type QueryShipping = Pick<StoreGraphqlQuery, 'shipping'>
 
-function ShippingOptionWrapper({ showToast }: WithToast) {
+export function ShippingOption() {
+  const showToast = useToast()
   const handles = useCssHandles(['shippingEstimates'])
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
@@ -49,7 +49,7 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
       })),
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -58,10 +58,13 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
     SelectDeliveryOptionMutationVariables
   >(MutationSelectDeliveryOption, {
     onCompleted({ selectDeliveryOption }) {
-      setOrderForm(selectDeliveryOption as OrderForm)
+      setOrderForm({
+        ...orderForm,
+        ...selectDeliveryOption,
+      } as CompleteOrderForm)
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 
@@ -142,7 +145,5 @@ function ShippingOptionWrapper({ showToast }: WithToast) {
     )
   }
 
-  return formatMessage(messages.shippingOptionEmpty)
+  return <>{formatMessage(messages.shippingOptionEmpty)}</>
 }
-
-export const ShippingOption = withToast(ShippingOptionWrapper)

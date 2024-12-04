@@ -1,7 +1,7 @@
 {
   "vendor": "ssesandbox04",
   "name": "checkout-b2b",
-  "version": "0.0.12",
+  "version": "0.0.21",
   "title": "Checkout B2B",
   "description": "Checkout for B2B Stores",
   "builders": {
@@ -9,7 +9,9 @@
     "messages": "1.x",
     "docs": "0.x",
     "store": "0.x",
-    "checkout-ui-custom": "0.x"
+    "checkout-ui-custom": "0.x",
+    "node": "7.x",
+    "graphql": "1.x"
   },
   "dependencies": {
     "vtex.order-manager": "0.x",
@@ -24,6 +26,7 @@
     "vtex.b2b-organizations-graphql": "0.x",
     "vtex.shipping-estimate-translator": "2.x",
     "vtex.store-graphql": "2.x",
+    "vtex.storefront-permissions": "1.x",
     "vtex.storefront-permissions-ui": "1.x",
     "vtex.search-graphql": "0.x",
     "vtex.address-form": "4.x",
@@ -32,7 +35,99 @@
     "vtex.apps-graphql": "3.x"
   },
   "registries": ["smartcheckout"],
-  "policies": [],
+  "policies": [
+    {
+      "name": "colossus-fire-event"
+    },
+    {
+      "name": "colossus-write-logs"
+    },
+    {
+      "name": "ADMIN_DS"
+    },
+    {
+      "name": "POWER_USER_DS"
+    },
+    {
+      "name": "OMSViewer"
+    },
+    {
+      "name": "ListOrders"
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.vtex.com",
+        "path": "/{{account}}/pricing/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.vtex.com",
+        "path": "/api/dataentities/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/profile-system/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "*.vtexcommercestable.com.br",
+        "path": "/api/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "kubernetes.default.svc.cluster.local",
+        "path": "*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "infra.io.vtex.com",
+        "path": "*"
+      }
+    },
+    {
+      "name": "Sku.aspx"
+    },
+    {
+      "name": "read_prices"
+    },
+    {
+      "name": "ADMIN_CRM"
+    },
+    {
+      "name": "POWER_USER_CRM"
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "*",
+        "path": "*"
+      }
+    },
+    {
+      "name": "graphql-query"
+    },
+    {
+      "name": "vbase-read-write"
+    },
+    {
+      "name": "update-app-settings"
+    },
+    {
+      "name": "read-workspace-apps"
+    }
+  ],
   "billingOptions": {
     "type": "free",
     "availableCountries": ["*"]

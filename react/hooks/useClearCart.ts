@@ -1,22 +1,20 @@
 import { useMutation } from '@tanstack/react-query'
 
+import { useOrderFormCustom, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { apiRequest } from '../services'
-import type { ApiResponse, WithToast } from '../typings'
-import { useOrderFormCustom, UseOrderFormReturn } from './useOrderFormCustom'
+import type { ApiResponse, CompleteOrderForm } from '../typings'
 
-export function useClearCart(showToast: WithToast['showToast']) {
+export function useClearCart() {
+  const showToast = useToast()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const { setPending } = useCheckoutB2BContext()
 
-  const { mutate, isLoading } = useMutation<
-    UseOrderFormReturn['orderForm'],
-    Error
-  >({
+  const { mutate, isLoading } = useMutation<CompleteOrderForm, Error>({
     mutationFn: async () => {
       setPending(true)
 
-      return apiRequest<UseOrderFormReturn['orderForm'] & ApiResponse>(
+      return apiRequest<CompleteOrderForm & ApiResponse>(
         `/api/checkout/pub/orderForm/${orderForm.id}/items/removeAll`,
         'POST',
         {}
@@ -26,7 +24,7 @@ export function useClearCart(showToast: WithToast['showToast']) {
       setOrderForm(newOrderForm)
     },
     onError({ message }) {
-      showToast?.({ message })
+      showToast({ message })
     },
   })
 

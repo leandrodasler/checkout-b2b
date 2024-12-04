@@ -5,6 +5,15 @@
   "store/checkout.b2b.modal.editBillingAddress": "Edit Billing Address",
   "store/checkout.b2b.modal.sameAsShipping": "Same as shipping address",
 
+  "store/checkout.b2b.savedCarts.title": "Manage saved carts",
+  "store/checkout.b2b.savedCarts.save-cart.title": "Cart title (optional)",
+  "store/checkout.b2b.savedCarts.save-cart.placeholder": "Write a title that makes it easy to find this cart in the future",
+  "store/checkout.b2b.savedCarts.save-cart.label": "Save current cart",
+  "store/checkout.b2b.savedCarts.save-cart.success": "Cart saved successfully",
+  "store/checkout.b2b.savedCarts.save-cart.default.title": "Cart {date}",
+  "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
+  "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
+
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",
   "store/checkout.b2b.totalizer.editAddress": "Edit",
@@ -19,9 +28,10 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Enter the PO number",
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
-  "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation.",
+  "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation. Any discounts expected due to the payment method are not cumulative.",
   "store/checkout.b2b.totalizer.salesRep": "Sales rep.:",
   "store/checkout.b2b.totalizer.salesAdm": "Sales adm.:",
+  "store/checkout.b2b.totalizer.totalMargin": "Total Margin",
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",

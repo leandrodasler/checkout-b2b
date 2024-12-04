@@ -1,6 +1,7 @@
 .container {
   --base-font-size: 1rem;
   --small-font-size: calc(var(--base-font-size) * 0.8);
+  --small-gap: calc(var(--base-font-size) / 4);
   --numeric-stepper-button-size: 25px;
   --numeric-stepper-input-size: 40px;
   --input-height: calc(var(--base-font-size) * 2);
@@ -16,8 +17,12 @@
   flex: 1;
 }
 
+.container :global(.flex.flex-wrap) {
+  gap: var(--small-gap);
+}
+
 .container :global(.vtex-dropdown__help-text) {
-  margin-top: calc(var(--base-font-size) / 4);
+  margin-top: var(--small-gap);
 }
 
 .container :local([data-testid='totalizer-value']),

@@ -1,59 +1,109 @@
-import React from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { Totalizer } from 'vtex.styleguide'
+import type {
+  UpdateOrderFormProfileMutation,
+  UpdateOrderFormProfileMutationVariables,
+} from 'vtex.checkout-resources'
+import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
+import { Tag, Totalizer } from 'vtex.styleguide'
 
-import { useOrderFormCustom } from '../hooks'
-import type { CustomOrganization } from '../typings'
+import { useOrderFormCustom, useOrganization } from '../hooks'
 import { messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
 import { ShippingAddress } from './ShippingAddress'
 import { ShippingOption } from './ShippingOption'
 
-type Props = {
-  organization?: CustomOrganization
-}
-
-export function ContactInfos({ organization }: Props) {
+export function ContactInfos() {
   const { formatMessage } = useIntl()
+  const { organization } = useOrganization()
   const {
     orderForm: { clientProfileData, items },
   } = useOrderFormCustom()
 
-  if (!clientProfileData) return null
+  const { costCenter, users, tradeName, name, roleName } = organization
+  const costCenterPhone = costCenter?.phoneNumber ?? ''
+  const clientProfilePhone = clientProfileData?.phone
 
-  const {
-    firstName,
-    lastName,
-    email,
-    corporatePhone,
-    phone,
-  } = clientProfileData
+  const organizationName = useMemo(() => (tradeName ?? '') || name, [
+    name,
+    tradeName,
+  ])
 
-  const contactFields: Array<{ label: string; value: React.ReactNode }> = []
+  const phone = useMemo(() => costCenterPhone || clientProfilePhone, [
+    clientProfilePhone,
+    costCenterPhone,
+  ])
 
-  if (organization?.users) {
-    const getUsersByRole = (role: string) =>
-      organization.users
+  const [updateProfile] = useMutation<
+    UpdateOrderFormProfileMutation,
+    UpdateOrderFormProfileMutationVariables
+  >(MutationUpdateOrderFormProfile)
+
+  useEffect(() => {
+    if (!clientProfileData || clientProfileData?.tradeName) return
+
+    const {
+      corporatePhone,
+      profileCompleteOnLoading,
+      profileErrorOnLoading,
+      customerClass,
+      ...inputProfileData
+    } = clientProfileData
+
+    updateProfile({
+      variables: {
+        profile: { ...inputProfileData, tradeName: organizationName },
+      },
+    })
+  }, [clientProfileData, organizationName, phone, updateProfile])
+
+  const getUsersByRole = useCallback(
+    (role: string) =>
+      users
         ?.filter((user) => user?.roleId === role)
         .map((user) => user?.name)
-        .join(', ') ?? 'N/A'
+        .sort(),
+    [users]
+  )
 
+  if (!clientProfileData) return null
+
+  const { firstName, lastName, email } = clientProfileData
+  const salesRepresentative = getUsersByRole('sales-representative')
+  const salesAdmin = getUsersByRole('sales-admin')
+  const contactFields: Array<{ label: string; value: React.ReactNode }> = []
+
+  if (organization) {
     contactFields.push({
       label: formatMessage(messages.companyName),
       value: (
         <>
-          <div className="mb1">
-            {organization.tradeName ?? organization.name}
+          <div className="mb1 flex items-center flex-wrap">
+            {organizationName}
+            {costCenter?.name && <Tag size="small">{costCenter?.name}</Tag>}
           </div>
-          <span className="t-mini">
-            <span className="b">
-              {formatMessage(messages.salesRepresentative)}{' '}
+          {(!!salesRepresentative?.length || !!salesAdmin?.length) && (
+            <span className="t-mini">
+              {!!salesRepresentative?.length && (
+                <>
+                  <span className="b">
+                    {formatMessage(messages.salesRepresentative)}
+                  </span>{' '}
+                  {salesRepresentative.join(', ')}
+                </>
+              )}
+              {!!salesRepresentative?.length && !!salesAdmin?.length && <br />}
+              {!!salesAdmin?.length && (
+                <>
+                  <span className="b">
+                    {formatMessage(messages.salesAdmin)}
+                  </span>{' '}
+                  {salesAdmin.join(', ')}
+                </>
+              )}
             </span>
-            {getUsersByRole('sales-representative')}
-            <br />
-            <span className="b">{formatMessage(messages.salesAdmin)}</span>{' '}
-            {getUsersByRole('sales-admin')}
-          </span>
+          )}
         </>
       ),
     })
@@ -63,17 +113,17 @@ export function ContactInfos({ organization }: Props) {
     label: formatMessage(messages.buyerName),
     value: (
       <>
-        <div className="mb1">
-          {firstName} {lastName}
+        <div className="mb1 flex items-center flex-wrap">
+          <span>
+            {firstName} {lastName}
+          </span>
+          <Tag size="small">{roleName}</Tag>
         </div>
         <span className="t-mini">{email}</span>
-        {(corporatePhone || phone) && (
+        {phone && phone !== '+10000000000' && (
           <>
             <br />
-            <span className="t-mini">
-              {corporatePhone ? `${corporatePhone} / ` : ''}
-              {phone}
-            </span>
+            <span className="t-mini">{phone}</span>
           </>
         )}
       </>

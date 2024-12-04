@@ -30,6 +30,44 @@ query getOrganization($organizationId: ID, $costCenterId: ID) {
     }
   }
 
+  getCostCenterByIdStorefront
+    @context(provider: "vtex.b2b-organizations-graphql") {
+    id
+    name
+    organization
+    addresses {
+      addressType
+      receiverName
+      addressId
+      postalCode
+      city
+      state
+      country
+      street
+      number
+      neighborhood
+      complement
+      reference
+      geoCoordinates
+    }
+    paymentTerms {
+      id
+      name
+    }
+    phoneNumber
+    businessDocument
+    customFields {
+      name
+      value
+    }
+    stateRegistration
+    sellers {
+      id
+      name
+      email
+    }
+  }
+
   getUsers(organizationId: $organizationId, costCenterId: $costCenterId)
     @context(provider: "vtex.b2b-organizations-graphql") {
     organizationName

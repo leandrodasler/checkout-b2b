@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { MutationSetManualPrice } from 'vtex.checkout-resources'
@@ -15,38 +15,44 @@ import {
   Table,
   ToastProvider,
   Totalizer,
-  withToast,
 } from 'vtex.styleguide'
 
 import { CheckoutB2BProvider } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
+import { SavedCarts } from './components/SavedCarts'
 import {
   useClearCart,
   useOrderFormCustom,
   useOrganization,
   useTableSchema,
+  useToast,
   useToolbar,
   useTotalizers,
 } from './hooks'
 import { queryClient } from './services'
 import './styles.css'
-import { WithToast } from './typings'
 import { messages } from './utils'
 
-function CheckoutB2B({ showToast }: WithToast) {
+function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table'])
-  const { organization, loading: organizationLoading } = useOrganization()
+  const { loading: organizationLoading } = useOrganization()
   const { loading: orderFormLoading, orderForm } = useOrderFormCustom()
-  const { clearCart, isLoading: clearCartLoading } = useClearCart(showToast)
+  const { clearCart, isLoading: clearCartLoading } = useClearCart()
   const totalizers = useTotalizers()
+  const toolbar = useToolbar()
+  const { navigate } = useRuntime()
   const [isEditing, setIsEditing] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const { formatMessage } = useIntl()
-  const { navigate } = useRuntime()
   const { items } = orderForm
-  const loading = orderFormLoading || organizationLoading
-  const toolbar = useToolbar(showToast)
+  const loading = useMemo(() => orderFormLoading || organizationLoading, [
+    orderFormLoading,
+    organizationLoading,
+  ])
+
+  const showToast = useToast()
+
   const filteredItems = toolbar?.filteredItems ?? items
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
@@ -117,13 +123,15 @@ function CheckoutB2B({ showToast }: WithToast) {
             onLinkClick={() =>
               navigate({ page: 'store.home', fallbackToWindowLocation: true })
             }
-          />
+          >
+            <SavedCarts />
+          </PageHeader>
         }
       >
         <PageBlock>
           {!loading && (
             <div className="mb4">
-              <ContactInfos organization={organization} />
+              <ContactInfos />
               <Totalizer items={totalizers} />
             </div>
           )}
@@ -136,7 +144,7 @@ function CheckoutB2B({ showToast }: WithToast) {
               items={filteredItems}
               density="high"
               emptyStateLabel={formatMessage(messages.emptyCart)}
-              toolbar={toolbar}
+              toolbar={!loading && toolbar}
             />
           </div>
         </PageBlock>
@@ -182,14 +190,12 @@ function CheckoutB2B({ showToast }: WithToast) {
   )
 }
 
-const CheckoutB2BWithToast = withToast(CheckoutB2B)
-
 function CheckoutB2BWrapper() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider positioning="window">
         <CheckoutB2BProvider>
-          <CheckoutB2BWithToast />
+          <CheckoutB2B />
         </CheckoutB2BProvider>
       </ToastProvider>
     </QueryClientProvider>

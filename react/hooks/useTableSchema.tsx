@@ -5,6 +5,7 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
 
+import { useOrderFormCustom, usePermissions } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
@@ -12,7 +13,6 @@ import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
-import { useOrderFormCustom } from './useOrderFormCustom'
 
 const { useOrderItems } = OrderItems
 
@@ -28,6 +28,7 @@ export function useTableSchema(
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
+  const { isSalesUser } = usePermissions()
   const { getSellingPrice, getDiscountedPrice } = useCheckoutB2BContext()
 
   return useMemo(
@@ -112,6 +113,25 @@ export function useTableSchema(
             )
           },
         },
+        ...(isSalesUser && {
+          listPrice: {
+            width: 100,
+            title: formatMessage(messages.margin),
+            cellRenderer({ rowData }) {
+              return (
+                <TruncatedText
+                  text={
+                    <MarginProductPrice
+                      itemId={rowData.id}
+                      sellingPrice={rowData.sellingPrice ?? 0}
+                    />
+                  }
+                  {...getStrike(rowData)}
+                />
+              )
+            },
+          },
+        }),
         listPrice: {
           width: 100,
           title: formatMessage(messages.margin),
@@ -181,6 +201,7 @@ export function useTableSchema(
       getSellingPrice,
       getDiscountedPrice,
       onUpdatePrice,
+      isSalesUser,
     ]
   )
 }

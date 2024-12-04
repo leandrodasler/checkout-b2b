@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Node and graphql setup for saved carts
+
+### Changed
+
+- Putting showToast in CheckoutB2BContext and new hook useToast consuming it
+
+## [0.0.21] - 2024-11-29
+
+### Fixed
+
+- Cost center default address as fallback for shipping address
+- Keep total margin updated with order form
+
+## [0.0.20] - 2024-11-27
+
+### Fixed
+
+- Fallback when margin is unavailable
+
+## [0.0.19] - 2024-11-27
+
+### Fixed
+
+- Do not show toolbar when order form is loading
+
+## [0.0.18] - 2024-11-27
+
+### Added
+
+- New totalizer for margin total
+- Users with customer role can not view margin column or margin total
+
+## [0.0.17] - 2024-11-25
+
+### Changed
+
+- Set client profile trade name with organization name if empty
+
+## [0.0.16] - 2024-11-25
+
+### Changed
+
+- Change message for discount by quotation
+
+## [0.0.15] - 2024-11-25
+
+### Fixed
+
+- Handle empty organization trade name
+
+## [0.0.14] - 2024-11-24
+
+### Changed
+
+- Show when billing address is same as shipping address
+
+## [0.0.13] - 2024-11-24
+
+### Changed
+
+- Using cost center data
+
 ## [0.0.12] - 2024-11-20
 
 ### Fixed

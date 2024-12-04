@@ -1,31 +1,73 @@
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
+import { useOrderFormCustom, useOrganization, usePermissions } from '.'
 import { apiRequest } from '../services'
 import type { ApiResponse } from '../typings'
 
 interface PriceResponse extends ApiResponse {
   itemId: string
-  listPrice: number | null
-  costPrice: number
-  markup: number
-  basePrice: number
+  costPrice?: number | null
 }
 
 interface PriceTable {
-  productId: string
+  skuId: string
   priceTable: string
 }
 
 const getPriceUrl = (infosPrice: PriceTable) =>
-  `/api/pricing/prices/${infosPrice.productId}/computed/${infosPrice.priceTable}`
+  `/api/pricing/prices/${infosPrice.skuId}/computed/${infosPrice.priceTable}`
 
-export function useFetchPrices(productId: string, priceTable: string) {
+export function useFetchPrices(skuId: string, priceTable: string) {
   return useQuery<PriceResponse, Error>({
-    queryKey: ['fetchPrices', productId, priceTable],
+    queryKey: ['fetchPrices', skuId, priceTable],
     queryFn: () =>
-      apiRequest<PriceResponse>(getPriceUrl({ productId, priceTable }), 'GET'),
+      apiRequest<PriceResponse>(getPriceUrl({ skuId, priceTable }), 'GET'),
     onError: (error) => {
       console.error(`Error fetching prices: ${error.message}`)
     },
   })
+}
+
+export function useTotalMargin() {
+  const { orderForm } = useOrderFormCustom()
+  const { organization } = useOrganization()
+  const { isSalesUser } = usePermissions()
+  const { items } = orderForm
+  const priceTable = organization?.priceTables?.[0] ?? '1'
+
+  const { data } = useQuery<PriceResponse[], Error>({
+    queryKey: ['fetchPrices', priceTable],
+    enabled: isSalesUser && !!items.length,
+    queryFn: async () =>
+      Promise.all(
+        items.map((item) =>
+          apiRequest<PriceResponse>(
+            getPriceUrl({ skuId: item.id, priceTable }),
+            'GET'
+          )
+            .then((r) => ({ ...r, itemId: item.id }))
+            .catch(() => ({ itemId: item.id, costPrice: null }))
+        )
+      ),
+  })
+
+  const totalMargin = useMemo(
+    () =>
+      data
+        ?.map((item) => {
+          const cartItem = items.find((i) => i.id === item.itemId)
+
+          if (!item?.costPrice) return 0
+
+          return (
+            ((cartItem?.sellingPrice ?? 0) / 100 - item.costPrice) *
+            (cartItem?.quantity ?? 0)
+          )
+        })
+        .reduce((acc, margin) => acc + margin),
+    [data, items]
+  )
+
+  return totalMargin
 }

@@ -14,7 +14,7 @@ import { Button, ButtonPlain, Modal, Toggle } from 'vtex.styleguide'
 
 import GET_LOGISTICS from '../graphql/getLogistics.graphql'
 import { useOrderFormCustom } from '../hooks'
-import { PaymentAddressType } from '../typings'
+import type { CompleteOrderForm, PaymentAddressType } from '../typings'
 import { buildBillingAddress, messages, toggleAddress } from '../utils'
 import { Address } from './Address'
 
@@ -70,7 +70,7 @@ export function BillingAddress() {
     setOrderForm({
       ...orderForm,
       paymentAddress: removeValidation(newBillingAddressState),
-    })
+    } as CompleteOrderForm)
 
     handleCloseModal()
   }, [handleCloseModal, newBillingAddressState, orderForm, setOrderForm])
@@ -121,13 +121,17 @@ export function BillingAddress() {
     [newBillingAddressState, shipping.selectedAddress]
   )
 
-  if (!orderForm.paymentAddress) {
+  if (!paymentAddress) {
     return <>{formatMessage(messages.emptyAddress)}</>
   }
 
   return (
     <div>
-      <Address address={paymentAddress} />
+      {toggle ? (
+        formatMessage(messages.sameAsShipping)
+      ) : (
+        <Address address={paymentAddress} />
+      )}
 
       <div className="w-100 mt3">
         <ButtonPlain
@@ -147,8 +151,8 @@ export function BillingAddress() {
         aria-label={formatMessage(messages.editBillingAddress)}
         aria-describedby="modal-billing-address"
         bottomBar={
-          <div className="flex items-center justify-between w-100">
-            <div className="flex items-center">
+          <div className="flex flex-wrap items-center justify-around justify-between-ns w-100">
+            <div className="flex items-center mb3 mb0-ns">
               <Toggle checked={toggle} onChange={handleToggle} />
               <span className="ml4 c-action-secondary t-mini mw9">
                 {formatMessage(messages.sameAsShipping)}
@@ -175,7 +179,7 @@ export function BillingAddress() {
         }
       >
         <AddressRules
-          country={paymentAddress?.country}
+          country={paymentAddress.country}
           shouldUseIOFetching
           useGeolocation={false}
         >

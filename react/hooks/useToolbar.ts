@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Item } from 'vtex.checkout-graphql'
+import type { Item } from 'vtex.checkout-graphql'
 
+import { useOrderFormCustom, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import type { WithToast } from '../typings'
 import { messages } from '../utils'
-import { useOrderFormCustom } from './useOrderFormCustom'
-import { usePlaceOrder } from './usePlaceOrder'
 
-export function useToolbar(showToast: WithToast['showToast']) {
+export function useToolbar() {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
   const { pending } = useCheckoutB2BContext()
-  const { placeOrder, isLoading, isSuccess } = usePlaceOrder(showToast)
+  const { placeOrder, isLoading, isSuccess } = usePlaceOrder()
 
   const [searchTerm, setSearchTerm] = useState<string>('')
 
