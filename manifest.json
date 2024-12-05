@@ -136,9 +136,21 @@
     "title": "Configurações de Checkout B2B",
     "type": "object",
     "properties": {
-      "salesVendedor": {
-        "title": "Desconto do Vendedor",
-        "description": "Configure o valor do desconto que será aplicado pelo vendedor",
+      "salesRepresentative": {
+        "title": "Representative Discount",
+        "description": "Set the discount value to be applied by the representative",
+        "type": "number",
+        "default": 0
+      },
+      "salesManager": {
+        "title": "Sales Manager Discount",
+        "description": "Set the discount value to be applied by the sales manager",
+        "type": "number",
+        "default": 0
+      },
+      "salesAdmin": {
+        "title": "Sales Admin Discount",
+        "description": "Set the discount value to be applied by the sales admin",
         "type": "number",
         "default": 0
       }

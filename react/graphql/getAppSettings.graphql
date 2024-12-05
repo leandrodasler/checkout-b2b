@@ -1,0 +1,7 @@
+query getSettings {
+  getAppSettings @context(provider: "ssesandbox04.checkout-b2b") {
+    salesRepresentative
+    salesManager
+    salesAdmin
+  }
+}

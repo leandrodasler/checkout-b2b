@@ -1,7 +1,8 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import React, { useCallback, useMemo, useState } from 'react'
-import { useMutation } from 'react-apollo'
+import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
+import { Query } from 'ssesandbox04.checkout-b2b'
 import { MutationSetManualPrice } from 'vtex.checkout-resources'
 import 'vtex.country-codes/locales'
 import { useCssHandles } from 'vtex.css-handles'
@@ -20,10 +21,12 @@ import {
 import { CheckoutB2BProvider } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
 import { SavedCarts } from './components/SavedCarts'
+import GET_APP_SETTINGS from './graphql/getAppSettings.graphql'
 import {
   useClearCart,
   useOrderFormCustom,
   useOrganization,
+  usePermissions,
   useTableSchema,
   useToast,
   useToolbar,
@@ -32,6 +35,8 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { messages } from './utils'
+
+type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
 function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table'])
@@ -52,6 +57,9 @@ function CheckoutB2B() {
   ])
 
   const showToast = useToast()
+
+  const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, { ssr: false })
+  const { maximumDiscount } = usePermissions(data?.getAppSettings)
 
   const filteredItems = toolbar?.filteredItems ?? items
 
@@ -154,37 +162,40 @@ function CheckoutB2B() {
               setDiscount(values[0])
             }}
             min={0}
-            max={100}
+            max={maximumDiscount}
             step={1}
             disabled={false}
             defaultValues={[0]}
             alwaysShowCurrentValue={false}
-            formatValue={(a: number) => a + 1}
+            formatValue={(a: number) => `${a}%`}
           />
         )}
-        <Button
-          variation={isEditing ? 'danger' : 'primary'}
-          onClick={toggleEditMode}
-        >
-          {isEditing ? 'Parar edição' : 'Editar todos'}
-        </Button>
-        <Button
-          variation="primary"
-          onClick={handleSavePrices}
-          isLoading={saving}
-          disabled={!items.length || saving}
-        >
-          Salvar
-        </Button>
-        {!!items.length && !loading && (
+        <div className="flex flex-wrap">
           <Button
-            variation="danger-tertiary"
-            onClick={clearCart}
-            isLoading={clearCartLoading}
+            variation={isEditing ? 'danger' : 'primary'}
+            onClick={toggleEditMode}
           >
-            {formatMessage(messages.clearCart)}
+            {isEditing ? 'Parar edição' : 'Editar todos'}
           </Button>
-        )}
+          <Button
+            variation="primary"
+            onClick={handleSavePrices}
+            isLoading={saving}
+            disabled={!items.length || saving}
+          >
+            Aplicar Preços
+          </Button>
+
+          {!!items.length && !loading && (
+            <Button
+              variation="danger-tertiary"
+              onClick={clearCart}
+              isLoading={clearCartLoading}
+            >
+              {formatMessage(messages.clearCart)}
+            </Button>
+          )}
+        </div>
       </Layout>
     </div>
   )
