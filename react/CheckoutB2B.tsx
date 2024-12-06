@@ -59,7 +59,7 @@ function CheckoutB2B() {
   const showToast = useToast()
 
   const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, { ssr: false })
-  const { maximumDiscount } = usePermissions(data?.getAppSettings)
+  const { maximumDiscount, isSalesUser } = usePermissions(data?.getAppSettings)
 
   const filteredItems = toolbar?.filteredItems ?? items
 
@@ -92,13 +92,25 @@ function CheckoutB2B() {
     }))
   }, [filteredItems, prices, orderForm.id])
 
+  // eslint-disable-next-line no-console
+  console.log('oderFr', orderForm)
+
   const handleSavePrices = async () => {
     const updatedPrices = getUpdatedPrices()
 
     try {
       await Promise.all(
-        updatedPrices.map((item) =>
-          setManualPrice({
+        updatedPrices.map((item) => {
+          // eslint-disable-next-line no-console
+          console.log('Enviando para setManualPrice:', {
+            orderFormId: item.orderFormId,
+            manualPriceInput: {
+              itemIndex: item.itemIndex,
+              price: Math.round(item.price),
+            },
+          })
+
+          return setManualPrice({
             variables: {
               orderFormId: item.orderFormId,
               manualPriceInput: {
@@ -107,12 +119,13 @@ function CheckoutB2B() {
               },
             },
           })
-        )
+        })
       )
-      showToast?.({ message: 'Todos os preços foram atualizados com sucesso!' })
+
+      showToast?.({ message: formatMessage(messages.manualPriceSuccess) })
     } catch (error) {
-      console.error('Erro ao atualizar os preços:', error.message)
-      showToast?.({ message: 'Erro ao atualizar os preços.' })
+      console.error('Erro ao atualizar os preços:', error)
+      showToast?.({ message: formatMessage(messages.manualPriceError) })
     }
   }
 
@@ -170,32 +183,36 @@ function CheckoutB2B() {
             formatValue={(a: number) => `${a}%`}
           />
         )}
-        <div className="flex flex-wrap">
-          <Button
-            variation={isEditing ? 'danger' : 'primary'}
-            onClick={toggleEditMode}
-          >
-            {isEditing ? 'Parar edição' : 'Editar todos'}
-          </Button>
-          <Button
-            variation="primary"
-            onClick={handleSavePrices}
-            isLoading={saving}
-            disabled={!items.length || saving}
-          >
-            Aplicar Preços
-          </Button>
-
-          {!!items.length && !loading && (
+        {isSalesUser && (
+          <div className="flex flex-wrap">
             <Button
-              variation="danger-tertiary"
-              onClick={clearCart}
-              isLoading={clearCartLoading}
+              variation={isEditing ? 'danger' : 'primary'}
+              onClick={toggleEditMode}
             >
-              {formatMessage(messages.clearCart)}
+              {isEditing
+                ? formatMessage(messages.manualPriceStopEdit)
+                : formatMessage(messages.editManualPrice)}
             </Button>
-          )}
-        </div>
+            <Button
+              variation="primary"
+              onClick={handleSavePrices}
+              isLoading={saving}
+              disabled={!items.length || saving}
+            >
+              {formatMessage(messages.saveManualPrice)}
+            </Button>
+
+            {!!items.length && !loading && (
+              <Button
+                variation="danger-tertiary"
+                onClick={clearCart}
+                isLoading={clearCartLoading}
+              >
+                {formatMessage(messages.clearCart)}
+              </Button>
+            )}
+          </div>
+        )}
       </Layout>
     </div>
   )

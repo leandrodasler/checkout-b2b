@@ -67,4 +67,14 @@ export const messages = defineMessages({
   savedCartsSelectLabel: {
     id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
   },
+  saveManualPrice: { id: 'store/checkout.b2b.button.saveManualPrice' },
+  editManualPrice: { id: 'store/checkout.b2b.button.editManualPrice' },
+  manualPriceStopEdit: {
+    id: 'store/checkout.b2b.manualPrice.stopEditManualPrice',
+  },
+  manualPriceSuccess: { id: 'store/checkout.b2b.manualPrice.placeOrder' },
+  manualPriceError: { id: 'store/checkout.b2b.manualPrice.placeOrder.error' },
+  manualPriceSuccessMessage: {
+    id: 'store/checkout.b2b.manualPrice.placeOrder.success',
+  },
 })

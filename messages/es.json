@@ -49,6 +49,13 @@
   "store/checkout.b2b.button.removeItem": "Eliminar",
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
   "store/checkout.b2b.button.placeOrder.error": "Error al procesar el pedido",
+  "store/checkout.b2b.button.saveManualPrice": "Aplicar Precios",
+  "store/checkout.b2b.button.editManualPrice": "Editar todos",
+
+  "store/checkout.b2b.manualPrice.stopEditManualPrice": "Finalizar edicion",
+  "store/checkout.b2b.manualPrice.placeOrder": "¡Todos los precios se actualizaron con éxito!",
+  "store/checkout.b2b.manualPrice.placeOrder.error": "Error al actualizar los precios:",
+  "store/checkout.b2b.manualPrice.placeOrder.success": "¡Precios actualizados con éxito!",
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",
   "store/checkout.b2b.empty.cart": "El carrito está vacío.",
