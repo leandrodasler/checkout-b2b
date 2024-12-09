@@ -34,6 +34,7 @@ import {
 } from './hooks'
 import { queryClient } from './services'
 import './styles.css'
+import { CompleteOrderForm } from './typings'
 import { messages } from './utils'
 
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
@@ -41,7 +42,12 @@ type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table'])
   const { loading: organizationLoading } = useOrganization()
-  const { loading: orderFormLoading, orderForm } = useOrderFormCustom()
+  const {
+    loading: orderFormLoading,
+    orderForm,
+    setOrderForm,
+  } = useOrderFormCustom()
+
   const { clearCart, isLoading: clearCartLoading } = useClearCart()
   const totalizers = useTotalizers()
   const toolbar = useToolbar()
@@ -75,10 +81,16 @@ function CheckoutB2B() {
   const [setManualPrice, { loading: saving }] = useMutation(
     MutationSetManualPrice,
     {
-      onCompleted: () => {
+      onCompleted: ({ updateOrderFormPayment }) => {
+        setOrderForm({
+          ...orderForm,
+          ...updateOrderFormPayment,
+        } as CompleteOrderForm)
+
         showToast?.({ message: 'Preços atualizados com sucesso!' })
       },
       onError: (error) => {
+        console.error('Erro na mutação:', error)
         showToast?.({ message: error.message })
       },
     }
@@ -92,40 +104,23 @@ function CheckoutB2B() {
     }))
   }, [filteredItems, prices, orderForm.id])
 
-  // eslint-disable-next-line no-console
-  console.log('oderFr', orderForm)
-
   const handleSavePrices = async () => {
     const updatedPrices = getUpdatedPrices()
 
     try {
-      await Promise.all(
-        updatedPrices.map((item) => {
-          // eslint-disable-next-line no-console
-          console.log('Enviando para setManualPrice:', {
+      for await (const item of updatedPrices) {
+        await setManualPrice({
+          variables: {
             orderFormId: item.orderFormId,
             manualPriceInput: {
               itemIndex: item.itemIndex,
               price: Math.round(item.price),
             },
-          })
-
-          return setManualPrice({
-            variables: {
-              orderFormId: item.orderFormId,
-              manualPriceInput: {
-                itemIndex: item.itemIndex,
-                price: Math.round(item.price),
-              },
-            },
-          })
+          },
         })
-      )
-
-      showToast?.({ message: formatMessage(messages.manualPriceSuccess) })
+      }
     } catch (error) {
-      console.error('Erro ao atualizar os preços:', error)
-      showToast?.({ message: formatMessage(messages.manualPriceError) })
+      console.error('Erro ao salvar os preços:', error)
     }
   }
 
