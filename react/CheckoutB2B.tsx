@@ -172,9 +172,7 @@ function CheckoutB2B() {
             min={0}
             max={maximumDiscount}
             step={1}
-            disabled={false}
             defaultValues={[0]}
-            alwaysShowCurrentValue={false}
             formatValue={(a: number) => `${a}%`}
           />
         )}
