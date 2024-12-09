@@ -7,14 +7,12 @@ import type {
 } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
 import { Tag, Totalizer } from 'vtex.styleguide'
-import { FormattedPrice } from 'vtex.formatted-price'
 
 import { useOrderFormCustom, useOrganization } from '../hooks'
 import { messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
 import { ShippingAddress } from './ShippingAddress'
 import { ShippingOption } from './ShippingOption'
-import { useFetchCustomerCredit } from '../hooks/useFetchCustomerCredit'
 
 export function ContactInfos() {
   const { formatMessage } = useIntl()
@@ -23,23 +21,10 @@ export function ContactInfos() {
     orderForm: { clientProfileData, items },
   } = useOrderFormCustom()
 
-  const {
-    costCenter,
-    users,
-    tradeName,
-    name,
-    roleName,
-    salesChannel,
-  } = organization
+  const { costCenter, users, tradeName, name, roleName } = organization
 
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
-
-  const { data } = useFetchCustomerCredit({
-    email: clientProfileData?.email ?? '',
-    skus: items.map((item) => item.id).join(','),
-    salesChannel: salesChannel ?? '',
-  })
 
   const organizationName = useMemo(() => (tradeName ?? '') || name, [
     name,
@@ -159,23 +144,7 @@ export function ContactInfos() {
   if (items.length) {
     contactFields.push({
       label: formatMessage(messages.shippingOption),
-      value: (
-        <>
-          <div className="mb4">
-            <ShippingOption />
-          </div>
-          {data?.availableCredit ? (
-            <>
-              {formatMessage(messages.creditAvailable)} <br />
-              <strong>
-                <FormattedPrice value={data.availableCredit} />
-              </strong>
-            </>
-          ) : (
-            <span>{formatMessage(messages.noCreditAvailable)}</span>
-          )}
-        </>
-      ),
+      value: <ShippingOption />,
     })
   }
 

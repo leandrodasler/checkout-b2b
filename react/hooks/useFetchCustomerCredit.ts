@@ -18,9 +18,15 @@ interface Options {
   email: string
   skus: string
   salesChannel: string
+  enabled?: boolean
 }
 
-export function useFetchCustomerCredit({ email, skus, salesChannel }: Options) {
+export function useFetchCustomerCredit({
+  email,
+  skus,
+  salesChannel,
+  enabled = true,
+}: Options) {
   const showToast = useToast()
 
   const url = `/api/creditcontrol/purchase-conditions?email=${email}&sc=${salesChannel}&skus=${skus}`
@@ -28,6 +34,7 @@ export function useFetchCustomerCredit({ email, skus, salesChannel }: Options) {
   return useQuery<Response, Error>({
     queryKey: ['fetchCustomerCredit', email, skus, salesChannel],
     queryFn: () => apiRequest<Response>(url, 'GET'),
+    enabled,
     onError: (error) => {
       showToast({ message: error.message })
       console.error(`Error fetching Customer Credit: ${error.message}`)

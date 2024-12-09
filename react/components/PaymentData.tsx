@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { PaymentDataInput } from 'vtex.checkout-graphql'
@@ -12,7 +12,11 @@ import type { CompleteOrderForm } from '../typings'
 import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
-export function PaymentData() {
+export function PaymentData({
+  onPaymentChange,
+}: {
+  onPaymentChange?: (paymentSystem: string) => void
+}) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
@@ -40,8 +44,12 @@ export function PaymentData() {
   const { value } = orderForm
   const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
 
-  const filteredPaymentSystems = paymentSystems.filter(
-    (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+  const filteredPaymentSystems = useMemo(
+    () =>
+      paymentSystems.filter(
+        (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+      ),
+    [paymentSystems]
   )
 
   const options = filteredPaymentSystems.map((paymentSystem) => ({
@@ -80,8 +88,16 @@ export function PaymentData() {
   )
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => setPayment(e.target.value),
-    [setPayment]
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setPayment(e.target.value)
+
+      const paymentMethod = filteredPaymentSystems.find(
+        (payment) => payment.id === e.target.value
+      )
+
+      onPaymentChange?.(paymentMethod?.name ?? '')
+    },
+    [setPayment, onPaymentChange, filteredPaymentSystems]
   )
 
   const validPaymentSystem = filteredPaymentSystems.find(
@@ -104,6 +120,12 @@ export function PaymentData() {
     setPayment,
     validPaymentSystem,
   ])
+
+  useEffect(() => {
+    if (validPaymentSystem) {
+      onPaymentChange?.(validPaymentSystem.name)
+    }
+  }, [onPaymentChange, validPaymentSystem])
 
   if (loading) {
     return <TotalizerSpinner />
