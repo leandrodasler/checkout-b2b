@@ -3,6 +3,8 @@ import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { Input } from 'vtex.styleguide'
 
+import { useFormatPrice } from '../hooks'
+
 interface ManualPriceProps {
   rowData: Item
   isEditing: boolean
@@ -16,10 +18,11 @@ export default function ManualPrice({
   sliderValue,
   onUpdatePrice,
 }: ManualPriceProps) {
-  const [isInputVisible, setIsInputVisible] = useState(isEditing)
   const [customPrice, setCustomPrice] = useState<string>(
     String(rowData.sellingPrice ?? 0)
   )
+
+  const formatPrice = useFormatPrice()
 
   const originalPrice = rowData.sellingPrice ?? 0
   const discountedPrice = originalPrice * (1 - sliderValue / 100)
@@ -32,10 +35,6 @@ export default function ManualPrice({
     }
   }, [discountedPrice, onUpdatePrice, rowData.id, sliderValue, customPrice])
 
-  useEffect(() => {
-    setIsInputVisible(isEditing)
-  }, [isEditing])
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.replace('R$', '').replace(',', '.').trim()
     const newValue = parseFloat(inputValue)
@@ -43,15 +42,12 @@ export default function ManualPrice({
     setCustomPrice(String(newValue * 100))
   }
 
-  const formattedPrice = (value: number) =>
-    `R$ ${(value / 100).toFixed(2).replace('.', ',')}`
-
-  if (isInputVisible && sliderValue === 0) {
+  if (isEditing && sliderValue === 0) {
     return (
       <div style={{ minWidth: 110 }}>
         <Input
           size="small"
-          value={formattedPrice(Number(customPrice))}
+          value={formatPrice(Number(customPrice) / 100)}
           onChange={handleInputChange}
         />
       </div>

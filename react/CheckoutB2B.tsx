@@ -87,7 +87,9 @@ function CheckoutB2B() {
           ...updateOrderFormPayment,
         } as CompleteOrderForm)
 
-        showToast?.({ message: 'Preços atualizados com sucesso!' })
+        showToast?.({
+          message: formatMessage(messages.manualPriceSuccess),
+        })
       },
       onError: (error) => {
         console.error('Erro na mutação:', error)
