@@ -1,25 +1,33 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { PaymentDataInput } from 'vtex.checkout-graphql'
-import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
-import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
 import { Dropdown } from 'vtex.styleguide'
+import { FormattedPrice } from 'vtex.formatted-price'
+import type { PaymentDataInput } from 'vtex.checkout-graphql'
+import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
+import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
 
-import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { useOrderFormCustom, useToast } from '../hooks'
+import {
+  useToast,
+  useOrganization,
+  useOrderFormCustom,
+  useFetchCustomerCredit,
+} from '../hooks'
+import {
+  messages,
+  CUSTOMER_CREDIT_ID,
+  getFirstInstallmentByPaymentSystem,
+} from '../utils'
 import type { CompleteOrderForm } from '../typings'
-import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
-export function PaymentData({
-  onPaymentChange,
-}: {
-  onPaymentChange?: (paymentSystem: string) => void
-}) {
+export function PaymentData() {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
+  const { organization } = useOrganization()
+
   const {
     orderForm,
     setOrderForm,
@@ -59,6 +67,12 @@ export function PaymentData({
 
   const [selectedPayment] = payments
 
+  const { data: customerCreditData } = useFetchCustomerCredit({
+    enabled:
+      !!organization?.salesChannel &&
+      selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID,
+  })
+
   const setPayment = useCallback(
     (newPaymentSystem: string) => {
       const installment = getFirstInstallmentByPaymentSystem(
@@ -90,14 +104,8 @@ export function PaymentData({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setPayment(e.target.value)
-
-      const paymentMethod = filteredPaymentSystems.find(
-        (payment) => payment.id === e.target.value
-      )
-
-      onPaymentChange?.(paymentMethod?.name ?? '')
     },
-    [setPayment, onPaymentChange, filteredPaymentSystems]
+    [setPayment]
   )
 
   const validPaymentSystem = filteredPaymentSystems.find(
@@ -121,12 +129,6 @@ export function PaymentData({
     validPaymentSystem,
   ])
 
-  useEffect(() => {
-    if (validPaymentSystem) {
-      onPaymentChange?.(validPaymentSystem.name)
-    }
-  }, [onPaymentChange, validPaymentSystem])
-
   if (loading) {
     return <TotalizerSpinner />
   }
@@ -138,6 +140,19 @@ export function PaymentData({
       options={options}
       value={selectedPayment?.paymentSystem}
       onChange={handleChange}
+      helpText={
+        selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID &&
+        (customerCreditData ? (
+          <div className="flex items-center flex-wrap">
+            {formatMessage(messages.creditAvailable)}:{' '}
+            <strong>
+              <FormattedPrice value={customerCreditData?.availableCredit} />
+            </strong>
+          </div>
+        ) : (
+          formatMessage(messages.noCreditAvailable)
+        ))
+      }
     />
   )
 }

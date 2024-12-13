@@ -1,44 +1,21 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
-import { useOrderFormCustom, useOrganization, useTotalMargin } from '.'
-import { useFetchCustomerCredit } from './useFetchCustomerCredit'
-import CustomerCreditDisplay from '../components/CustomerCreditDisplay'
+import { useOrderFormCustom, useTotalMargin } from '.'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
-import {
-  B2B_QUOTES_CUSTOM_APP_ID,
-  CUSTOMER_CREDIT_KEY,
-  messages,
-} from '../utils'
+import { B2B_QUOTES_CUSTOM_APP_ID, messages } from '../utils'
 
 export function useTotalizers() {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
-  const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
-  const {
-    organization: { salesChannel },
-  } = useOrganization()
 
-  const {
-    totalizers = [],
-    customData,
-    value: total = 0,
-    items,
-    clientProfileData,
-  } = orderForm
+  const { totalizers = [], customData, value: total = 0, items } = orderForm
 
   const customApps = customData?.customApps
-
-  const { data } = useFetchCustomerCredit({
-    email: clientProfileData?.email ?? '',
-    skus: items.map((item) => item.id).join(','),
-    salesChannel: salesChannel ?? '',
-    enabled: paymentMethod === CUSTOMER_CREDIT_KEY,
-  })
 
   const hasQuotationDiscount = useMemo(
     () =>
@@ -55,17 +32,7 @@ export function useTotalizers() {
   return [
     {
       label: formatMessage(messages.paymentMethods),
-      value: (
-        <>
-          <div className="mb4">
-            <PaymentData onPaymentChange={setPaymentMethod} />
-          </div>
-
-          {paymentMethod === CUSTOMER_CREDIT_KEY && (
-            <CustomerCreditDisplay availableCredit={data?.availableCredit} />
-          )}
-        </>
-      ),
+      value: <PaymentData />,
     },
     {
       label: formatMessage(messages.PONumber),

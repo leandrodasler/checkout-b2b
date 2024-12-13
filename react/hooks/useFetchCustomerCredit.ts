@@ -1,8 +1,9 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { apiRequest } from '../services'
 import type { ApiResponse } from '../typings'
-import { useToast } from './useToast'
+import { useToast, useOrderFormCustom, useOrganization } from '.'
 
 interface Response extends ApiResponse {
   accountId: string
@@ -15,19 +16,23 @@ interface Response extends ApiResponse {
 }
 
 interface Options {
-  email: string
-  skus: string
-  salesChannel: string
   enabled?: boolean
 }
 
-export function useFetchCustomerCredit({
-  email,
-  skus,
-  salesChannel,
-  enabled = true,
-}: Options) {
+export function useFetchCustomerCredit({ enabled = true }: Options) {
   const showToast = useToast()
+  const { organization } = useOrganization()
+
+  const {
+    orderForm: { items, clientProfileData },
+  } = useOrderFormCustom()
+
+  const email = clientProfileData?.email
+    ? encodeURIComponent(clientProfileData.email)
+    : ''
+
+  const salesChannel = organization?.salesChannel ?? ''
+  const skus = useMemo(() => items.map((item) => item.id).join(','), [items])
 
   const url = `/api/creditcontrol/purchase-conditions?email=${email}&sc=${salesChannel}&skus=${skus}`
 
