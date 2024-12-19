@@ -67,11 +67,16 @@ export function PaymentData() {
 
   const [selectedPayment] = payments
 
-  const { data: customerCreditData } = useFetchCustomerCredit({
+  const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
     enabled:
       !!organization?.salesChannel &&
       selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID,
   })
+
+  const customerCreditLoading = useMemo(
+    () => selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID && isLoading,
+    [isLoading, selectedPayment.paymentSystem]
+  )
 
   const setPayment = useCallback(
     (newPaymentSystem: string) => {
@@ -129,7 +134,7 @@ export function PaymentData() {
     validPaymentSystem,
   ])
 
-  if (loading) {
+  if (loading || customerCreditLoading) {
     return <TotalizerSpinner />
   }
 
