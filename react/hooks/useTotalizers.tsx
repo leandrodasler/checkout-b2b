@@ -12,8 +12,11 @@ import { B2B_QUOTES_CUSTOM_APP_ID, messages } from '../utils'
 export function useTotalizers() {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
+
   const { totalizers = [], customData, value: total = 0, items } = orderForm
+
   const customApps = customData?.customApps
+
   const hasQuotationDiscount = useMemo(
     () =>
       customApps?.find(

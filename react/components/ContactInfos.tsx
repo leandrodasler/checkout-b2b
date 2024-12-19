@@ -22,6 +22,7 @@ export function ContactInfos() {
   } = useOrderFormCustom()
 
   const { costCenter, users, tradeName, name, roleName } = organization
+
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
 

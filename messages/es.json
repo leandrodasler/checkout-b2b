@@ -1,6 +1,8 @@
 {
   "store/checkout.b2b.confirm": "Confirmar",
   "store/checkout.b2b.cancel": "Cancelar",
+  "store/checkout.b2b.creditAvailable": "Crédito disponible",
+  "store/checkout.b2b.noCreditAvailable": "Sin crédito disponible",
 
   "store/checkout.b2b.modal.editBillingAddress": "Editar Dirección de Facturación",
   "store/checkout.b2b.modal.sameAsShipping": "Misma dirección de entrega",
