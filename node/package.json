@@ -12,7 +12,6 @@
     "@vtex/api": "6.48.0",
     "@vtex/test-tools": "^1.0.0",
     "@vtex/tsconfig": "^0.5.6",
-    "ssesandbox04.checkout-b2b": "https://tiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@0.0.21+build1734577148/public/@types/ssesandbox04.checkout-b2b",
     "typescript": "5.5.3",
     "vtex.address-form": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.1/public/@types/vtex.address-form",
     "vtex.b2b-organizations-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.1/public/@types/vtex.b2b-organizations-graphql",
