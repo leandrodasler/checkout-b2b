@@ -4990,6 +4990,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
+"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@0.0.21/public/@types/ssesandbox04.checkout-b2b":
+  version "0.0.21"
+  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@0.0.21/public/@types/ssesandbox04.checkout-b2b#c18513b29e9e1f289d21cea44725e58d5a4b64f2"
+
 sshpk@^1.7.0:
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.17.0.tgz#578082d92d4fe612b13007496e543fa0fbcbe4c5"
@@ -5394,9 +5398,9 @@ verror@1.10.0:
   version "4.26.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.1/public/@types/vtex.address-form#f578e6e1156d9ec20cae8f7c4018db74f83546ba"
 
-"vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.1/public/@types/vtex.b2b-organizations-graphql":
-  version "0.63.1"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.1/public/@types/vtex.b2b-organizations-graphql#10f75db900d36cc3a885a92ac8df3aa6b823b525"
+"vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.2/public/@types/vtex.b2b-organizations-graphql":
+  version "0.63.2"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.2/public/@types/vtex.b2b-organizations-graphql#3e6f9aaedf83477551e99eb61de73a43534b8215"
 
 "vtex.checkout-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql":
   version "0.67.1"
@@ -5457,6 +5461,10 @@ verror@1.10.0:
 "vtex.storefront-permissions-ui@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui":
   version "1.2.2"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui#e23c33d1d7deee3dc0a6f6295891b441db115911"
+
+"vtex.storefront-permissions@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions@1.45.1/public/@types/vtex.storefront-permissions":
+  version "1.45.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions@1.45.1/public/@types/vtex.storefront-permissions#cadc6a1860a6cf3ac750827b4c86529be0ed3272"
 
 "vtex.styleguide@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide":
   version "9.146.13"
