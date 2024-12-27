@@ -3,8 +3,6 @@ import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { Input } from 'vtex.styleguide'
 
-import { useFormatPrice } from '../hooks'
-
 interface ManualPriceProps {
   rowData: Item
   isEditing: boolean
@@ -19,10 +17,8 @@ export default function ManualPrice({
   onUpdatePrice,
 }: ManualPriceProps) {
   const [customPrice, setCustomPrice] = useState<string>(
-    String(rowData.sellingPrice ?? 0)
+    String((rowData.sellingPrice ?? 0) / 100)
   )
-
-  const formatPrice = useFormatPrice()
 
   const originalPrice = rowData.sellingPrice ?? 0
   const discountedPrice = originalPrice * (1 - sliderValue / 100)
@@ -31,15 +27,23 @@ export default function ManualPrice({
     if (sliderValue !== 0) {
       onUpdatePrice(rowData.id, discountedPrice)
     } else {
-      onUpdatePrice(rowData.id, Number(customPrice))
+      onUpdatePrice(rowData.id, parseFloat(customPrice) * 100 || 0)
     }
   }, [discountedPrice, onUpdatePrice, rowData.id, sliderValue, customPrice])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace('R$', '').replace(',', '.').trim()
-    const newValue = parseFloat(inputValue)
+    const inputValue = e.target.value
 
-    setCustomPrice(String(newValue * 100))
+    setCustomPrice(inputValue) // Apenas atualiza o valor digitado
+  }
+
+  const handleInputBlur = () => {
+    const newValue = parseFloat(customPrice.replace(',', '.'))
+
+    if (newValue) {
+      setCustomPrice(newValue.toFixed(2)) // Formata ao sair do campo
+      onUpdatePrice(rowData.id, newValue * 100)
+    }
   }
 
   if (isEditing && sliderValue === 0) {
@@ -47,8 +51,9 @@ export default function ManualPrice({
       <div style={{ minWidth: 110 }}>
         <Input
           size="small"
-          value={formatPrice(Number(customPrice) / 100)}
-          onChange={handleInputChange}
+          value={customPrice} // Mostra o valor atual como está
+          onChange={handleInputChange} // Permite digitação fluida
+          onBlur={handleInputBlur} // Formata ao sair do campo
         />
       </div>
     )
@@ -57,7 +62,7 @@ export default function ManualPrice({
   return (
     <FormattedPrice
       value={
-        sliderValue > 0 ? discountedPrice / 100 : Number(customPrice) / 100
+        sliderValue > 0 ? discountedPrice / 100 : parseFloat(customPrice) || 0
       }
     />
   )

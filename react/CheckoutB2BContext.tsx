@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import type { Item } from 'vtex.checkout-graphql'
 import { withToast } from 'vtex.styleguide'
 
@@ -10,6 +10,10 @@ type CheckoutB2BContextData = {
   showToast: WithToast['showToast']
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
+  discountApplied: number // Variável adicionada ao contexto
+  setDiscountApplied: React.Dispatch<React.SetStateAction<number>>
+  fixedDiscountPercentage: number // Variável adicionada ao contexto
+  setFixedDiscountPercentage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -21,6 +25,8 @@ function CheckoutB2BProviderWrapper({
   showToast,
 }: React.PropsWithChildren<WithToast>) {
   const [pending, setPending] = React.useState(false)
+  const [discountApplied, setDiscountApplied] = useState(0) // Estado para controlar o desconto aplicado
+  const [fixedDiscountPercentage, setFixedDiscountPercentage] = useState(0)
 
   const getSellingPrice = useCallback(
     (item: Item, discount: number): number => {
@@ -50,8 +56,22 @@ function CheckoutB2BProviderWrapper({
       showToast,
       getSellingPrice,
       getDiscountedPrice,
+      discountApplied, // Adiciona ao valor do contexto
+      setDiscountApplied, // Função para atualizar o desconto
+      fixedDiscountPercentage, // Adiciona ao contexto
+      setFixedDiscountPercentage, // Adiciona função para atualizar
     }),
-    [pending, setPending, showToast, getSellingPrice, getDiscountedPrice]
+    [
+      pending,
+      setPending,
+      showToast,
+      getSellingPrice,
+      getDiscountedPrice,
+      discountApplied,
+      setDiscountApplied,
+      fixedDiscountPercentage,
+      setFixedDiscountPercentage,
+    ]
   )
 
   return (

@@ -18,7 +18,10 @@ import {
   Totalizer,
 } from 'vtex.styleguide'
 
-import { CheckoutB2BProvider } from './CheckoutB2BContext'
+import {
+  CheckoutB2BProvider,
+  useCheckoutB2BContext,
+} from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
 import { SavedCarts } from './components/SavedCarts'
 import GET_APP_SETTINGS from './graphql/getAppSettings.graphql'
@@ -50,13 +53,19 @@ function CheckoutB2B() {
 
   const { clearCart, isLoading: clearCartLoading } = useClearCart()
   const totalizers = useTotalizers()
+  const {
+    discountApplied = 0,
+    setDiscountApplied,
+    fixedDiscountPercentage = 0,
+  } = useCheckoutB2BContext()
+
   const toolbar = useToolbar()
   const { navigate } = useRuntime()
   const [isEditing, setIsEditing] = useState(false)
-  const [discount, setDiscount] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const { formatMessage } = useIntl()
   const { items } = orderForm
+
   const loading = useMemo(() => orderFormLoading || organizationLoading, [
     orderFormLoading,
     organizationLoading,
@@ -76,7 +85,7 @@ function CheckoutB2B() {
     }))
   }, [])
 
-  const schema = useTableSchema(isEditing, discount, updatePrice)
+  const schema = useTableSchema(isEditing, discountApplied, updatePrice)
 
   const [setManualPrice, { loading: saving }] = useMutation(
     MutationSetManualPrice,
@@ -86,10 +95,6 @@ function CheckoutB2B() {
           ...orderForm,
           ...updateOrderFormPayment,
         } as CompleteOrderForm)
-
-        showToast?.({
-          message: formatMessage(messages.manualPriceSuccess),
-        })
       },
       onError: (error) => {
         console.error('Erro na mutação:', error)
@@ -121,14 +126,27 @@ function CheckoutB2B() {
           },
         })
       }
+
+      showToast?.({
+        message: formatMessage(messages.manualPriceSuccess),
+      })
     } catch (error) {
       console.error('Erro ao salvar os preços:', error)
+      showToast?.({
+        message: formatMessage(messages.manualPriceError),
+      })
     }
   }
 
   const toggleEditMode = () => {
     setIsEditing((prev) => !prev)
   }
+
+  const sliderMaxValue = useMemo(() => {
+    return fixedDiscountPercentage >= 0
+      ? maximumDiscount
+      : Math.max(0, maximumDiscount + fixedDiscountPercentage)
+  }, [maximumDiscount, fixedDiscountPercentage])
 
   return (
     <div className={handles.container}>
@@ -169,13 +187,13 @@ function CheckoutB2B() {
         {isEditing && (
           <Slider
             onChange={(values: number[]) => {
-              setDiscount(values[0])
+              setDiscountApplied(values[0])
             }}
             min={0}
-            max={maximumDiscount}
+            max={sliderMaxValue}
             step={1}
-            defaultValues={[0]}
-            formatValue={(a: number) => `${a}%`}
+            defaultValues={[discountApplied]}
+            formatValue={(value: number) => `${value}%`}
           />
         )}
         {isSalesUser && (
