@@ -30,7 +30,7 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "12.12.21",
+    "@types/node": "^12.12.21",
     "@vtex/danger": "^0.2.7",
     "@vtex/intl-equalizer": "^2.5.0",
     "@vtex/prettier-config": "^0.3.5",

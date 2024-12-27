@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import type { SavedCart } from 'ssesandbox04.checkout-b2b'
 import type { Item } from 'vtex.checkout-graphql'
 import { withToast } from 'vtex.styleguide'
 
@@ -8,11 +9,13 @@ type CheckoutB2BContextData = {
   pending: boolean
   setPending: React.Dispatch<React.SetStateAction<boolean>>
   showToast: WithToast['showToast']
+  selectedCart?: SavedCart
+  setSelectedCart: React.Dispatch<React.SetStateAction<SavedCart | undefined>>
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
-  discountApplied: number // Variável adicionada ao contexto
+  discountApplied: number
   setDiscountApplied: React.Dispatch<React.SetStateAction<number>>
-  fixedDiscountPercentage: number // Variável adicionada ao contexto
+  fixedDiscountPercentage: number
   setFixedDiscountPercentage: React.Dispatch<React.SetStateAction<number>>
 }
 
@@ -24,8 +27,9 @@ function CheckoutB2BProviderWrapper({
   children,
   showToast,
 }: React.PropsWithChildren<WithToast>) {
-  const [pending, setPending] = React.useState(false)
-  const [discountApplied, setDiscountApplied] = useState(0) // Estado para controlar o desconto aplicado
+  const [pending, setPending] = useState(false)
+  const [selectedCart, setSelectedCart] = useState<SavedCart>()
+  const [discountApplied, setDiscountApplied] = useState(0)
   const [fixedDiscountPercentage, setFixedDiscountPercentage] = useState(0)
 
   const getSellingPrice = useCallback(
@@ -54,17 +58,21 @@ function CheckoutB2BProviderWrapper({
       pending,
       setPending,
       showToast,
+      selectedCart,
+      setSelectedCart,
       getSellingPrice,
       getDiscountedPrice,
-      discountApplied, // Adiciona ao valor do contexto
-      setDiscountApplied, // Função para atualizar o desconto
-      fixedDiscountPercentage, // Adiciona ao contexto
-      setFixedDiscountPercentage, // Adiciona função para atualizar
+      discountApplied,
+      setDiscountApplied,
+      fixedDiscountPercentage,
+      setFixedDiscountPercentage,
     }),
     [
       pending,
       setPending,
       showToast,
+      selectedCart,
+      setSelectedCart,
       getSellingPrice,
       getDiscountedPrice,
       discountApplied,

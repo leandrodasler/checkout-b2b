@@ -10,6 +10,7 @@ export const B2B_QUOTES_CUSTOM_APP_ID = 'b2b-quotes-graphql'
 export const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
 export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
+export const CUSTOMER_CREDIT_ID = '64'
 
 export function normalizeString(str?: string | null) {
   return (

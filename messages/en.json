@@ -1,6 +1,8 @@
 {
   "store/checkout.b2b.confirm": "Confirm",
   "store/checkout.b2b.cancel": "Cancel",
+  "store/checkout.b2b.creditAvailable": "Credit available",
+  "store/checkout.b2b.noCreditAvailable": "No credit available",
 
   "store/checkout.b2b.modal.editBillingAddress": "Edit Billing Address",
   "store/checkout.b2b.modal.sameAsShipping": "Same as shipping address",
@@ -12,6 +14,7 @@
   "store/checkout.b2b.savedCarts.save-cart.success": "Cart saved successfully",
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Cart {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
+  "store/checkout.b2b.savedCarts.use-cart.empty": "There are no saved carts for your organization and cost center.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
@@ -53,9 +56,9 @@
   "store/checkout.b2b.button.editManualPrice": "Edit all",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Stop edit",
-  "store/checkout.b2b.manualPrice.placeOrder": "All prices were successfully updated!",
+  "store/checkout.b2b.manualPrice.placeOrder": "All prices were successfully updated",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error updating prices:",
-  "store/checkout.b2b.manualPrice.placeOrder.success": "Prices updated successfully:",
+  "store/checkout.b2b.manualPrice.placeOrder.success": "Prices updated successfully",
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
   "store/checkout.b2b.empty.cart": "Cart is empty.",

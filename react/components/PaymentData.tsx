@@ -1,55 +1,56 @@
-import React, { useCallback, useEffect } from 'react'
-import { useMutation } from 'react-apollo'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import type { PaymentDataInput } from 'vtex.checkout-graphql'
-import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
-import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
+import { FormattedPrice } from 'vtex.formatted-price'
 import { Dropdown } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { useOrderFormCustom, useToast } from '../hooks'
-import type { CompleteOrderForm } from '../typings'
-import { getFirstInstallmentByPaymentSystem, messages } from '../utils'
+import {
+  useFetchCustomerCredit,
+  useOrderFormCustom,
+  useOrganization,
+  useUpdatePayment,
+} from '../hooks'
+import {
+  CUSTOMER_CREDIT_ID,
+  getFirstInstallmentByPaymentSystem,
+  messages,
+} from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 export function PaymentData() {
-  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
-  const {
-    orderForm,
-    setOrderForm,
-    loading: orderFormLoading,
-  } = useOrderFormCustom()
-
-  const [updatePayment, { loading }] = useMutation<
-    UpdateOrderFormPaymentMutation,
-    { paymentData: PaymentDataInput }
-  >(MutationUpdateOrderFormPayment, {
-    onCompleted({ updateOrderFormPayment }) {
-      setOrderForm({
-        ...orderForm,
-        ...updateOrderFormPayment,
-      } as CompleteOrderForm)
-    },
-    onError({ message }) {
-      showToast({ message })
-    },
-  })
-
+  const { organization } = useOrganization()
+  const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
+  const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
   const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
 
-  const filteredPaymentSystems = paymentSystems.filter(
-    (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+  const filteredPaymentSystems = useMemo(
+    () =>
+      paymentSystems.filter(
+        (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+      ),
+    [paymentSystems]
   )
 
   const options = filteredPaymentSystems.map((paymentSystem) => ({
-    value: paymentSystem.id,
+    value: paymentSystem.stringId,
     label: paymentSystem.name,
   }))
 
   const [selectedPayment] = payments
+
+  const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
+    enabled:
+      !!organization?.salesChannel &&
+      selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
+  })
+
+  const customerCreditLoading = useMemo(
+    () => selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID && isLoading,
+    [isLoading, selectedPayment?.paymentSystem]
+  )
 
   const setPayment = useCallback(
     (newPaymentSystem: string) => {
@@ -80,12 +81,14 @@ export function PaymentData() {
   )
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => setPayment(e.target.value),
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setPayment(e.target.value)
+    },
     [setPayment]
   )
 
   const validPaymentSystem = filteredPaymentSystems.find(
-    (paymentSystem) => paymentSystem.id === selectedPayment?.paymentSystem
+    (paymentSystem) => paymentSystem.stringId === selectedPayment?.paymentSystem
   )
 
   useEffect(() => {
@@ -95,7 +98,7 @@ export function PaymentData() {
       filteredPaymentSystems.length &&
       !validPaymentSystem
     ) {
-      setPayment(filteredPaymentSystems[0].id)
+      setPayment(filteredPaymentSystems[0].stringId)
     }
   }, [
     filteredPaymentSystems,
@@ -105,7 +108,7 @@ export function PaymentData() {
     validPaymentSystem,
   ])
 
-  if (loading) {
+  if (loading || customerCreditLoading) {
     return <TotalizerSpinner />
   }
 
@@ -116,6 +119,19 @@ export function PaymentData() {
       options={options}
       value={selectedPayment?.paymentSystem}
       onChange={handleChange}
+      helpText={
+        selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID &&
+        (customerCreditData ? (
+          <div className="flex items-center flex-wrap">
+            {formatMessage(messages.creditAvailable)}:{' '}
+            <strong>
+              <FormattedPrice value={customerCreditData?.availableCredit} />
+            </strong>
+          </div>
+        ) : (
+          formatMessage(messages.noCreditAvailable)
+        ))
+      }
     />
   )
 }

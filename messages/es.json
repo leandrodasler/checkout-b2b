@@ -1,6 +1,8 @@
 {
   "store/checkout.b2b.confirm": "Confirmar",
   "store/checkout.b2b.cancel": "Cancelar",
+  "store/checkout.b2b.creditAvailable": "Crédito disponible",
+  "store/checkout.b2b.noCreditAvailable": "Sin crédito disponible",
 
   "store/checkout.b2b.modal.editBillingAddress": "Editar Dirección de Facturación",
   "store/checkout.b2b.modal.sameAsShipping": "Misma dirección de entrega",
@@ -12,6 +14,7 @@
   "store/checkout.b2b.savedCarts.save-cart.success": "El carrito se guardó correctamente",
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Carrito {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Usar un carrito guardado",
+  "store/checkout.b2b.savedCarts.use-cart.empty": "No hay carritos guardados para su organización y centro de costos.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Seleccione un carrito",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Dirección de Envío",
@@ -53,9 +56,9 @@
   "store/checkout.b2b.button.editManualPrice": "Editar todos",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Finalizar edicion",
-  "store/checkout.b2b.manualPrice.placeOrder": "¡Todos los precios se actualizaron con éxito!",
+  "store/checkout.b2b.manualPrice.placeOrder": "Todos los precios se actualizaron con éxito",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error al actualizar los precios:",
-  "store/checkout.b2b.manualPrice.placeOrder.success": "¡Precios actualizados con éxito!",
+  "store/checkout.b2b.manualPrice.placeOrder.success": "Precios actualizados con éxito",
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",
   "store/checkout.b2b.empty.cart": "El carrito está vacío.",

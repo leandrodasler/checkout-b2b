@@ -8,7 +8,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
-import { B2B_QUOTES_CUSTOM_APP_ID, messages } from '../utils'
+import { messages } from '../utils'
 
 export function useTotalizers() {
   const {
@@ -18,14 +18,12 @@ export function useTotalizers() {
 
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
-  const { totalizers = [], customData, value: total = 0, items } = orderForm
-  const customApps = customData?.customApps
+
+  const { totalizers = [], value: total = 0, items } = orderForm
+
   const hasQuotationDiscount = useMemo(
-    () =>
-      customApps?.find(
-        (app) => app.id === B2B_QUOTES_CUSTOM_APP_ID && app.fields?.quoteId
-      ),
-    [customApps]
+    () => items?.some((item) => item.manualPrice),
+    [items]
   )
 
   const totalMargin = useTotalMargin()

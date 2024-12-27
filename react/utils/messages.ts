@@ -3,6 +3,8 @@ import { defineMessages } from 'react-intl'
 export const messages = defineMessages({
   cancel: { id: 'store/checkout.b2b.cancel' },
   confirm: { id: 'store/checkout.b2b.confirm' },
+  creditAvailable: { id: 'store/checkout.b2b.creditAvailable' },
+  noCreditAvailable: { id: 'store/checkout.b2b.noCreditAvailable' },
   editBillingAddress: { id: 'store/checkout.b2b.modal.editBillingAddress' },
   sameAsShipping: { id: 'store/checkout.b2b.modal.sameAsShipping' },
   billingAddress: { id: 'store/checkout.b2b.totalizer.billingAddress' },
@@ -64,6 +66,7 @@ export const messages = defineMessages({
     id: 'store/checkout.b2b.savedCarts.save-cart.success',
   },
   savedCartsUseLabel: { id: 'store/checkout.b2b.savedCarts.use-cart.label' },
+  savedCartsUseEmpty: { id: 'store/checkout.b2b.savedCarts.use-cart.empty' },
   savedCartsSelectLabel: {
     id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
   },
