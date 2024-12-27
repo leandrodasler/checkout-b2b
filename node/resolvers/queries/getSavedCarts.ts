@@ -19,8 +19,8 @@ export const getSavedCarts = async (
 
   await saveSchemas(context)
 
-  const { clients } = context
-  const savedCarts = await clients.masterdata.searchDocuments<SavedCart>({
+  const { masterdata } = context.clients
+  const savedCarts = await masterdata.searchDocuments<SavedCart>({
     schema: SAVED_CART_SCHEMA_VERSION,
     dataEntity: SAVED_CART_ENTITY,
     fields: SAVED_CART_FIELDS,

@@ -1,54 +1,28 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
-import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { Dropdown } from 'vtex.styleguide'
 import { FormattedPrice } from 'vtex.formatted-price'
-import type { PaymentDataInput } from 'vtex.checkout-graphql'
-import { MutationUpdateOrderFormPayment } from 'vtex.checkout-resources'
-import type { UpdateOrderFormPaymentMutation } from 'vtex.checkout-resources'
+import { Dropdown } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import {
-  useToast,
-  useOrganization,
-  useOrderFormCustom,
   useFetchCustomerCredit,
+  useOrderFormCustom,
+  useOrganization,
+  useUpdatePayment,
 } from '../hooks'
 import {
-  messages,
   CUSTOMER_CREDIT_ID,
   getFirstInstallmentByPaymentSystem,
+  messages,
 } from '../utils'
-import type { CompleteOrderForm } from '../typings'
-import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 export function PaymentData() {
-  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
   const { organization } = useOrganization()
-
-  const {
-    orderForm,
-    setOrderForm,
-    loading: orderFormLoading,
-  } = useOrderFormCustom()
-
-  const [updatePayment, { loading }] = useMutation<
-    UpdateOrderFormPaymentMutation,
-    { paymentData: PaymentDataInput }
-  >(MutationUpdateOrderFormPayment, {
-    onCompleted({ updateOrderFormPayment }) {
-      setOrderForm({
-        ...orderForm,
-        ...updateOrderFormPayment,
-      } as CompleteOrderForm)
-    },
-    onError({ message }) {
-      showToast({ message })
-    },
-  })
-
+  const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
+  const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
   const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
 
@@ -61,7 +35,7 @@ export function PaymentData() {
   )
 
   const options = filteredPaymentSystems.map((paymentSystem) => ({
-    value: paymentSystem.id,
+    value: paymentSystem.stringId,
     label: paymentSystem.name,
   }))
 
@@ -70,12 +44,12 @@ export function PaymentData() {
   const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
     enabled:
       !!organization?.salesChannel &&
-      selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID,
+      selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
   })
 
   const customerCreditLoading = useMemo(
-    () => selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID && isLoading,
-    [isLoading, selectedPayment.paymentSystem]
+    () => selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID && isLoading,
+    [isLoading, selectedPayment?.paymentSystem]
   )
 
   const setPayment = useCallback(
@@ -114,7 +88,7 @@ export function PaymentData() {
   )
 
   const validPaymentSystem = filteredPaymentSystems.find(
-    (paymentSystem) => paymentSystem.id === selectedPayment?.paymentSystem
+    (paymentSystem) => paymentSystem.stringId === selectedPayment?.paymentSystem
   )
 
   useEffect(() => {
@@ -124,7 +98,7 @@ export function PaymentData() {
       filteredPaymentSystems.length &&
       !validPaymentSystem
     ) {
-      setPayment(filteredPaymentSystems[0].id)
+      setPayment(filteredPaymentSystems[0].stringId)
     }
   }, [
     filteredPaymentSystems,
@@ -146,7 +120,7 @@ export function PaymentData() {
       value={selectedPayment?.paymentSystem}
       onChange={handleChange}
       helpText={
-        selectedPayment.paymentSystem === CUSTOMER_CREDIT_ID &&
+        selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID &&
         (customerCreditData ? (
           <div className="flex items-center flex-wrap">
             {formatMessage(messages.creditAvailable)}:{' '}

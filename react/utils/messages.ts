@@ -66,6 +66,7 @@ export const messages = defineMessages({
     id: 'store/checkout.b2b.savedCarts.save-cart.success',
   },
   savedCartsUseLabel: { id: 'store/checkout.b2b.savedCarts.use-cart.label' },
+  savedCartsUseEmpty: { id: 'store/checkout.b2b.savedCarts.use-cart.empty' },
   savedCartsSelectLabel: {
     id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
   },

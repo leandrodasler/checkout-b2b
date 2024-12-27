@@ -1,4 +1,5 @@
 import React from 'react'
+import type { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { withToast } from 'vtex.styleguide'
 
 import type { WithToast } from './typings'
@@ -7,6 +8,8 @@ type CheckoutB2BContextData = {
   pending: boolean
   setPending: React.Dispatch<React.SetStateAction<boolean>>
   showToast: WithToast['showToast']
+  selectedCart?: SavedCart
+  setSelectedCart: React.Dispatch<React.SetStateAction<SavedCart | undefined>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -18,9 +21,12 @@ function CheckoutB2BProviderWrapper({
   showToast,
 }: React.PropsWithChildren<WithToast>) {
   const [pending, setPending] = React.useState(false)
+  const [selectedCart, setSelectedCart] = React.useState<SavedCart>()
 
   return (
-    <CheckoutB2BContext.Provider value={{ pending, setPending, showToast }}>
+    <CheckoutB2BContext.Provider
+      value={{ pending, setPending, showToast, selectedCart, setSelectedCart }}
+    >
       {children}
     </CheckoutB2BContext.Provider>
   )

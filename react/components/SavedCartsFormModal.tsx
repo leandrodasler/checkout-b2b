@@ -48,6 +48,7 @@ export function SavedCartsFormModal({ open, setOpen }: ModalProps) {
 
     const additionalData = JSON.stringify({
       paymentAddress: orderForm.paymentAddress,
+      customData: orderForm.customData,
     })
 
     saveCart({
@@ -59,6 +60,7 @@ export function SavedCartsFormModal({ open, setOpen }: ModalProps) {
   }, [
     formatMessage,
     handleCloseModal,
+    orderForm.customData,
     orderForm.paymentAddress,
     saveCart,
     setPending,
@@ -92,13 +94,20 @@ export function SavedCartsFormModal({ open, setOpen }: ModalProps) {
       }
     >
       <div className="pb7">
-        <Input
-          ref={titleInput}
-          size="small"
-          disabled={loading}
-          label={formatMessage(messages.savedCartsSaveTitle)}
-          placeholder={formatMessage(messages.savedCartsSavePlaceholder)}
-        />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleSaveCart()
+          }}
+        >
+          <Input
+            ref={titleInput}
+            size="small"
+            disabled={loading}
+            label={formatMessage(messages.savedCartsSaveTitle)}
+            placeholder={formatMessage(messages.savedCartsSavePlaceholder)}
+          />
+        </form>
       </div>
     </Modal>
   )

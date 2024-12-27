@@ -14,6 +14,7 @@
   "store/checkout.b2b.savedCarts.save-cart.success": "Cart saved successfully",
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Cart {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
+  "store/checkout.b2b.savedCarts.use-cart.empty": "There are no saved carts for your organization and cost center.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",

@@ -14,6 +14,7 @@
   "store/checkout.b2b.savedCarts.save-cart.success": "O carrinho foi salvo com sucesso",
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Carrinho {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Utilizar um carrinho salvo",
+  "store/checkout.b2b.savedCarts.use-cart.empty": "Não há carrinhos salvos para a sua organização e centro de custos.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Selecione um carrinho",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Endereço de Entrega",
@@ -30,7 +31,7 @@
   "store/checkout.b2b.totalizer.PONumber.placeholder": "Insira o número do pedido",
   "store/checkout.b2b.totalizer.companyName": "Organização",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
-  "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado pela cotação. Eventuais descontos esperados pela forma de pagamento não são cumulativos.",
+  "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado por uma cotação. Eventuais descontos esperados pela forma de pagamento não são cumulativos.",
   "store/checkout.b2b.totalizer.salesRep": "Rep. de vendas:",
   "store/checkout.b2b.totalizer.salesAdm": "Adm. de vendas:",
   "store/checkout.b2b.totalizer.totalMargin": "Margem Total",

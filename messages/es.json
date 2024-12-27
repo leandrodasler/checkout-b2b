@@ -14,6 +14,7 @@
   "store/checkout.b2b.savedCarts.save-cart.success": "El carrito se guardó correctamente",
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Carrito {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Usar un carrito guardado",
+  "store/checkout.b2b.savedCarts.use-cart.empty": "No hay carritos guardados para su organización y centro de costos.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Seleccione un carrito",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Dirección de Envío",
