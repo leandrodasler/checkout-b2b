@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
@@ -29,7 +29,45 @@ export function useTableSchema(
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
   const { isSalesUser } = usePermissions()
-  const { getSellingPrice, getDiscountedPrice } = useCheckoutB2BContext()
+  const {
+    getSellingPrice,
+    getDiscountedPrice,
+    setSubtotal,
+    setListedPrice,
+  } = useCheckoutB2BContext()
+
+  const [updatedPrices, setUpdatedPrices] = useState<Record<string, number>>({})
+
+  const handlesNewPrice = useCallback(
+    (id: string, newPrice: number) => {
+      onUpdatePrice(id, newPrice)
+      setUpdatedPrices((prevPrices) => ({
+        ...prevPrices,
+        [id]: newPrice,
+      }))
+    },
+    [onUpdatePrice]
+  )
+
+  useEffect(() => {
+    const totalValue = orderForm.items?.reduce((acc, item) => {
+      const quantity = item.quantity ?? 0
+      const price = updatedPrices[item.id] ?? item.sellingPrice ?? 0
+
+      return acc + quantity * price
+    }, 0)
+
+    const totalListPrice = orderForm.items?.reduce((acc, item) => {
+      const quantity = item.quantity ?? 0
+      const sellingPrice = item.price ?? 0
+
+      return acc + sellingPrice * quantity
+    }, 0)
+
+    setListedPrice(totalListPrice)
+
+    setSubtotal(totalValue)
+  }, [orderForm.items, updatedPrices, setSubtotal, setListedPrice])
 
   return useMemo(
     () => ({
@@ -108,7 +146,7 @@ export function useTableSchema(
                 rowData={rowData}
                 isEditing={isEditing}
                 sliderValue={discount}
-                onUpdatePrice={onUpdatePrice}
+                onUpdatePrice={handlesNewPrice}
               />
             )
           },
@@ -200,8 +238,8 @@ export function useTableSchema(
       discount,
       getSellingPrice,
       getDiscountedPrice,
-      onUpdatePrice,
       isSalesUser,
+      handlesNewPrice,
     ]
   )
 }

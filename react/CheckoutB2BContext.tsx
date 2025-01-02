@@ -15,8 +15,14 @@ type CheckoutB2BContextData = {
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
   setDiscountApplied: React.Dispatch<React.SetStateAction<number>>
-  fixedDiscountPercentage: number
-  setFixedDiscountPercentage: React.Dispatch<React.SetStateAction<number>>
+  maximumDiscount?: number
+  setMaximumDiscount: React.Dispatch<React.SetStateAction<number | undefined>>
+  subtotal: number
+  setSubtotal: React.Dispatch<React.SetStateAction<number>>
+  listedPrice: number
+  setListedPrice: React.Dispatch<React.SetStateAction<number>>
+  percentualDiscount: number
+  setPercentualDiscount: React.Dispatch<React.SetStateAction<number>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -30,8 +36,11 @@ function CheckoutB2BProviderWrapper({
   const [pending, setPending] = useState(false)
   const [selectedCart, setSelectedCart] = useState<SavedCart>()
   const [discountApplied, setDiscountApplied] = useState(0)
-  const [fixedDiscountPercentage, setFixedDiscountPercentage] = useState(0)
 
+  const [subtotal, setSubtotal] = useState(0)
+  const [listedPrice, setListedPrice] = useState(0)
+  const [percentualDiscount, setPercentualDiscount] = useState(0)
+  const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
   const getSellingPrice = useCallback(
     (item: Item, discount: number): number => {
       if (!item.sellingPrice) return 0
@@ -64,8 +73,14 @@ function CheckoutB2BProviderWrapper({
       getDiscountedPrice,
       discountApplied,
       setDiscountApplied,
-      fixedDiscountPercentage,
-      setFixedDiscountPercentage,
+      maximumDiscount,
+      setMaximumDiscount,
+      subtotal,
+      setSubtotal,
+      listedPrice,
+      setListedPrice,
+      percentualDiscount,
+      setPercentualDiscount,
     }),
     [
       pending,
@@ -77,8 +92,14 @@ function CheckoutB2BProviderWrapper({
       getDiscountedPrice,
       discountApplied,
       setDiscountApplied,
-      fixedDiscountPercentage,
-      setFixedDiscountPercentage,
+      maximumDiscount,
+      setMaximumDiscount,
+      subtotal,
+      setSubtotal,
+      listedPrice,
+      setListedPrice,
+      percentualDiscount,
+      setPercentualDiscount,
     ]
   )
 

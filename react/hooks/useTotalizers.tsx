@@ -11,11 +11,7 @@ import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
 export function useTotalizers() {
-  const {
-    discountApplied,
-    setFixedDiscountPercentage,
-  } = useCheckoutB2BContext()
-
+  const { discountApplied, percentualDiscount } = useCheckoutB2BContext()
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
 
@@ -30,24 +26,6 @@ export function useTotalizers() {
 
   if (!totalizers.length || !items?.length) return []
 
-  const totalItems = totalizers.find((t) => t.id === 'Items')?.value ?? 0
-  const totalDiscounts =
-    totalizers.find((t) => t.id === 'Discounts')?.value ?? 0
-
-  const additionalDiscount = -(discountApplied / 100) * totalItems
-
-  const totalDiscountsWithSlider = totalDiscounts + additionalDiscount
-
-  const discountPercentageWithSlider = totalItems
-    ? ((totalDiscountsWithSlider / totalItems) * 100).toFixed(2)
-    : 0
-
-  const fixedDiscount = totalItems
-    ? ((totalDiscounts / totalItems) * 100).toFixed(2)
-    : 0
-
-  setFixedDiscountPercentage(Number(fixedDiscount))
-
   const totalPriceWithDiscount = total - (total * discountApplied) / 100
 
   return [
@@ -60,8 +38,8 @@ export function useTotalizers() {
       value: <PONumber />,
     },
     {
-      label: 'Desconto total (%)',
-      value: `${discountPercentageWithSlider}%`,
+      label: formatMessage(messages.totalDiscount),
+      value: `${(percentualDiscount + discountApplied).toFixed(2)}%`,
     },
     ...totalizers.map((t) => ({
       label: t.name,

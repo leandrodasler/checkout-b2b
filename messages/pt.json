@@ -35,6 +35,7 @@
   "store/checkout.b2b.totalizer.salesRep": "Rep. de vendas:",
   "store/checkout.b2b.totalizer.salesAdm": "Adm. de vendas:",
   "store/checkout.b2b.totalizer.totalMargin": "Margem Total",
+  "store/checkout.b2b.totalizer.totalDiscount": "Desconto total (%)",
 
   "store/checkout.b2b.column.name": "Nome",
   "store/checkout.b2b.column.quantity": "Quantidade",

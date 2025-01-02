@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { Query } from 'ssesandbox04.checkout-b2b'
@@ -56,7 +56,11 @@ function CheckoutB2B() {
   const {
     discountApplied = 0,
     setDiscountApplied,
-    fixedDiscountPercentage = 0,
+    setMaximumDiscount,
+    subtotal,
+    listedPrice,
+    percentualDiscount,
+    setPercentualDiscount,
   } = useCheckoutB2BContext()
 
   const toolbar = useToolbar()
@@ -76,13 +80,33 @@ function CheckoutB2B() {
   const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, { ssr: false })
   const { maximumDiscount, isSalesUser } = usePermissions(data?.getAppSettings)
 
+  useEffect(() => {
+    if (listedPrice > 0) {
+      const discountPercentage = ((listedPrice - subtotal) / listedPrice) * 100
+
+      setPercentualDiscount(discountPercentage)
+    }
+  }, [listedPrice, subtotal, setPercentualDiscount])
+
+  useEffect(() => {
+    setMaximumDiscount(maximumDiscount)
+  }, [maximumDiscount, setMaximumDiscount])
+
+  const sliderMaxValue = useMemo(() => {
+    return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
+  }, [maximumDiscount, percentualDiscount])
+
   const filteredItems = toolbar?.filteredItems ?? items
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
-    setPrices((prevPrices) => ({
-      ...prevPrices,
-      [id]: newPrice,
-    }))
+    setPrices((prevPrices) => {
+      const updatedPrices = {
+        ...prevPrices,
+        [id]: newPrice,
+      }
+
+      return updatedPrices
+    })
   }, [])
 
   const schema = useTableSchema(isEditing, discountApplied, updatePrice)
@@ -112,6 +136,12 @@ function CheckoutB2B() {
   }, [filteredItems, prices, orderForm.id])
 
   const handleSavePrices = async () => {
+    if (percentualDiscount > maximumDiscount) {
+      showToast?.({ message: 'Desconto acima do limite' })
+
+      return
+    }
+
     const updatedPrices = getUpdatedPrices()
 
     try {
@@ -141,12 +171,6 @@ function CheckoutB2B() {
   const toggleEditMode = () => {
     setIsEditing((prev) => !prev)
   }
-
-  const sliderMaxValue = useMemo(() => {
-    return fixedDiscountPercentage >= 0
-      ? maximumDiscount
-      : Math.max(0, maximumDiscount + fixedDiscountPercentage)
-  }, [maximumDiscount, fixedDiscountPercentage])
 
   return (
     <div className={handles.container}>
