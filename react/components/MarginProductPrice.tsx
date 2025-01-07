@@ -15,6 +15,7 @@ export function MarginProductPrice({
   const organizationPrice = organization?.priceTables?.[0] ?? '1'
 
   const { data } = useFetchPrices(itemId, organizationPrice)
+
   const formatPrice = useFormatPrice()
 
   if (!data?.costPrice) return <>---</>

@@ -35,6 +35,7 @@
   "store/checkout.b2b.totalizer.salesRep": "Rep. de vendas:",
   "store/checkout.b2b.totalizer.salesAdm": "Adm. de vendas:",
   "store/checkout.b2b.totalizer.totalMargin": "Margem Total",
+  "store/checkout.b2b.totalizer.totalDiscount": "Desconto total (%)",
 
   "store/checkout.b2b.column.name": "Nome",
   "store/checkout.b2b.column.quantity": "Quantidade",
@@ -52,6 +53,13 @@
   "store/checkout.b2b.button.removeItem": "Remover",
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
   "store/checkout.b2b.button.placeOrder.error": "Erro ao processar pedido",
+  "store/checkout.b2b.button.saveManualPrice": "Aplicar Preços",
+  "store/checkout.b2b.button.editManualPrice": "Editar todos",
+
+  "store/checkout.b2b.manualPrice.stopEditManualPrice": "Parar edição",
+  "store/checkout.b2b.manualPrice.placeOrder": "Todos os preços foram atualizados com sucesso",
+  "store/checkout.b2b.manualPrice.placeOrder.error": "Erro ao atualizar os preços:",
+  "store/checkout.b2b.manualPrice.placeOrder.success": "Preço atualizado",
 
   "store/checkout.b2b.search.placeholder": "Pesquisar por nome do SKU ou EAN",
   "store/checkout.b2b.empty.cart": "O carrinho está vazio.",

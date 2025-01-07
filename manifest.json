@@ -31,7 +31,8 @@
     "vtex.search-graphql": "0.x",
     "vtex.address-form": "4.x",
     "vtex.country-codes": "2.x",
-    "vtex.session-client": "1.x"
+    "vtex.session-client": "1.x",
+    "vtex.apps-graphql": "3.x"
   },
   "registries": ["smartcheckout"],
   "policies": [
@@ -130,6 +131,30 @@
   "billingOptions": {
     "type": "free",
     "availableCountries": ["*"]
+  },
+  "settingsSchema": {
+    "title": "Configurações de Checkout B2B",
+    "type": "object",
+    "properties": {
+      "salesRepresentative": {
+        "title": "Representative Discount",
+        "description": "Set the discount value to be applied by the representative",
+        "type": "number",
+        "default": 0
+      },
+      "salesManager": {
+        "title": "Sales Manager Discount",
+        "description": "Set the discount value to be applied by the sales manager",
+        "type": "number",
+        "default": 0
+      },
+      "salesAdmin": {
+        "title": "Sales Admin Discount",
+        "description": "Set the discount value to be applied by the sales admin",
+        "type": "number",
+        "default": 0
+      }
+    }
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }

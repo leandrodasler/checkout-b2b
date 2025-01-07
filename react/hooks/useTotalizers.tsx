@@ -4,12 +4,14 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
 import { useOrderFormCustom, useTotalMargin } from '.'
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
 import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
 export function useTotalizers() {
+  const { discountApplied, percentualDiscount } = useCheckoutB2BContext()
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
 
@@ -24,6 +26,8 @@ export function useTotalizers() {
 
   if (!totalizers.length || !items?.length) return []
 
+  const totalPriceWithDiscount = total - (total * discountApplied) / 100
+
   return [
     {
       label: formatMessage(messages.paymentMethods),
@@ -32,6 +36,10 @@ export function useTotalizers() {
     {
       label: formatMessage(messages.PONumber),
       value: <PONumber />,
+    },
+    {
+      label: formatMessage(messages.totalDiscount),
+      value: `${(percentualDiscount + discountApplied).toFixed(2)}%`,
     },
     ...totalizers.map((t) => ({
       label: t.name,
@@ -60,7 +68,11 @@ export function useTotalizers() {
       : []),
     {
       label: formatMessage(messages.total),
-      value: <TruncatedText text={<FormattedPrice value={total / 100} />} />,
+      value: (
+        <TruncatedText
+          text={<FormattedPrice value={totalPriceWithDiscount / 100} />}
+        />
+      ),
     },
   ]
 }

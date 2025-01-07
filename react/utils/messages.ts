@@ -31,6 +31,7 @@ export const messages = defineMessages({
   buyerName: { id: 'store/checkout.b2b.totalizer.buyerName' },
   quotationDiscount: { id: 'store/checkout.b2b.totalizer.quotationDiscount' },
   totalMargin: { id: 'store/checkout.b2b.totalizer.totalMargin' },
+  totalDiscount: { id: 'store/checkout.b2b.totalizer.totalDiscount' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },
@@ -69,5 +70,15 @@ export const messages = defineMessages({
   savedCartsUseEmpty: { id: 'store/checkout.b2b.savedCarts.use-cart.empty' },
   savedCartsSelectLabel: {
     id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
+  },
+  saveManualPrice: { id: 'store/checkout.b2b.button.saveManualPrice' },
+  editManualPrice: { id: 'store/checkout.b2b.button.editManualPrice' },
+  manualPriceStopEdit: {
+    id: 'store/checkout.b2b.manualPrice.stopEditManualPrice',
+  },
+  manualPriceSuccess: { id: 'store/checkout.b2b.manualPrice.placeOrder' },
+  manualPriceError: { id: 'store/checkout.b2b.manualPrice.placeOrder.error' },
+  manualPriceSuccessMessage: {
+    id: 'store/checkout.b2b.manualPrice.placeOrder.success',
   },
 })

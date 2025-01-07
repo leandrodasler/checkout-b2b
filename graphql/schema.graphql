@@ -10,8 +10,15 @@ type SavedCart {
   data: String!
 }
 
+type AppSettings {
+  salesRepresentative: Int!
+  salesManager: Int!
+  salesAdmin: Int!
+}
+
 type Query {
   getSavedCarts: [SavedCart!]!
+  getAppSettings: AppSettings!
 }
 
 type Mutation {
