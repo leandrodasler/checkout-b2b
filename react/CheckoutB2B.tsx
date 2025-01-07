@@ -211,7 +211,16 @@ function CheckoutB2B() {
         {isEditing && (
           <Slider
             onChange={(values: number[]) => {
-              setDiscountApplied(values[0])
+              const [newDiscount] = values
+
+              setDiscountApplied(newDiscount)
+
+              filteredItems.forEach((item) => {
+                const originalPrice = item.manualPrice ?? item.sellingPrice ?? 0
+                const discountedPrice = originalPrice * (1 - newDiscount / 100)
+
+                updatePrice(item.id, Math.max(0, discountedPrice))
+              })
             }}
             min={0}
             max={sliderMaxValue}
