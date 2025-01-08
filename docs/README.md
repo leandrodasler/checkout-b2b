@@ -20,7 +20,7 @@ The **Checkout B2B** app is a custom checkout solution designed for B2B stores o
 
 To use the **Checkout B2B** in your store, install the app using the following command in the VTEX terminal:
 
-`vtex install ssesandbox04.checkout-b2b@0.x`
+`vtex install ssesandbox04.checkout-b2b@1.x`
 
 After installation, the `/checkout` URL will automatically redirect to `/checkout-b2b`, taking the customer to the customized B2B checkout interface.
 
