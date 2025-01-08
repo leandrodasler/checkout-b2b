@@ -47,6 +47,7 @@
   "store/checkout.b2b.column.refId": "#",
   "store/checkout.b2b.column.seller": "Vendedor",
   "store/checkout.b2b.column.margin": "Margen",
+  "store/checkout.b2b.column.createdIn": "creado en",
 
   "store/checkout.b2b.button.backToHome": "Volver a la página de inicio",
   "store/checkout.b2b.button.clearCart": "Limpiar carrito",

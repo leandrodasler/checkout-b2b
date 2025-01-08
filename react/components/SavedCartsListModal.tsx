@@ -13,7 +13,7 @@ import {
   MutationAddToCart,
   MutationSetManualPrice,
 } from 'vtex.checkout-resources'
-import { Button, Dropdown, Modal } from 'vtex.styleguide'
+import { Button, Modal } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
@@ -25,7 +25,7 @@ import {
 } from '../hooks'
 import type { CompleteOrderForm, ModalProps } from '../typings'
 import { messages } from '../utils'
-import { TotalizerSpinner } from './TotalizerSpinner'
+import { SavedCartsTable } from './SavedCardTable'
 
 type GetSavedCartsQuery = Pick<Query, 'getSavedCarts'>
 
@@ -37,16 +37,13 @@ export function SavedCartsListModal({ open, setOpen }: ModalProps) {
   const selectedCartData = JSON.parse(selectedCart?.data ?? '{}')
   const { clearCart, isLoading: loadingClearCart } = useClearCart(false)
 
-  const { data, loading: loadingGetSavedCarts } = useQuery<GetSavedCartsQuery>(
-    GET_SAVED_CARTS,
-    {
-      ssr: false,
-      fetchPolicy: 'network-only',
-      onError({ message }) {
-        showToast({ message })
-      },
-    }
-  )
+  const { data } = useQuery<GetSavedCartsQuery>(GET_SAVED_CARTS, {
+    ssr: false,
+    fetchPolicy: 'network-only',
+    onError({ message }) {
+      showToast({ message })
+    },
+  })
 
   const [addItemsMutation, { loading: loadingAddItemsToCart }] = useMutation<
     AddToCartMutation,
@@ -103,152 +100,136 @@ export function SavedCartsListModal({ open, setOpen }: ModalProps) {
 
   const savedCarts = data?.getSavedCarts
 
-  const options = useMemo(
-    () =>
-      savedCarts?.map((cart: SavedCart) => ({
-        label: `${new Date(cart.createdIn).toLocaleString()} - ${cart.title}`,
-        value: cart.id,
-      })),
-    [savedCarts]
-  )
-
   const handleCloseModal = useCallback(() => {
     setOpen(false)
   }, [setOpen])
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setSelectedCart(
-        savedCarts?.find((cart: SavedCart) => cart.id === e.target.value)
-      )
+  const handleSelectCart = useCallback(
+    (cartId: string) => {
+      setSelectedCart(savedCarts?.find((cart: SavedCart) => cart.id === cartId))
     },
     [savedCarts, setSelectedCart]
   )
 
-  const handleConfirm = useCallback(() => {
-    const { items, salesChannel, marketingData, paymentData } = selectedCartData
-    const { utmipage, ...newMarketingData } = marketingData ?? {}
-    const { payments } = paymentData
+  const handleConfirm = useCallback(
+    (cartId: string) => {
+      const cart = savedCarts?.find((c: SavedCart) => c.id === cartId)
 
-    setPending(true)
+      if (!cart) return
 
-    clearCart(undefined, {
-      onSuccess: () => {
-        addItemsMutation({
-          variables: {
-            items: items?.map(
-              (item: Item & { assemblies?: unknown }, index: number) => ({
-                id: +item.id,
-                index,
-                quantity: item.quantity,
-                seller: item.seller,
-                uniqueId: item.uniqueId,
-                options: item.assemblies,
-              })
-            ),
-            salesChannel,
-            marketingData: marketingData
-              ? {
-                  ...newMarketingData,
-                  ...(utmipage && { utmiPage: utmipage }),
-                }
-              : null,
-          },
-        }).then(async () => {
-          let index = 0
+      const { items, salesChannel, marketingData, paymentData } = JSON.parse(
+        cart.data ?? '{}'
+      )
 
-          for await (const item of items) {
-            if (item.manualPrice) {
-              await setManualPriceMutation({
+      const { utmipage, ...newMarketingData } = marketingData ?? {}
+      const { payments } = paymentData
+
+      setPending(true)
+
+      clearCart(undefined, {
+        onSuccess: () => {
+          addItemsMutation({
+            variables: {
+              items: items?.map(
+                (item: Item & { assemblies?: unknown }, index: number) => ({
+                  id: +item.id,
+                  index,
+                  quantity: item.quantity,
+                  seller: item.seller,
+                  uniqueId: item.uniqueId,
+                  options: item.assemblies,
+                })
+              ),
+              salesChannel,
+              marketingData: marketingData
+                ? {
+                    ...newMarketingData,
+                    ...(utmipage && { utmiPage: utmipage }),
+                  }
+                : null,
+            },
+          }).then(async () => {
+            let index = 0
+
+            for await (const item of items) {
+              if (item.manualPrice) {
+                await setManualPriceMutation({
+                  variables: {
+                    manualPriceInput: {
+                      itemIndex: index++,
+                      price: item.manualPrice,
+                    },
+                  },
+                })
+              }
+            }
+
+            if (payments?.[0]) {
+              await updatePayment({
                 variables: {
-                  manualPriceInput: {
-                    itemIndex: index++,
-                    price: item.manualPrice,
+                  paymentData: {
+                    payments: [
+                      {
+                        paymentSystem: payments[0].paymentSystem,
+                        referenceValue: payments[0].referenceValue,
+                        installmentsInterestRate:
+                          payments[0].merchantSellerPayments?.[0]
+                            ?.interestRate ?? 0,
+                        installments: payments[0].installment ?? 1,
+                        value: payments[0].value,
+                      },
+                    ],
                   },
                 },
               })
             }
-          }
 
-          if (payments?.[0]) {
-            await updatePayment({
-              variables: {
-                paymentData: {
-                  payments: [
-                    {
-                      paymentSystem: payments[0].paymentSystem,
-                      referenceValue: payments[0].referenceValue,
-                      installmentsInterestRate:
-                        payments[0].merchantSellerPayments?.[0]?.interestRate ??
-                        0,
-                      installments: payments[0].installment ?? 1,
-                      value: payments[0].value,
-                    },
-                  ],
-                },
-              },
-            })
-          }
+            setPending(false)
+            handleCloseModal()
+          })
+        },
+      })
+    },
+    [
+      addItemsMutation,
+      clearCart,
+      handleCloseModal,
+      savedCarts,
+      setManualPriceMutation,
+      setPending,
+      updatePayment,
+    ]
+  )
 
-          setPending(false)
-          handleCloseModal()
-        })
-      },
-    })
-  }, [
-    addItemsMutation,
-    clearCart,
-    handleCloseModal,
-    selectedCartData,
-    setManualPriceMutation,
-    setPending,
-    updatePayment,
-  ])
+  const ActionCellRenderer = ({ rowData }: { rowData: SavedCart }) => (
+    <Button
+      size="small"
+      onClick={() => handleConfirm(rowData.id)}
+      isLoading={loadingApplySavedCart}
+    >
+      {formatMessage(messages.confirm)}
+    </Button>
+  )
+
+  ActionCellRenderer.displayName = 'ActionCellRenderer'
 
   return (
     <Modal
       isOpen={open}
-      onClose={handleCloseModal}
-      size="small"
-      title={formatMessage(messages.savedCartsUseLabel)}
-      bottomBar={
-        !loadingGetSavedCarts &&
-        !!savedCarts?.length && (
-          <div className="flex flex-wrap items-center justify-around justify-between-ns w-100">
-            <Button
-              variation="tertiary"
-              onClick={handleCloseModal}
-              disabled={loadingApplySavedCart}
-            >
-              {formatMessage(messages.cancel)}
-            </Button>
-            <Button
-              variation="primary"
-              onClick={handleConfirm}
-              isLoading={loadingApplySavedCart}
-            >
-              {formatMessage(messages.confirm)}
-            </Button>
-          </div>
-        )
-      }
+      onClose={onclose}
+      centered
+      title={formatMessage(messages.savedCartsTitle)}
     >
-      <div className="pb7">
-        {loadingGetSavedCarts && <TotalizerSpinner />}
-
-        {!loadingGetSavedCarts &&
-          !savedCarts?.length &&
-          formatMessage(messages.savedCartsUseEmpty)}
-
-        {!loadingGetSavedCarts && !!savedCarts?.length && (
-          <Dropdown
-            size="small"
-            placeholder={formatMessage(messages.savedCartsSelectLabel)}
-            options={options}
-            value={selectedCart?.id}
-            onChange={handleChange}
-          />
-        )}
+      <div className="mb5 overflow-auto">
+        <SavedCartsTable
+          savedCarts={savedCarts}
+          handleConfirm={handleConfirm}
+          handleSelectCart={handleSelectCart}
+          loadingApplySavedCart={loadingApplySavedCart}
+        />
+      </div>
+      <div className="flex justify-end">
+        <Button onClick={onclose}>{formatMessage(messages.cancel)}</Button>
       </div>
     </Modal>
   )
