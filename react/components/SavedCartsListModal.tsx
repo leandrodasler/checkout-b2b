@@ -13,7 +13,7 @@ import {
   MutationAddToCart,
   MutationSetManualPrice,
 } from 'vtex.checkout-resources'
-import { Button, Modal } from 'vtex.styleguide'
+import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
@@ -218,9 +218,10 @@ export function SavedCartsListModal({ open, setOpen }: ModalProps) {
       isOpen={open}
       onClose={onclose}
       centered
+      size="large"
       title={formatMessage(messages.savedCartsTitle)}
     >
-      <div className="mb5 overflow-auto">
+      <div className="mb5 ">
         <SavedCartsTable
           savedCarts={savedCarts}
           handleConfirm={handleConfirm}
