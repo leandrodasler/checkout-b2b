@@ -33,6 +33,7 @@ export function SavedCartsTable({
     () => ({
       properties: {
         createdIn: {
+          width: 198,
           title: formatMessage(messages.createdIn),
           cellRenderer: ({ cellData }: { cellData: string }) =>
             new Date(cellData).toLocaleString(),
@@ -41,6 +42,7 @@ export function SavedCartsTable({
           title: formatMessage(messages.name),
         },
         totalValue: {
+          width: 110,
           title: formatMessage(messages.totalPrice),
           cellRenderer: ({ rowData }: { rowData: SavedCart }) => {
             const cartData = parseCartData(rowData.data ?? '{}')
@@ -51,6 +53,7 @@ export function SavedCartsTable({
           },
         },
         totalItems: {
+          width: 53,
           title: formatMessage(messages.quantity),
           cellRenderer: ({ rowData }: { rowData: SavedCart }) => {
             const cartData = parseCartData(rowData.data ?? '{}')
@@ -59,6 +62,7 @@ export function SavedCartsTable({
           },
         },
         paymentMethod: {
+          width: 190,
           title: formatMessage(messages.paymentMethods),
           cellRenderer: ({ rowData }: { rowData: SavedCart }) => {
             const cartData = parseCartData(rowData.data ?? '{}')
@@ -98,6 +102,7 @@ export function SavedCartsTable({
   return (
     <Table
       schema={tableSchema}
+      fullWidth
       items={savedCarts ?? []}
       density="low"
       onRowClick={({ rowData }: { rowData: SavedCart }) =>

@@ -216,7 +216,7 @@ export function SavedCartsListModal({ open, setOpen }: ModalProps) {
   return (
     <Modal
       isOpen={open}
-      onClose={onclose}
+      onClose={handleCloseModal}
       centered
       size="large"
       title={formatMessage(messages.savedCartsTitle)}
@@ -230,7 +230,9 @@ export function SavedCartsListModal({ open, setOpen }: ModalProps) {
         />
       </div>
       <div className="flex justify-end">
-        <Button onClick={onclose}>{formatMessage(messages.cancel)}</Button>
+        <Button onClick={handleCloseModal}>
+          {formatMessage(messages.cancel)}
+        </Button>
       </div>
     </Modal>
   )
