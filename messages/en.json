@@ -48,6 +48,7 @@
   "store/checkout.b2b.column.seller": "Seller",
   "store/checkout.b2b.column.margin": "Margin",
   "store/checkout.b2b.column.createdIn": "Created in",
+  "store/checkout.b2b.column.item": "Items",
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.clearCart": "Clear cart",

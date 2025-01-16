@@ -38,7 +38,7 @@
   "store/checkout.b2b.totalizer.totalDiscount": "Desconto total (%)",
 
   "store/checkout.b2b.column.name": "Nome",
-  "store/checkout.b2b.column.quantity": "Total",
+  "store/checkout.b2b.column.quantity": "Quantidade",
   "store/checkout.b2b.withoutStock": "Sem estoque",
   "store/checkout.b2b.column.price": "Preço Unitário",
   "store/checkout.b2b.column.totalPrice": "Preço Total",
@@ -48,6 +48,7 @@
   "store/checkout.b2b.column.seller": "Vendedor",
   "store/checkout.b2b.column.margin": "Margem",
   "store/checkout.b2b.column.createdIn": "Criado em",
+  "store/checkout.b2b.column.item": "Itens",
 
   "store/checkout.b2b.button.backToHome": "Voltar à página inicial",
   "store/checkout.b2b.button.clearCart": "Limpar carrinho",
