@@ -78,3 +78,7 @@
 .container .table :global(#toolbar) :global(.vtex-button) :global(.mr3) {
   display: none;
 }
+
+:global(.vtex-styleguide-9-x-popup) {
+  z-index: 2147483648 !important;
+}

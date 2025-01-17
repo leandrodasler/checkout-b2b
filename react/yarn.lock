@@ -5398,6 +5398,10 @@ verror@1.10.0:
   version "4.26.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.1/public/@types/vtex.address-form#f578e6e1156d9ec20cae8f7c4018db74f83546ba"
 
+"vtex.apps-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.4/public/@types/vtex.apps-graphql":
+  version "3.17.4"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.4/public/@types/vtex.apps-graphql#0e0abc699713a7113f1ec4948456bcd9e330d0f9"
+
 "vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.2/public/@types/vtex.b2b-organizations-graphql":
   version "0.63.2"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.2/public/@types/vtex.b2b-organizations-graphql#3e6f9aaedf83477551e99eb61de73a43534b8215"
@@ -5454,9 +5458,9 @@ verror@1.10.0:
   version "2.172.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.172.1/public/@types/vtex.store-graphql#3285d5b1086a07b8ba9489cee516c163df4a768d"
 
-"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.138.0/public/@types/vtex.store":
-  version "2.138.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.138.0/public/@types/vtex.store#bc1ef2f3eedc20d042014b815bdc5a4bc390d5a0"
+"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.139.0/public/@types/vtex.store":
+  version "2.139.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.139.0/public/@types/vtex.store#8e70800bb49c595b94636b85de18ba55d303a4c0"
 
 "vtex.storefront-permissions-ui@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui":
   version "1.2.2"
