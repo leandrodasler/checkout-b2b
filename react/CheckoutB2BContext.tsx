@@ -23,6 +23,8 @@ type CheckoutB2BContextData = {
   setListedPrice: React.Dispatch<React.SetStateAction<number>>
   percentualDiscount: number
   setPercentualDiscount: React.Dispatch<React.SetStateAction<number>>
+  openSavedCartModal: boolean
+  setOpenSavedCartModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -35,6 +37,7 @@ function CheckoutB2BProviderWrapper({
 }: React.PropsWithChildren<WithToast>) {
   const [pending, setPending] = useState(false)
   const [selectedCart, setSelectedCart] = useState<SavedCart>()
+  const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
 
   const [subtotal, setSubtotal] = useState(0)
@@ -68,6 +71,8 @@ function CheckoutB2BProviderWrapper({
       setPending,
       showToast,
       selectedCart,
+      openSavedCartModal,
+      setOpenSavedCartModal,
       setSelectedCart,
       getSellingPrice,
       getDiscountedPrice,
@@ -88,6 +93,8 @@ function CheckoutB2BProviderWrapper({
       showToast,
       selectedCart,
       setSelectedCart,
+      openSavedCartModal,
+      setOpenSavedCartModal,
       getSellingPrice,
       getDiscountedPrice,
       discountApplied,

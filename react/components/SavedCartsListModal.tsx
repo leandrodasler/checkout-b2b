@@ -27,7 +27,9 @@ export function SavedCartsListModal({
       title={formatMessage(messages.savedCartsTitle)}
     >
       <div className="mb5">
-        <SavedCartsTable />
+        <div className="t-small">
+          <SavedCartsTable />
+        </div>
       </div>
       <div className="flex justify-end">
         <Button onClick={handleCloseModal}>

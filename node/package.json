@@ -12,7 +12,7 @@
     "@vtex/api": "6.48.0",
     "@vtex/test-tools": "^1.0.0",
     "@vtex/tsconfig": "^0.5.6",
-    "ssesandbox04.checkout-b2b": "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@0.0.21/public/@types/ssesandbox04.checkout-b2b",
+    "ssesandbox04.checkout-b2b": "https://checkoutb2btiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@1.0.0+build1737138747/public/@types/ssesandbox04.checkout-b2b",
     "typescript": "5.5.3",
     "vtex.address-form": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.1/public/@types/vtex.address-form",
     "vtex.apps-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.4/public/@types/vtex.apps-graphql",

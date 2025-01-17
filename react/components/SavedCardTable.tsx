@@ -32,11 +32,17 @@ export function SavedCartsTable() {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
-  const { setPending, selectedCart, setSelectedCart } = useCheckoutB2BContext()
+  const {
+    setPending,
+    selectedCart,
+    setSelectedCart,
+    setOpenSavedCartModal,
+  } = useCheckoutB2BContext()
+
   const selectedCartData = JSON.parse(selectedCart?.data ?? '{}')
   const { clearCart, isLoading: loadingClearCart } = useClearCart(false)
 
-  const { data } = useQuery<GetSavedCartsQuery>(GET_SAVED_CARTS, {
+  const { data, loading } = useQuery<GetSavedCartsQuery>(GET_SAVED_CARTS, {
     ssr: false,
     fetchPolicy: 'network-only',
     onError({ message }) {
@@ -108,6 +114,7 @@ export function SavedCartsTable() {
 
   const handleConfirm = useCallback(
     (cartId: string) => {
+      handleSelectCart(cartId)
       const cart = savedCarts?.find((c: SavedCart) => c.id === cartId)
 
       if (!cart) return
@@ -180,6 +187,7 @@ export function SavedCartsTable() {
             }
 
             setPending(false)
+            setOpenSavedCartModal(false)
           })
         },
       })
@@ -187,8 +195,10 @@ export function SavedCartsTable() {
     [
       addItemsMutation,
       clearCart,
+      handleSelectCart,
       savedCarts,
       setManualPriceMutation,
+      setOpenSavedCartModal,
       setPending,
       updatePayment,
     ]
@@ -219,13 +229,17 @@ export function SavedCartsTable() {
     () => ({
       properties: {
         createdIn: {
-          width: 198,
+          width: 100,
           title: formatMessage(messages.createdIn),
           cellRenderer: ({ cellData }: { cellData: string }) =>
-            new Date(cellData).toLocaleString(),
+            new Date(cellData).toLocaleDateString(),
         },
         title: {
           title: formatMessage(messages.name),
+          // eslint-disable-next-line react/display-name
+          cellRenderer: ({ cellData }: { cellData: string }) => {
+            return <TruncatedText text={cellData} />
+          },
         },
         totalValue: {
           width: 115,
@@ -243,8 +257,9 @@ export function SavedCartsTable() {
           },
         },
         paymentMethod: {
-          width: 190,
+          width: 150,
           title: formatMessage(messages.paymentMethods),
+          // eslint-disable-next-line react/display-name
           cellRenderer: ({ rowData }: { rowData: SavedCart }) => {
             const cartData = parseCartData(rowData.data ?? '{}')
             const paymentSystemId =
@@ -256,11 +271,12 @@ export function SavedCartsTable() {
                 String(method.id) === String(paymentSystemId)
             )?.name
 
-            return paymentMethodName ?? '-'
+            return <TruncatedText text={paymentMethodName} />
           },
         },
         action: {
           title: ' ',
+          width: 50,
           cellRenderer: function ActionRenderer({
             rowData,
           }: {
@@ -292,9 +308,7 @@ export function SavedCartsTable() {
       fullWidth
       items={savedCarts ?? []}
       density="low"
-      onRowClick={({ rowData }: { rowData: SavedCart }) =>
-        handleSelectCart(rowData.id)
-      }
+      loading={loading}
     />
   )
 }

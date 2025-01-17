@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ActionMenu } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { usePermissions } from '../hooks'
 import { messages } from '../utils'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
@@ -10,11 +11,12 @@ import { SavedCartsListModal } from './SavedCartsListModal'
 export function SavedCarts() {
   const { formatMessage } = useIntl()
   const { isSalesUser } = usePermissions()
-  const [openList, setOpenList] = useState(false)
+
   const [openForm, setOpenForm] = useState(false)
+  const { openSavedCartModal, setOpenSavedCartModal } = useCheckoutB2BContext()
 
   const handleOpenListModal = () => {
-    setOpenList(true)
+    setOpenSavedCartModal(true)
   }
 
   const handleOpenFormModal = () => {
@@ -39,8 +41,11 @@ export function SavedCarts() {
           },
         ]}
       />
-      {openList && (
-        <SavedCartsListModal open={openList} setOpen={setOpenList} />
+      {openSavedCartModal && (
+        <SavedCartsListModal
+          open={openSavedCartModal}
+          setOpen={setOpenSavedCartModal}
+        />
       )}
       {openForm && (
         <SavedCartsFormModal open={openForm} setOpen={setOpenForm} />
