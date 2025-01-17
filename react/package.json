@@ -22,7 +22,7 @@
     "@vtex/tsconfig": "^0.4.4",
     "apollo-cache-inmemory": "^1.6.5",
     "graphql": "^14.6.0",
-    "ssesandbox04.checkout-b2b": "https://checkoutb2btiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@1.0.0+build1737138747/public/@types/ssesandbox04.checkout-b2b",
+    "ssesandbox04.checkout-b2b": "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@0.0.21/public/@types/ssesandbox04.checkout-b2b",
     "typescript": "3.9.7",
     "vtex.address-form": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.1/public/@types/vtex.address-form",
     "vtex.apps-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.4/public/@types/vtex.apps-graphql",
