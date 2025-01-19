@@ -16,6 +16,7 @@
   "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
   "store/checkout.b2b.savedCarts.use-cart.empty": "There are no saved carts for your organization and cost center.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
+  "store/checkout.b2b.savedCarts.savedCartsTable": "Saved Carts",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",

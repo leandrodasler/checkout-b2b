@@ -16,6 +16,7 @@
   "store/checkout.b2b.savedCarts.use-cart.label": "Utilizar um carrinho salvo",
   "store/checkout.b2b.savedCarts.use-cart.empty": "Não há carrinhos salvos para a sua organização e centro de custos.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Selecione um carrinho",
+  "store/checkout.b2b.savedCarts.savedCartsTable": "Carrinhos Salvos",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Endereço de Entrega",
   "store/checkout.b2b.totalizer.billingAddress": "Endereço de Cobrança",

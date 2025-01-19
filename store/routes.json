@@ -1,5 +1,8 @@
 {
   "store.checkout-b2b": {
     "path": "/checkout-b2b"
+  },
+  "store.checkout-b2b-carts": {
+    "path": "/checkout-b2b/carts"
   }
 }

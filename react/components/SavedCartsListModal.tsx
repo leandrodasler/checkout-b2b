@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
 
 import { messages } from '../utils'
-import { SavedCartsTable } from './SavedCardTable'
+import { SavedCartsTable } from './SavedCartsTable'
 
 export function SavedCartsListModal({
   open,

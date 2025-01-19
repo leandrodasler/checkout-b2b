@@ -51,5 +51,14 @@
       "text": "# Checkout B2B",
       "blockClass": "checkout-b2b-title"
     }
+  },
+  "store.checkout-b2b-carts": {
+    "blocks": ["checkout-b2b-carts"],
+    "props": {
+      "savedCarts": [],
+      "handleConfirm": null,
+      "handleSelectCart": null,
+      "loadingApplySavedCart": false
+    }
   }
 }

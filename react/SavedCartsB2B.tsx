@@ -4,18 +4,21 @@ import { useIntl } from 'react-intl'
 import 'vtex.country-codes/locales'
 import { useCssHandles } from 'vtex.css-handles'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
-import { Layout, PageHeader, ToastProvider } from 'vtex.styleguide'
+import { Layout, PageBlock, PageHeader, ToastProvider } from 'vtex.styleguide'
 
-import { CheckoutB2BProvider } from './CheckoutB2BContext'
+import {
+  CheckoutB2BProvider,
+  useCheckoutB2BContext,
+} from './CheckoutB2BContext'
 import { CheckoutB2bTable } from './components/CheckoutB2bTable'
-import { SavedCarts } from './components/SavedCarts'
+import { SavedCartsTable } from './components/SavedCartsTable'
 import { queryClient } from './services'
 import './styles.css'
 import { messages } from './utils'
 
-function CheckoutB2B() {
+function SavedCartB2B() {
   const handles = useCssHandles(['container', 'table'])
-
+  const { selectedCart } = useCheckoutB2BContext()
   const { navigate } = useRuntime()
   const { formatMessage } = useIntl()
 
@@ -30,12 +33,15 @@ function CheckoutB2B() {
             onLinkClick={() =>
               navigate({ page: 'store.home', fallbackToWindowLocation: true })
             }
-          >
-            <SavedCarts />
-          </PageHeader>
+          />
         }
       >
-        <CheckoutB2bTable />
+        <PageBlock title={formatMessage(messages.savedCards)}>
+          <div className={handles.table}>
+            <SavedCartsTable />
+          </div>
+        </PageBlock>
+        {selectedCart ?? <CheckoutB2bTable />}
       </Layout>
     </div>
   )
@@ -46,7 +52,7 @@ function CheckoutB2BWrapper() {
     <QueryClientProvider client={queryClient}>
       <ToastProvider positioning="window">
         <CheckoutB2BProvider>
-          <CheckoutB2B />
+          <SavedCartB2B />
         </CheckoutB2BProvider>
       </ToastProvider>
     </QueryClientProvider>

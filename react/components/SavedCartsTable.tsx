@@ -236,8 +236,7 @@ export function SavedCartsTable() {
         },
         title: {
           title: formatMessage(messages.name),
-          // eslint-disable-next-line react/display-name
-          cellRenderer: ({ cellData }: { cellData: string }) => {
+          cellRenderer({ cellData }: { cellData: string }) {
             return <TruncatedText text={cellData} />
           },
         },
@@ -257,10 +256,8 @@ export function SavedCartsTable() {
           },
         },
         paymentMethod: {
-          width: 150,
           title: formatMessage(messages.paymentMethods),
-          // eslint-disable-next-line react/display-name
-          cellRenderer: ({ rowData }: { rowData: SavedCart }) => {
+          cellRenderer({ rowData }: { rowData: SavedCart }) {
             const cartData = parseCartData(rowData.data ?? '{}')
             const paymentSystemId =
               cartData?.paymentData?.payments?.[0]?.paymentSystem
@@ -274,6 +271,7 @@ export function SavedCartsTable() {
             return <TruncatedText text={paymentMethodName} />
           },
         },
+
         action: {
           title: ' ',
           width: 50,

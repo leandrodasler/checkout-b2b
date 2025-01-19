@@ -83,4 +83,5 @@ export const messages = defineMessages({
   },
   createdIn: { id: 'store/checkout.b2b.column.createdIn' },
   items: { id: 'store/checkout.b2b.column.item' },
+  savedCards: { id: 'store/checkout.b2b.savedCarts.savedCartsTable' },
 })

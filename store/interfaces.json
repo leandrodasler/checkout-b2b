@@ -5,5 +5,11 @@
   "checkout-b2b": {
     "component": "CheckoutB2B",
     "allowed": ["rich-text"]
+  },
+  "checkout-b2b-carts": {
+    "component": "SavedCartsB2B"
+  },
+  "store.checkout-b2b-carts": {
+    "allowed": ["checkout-b2b-carts"]
   }
 }
