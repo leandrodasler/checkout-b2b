@@ -37,9 +37,9 @@ export default function ChildrenCartsColumn({
     onCompleted({ getSavedCarts }) {
       const [firstChild] = getSavedCarts
       const { parentCartId } = firstChild
-      const prevChildrenQuotes = childrenCarts[parentCartId ?? '']
+      const currentChildrenCarts = childrenCarts[parentCartId ?? '']
 
-      if (parentCartId && !prevChildrenQuotes) {
+      if (parentCartId && !currentChildrenCarts) {
         setChildrenCarts((prev) => ({
           ...prev,
           [parentCartId]: getSavedCarts,

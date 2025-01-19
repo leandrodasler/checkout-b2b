@@ -58,6 +58,9 @@ export const messages = defineMessages({
   savedCartsMainTitle: { id: 'store/checkout.b2b.savedCarts.mainTitle' },
   savedCartsTitle: { id: 'store/checkout.b2b.savedCarts.title' },
   savedCartsCurrentLabel: { id: 'store/checkout.b2b.savedCarts.current.label' },
+  savedCartsFullScreen: {
+    id: 'store/checkout.b2b.savedCarts.fullScreen',
+  },
   savedCartsSaveTitle: { id: 'store/checkout.b2b.savedCarts.save-cart.title' },
   savedCartsSavePlaceholder: {
     id: 'store/checkout.b2b.savedCarts.save-cart.placeholder',

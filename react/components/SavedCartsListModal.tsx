@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
+import { useRuntime } from 'vtex.render-runtime'
+import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
 
 import { messages } from '../utils'
 import { SavedCartsTable } from './SavedCardTable'
@@ -13,6 +14,7 @@ export function SavedCartsListModal({
   setOpen: (value: boolean) => void
 }) {
   const { formatMessage } = useIntl()
+  const { navigate } = useRuntime()
 
   const handleCloseModal = useCallback(() => {
     setOpen(false)
@@ -25,6 +27,20 @@ export function SavedCartsListModal({
       centered
       size="large"
       title={formatMessage(messages.savedCartsTitle)}
+      bottomBar={
+        <Button
+          variation="tertiary"
+          onClick={() =>
+            navigate({
+              page: 'store.b2b-saved-carts',
+              fallbackToWindowLocation: true,
+            })
+          }
+        >
+          {formatMessage(messages.savedCartsFullScreen)}
+        </Button>
+      }
+      showBottomBarBorder={false}
     >
       <div className="t-small">
         <SavedCartsTable />

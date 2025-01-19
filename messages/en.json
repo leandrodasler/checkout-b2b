@@ -10,6 +10,7 @@
 
   "store/checkout.b2b.savedCarts.mainTitle": "Saved Carts",
   "store/checkout.b2b.savedCarts.title": "Use/manage saved carts",
+  "store/checkout.b2b.savedCarts.fullScreen": "View in full screen",
   "store/checkout.b2b.savedCarts.current.label": "Using cart",
   "store/checkout.b2b.savedCarts.save-cart.title": "Cart title (optional)",
   "store/checkout.b2b.savedCarts.save-cart.placeholder": "Write a title that makes it easy to find this cart in the future",

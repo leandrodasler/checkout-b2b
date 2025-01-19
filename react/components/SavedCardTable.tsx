@@ -297,7 +297,7 @@ export function SavedCartsTable() {
           setPending(false)
           setOpenSavedCartModal(false)
 
-          if (page === 'store.b2b-saved-carts') {
+          if (page !== 'store.checkout-b2b') {
             navigate({
               fallbackToWindowLocation: true,
               to: `/checkout-b2b?savedCart=${cart.id}`,

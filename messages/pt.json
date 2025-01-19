@@ -10,6 +10,7 @@
 
   "store/checkout.b2b.savedCarts.mainTitle": "Carrinhos Salvos",
   "store/checkout.b2b.savedCarts.title": "Utilizar/gerenciar carrinhos salvos",
+  "store/checkout.b2b.savedCarts.fullScreen": "Visualizar em tela inteira",
   "store/checkout.b2b.savedCarts.current.label": "Utilizando carrinho",
   "store/checkout.b2b.savedCarts.save-cart.title": "Título para o carrinho (opcional)",
   "store/checkout.b2b.savedCarts.save-cart.placeholder": "Escreva um título que facilite a futura busca por este carrinho",

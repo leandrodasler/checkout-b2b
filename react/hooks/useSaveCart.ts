@@ -42,6 +42,7 @@ export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
 
   const handleSaveCart = useCallback(() => {
     setPending(true)
+    setSelectedCart(null)
 
     const title =
       (cartTitle ?? '').trim() ||
@@ -77,6 +78,7 @@ export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
     selectedCart?.parentCartId,
     setOpen,
     setPending,
+    setSelectedCart,
   ])
 
   return { handleSaveCart, loading }
