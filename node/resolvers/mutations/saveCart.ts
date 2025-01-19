@@ -1,27 +1,27 @@
 import { ServiceContext } from '@vtex/api'
-import type { MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
+import type { MutationSaveCartArgs, SavedCart } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
   getSessionData,
   SAVED_CART_ENTITY,
+  SAVED_CART_FIELDS,
   SAVED_CART_SCHEMA_VERSION,
   saveSchemas,
 } from '../../utils'
 
 export const saveCart = async (
   _: unknown,
-  { id, title, additionalData }: MutationSaveCartArgs,
+  { id, title, additionalData, parentCartId }: MutationSaveCartArgs,
   context: ServiceContext<Clients>
 ) => {
+  await saveSchemas(context)
   const {
     email,
     orderFormId,
     organizationId,
     costCenterId,
   } = await getSessionData(context)
-
-  await saveSchemas(context)
 
   const { clients } = context
 
@@ -36,19 +36,50 @@ export const saveCart = async (
 
   const data = JSON.stringify({ ...orderForm, ...additionalDataObject })
 
+  let parentSavedCart: SavedCart | null = null
+  let newTitle = title
+
+  if (parentCartId) {
+    parentSavedCart = await clients.masterdata.getDocument<SavedCart>({
+      dataEntity: SAVED_CART_ENTITY,
+      id: parentCartId,
+      fields: SAVED_CART_FIELDS,
+    })
+
+    newTitle = `${parentSavedCart.title} (${
+      (parentSavedCart.childrenQuantity ?? 0) + 2
+    })`
+  }
+
   const { DocumentId } = await clients.masterdata.createOrUpdateEntireDocument({
     ...(id && { id }),
     schema: SAVED_CART_SCHEMA_VERSION,
     dataEntity: SAVED_CART_ENTITY,
     fields: {
-      title,
+      title: newTitle,
       email,
       orderFormId,
       organizationId,
       costCenterId,
       data,
+      parentCartId,
     },
   })
 
-  return DocumentId
+  const savedCart = await clients.masterdata.getDocument<SavedCart>({
+    dataEntity: SAVED_CART_ENTITY,
+    id: DocumentId,
+    fields: SAVED_CART_FIELDS,
+  })
+
+  if (parentSavedCart?.id) {
+    await clients.masterdata.updatePartialDocument({
+      dataEntity: SAVED_CART_ENTITY,
+      id: parentSavedCart.id,
+      schema: SAVED_CART_SCHEMA_VERSION,
+      fields: { childrenQuantity: (parentSavedCart.childrenQuantity ?? 0) + 1 },
+    })
+  }
+
+  return savedCart
 }

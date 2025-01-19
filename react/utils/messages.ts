@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl'
 export const messages = defineMessages({
   cancel: { id: 'store/checkout.b2b.cancel' },
   confirm: { id: 'store/checkout.b2b.confirm' },
+  delete: { id: 'store/checkout.b2b.delete' },
   creditAvailable: { id: 'store/checkout.b2b.creditAvailable' },
   noCreditAvailable: { id: 'store/checkout.b2b.noCreditAvailable' },
   editBillingAddress: { id: 'store/checkout.b2b.modal.editBillingAddress' },
@@ -54,7 +55,9 @@ export const messages = defineMessages({
   },
   salesRepresentative: { id: 'store/checkout.b2b.totalizer.salesRep' },
   salesAdmin: { id: 'store/checkout.b2b.totalizer.salesAdm' },
+  savedCartsMainTitle: { id: 'store/checkout.b2b.savedCarts.mainTitle' },
   savedCartsTitle: { id: 'store/checkout.b2b.savedCarts.title' },
+  savedCartsCurrentLabel: { id: 'store/checkout.b2b.savedCarts.current.label' },
   savedCartsSaveTitle: { id: 'store/checkout.b2b.savedCarts.save-cart.title' },
   savedCartsSavePlaceholder: {
     id: 'store/checkout.b2b.savedCarts.save-cart.placeholder',
@@ -70,6 +73,15 @@ export const messages = defineMessages({
   savedCartsUseEmpty: { id: 'store/checkout.b2b.savedCarts.use-cart.empty' },
   savedCartsSelectLabel: {
     id: 'store/checkout.b2b.savedCarts.use-cart.select.label',
+  },
+  savedCartsInUseLabel: {
+    id: 'store/checkout.b2b.savedCarts.use-cart.inUse.label',
+  },
+  savedCartsSaveCurrent: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.current',
+  },
+  savedCartsSaveNew: {
+    id: 'store/checkout.b2b.savedCarts.save-cart.new',
   },
   saveManualPrice: { id: 'store/checkout.b2b.button.saveManualPrice' },
   editManualPrice: { id: 'store/checkout.b2b.button.editManualPrice' },

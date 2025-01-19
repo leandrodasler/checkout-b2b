@@ -13,6 +13,8 @@ export const SAVED_CART_FIELDS = [
   'organizationId',
   'costCenterId',
   'data',
+  'parentCartId',
+  'childrenQuantity',
 ]
 export const SAVED_CART_SCHEMA_VERSION = 'v0.0.1'
 
@@ -28,6 +30,8 @@ export const schemas = [
         organizationId: { type: 'string' },
         costCenterId: { type: 'string' },
         data: { type: 'string' },
+        parentCartId: { type: ['string', 'null'] },
+        childrenQuantity: { type: ['number', 'null'] },
       },
       'v-indexed': [
         'title',
@@ -35,6 +39,8 @@ export const schemas = [
         'orderFormId',
         'organizationId',
         'costCenterId',
+        'parentCartId',
+        'childrenQuantity',
       ],
       'v-immediate-indexing': true,
       'v-cache': false,

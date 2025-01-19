@@ -2,8 +2,15 @@
   "store.checkout-b2b": {
     "allowed": "*"
   },
+  "store.b2b-saved-carts": {
+    "allowed": "*"
+  },
   "checkout-b2b": {
     "component": "CheckoutB2B",
+    "allowed": ["rich-text"]
+  },
+  "b2b-saved-carts": {
+    "component": "B2BSavedCarts",
     "allowed": ["rich-text"]
   }
 }

@@ -1,5 +1,6 @@
 {
   "store/checkout.b2b.confirm": "Confirm",
+  "store/checkout.b2b.delete": "Delete",
   "store/checkout.b2b.cancel": "Cancel",
   "store/checkout.b2b.creditAvailable": "Credit available",
   "store/checkout.b2b.noCreditAvailable": "No credit available",
@@ -7,7 +8,9 @@
   "store/checkout.b2b.modal.editBillingAddress": "Edit Billing Address",
   "store/checkout.b2b.modal.sameAsShipping": "Same as shipping address",
 
-  "store/checkout.b2b.savedCarts.title": "Manage saved carts",
+  "store/checkout.b2b.savedCarts.mainTitle": "Saved Carts",
+  "store/checkout.b2b.savedCarts.title": "Use/manage saved carts",
+  "store/checkout.b2b.savedCarts.current.label": "Using cart",
   "store/checkout.b2b.savedCarts.save-cart.title": "Cart title (optional)",
   "store/checkout.b2b.savedCarts.save-cart.placeholder": "Write a title that makes it easy to find this cart in the future",
   "store/checkout.b2b.savedCarts.save-cart.label": "Save current cart",
@@ -15,7 +18,10 @@
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Cart {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Use a saved cart",
   "store/checkout.b2b.savedCarts.use-cart.empty": "There are no saved carts for your organization and cost center.",
-  "store/checkout.b2b.savedCarts.use-cart.select.label": "Select a cart",
+  "store/checkout.b2b.savedCarts.use-cart.select.label": "Use this cart",
+  "store/checkout.b2b.savedCarts.use-cart.inUse.label": "Cart in use at this moment",
+  "store/checkout.b2b.savedCarts.save-cart.current": "Save cart in the same transaction",
+  "store/checkout.b2b.savedCarts.save-cart.new": "Save cart in a new transaction",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",

@@ -1,5 +1,6 @@
 {
   "store/checkout.b2b.confirm": "Confirmar",
+  "store/checkout.b2b.delete": "Eliminar",
   "store/checkout.b2b.cancel": "Cancelar",
   "store/checkout.b2b.creditAvailable": "Crédito disponible",
   "store/checkout.b2b.noCreditAvailable": "Sin crédito disponible",
@@ -7,7 +8,9 @@
   "store/checkout.b2b.modal.editBillingAddress": "Editar Dirección de Facturación",
   "store/checkout.b2b.modal.sameAsShipping": "Misma dirección de entrega",
 
-  "store/checkout.b2b.savedCarts.title": "Administrar carritos guardados",
+  "store/checkout.b2b.savedCarts.mainTitle": "Carritos Guardados",
+  "store/checkout.b2b.savedCarts.title": "Usar/administrar carritos guardados",
+  "store/checkout.b2b.savedCarts.current.label": "Usando carrito",
   "store/checkout.b2b.savedCarts.save-cart.title": "Título del carrito (opcional)",
   "store/checkout.b2b.savedCarts.save-cart.placeholder": "Escribe un título que facilite la búsqueda de este carrito en el futuro",
   "store/checkout.b2b.savedCarts.save-cart.label": "Guardar carrito actual",
@@ -15,7 +18,10 @@
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Carrito {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Usar un carrito guardado",
   "store/checkout.b2b.savedCarts.use-cart.empty": "No hay carritos guardados para su organización y centro de costos.",
-  "store/checkout.b2b.savedCarts.use-cart.select.label": "Seleccione un carrito",
+  "store/checkout.b2b.savedCarts.use-cart.select.label": "Utilice este carrito",
+  "store/checkout.b2b.savedCarts.use-cart.inUse.label": "Carrito en uso en este momento",
+  "store/checkout.b2b.savedCarts.save-cart.current": "Guardar carrito en la misma transacción",
+  "store/checkout.b2b.savedCarts.save-cart.new": "Guardar carrito in nueva transacción",
 
   "store/checkout.b2b.totalizer.shippingAddress": "Dirección de Envío",
   "store/checkout.b2b.totalizer.billingAddress": "Dirección de Facturación",

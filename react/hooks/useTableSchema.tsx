@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
-import { ButtonWithIcon, IconDelete } from 'vtex.styleguide'
+import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
 
 import { useOrderFormCustom, usePermissions } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
@@ -217,14 +217,21 @@ export function useTableSchema(
           title: ' ',
           cellRenderer({ rowData }) {
             return (
-              <ButtonWithIcon
-                size="small"
-                icon={<IconDelete />}
-                variation="danger-tertiary"
-                onClick={() => {
-                  removeItem({ id: rowData.id, seller: rowData.seller ?? '1' })
-                }}
-              />
+              <Tooltip label={formatMessage(messages.delete)}>
+                <div>
+                  <ButtonWithIcon
+                    size="small"
+                    icon={<IconDelete />}
+                    variation="danger-tertiary"
+                    onClick={() => {
+                      removeItem({
+                        id: rowData.id,
+                        seller: rowData.seller ?? '1',
+                      })
+                    }}
+                  />
+                </div>
+              </Tooltip>
             )
           },
         },

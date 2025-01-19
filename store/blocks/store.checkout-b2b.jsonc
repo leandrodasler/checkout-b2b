@@ -31,20 +31,6 @@
   "loading-content#checkout-b2b": {
     "children": ["rich-text#loading"]
   },
-  "rich-text#disallowed": {
-    "props": {
-      "textPosition": "CENTER",
-      "textColor": "c-danger",
-      "text": "**You don't have access to this content**"
-    }
-  },
-  "rich-text#loading": {
-    "props": {
-      "textPosition": "CENTER",
-      "text": "Waiting for permissions..."
-    }
-  },
-
   "rich-text#checkout-b2b-title": {
     "title": "Checkout B2B Title",
     "props": {

@@ -1,4 +1,25 @@
-mutation saveCart($id: ID, $title: String, $additionalData: String) {
-  saveCart(id: $id, title: $title, additionalData: $additionalData)
-    @context(provider: "ssesandbox04.checkout-b2b")
+mutation saveCart(
+  $id: ID
+  $title: String
+  $additionalData: String
+  $parentCartId: String
+) {
+  saveCart(
+    id: $id
+    title: $title
+    additionalData: $additionalData
+    parentCartId: $parentCartId
+  ) @context(provider: "ssesandbox04.checkout-b2b") {
+    id
+    createdIn
+    lastInteractionIn
+    title
+    email
+    orderFormId
+    organizationId
+    costCenterId
+    data
+    childrenQuantity
+    parentCartId
+  }
 }

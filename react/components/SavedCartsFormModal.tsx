@@ -1,87 +1,37 @@
-import React, { createRef, useCallback } from 'react'
-import { useMutation } from 'react-apollo'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Mutation, MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
+import { useCssHandles } from 'vtex.css-handles'
 import { Button, Input, Modal } from 'vtex.styleguide'
 
-import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
-import SAVE_CART_MUTATION from '../graphql/saveCart.graphql'
-import { useOrderFormCustom, useToast } from '../hooks'
+import { useSaveCart } from '../hooks'
 import type { ModalProps } from '../typings'
 import { messages } from '../utils'
 
-type SaveCardMutation = Pick<Mutation, 'saveCart'>
+type Props = ModalProps
 
-export function SavedCartsFormModal({ open, setOpen }: ModalProps) {
-  const { setPending } = useCheckoutB2BContext()
-  const { orderForm } = useOrderFormCustom()
-  const showToast = useToast()
+export function SavedCartsFormModal({ open, setOpen }: Props) {
+  const handles = useCssHandles(['container'])
   const { formatMessage } = useIntl()
-  const titleInput = createRef<HTMLInputElement>()
+  const [title, setTitle] = useState('')
+  const inputRef = useRef<HTMLInputElement>()
 
-  const [saveCart, { loading }] = useMutation<
-    SaveCardMutation,
-    MutationSaveCartArgs
-  >(SAVE_CART_MUTATION, {
-    refetchQueries: [{ query: GET_SAVED_CARTS }],
-    onCompleted() {
-      showToast({ message: formatMessage(messages.savedCartsSaveSuccess) })
-    },
-    onError({ message }) {
-      showToast({ message })
-    },
+  const { handleSaveCart, loading } = useSaveCart({
+    setOpen,
+    isCurrent: false,
+    cartTitle: title,
   })
 
-  const handleCloseModal = useCallback(() => {
-    setOpen(false)
-  }, [setOpen])
-
-  const handleSaveCart = useCallback(() => {
-    setPending(true)
-
-    const title =
-      (titleInput.current?.value ?? '').trim() ||
-      formatMessage(messages.savedCartsSaveDefaultTitle, {
-        date: new Date().toLocaleString(),
-      })
-
-    const additionalData = JSON.stringify({
-      paymentAddress: orderForm.paymentAddress,
-      customData: orderForm.customData,
-    })
-
-    saveCart({
-      variables: { title, additionalData },
-    }).finally(() => {
-      setPending(false)
-      handleCloseModal()
-    })
-  }, [
-    formatMessage,
-    handleCloseModal,
-    orderForm.customData,
-    orderForm.paymentAddress,
-    saveCart,
-    setPending,
-    titleInput,
-  ])
+  useEffect(() => inputRef.current?.focus(), [])
 
   return (
     <Modal
       isOpen={open}
-      onClose={handleCloseModal}
+      container={document.querySelector(`.${handles.container}`)}
+      onClose={() => setOpen(false)}
       size="small"
-      title={formatMessage(messages.savedCartsSaveLabel)}
+      title={formatMessage(messages.savedCartsSaveNew)}
       bottomBar={
-        <div className="flex flex-wrap items-center justify-around justify-between-ns w-100">
-          <Button
-            disabled={loading}
-            variation="tertiary"
-            onClick={handleCloseModal}
-          >
-            {formatMessage(messages.cancel)}
-          </Button>
+        <div className="flex justify-end">
           <Button
             variation="primary"
             disabled={loading}
@@ -101,7 +51,11 @@ export function SavedCartsFormModal({ open, setOpen }: ModalProps) {
           }}
         >
           <Input
-            ref={titleInput}
+            ref={inputRef}
+            value={title}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
             size="small"
             disabled={loading}
             label={formatMessage(messages.savedCartsSaveTitle)}

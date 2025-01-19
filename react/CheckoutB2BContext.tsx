@@ -1,16 +1,29 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import type { SavedCart } from 'ssesandbox04.checkout-b2b'
+import { useQuery } from 'react-apollo'
+import type {
+  Query,
+  QueryGetCartArgs,
+  SavedCart,
+} from 'ssesandbox04.checkout-b2b'
 import type { Item } from 'vtex.checkout-graphql'
+import { useRuntime } from 'vtex.render-runtime'
 import { withToast } from 'vtex.styleguide'
 
+import GET_SAVED_CART from './graphql/getSavedCart.graphql'
 import type { WithToast } from './typings'
+
+type QueryGetSavedCart = Pick<Query, 'getCart'>
 
 type CheckoutB2BContextData = {
   pending: boolean
   setPending: React.Dispatch<React.SetStateAction<boolean>>
   showToast: WithToast['showToast']
-  selectedCart?: SavedCart
-  setSelectedCart: React.Dispatch<React.SetStateAction<SavedCart | undefined>>
+  selectedCart?: SavedCart | null
+  setSelectedCart: React.Dispatch<
+    React.SetStateAction<SavedCart | null | undefined>
+  >
+  openSavedCartModal: boolean
+  setOpenSavedCartModal: React.Dispatch<React.SetStateAction<boolean>>
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
@@ -23,8 +36,6 @@ type CheckoutB2BContextData = {
   setListedPrice: React.Dispatch<React.SetStateAction<number>>
   percentualDiscount: number
   setPercentualDiscount: React.Dispatch<React.SetStateAction<number>>
-  openSavedCartModal: boolean
-  setOpenSavedCartModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -35,8 +46,9 @@ function CheckoutB2BProviderWrapper({
   children,
   showToast,
 }: React.PropsWithChildren<WithToast>) {
+  const { query, setQuery } = useRuntime()
   const [pending, setPending] = useState(false)
-  const [selectedCart, setSelectedCart] = useState<SavedCart>()
+  const [selectedCart, setSelectedCart] = useState<SavedCart | null>()
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
 
@@ -44,6 +56,22 @@ function CheckoutB2BProviderWrapper({
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
   const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
+
+  const savedCartId = query?.savedCart
+
+  useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
+    ssr: false,
+    skip: !savedCartId || selectedCart?.id === savedCartId,
+    variables: { id: savedCartId ?? '' },
+    onCompleted({ getCart }) {
+      setSelectedCart(getCart)
+    },
+    onError() {
+      setSelectedCart(null)
+      setQuery({ savedCart: undefined })
+    },
+  })
+
   const getSellingPrice = useCallback(
     (item: Item, discount: number): number => {
       if (!item.sellingPrice) return 0

@@ -1,6 +1,5 @@
-query getSavedCartsChildren($parentCartId: ID) {
-  getSavedCarts(parentCartId: $parentCartId)
-    @context(provider: "ssesandbox04.checkout-b2b") {
+query getSavedCart($id: ID!) {
+  getCart(id: $id) @context(provider: "ssesandbox04.checkout-b2b") {
     id
     createdIn
     lastInteractionIn

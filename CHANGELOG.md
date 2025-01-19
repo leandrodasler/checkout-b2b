@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Saved carts transactions mechanism
+
 ## [1.0.1] - 2025-01-17
 
-- Saved carts in a table.
+### Added
+
+- Saved carts in a table
 
 ## [1.0.0] - 2025-01-07
+
+### Added
 
 - Manual pricing quotation by sales users
 

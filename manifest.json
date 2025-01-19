@@ -21,6 +21,7 @@
     "vtex.checkout-graphql": "0.x",
     "vtex.store": "2.x",
     "vtex.rich-text": "0.x",
+    "vtex.flex-layout": "0.x",
     "vtex.css-handles": "0.x",
     "vtex.checkout-resources": "0.x",
     "vtex.b2b-organizations-graphql": "0.x",

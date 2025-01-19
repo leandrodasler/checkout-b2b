@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ActionMenu } from 'vtex.styleguide'
+import {
+  ActionMenu,
+  IconCopy,
+  IconPlusLines,
+  IconShoppingCart,
+  Spinner,
+  Tag,
+} from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { usePermissions } from '../hooks'
+import { usePermissions, useSaveCart } from '../hooks'
 import { messages } from '../utils'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
 import { SavedCartsListModal } from './SavedCartsListModal'
@@ -13,30 +20,61 @@ export function SavedCarts() {
   const { isSalesUser } = usePermissions()
 
   const [openForm, setOpenForm] = useState(false)
-  const { openSavedCartModal, setOpenSavedCartModal } = useCheckoutB2BContext()
 
-  const handleOpenListModal = () => {
-    setOpenSavedCartModal(true)
-  }
+  const {
+    selectedCart,
+    openSavedCartModal,
+    setOpenSavedCartModal,
+  } = useCheckoutB2BContext()
 
-  const handleOpenFormModal = () => {
-    setOpenForm(true)
-  }
+  const { handleSaveCart, loading } = useSaveCart({
+    isCurrent: true,
+  })
+
+  const handleOpenListModal = () => setOpenSavedCartModal(true)
+  const handleOpenFormModal = () => setOpenForm(true)
 
   if (!isSalesUser) return null
 
   return (
-    <>
+    <div className="flex items-center flex-wrap pl4">
+      {loading && <Spinner size={20} />}
+      {selectedCart && !loading && (
+        <Tag variation="low">
+          {formatMessage(messages.savedCartsCurrentLabel)}:{' '}
+          <strong>{selectedCart.title}</strong>
+        </Tag>
+      )}
       <ActionMenu
-        label={formatMessage(messages.savedCartsTitle)}
+        label={formatMessage(messages.savedCartsMainTitle)}
         buttonProps={{ variation: 'tertiary' }}
         options={[
+          ...(selectedCart
+            ? [
+                {
+                  label: (
+                    <OptionMenuWrapper icon={<IconCopy size={12} />}>
+                      {formatMessage(messages.savedCartsSaveCurrent)}
+                    </OptionMenuWrapper>
+                  ),
+                  onClick: handleSaveCart,
+                },
+              ]
+            : []),
           {
-            label: formatMessage(messages.savedCartsSaveLabel),
+            label: (
+              <OptionMenuWrapper icon={<IconPlusLines size={12} />}>
+                {formatMessage(messages.savedCartsSaveNew)}
+              </OptionMenuWrapper>
+            ),
             onClick: handleOpenFormModal,
           },
           {
-            label: formatMessage(messages.savedCartsUseLabel),
+            label: (
+              <OptionMenuWrapper icon={<IconShoppingCart size={12} />}>
+                {formatMessage(messages.savedCartsTitle)}
+              </OptionMenuWrapper>
+            ),
             onClick: handleOpenListModal,
           },
         ]}
@@ -50,6 +88,18 @@ export function SavedCarts() {
       {openForm && (
         <SavedCartsFormModal open={openForm} setOpen={setOpenForm} />
       )}
-    </>
+    </div>
+  )
+}
+
+function OptionMenuWrapper({
+  icon,
+  children,
+}: React.PropsWithChildren<{ icon: React.ReactNode }>) {
+  return (
+    <div className="flex flex-wrap items-center">
+      <div className="mr2">{icon}</div>
+      {children}
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
+import { EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
 
 import { messages } from '../utils'
 import { SavedCartsTable } from './SavedCardTable'
@@ -26,15 +26,8 @@ export function SavedCartsListModal({
       size="large"
       title={formatMessage(messages.savedCartsTitle)}
     >
-      <div className="mb5">
-        <div className="t-small">
-          <SavedCartsTable />
-        </div>
-      </div>
-      <div className="flex justify-end">
-        <Button onClick={handleCloseModal}>
-          {formatMessage(messages.cancel)}
-        </Button>
+      <div className="t-small">
+        <SavedCartsTable />
       </div>
     </Modal>
   )

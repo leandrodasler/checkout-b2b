@@ -5,6 +5,7 @@ import type {
   OrderForm as OrderFormType,
 } from 'vtex.checkout-graphql'
 import type { OrderForm as OrderFormStore } from 'vtex.store-graphql'
+import type { Query as CheckoutB2BQuery } from 'ssesandbox04.checkout-b2b'
 
 type ShowToastArgs = {
   message: string
@@ -128,3 +129,5 @@ export type ModalProps = {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+export type GetSavedCartsQuery = Pick<CheckoutB2BQuery, 'getSavedCarts'>

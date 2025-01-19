@@ -8,27 +8,35 @@ import { messages } from '../utils'
 
 interface ActionCellRendererProps {
   rowData: SavedCart
-  handleConfirm: (id: string) => void
+  handleConfirm: (cart: SavedCart) => void
   loading: boolean
+  disabled: boolean
 }
 
 export const ActionCellRenderer = ({
   rowData,
   handleConfirm,
   loading,
+  disabled,
 }: ActionCellRendererProps) => {
   const { formatMessage } = useIntl()
   const { selectedCart } = useCheckoutB2BContext()
 
+  const tooltipLabel =
+    selectedCart?.id === rowData.id
+      ? formatMessage(messages.savedCartsInUseLabel)
+      : formatMessage(messages.savedCartsSelectLabel)
+
   return (
-    <Tooltip label={formatMessage(messages.confirm)}>
+    <Tooltip label={tooltipLabel}>
       <div>
         <ButtonWithIcon
           size="small"
           variation="tertiary"
           icon={<IconShoppingCart />}
-          onClick={() => handleConfirm(rowData.id)}
-          isLoading={loading && selectedCart?.id === rowData.id}
+          onClick={() => handleConfirm(rowData)}
+          disabled={disabled}
+          isLoading={loading}
         />
       </div>
     </Tooltip>

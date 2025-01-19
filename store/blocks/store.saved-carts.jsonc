@@ -1,0 +1,42 @@
+{
+  "store.b2b-saved-carts": {
+    "children": ["check-permission#b2b-saved-carts"]
+  },
+  "check-permission#b2b-saved-carts": {
+    "props": {
+      "roles": [
+        "store-admin",
+        "sales-admin",
+        "sales-manager",
+        "sales-representative",
+        "customer-admin",
+        "customer-approver"
+      ]
+    },
+    "blocks": [
+      "allowed-content#b2b-saved-carts",
+      "disallowed-content#b2b-saved-carts",
+      "loading-content#b2b-saved-carts"
+    ]
+  },
+  "allowed-content#b2b-saved-carts": {
+    "children": ["b2b-saved-carts"]
+  },
+  "disallowed-content#b2b-saved-carts": {
+    "children": ["rich-text#disallowed"]
+  },
+  "loading-content#b2b-saved-carts": {
+    "children": ["rich-text#loading"]
+  },
+  "b2b-saved-carts": {
+    "title": "B2B Saved Carts",
+    "blocks": ["rich-text#b2b-saved-carts"]
+  },
+  "rich-text#b2b-saved-carts": {
+    "title": "B2B Saved Carts Title",
+    "props": {
+      "text": "# Saved Carts",
+      "blockClass": "checkout-b2b-title"
+    }
+  }
+}

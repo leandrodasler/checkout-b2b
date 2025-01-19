@@ -1,36 +1,31 @@
 import { ServiceContext } from '@vtex/api'
-import type { SavedCart } from 'ssesandbox04.checkout-b2b'
+import type { QueryGetSavedCartsArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
-import {
-  getSessionData,
-  SAVED_CART_ENTITY,
-  SAVED_CART_FIELDS,
-  SAVED_CART_SCHEMA_VERSION,
-  saveSchemas,
-} from '../../utils'
+import { getAllSavedCarts, getSessionData, saveSchemas } from '../../utils'
 
 export const getSavedCarts = async (
   _: unknown,
-  __: unknown,
+  { parentCartId }: QueryGetSavedCartsArgs,
   context: ServiceContext<Clients>
 ) => {
+  await saveSchemas(context)
   const { organizationId, costCenterId } = await getSessionData(context)
 
-  await saveSchemas(context)
+  const where: string[] = []
 
-  const { masterdata } = context.clients
-  const savedCarts = await masterdata.searchDocuments<SavedCart>({
-    schema: SAVED_CART_SCHEMA_VERSION,
-    dataEntity: SAVED_CART_ENTITY,
-    fields: SAVED_CART_FIELDS,
-    pagination: {
-      page: 1,
-      pageSize: 100,
-    },
-    where: `(organizationId='${organizationId}') AND (costCenterId='${costCenterId}')`,
-    sort: 'createdIn DESC',
+  where.push(`(organizationId='${organizationId}')`)
+  where.push(`(costCenterId='${costCenterId}')`)
+
+  if (parentCartId) {
+    where.push(`(parentCartId='${parentCartId}')`)
+  } else {
+    where.push(`(parentCartId is null)`)
+  }
+
+  return getAllSavedCarts({
+    context,
+    where: where.join(' AND '),
+    sort: `createdIn ${parentCartId ? 'ASC' : 'DESC'}`,
   })
-
-  return savedCarts
 }

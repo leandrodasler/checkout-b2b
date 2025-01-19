@@ -8,6 +8,8 @@ type SavedCart {
   organizationId: String!
   costCenterId: String!
   data: String!
+  parentCartId: String
+  childrenQuantity: Int
 }
 
 type AppSettings {
@@ -17,10 +19,18 @@ type AppSettings {
 }
 
 type Query {
-  getSavedCarts: [SavedCart!]!
+  getCart(id: ID!): SavedCart
+  getSavedCarts(parentCartId: ID): [SavedCart!]!
   getAppSettings: AppSettings!
 }
 
 type Mutation {
-  saveCart(id: ID, title: String, additionalData: String): ID!
+  saveCart(
+    id: ID
+    title: String
+    additionalData: String
+    parentCartId: String
+  ): SavedCart!
+
+  deleteCart(id: ID): ID
 }

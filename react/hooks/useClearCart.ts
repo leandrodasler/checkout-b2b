@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { useRuntime } from 'vtex.render-runtime'
 
 import { useOrderFormCustom, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
@@ -8,8 +9,9 @@ import type { ApiResponse, CompleteOrderForm } from '../typings'
 
 export function useClearCart(updateOrderForm = true) {
   const showToast = useToast()
+  const { setQuery } = useRuntime()
   const { orderForm, setOrderForm } = useOrderFormCustom()
-  const { setPending } = useCheckoutB2BContext()
+  const { setPending, setSelectedCart } = useCheckoutB2BContext()
   const handlePending = useCallback(
     (pending: boolean) => {
       updateOrderForm && setPending(pending)
@@ -28,7 +30,11 @@ export function useClearCart(updateOrderForm = true) {
       ).finally(() => handlePending(false))
     },
     onSuccess(newOrderForm) {
-      updateOrderForm && setOrderForm(newOrderForm)
+      if (!updateOrderForm) return
+
+      setOrderForm(newOrderForm)
+      setSelectedCart(null)
+      setQuery({ savedCart: undefined })
     },
     onError({ message }) {
       showToast({ message })
