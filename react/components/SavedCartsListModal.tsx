@@ -4,7 +4,7 @@ import { useRuntime } from 'vtex.render-runtime'
 import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
 
 import { messages } from '../utils'
-import { SavedCartsTable } from './SavedCardTable'
+import { SavedCartsTable } from './SavedCartTable'
 
 export function SavedCartsListModal({
   open,
