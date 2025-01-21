@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Correctly saved cart po number applying if empty
+
 ## [1.0.2] - 2025-01-20
 
 ### Added

@@ -15,9 +15,10 @@ export function PONumber() {
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
 
-  const poNumber = orderForm.customData?.customApps?.find(
-    (app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID
-  )?.fields?.[PO_NUMBER_CUSTOM_FIELD]
+  const poNumber =
+    orderForm.customData?.customApps?.find(
+      (app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID
+    )?.fields?.[PO_NUMBER_CUSTOM_FIELD] ?? ''
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrderForm({
