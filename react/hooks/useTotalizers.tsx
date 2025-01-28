@@ -11,7 +11,7 @@ import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
 export function useTotalizers() {
-  const { discountApplied, percentualDiscount } = useCheckoutB2BContext()
+  const { discountApplied } = useCheckoutB2BContext()
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
 
@@ -31,9 +31,16 @@ export function useTotalizers() {
 
   const totalPriceWithDiscount = total - (total * discountApplied) / 100
 
+  const totalItemsWithoutDiscount =
+    totalizers.find((t) => t.id === 'Items')?.value ?? 0
+
   const totalItems = items.reduce(
     (acc, item) => acc + (item.sellingPrice ?? 0) * item.quantity,
     0
+  )
+
+  const percentualDiscount = Math.round(
+    100 - (totalItems / totalItemsWithoutDiscount) * 100
   )
 
   return [
