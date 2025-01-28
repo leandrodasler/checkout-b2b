@@ -34,7 +34,7 @@ export function useClearCart(updateOrderForm = true) {
 
       setOrderForm(newOrderForm)
       setSelectedCart(null)
-      setQuery({ savedCart: undefined })
+      setQuery({ savedCart: undefined }, { replace: true })
     },
     onError({ message }) {
       showToast({ message })

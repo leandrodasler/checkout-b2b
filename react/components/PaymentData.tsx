@@ -122,7 +122,7 @@ export function PaymentData() {
       helpText={
         selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID &&
         (customerCreditData ? (
-          <div className="flex items-center flex-wrap">
+          <div className="flex flex-wrap items-center justify-center">
             {formatMessage(messages.creditAvailable)}:{' '}
             <strong>
               <FormattedPrice value={customerCreditData?.availableCredit} />

@@ -18,7 +18,10 @@ export function useTotalizers() {
   const { totalizers = [], value: total = 0, items } = orderForm
 
   const hasQuotationDiscount = useMemo(
-    () => items?.some((item) => item.manualPrice),
+    () =>
+      items?.some(
+        (item) => item.manualPrice && item.manualPrice !== item.price
+      ),
     [items]
   )
 
@@ -27,6 +30,11 @@ export function useTotalizers() {
   if (!totalizers.length || !items?.length) return []
 
   const totalPriceWithDiscount = total - (total * discountApplied) / 100
+
+  const totalItems = items.reduce(
+    (acc, item) => acc + (item.sellingPrice ?? 0) * item.quantity,
+    0
+  )
 
   return [
     {
@@ -39,13 +47,23 @@ export function useTotalizers() {
     },
     {
       label: formatMessage(messages.totalDiscount),
-      value: `${(percentualDiscount + discountApplied).toFixed(2)}%`,
+      value: `${Math.round(percentualDiscount + discountApplied)}%`,
     },
     ...totalizers.map((t) => ({
       label: t.name,
       value: (
-        <div className="flex">
-          <TruncatedText text={<FormattedPrice value={t.value / 100} />} />
+        <div className="flex flex-wrap">
+          <TruncatedText
+            text={<FormattedPrice value={t.value / 100} />}
+            strike={t.id === 'Items' && totalItems < t.value}
+          />
+          {t.id === 'Items' && totalItems < t.value && (
+            <div className="w-100">
+              <TruncatedText
+                text={<FormattedPrice value={totalItems / 100} />}
+              />
+            </div>
+          )}
           {t.id === 'Discounts' && hasQuotationDiscount && (
             <Tooltip label={formatMessage(messages.quotationDiscount)}>
               <span className="ml2">
