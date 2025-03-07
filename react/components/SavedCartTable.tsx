@@ -8,15 +8,10 @@ import type {
 } from 'ssesandbox04.checkout-b2b'
 import { Item } from 'vtex.checkout-graphql'
 import type {
-  AddToCartMutation,
-  AddToCartMutationVariables,
   SetManualPriceMutation,
   SetManualPriceMutationVariables,
 } from 'vtex.checkout-resources'
-import {
-  MutationAddToCart,
-  MutationSetManualPrice,
-} from 'vtex.checkout-resources'
+import { MutationSetManualPrice } from 'vtex.checkout-resources'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
 import {
@@ -30,7 +25,7 @@ import {
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import DELETE_SAVED_CART from '../graphql/deleteCart.graphql'
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
-import { useClearCart, useUpdatePayment } from '../hooks'
+import { useAddItems, useClearCart, useUpdatePayment } from '../hooks'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
 import { useToast } from '../hooks/useToast'
 import type {
@@ -151,22 +146,10 @@ export function SavedCartsTable() {
     },
   })
 
-  const [addItemsMutation, { loading: loadingAddItemsToCart }] = useMutation<
-    AddToCartMutation,
-    AddToCartMutationVariables
-  >(MutationAddToCart, {
-    onError({ message }) {
-      showToast({ message })
-    },
-    onCompleted({ addToCart }) {
-      setOrderForm({
-        ...orderForm,
-        ...addToCart,
-        customData: selectedCartData.customData,
-        paymentData: selectedCartData.paymentData,
-        sellers: selectedCartData.sellers,
-      } as CompleteOrderForm)
-    },
+  const [addItemsMutation, { loading: loadingAddItemsToCart }] = useAddItems({
+    customData: selectedCartData.customData,
+    paymentData: selectedCartData.paymentData,
+    sellers: selectedCartData.sellers,
   })
 
   const [

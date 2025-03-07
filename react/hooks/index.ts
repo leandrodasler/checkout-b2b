@@ -1,3 +1,4 @@
+export * from './useAddItems'
 export * from './useClearCart'
 export * from './useFetchCustomerCredit'
 export * from './useFetchPrices'
