@@ -43,6 +43,7 @@
   "store/checkout.b2b.totalizer.salesAdm": "Sales adm.:",
   "store/checkout.b2b.totalizer.totalMargin": "Total Margin",
   "store/checkout.b2b.totalizer.totalDiscount": "Total Discount (%)",
+  "store/checkout.b2b.totalizer.tax": "Taxes",
 
   "store/checkout.b2b.column.name": "Name",
   "store/checkout.b2b.column.quantity": "Quantity",

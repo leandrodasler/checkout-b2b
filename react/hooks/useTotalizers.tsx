@@ -57,7 +57,7 @@ export function useTotalizers() {
       value: `${Math.round(percentualDiscount + discountApplied)}%`,
     },
     ...totalizers.map((t) => ({
-      label: t.name,
+      label: t.id === 'Tax' ? formatMessage(messages.tax) : t.name,
       value: (
         <div className="flex flex-wrap">
           <TruncatedText

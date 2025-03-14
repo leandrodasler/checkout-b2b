@@ -33,6 +33,7 @@ export const messages = defineMessages({
   quotationDiscount: { id: 'store/checkout.b2b.totalizer.quotationDiscount' },
   totalMargin: { id: 'store/checkout.b2b.totalizer.totalMargin' },
   totalDiscount: { id: 'store/checkout.b2b.totalizer.totalDiscount' },
+  tax: { id: 'store/checkout.b2b.totalizer.tax' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },

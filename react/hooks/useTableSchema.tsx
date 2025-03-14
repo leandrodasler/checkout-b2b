@@ -196,6 +196,31 @@ export function useTableSchema(
             return <QuantitySelector item={rowData} />
           },
         },
+        priceTags: {
+          width: 100,
+          title: formatMessage(messages.tax),
+          cellRenderer({ rowData }) {
+            const tax = rowData.priceTags?.find((tag) =>
+              tag.name?.includes('tax@price')
+            )
+
+            return tax?.rawValue && rowData.sellingPrice ? (
+              <TruncatedText
+                text={
+                  <FormattedPrice
+                    value={
+                      (tax.rawValue * rowData.sellingPrice * rowData.quantity) /
+                      100
+                    }
+                  />
+                }
+                {...getStrike(rowData)}
+              />
+            ) : (
+              <>N/A</>
+            )
+          },
+        },
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
