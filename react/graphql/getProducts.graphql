@@ -1,0 +1,20 @@
+query getProductss($query: String) {
+  products(
+    query: $query
+    hideUnavailableItems: true
+    orderBy: "OrderByNameASC"
+  ) @context(provider: "vtex.search-graphql") {
+    productId
+    productName
+    items {
+      itemId
+      name
+      sellers {
+        sellerId
+        commertialOffer {
+          Price
+        }
+      }
+    }
+  }
+}

@@ -6,13 +6,16 @@ import { useOrderFormCustom, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { messages } from '../utils'
 
-export function useToolbar() {
+export function useToolbar(searchStore: boolean) {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
   const { pending } = useCheckoutB2BContext()
   const { placeOrder, isLoading, isSuccess } = usePlaceOrder()
 
   const [searchTerm, setSearchTerm] = useState<string>('')
+
+  // eslint-disable-next-line no-console
+  console.log('searchStore', searchStore)
 
   if (!orderForm?.items?.length) return null
 
