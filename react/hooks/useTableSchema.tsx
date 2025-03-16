@@ -200,16 +200,23 @@ export function useTableSchema(
           width: 100,
           title: formatMessage(messages.tax),
           cellRenderer({ rowData }) {
-            const tax = rowData.priceTags?.find((tag) =>
+            const taxes = rowData.priceTags?.filter((tag) =>
               tag.name?.includes('tax@price')
             )
 
-            return tax?.rawValue && rowData.sellingPrice ? (
+            const totalRawValue = taxes?.reduce(
+              (acc, tax) => acc + (tax.rawValue ?? 0),
+              0
+            )
+
+            return totalRawValue && rowData.sellingPrice ? (
               <TruncatedText
                 text={
                   <FormattedPrice
                     value={
-                      (tax.rawValue * rowData.sellingPrice * rowData.quantity) /
+                      (totalRawValue *
+                        rowData.sellingPrice *
+                        rowData.quantity) /
                       100
                     }
                   />

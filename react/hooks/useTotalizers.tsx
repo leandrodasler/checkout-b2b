@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
-import { useOrderFormCustom, useTotalMargin } from '.'
+import { useOrderFormCustom, useTaxes, useTotalMargin } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
@@ -26,6 +26,27 @@ export function useTotalizers() {
   )
 
   const totalMargin = useTotalMargin()
+
+  const { data: taxes } = useTaxes()
+
+  const taxTotalizers: Record<string, number> = {}
+
+  if ((taxes?.length ?? 0) > 1) {
+    items.forEach((item) => {
+      item.priceTags.forEach((tag) => {
+        if (
+          tag.name?.includes('tax@price') &&
+          tag.identifier &&
+          tag.rawValue &&
+          item.sellingPrice
+        ) {
+          taxTotalizers[tag.identifier] = taxTotalizers[tag.identifier] ?? 0
+          taxTotalizers[tag.identifier] +=
+            tag.rawValue * item.sellingPrice * item.quantity
+        }
+      })
+    })
+  }
 
   if (!totalizers.length || !items?.length) return []
 
@@ -64,6 +85,28 @@ export function useTotalizers() {
             text={<FormattedPrice value={t.value / 100} />}
             strike={t.id === 'Items' && totalItems < t.value}
           />
+          {t.id === 'Tax' && taxes?.length && (
+            <div className="flex flex-wrap flex-column w-100 t-mini">
+              {taxes.map((tax) => (
+                <div
+                  className="flex flex-wrap"
+                  key={tax.idCalculatorConfiguration}
+                >
+                  {tax.name}
+                  {taxes.length > 1 && (
+                    <>
+                      :{' '}
+                      <FormattedPrice
+                        value={
+                          taxTotalizers[tax.idCalculatorConfiguration] / 100
+                        }
+                      />
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           {t.id === 'Items' && totalItems < t.value && (
             <div className="w-100">
               <TruncatedText
