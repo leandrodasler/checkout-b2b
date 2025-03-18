@@ -37,6 +37,8 @@ export type ApiResponse = {
   error?: { message?: string }
 }
 
+export type CustomItem = OrderFormType['items'][number] & { tax?: number }
+
 export type CompleteOrderFormData = ApiResponse &
   Pick<OrderFormStore, 'sellers'> & {
     orderFormId: string
@@ -46,6 +48,7 @@ export type CompleteOrderFormData = ApiResponse &
       profileErrorOnLoading?: string | null
       customerClass?: string | null
     }
+    items: CustomItem[]
   }
 
 export type PaymentAddress = {

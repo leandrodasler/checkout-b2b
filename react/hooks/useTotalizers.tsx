@@ -41,8 +41,13 @@ export function useTotalizers() {
           item.sellingPrice
         ) {
           taxTotalizers[tag.identifier] = taxTotalizers[tag.identifier] ?? 0
-          taxTotalizers[tag.identifier] +=
-            tag.rawValue * item.sellingPrice * item.quantity
+
+          if (tag.isPercentual) {
+            taxTotalizers[tag.identifier] +=
+              tag.rawValue * item.sellingPrice * item.quantity
+          } else if (tag.value) {
+            taxTotalizers[tag.identifier] += tag.value * item.quantity
+          }
         }
       })
     })

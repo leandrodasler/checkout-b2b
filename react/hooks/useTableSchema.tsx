@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
@@ -11,12 +10,12 @@ import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
-import type { TableSchema } from '../typings'
+import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 
 const { useOrderItems } = OrderItems
 
-function getStrike(item: Item) {
+function getStrike(item: CustomItem) {
   return { strike: isWithoutStock(item) }
 }
 
@@ -24,7 +23,7 @@ export function useTableSchema(
   isEditing: boolean,
   discount: number,
   onUpdatePrice: (id: string, newPrice: number) => void
-): TableSchema<Item> {
+): TableSchema<CustomItem> {
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
@@ -196,29 +195,15 @@ export function useTableSchema(
             return <QuantitySelector item={rowData} />
           },
         },
-        priceTags: {
+        tax: {
           width: 100,
           title: formatMessage(messages.tax),
           cellRenderer({ rowData }) {
-            const taxes = rowData.priceTags?.filter((tag) =>
-              tag.name?.includes('tax@price')
-            )
-
-            const totalRawValue = taxes?.reduce(
-              (acc, tax) => acc + (tax.rawValue ?? 0),
-              0
-            )
-
-            return totalRawValue && rowData.sellingPrice ? (
+            return rowData.tax ? (
               <TruncatedText
                 text={
                   <FormattedPrice
-                    value={
-                      (totalRawValue *
-                        rowData.sellingPrice *
-                        rowData.quantity) /
-                      100
-                    }
+                    value={(rowData.tax * rowData.quantity) / 100}
                   />
                 }
                 {...getStrike(rowData)}
