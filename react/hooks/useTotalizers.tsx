@@ -46,7 +46,7 @@ export function useTotalizers() {
             taxTotalizers[tag.identifier] +=
               tag.rawValue * item.sellingPrice * item.quantity
           } else if (tag.value) {
-            taxTotalizers[tag.identifier] += tag.value * item.quantity
+            taxTotalizers[tag.identifier] += tag.value
           }
         }
       })
