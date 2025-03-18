@@ -155,12 +155,14 @@ export function useTableSchema(
             width: 100,
             title: formatMessage(messages.margin),
             cellRenderer({ rowData }) {
+              const sellingPrice = getSellingPrice(rowData, discount)
+
               return (
                 <TruncatedText
                   text={
                     <MarginProductPrice
                       itemId={rowData.id}
-                      sellingPrice={rowData.sellingPrice ?? 0}
+                      sellingPrice={sellingPrice}
                     />
                   }
                   {...getStrike(rowData)}
@@ -169,25 +171,6 @@ export function useTableSchema(
             },
           },
         }),
-        listPrice: {
-          width: 100,
-          title: formatMessage(messages.margin),
-          cellRenderer({ rowData }) {
-            const sellingPrice = getSellingPrice(rowData, discount)
-
-            return (
-              <TruncatedText
-                text={
-                  <MarginProductPrice
-                    itemId={rowData.id}
-                    sellingPrice={sellingPrice}
-                  />
-                }
-                {...getStrike(rowData)}
-              />
-            )
-          },
-        },
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,

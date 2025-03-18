@@ -69,6 +69,8 @@ export function useTotalizers() {
     100 - (totalItems / totalItemsWithoutDiscount) * 100
   )
 
+  const totalDiscount = Math.round(percentualDiscount + discountApplied)
+
   return [
     {
       label: formatMessage(messages.paymentMethods),
@@ -78,10 +80,14 @@ export function useTotalizers() {
       label: formatMessage(messages.PONumber),
       value: <PONumber />,
     },
-    {
-      label: formatMessage(messages.totalDiscount),
-      value: `${Math.round(percentualDiscount + discountApplied)}%`,
-    },
+    ...(totalDiscount
+      ? [
+          {
+            label: formatMessage(messages.totalDiscount),
+            value: `${totalDiscount}%`,
+          },
+        ]
+      : []),
     ...totalizers.map((t) => ({
       label: t.id === 'Tax' ? formatMessage(messages.tax) : t.name,
       value: (
