@@ -45,7 +45,7 @@ import { messages } from './utils'
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
 function CheckoutB2B() {
-  const handles = useCssHandles(['container', 'table'])
+  const handles = useCssHandles(['container', 'table', 'containerToggle'])
   const { loading: organizationLoading } = useOrganization()
   const {
     loading: orderFormLoading,
@@ -66,9 +66,10 @@ function CheckoutB2B() {
   } = useCheckoutB2BContext()
 
   const [searchStore, setSearchStore] = useState(false)
-  const toolbar = useToolbar(searchStore)
-  const { navigate } = useRuntime()
   const [isEditing, setIsEditing] = useState(false)
+
+  const toolbar = useToolbar()
+  const { navigate } = useRuntime()
   const [prices, setPrices] = useState<Record<string, number>>({})
   const { formatMessage } = useIntl()
   const { items } = orderForm
@@ -177,6 +178,7 @@ function CheckoutB2B() {
 
   const toggleRef = useRef<HTMLDivElement>(null)
   const tableRef = useRef<HTMLDivElement>(null)
+  const autocompleteRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -185,8 +187,9 @@ function CheckoutB2B() {
       const toolbarElement = tableRef.current.querySelector('#toolbar')
 
       const inputWrapperElement = toolbarElement?.querySelector('.w-40')
+      const autocompleElement = document.getElementById('autocomplete')
 
-      if (!toolbarElement || !inputWrapperElement) return
+      if (!toolbarElement || !inputWrapperElement || !autocompleElement) return
 
       if (!toggleRef.current.classList.contains('dn')) {
         observer.disconnect()
@@ -195,12 +198,25 @@ function CheckoutB2B() {
       }
 
       toolbarElement.prepend(toggleRef.current)
+      toolbarElement.prepend(autocompleElement)
       toggleRef.current.prepend(inputWrapperElement)
+      inputWrapperElement.id = 'input-search-sku'
       inputWrapperElement.classList.remove('w-40')
       inputWrapperElement.classList.add('flex-auto')
       toggleRef.current.classList.remove('dn')
       toggleRef.current.classList.add('flex', 'flex-wrap', 'items-center')
     })
+
+    const searchStoreElement = document.getElementById('toggle-search-store')
+    const autocompleElement = document.getElementById('autocomplete')
+
+    if (searchStore) {
+      searchStoreElement?.setAttribute('style', 'display: none;')
+      autocompleElement?.setAttribute('style', 'display: flex;')
+    } else {
+      autocompleElement?.setAttribute('style', 'display: none;')
+      searchStoreElement?.setAttribute('style', 'display: flex;')
+    }
 
     if (tableRef.current) {
       observer.observe(tableRef.current, {
@@ -211,7 +227,7 @@ function CheckoutB2B() {
     }
 
     return () => observer.disconnect()
-  }, [])
+  }, [searchStore])
 
   return (
     <div className={handles.container}>
@@ -238,7 +254,7 @@ function CheckoutB2B() {
           )}
 
           <div className={handles.table}>
-            <div className="dn w-60" ref={toggleRef}>
+            <div id="toggle-search-store" className="dn w-60" ref={toggleRef}>
               <Toggle
                 label="Buscar em toda a loja"
                 checked={searchStore}
@@ -247,11 +263,24 @@ function CheckoutB2B() {
                 }
               />
             </div>
-            {searchStore && (
-              <div className="w-180 m-7">
-                <ProductAutocomplete />
-              </div>
-            )}
+
+            <div
+              id="autocomplete"
+              className={handles.containerToggle}
+              ref={autocompleteRef}
+            >
+              <ProductAutocomplete />
+
+              <Toggle
+                id="toggle-autocomplete"
+                label="Buscar em toda a loja"
+                checked={searchStore}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchStore(e.target.checked)
+                }
+              />
+            </div>
+
             <div ref={tableRef}>
               <Table
                 loading={loading}
@@ -260,7 +289,7 @@ function CheckoutB2B() {
                 items={filteredItems}
                 density="high"
                 emptyStateLabel={formatMessage(messages.emptyCart)}
-                toolbar={!loading && toolbar}
+                toolbar={toolbar}
               />
             </div>
           </div>
