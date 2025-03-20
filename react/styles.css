@@ -82,3 +82,24 @@
 :global(.vtex-styleguide-9-x-popup) {
   z-index: 2147483648 !important;
 }
+
+.containerToggle {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+}
+
+.containerToggle input {
+  width: 611px;
+  height: 30px;
+}
+
+:global(#toggle-autocomplete) {
+  width: fit-content;
+}
+
+.containerToggle label {
+  width: 100%;
+}

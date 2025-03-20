@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { Query } from 'ssesandbox04.checkout-b2b'
@@ -15,6 +15,7 @@ import {
   Slider,
   Table,
   ToastProvider,
+  Toggle,
   Totalizer,
 } from 'vtex.styleguide'
 
@@ -23,6 +24,7 @@ import {
   useCheckoutB2BContext,
 } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
+import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import GET_APP_SETTINGS from './graphql/getAppSettings.graphql'
 import {
@@ -43,7 +45,7 @@ import { messages } from './utils'
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
 function CheckoutB2B() {
-  const handles = useCssHandles(['container', 'table'])
+  const handles = useCssHandles(['container', 'table', 'containerToggle'])
   const { loading: organizationLoading } = useOrganization()
   const {
     loading: orderFormLoading,
@@ -63,9 +65,11 @@ function CheckoutB2B() {
     setPercentualDiscount,
   } = useCheckoutB2BContext()
 
+  const [searchStore, setSearchStore] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+
   const toolbar = useToolbar()
   const { navigate } = useRuntime()
-  const [isEditing, setIsEditing] = useState(false)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const { formatMessage } = useIntl()
   const { items } = orderForm
@@ -172,6 +176,59 @@ function CheckoutB2B() {
     setIsEditing((prev) => !prev)
   }
 
+  const toggleRef = useRef<HTMLDivElement>(null)
+  const tableRef = useRef<HTMLDivElement>(null)
+  const autocompleteRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      if (!toggleRef.current || !tableRef.current) return
+
+      const toolbarElement = tableRef.current.querySelector('#toolbar')
+
+      const inputWrapperElement = toolbarElement?.querySelector('.w-40')
+      const autocompleElement = document.getElementById('autocomplete')
+
+      if (!toolbarElement || !inputWrapperElement || !autocompleElement) return
+
+      if (!toggleRef.current.classList.contains('dn')) {
+        observer.disconnect()
+
+        return
+      }
+
+      toolbarElement.prepend(toggleRef.current)
+      toolbarElement.prepend(autocompleElement)
+      toggleRef.current.prepend(inputWrapperElement)
+      inputWrapperElement.id = 'input-search-sku'
+      inputWrapperElement.classList.remove('w-40')
+      inputWrapperElement.classList.add('flex-auto')
+      toggleRef.current.classList.remove('dn')
+      toggleRef.current.classList.add('flex', 'flex-wrap', 'items-center')
+    })
+
+    const searchStoreElement = document.getElementById('toggle-search-store')
+    const autocompleElement = document.getElementById('autocomplete')
+
+    if (searchStore) {
+      searchStoreElement?.setAttribute('style', 'display: none;')
+      autocompleElement?.setAttribute('style', 'display: flex;')
+    } else {
+      autocompleElement?.setAttribute('style', 'display: none;')
+      searchStoreElement?.setAttribute('style', 'display: flex;')
+    }
+
+    if (tableRef.current) {
+      observer.observe(tableRef.current, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      })
+    }
+
+    return () => observer.disconnect()
+  }, [searchStore])
+
   return (
     <div className={handles.container}>
       <Layout
@@ -197,15 +254,44 @@ function CheckoutB2B() {
           )}
 
           <div className={handles.table}>
-            <Table
-              loading={loading}
-              fullWidth
-              schema={schema}
-              items={filteredItems}
-              density="high"
-              emptyStateLabel={formatMessage(messages.emptyCart)}
-              toolbar={!loading && toolbar}
-            />
+            <div id="toggle-search-store" className="dn w-60" ref={toggleRef}>
+              <Toggle
+                label="Buscar em toda a loja"
+                checked={searchStore}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchStore(e.target.checked)
+                }
+              />
+            </div>
+
+            <div
+              id="autocomplete"
+              className={handles.containerToggle}
+              ref={autocompleteRef}
+            >
+              <ProductAutocomplete />
+
+              <Toggle
+                id="toggle-autocomplete"
+                label="Buscar em toda a loja"
+                checked={searchStore}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchStore(e.target.checked)
+                }
+              />
+            </div>
+
+            <div ref={tableRef}>
+              <Table
+                loading={loading}
+                fullWidth
+                schema={schema}
+                items={filteredItems}
+                density="high"
+                emptyStateLabel={formatMessage(messages.emptyCart)}
+                toolbar={toolbar}
+              />
+            </div>
           </div>
         </PageBlock>
         {isEditing && (
