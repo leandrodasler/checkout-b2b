@@ -99,4 +99,14 @@ export const messages = defineMessages({
   },
   createdIn: { id: 'store/checkout.b2b.column.createdIn' },
   items: { id: 'store/checkout.b2b.column.item' },
+
+  searchProductsError: {
+    id: 'store/checkout.b2b.search.products.error',
+  },
+  searchProductsPlaceholder: {
+    id: 'store/checkout.b2b.search.products.placeholder',
+  },
+  searchProductsToggle: {
+    id: 'store/checkout.b2b.search.products.toggle',
+  },
 })

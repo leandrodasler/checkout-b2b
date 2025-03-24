@@ -256,7 +256,7 @@ function CheckoutB2B() {
           <div className={handles.table}>
             <div id="toggle-search-store" className="dn w-60" ref={toggleRef}>
               <Toggle
-                label="Buscar em toda a loja"
+                label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchStore(e.target.checked)
@@ -273,7 +273,7 @@ function CheckoutB2B() {
 
               <Toggle
                 id="toggle-autocomplete"
-                label="Buscar em toda a loja"
+                label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchStore(e.target.checked)

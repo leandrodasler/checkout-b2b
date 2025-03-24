@@ -72,6 +72,10 @@
   "store/checkout.b2b.manualPrice.placeOrder.success": "Prices updated successfully",
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
+  "store/checkout.b2b.search.products.error": "Error loading products. Please try again later.",
+  "store/checkout.b2b.search.products.placeholder": "Search products...",
+  "store/checkout.b2b.search.products.toggle": "Search the entire store",
+
   "store/checkout.b2b.empty.cart": "Cart is empty.",
   "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "The quantity has been adjusted to the minimum allowed for this item: "
 }
