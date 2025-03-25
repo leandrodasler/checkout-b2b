@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { AutocompleteInput } from 'vtex.styleguide'
@@ -6,6 +6,7 @@ import { AutocompleteInput } from 'vtex.styleguide'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
 import { useAddItems } from '../hooks/useAddItems'
 import { messages } from '../utils/messages'
+import { useDebounce } from '../hooks'
 
 interface CommertialOffer {
   Price: number
@@ -34,8 +35,9 @@ interface ProductsResponse {
 
 const ProductAutocomplete = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { formatMessage } = useIntl()
+
+  const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
 
   const {
     data,
@@ -51,23 +53,13 @@ const ProductAutocomplete = () => {
     { loading: mutationLoading, error: mutationError },
   ] = useAddItems()
 
-  const handleSearchChange = useCallback((term: string) => {
-    if (timerRef.current !== null) {
-      clearTimeout(timerRef.current)
-    }
+  const handleSearchChange = useCallback(
+    (term: string) => {
+      setSearchQueryDebounced(term)
+    },
+    [setSearchQueryDebounced]
+  )
 
-    timerRef.current = setTimeout(() => {
-      setSearchQuery(term)
-    }, 1000)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current)
-      }
-    }
-  }, [])
   const handleAddItem = (item: Item) => {
     if (!item?.sellers || item.sellers.length === 0) {
       console.error('Nenhum seller disponível para o item:', item)
@@ -94,6 +86,7 @@ const ProductAutocomplete = () => {
     },
     size: 'small',
     loading: queryLoading || mutationLoading,
+    maxHeight: 400,
     value:
       data?.products
         ?.map((product) =>
