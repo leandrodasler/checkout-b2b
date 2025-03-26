@@ -17,7 +17,8 @@
   flex: 1;
 }
 
-.container :global(.flex.flex-wrap) {
+.container :global(.flex.flex-wrap),
+.containerToggle {
   gap: var(--small-gap);
 }
 
@@ -83,14 +84,6 @@
   z-index: 2147483648 !important;
 }
 
-.containerToggle {
-  justify-content: flex-start;
-}
-
 .containerToggle > :local(div) {
   flex: 1;
-}
-
-.containerToggle input {
-  font-size: var(--base-font-size);
 }

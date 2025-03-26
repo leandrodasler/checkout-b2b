@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 
@@ -9,28 +8,26 @@ import { messages } from '../utils'
 export function useToolbar() {
   const { formatMessage } = useIntl()
   const { orderForm } = useOrderFormCustom()
-  const { pending } = useCheckoutB2BContext()
+  const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
   const { placeOrder, isLoading, isSuccess } = usePlaceOrder()
-
-  const [searchTerm, setSearchTerm] = useState<string>('')
 
   if (!orderForm?.items?.length) return null
 
   const handleFilterItems = (items: Item[]) => {
     return items.filter(
       ({ name, skuName, refId }) =>
-        (name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-        (skuName?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-        (refId?.toLowerCase() ?? '').includes(searchTerm.toLowerCase())
+        (name?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
+        (skuName?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
+        (refId?.toLowerCase() ?? '').includes(searchQuery.toLowerCase())
     )
   }
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value)
+    setSearchQuery(event.target.value)
   }
 
   const handleClearSearch = () => {
-    setSearchTerm('')
+    setSearchQuery('')
   }
 
   const handleSubmit = () => {
@@ -42,7 +39,7 @@ export function useToolbar() {
   return {
     filteredItems,
     inputSearch: {
-      value: searchTerm,
+      value: searchQuery,
       placeholder: formatMessage(messages.searchPlaceholder),
       onChange: handleSearchChange,
       onClear: handleClearSearch,

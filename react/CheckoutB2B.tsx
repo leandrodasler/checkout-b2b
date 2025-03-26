@@ -100,7 +100,7 @@ function CheckoutB2B() {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
   }, [maximumDiscount, percentualDiscount])
 
-  const filteredItems = toolbar?.filteredItems ?? items
+  const filteredItems = searchStore ? items : toolbar?.filteredItems ?? items
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
     setPrices((prevPrices) => {
@@ -182,14 +182,13 @@ function CheckoutB2B() {
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      if (!toggleRef.current || !tableRef.current) return
+      if (!toggleRef.current || !tableRef.current || !autocompleteRef.current)
+        return
 
       const toolbarElement = tableRef.current.querySelector('#toolbar')
-
       const inputWrapperElement = toolbarElement?.querySelector('.w-40')
-      const autocompleElement = document.getElementById('autocomplete')
 
-      if (!toolbarElement || !inputWrapperElement || !autocompleElement) return
+      if (!toolbarElement || !inputWrapperElement) return
 
       if (!toggleRef.current.classList.contains('dn')) {
         observer.disconnect()
@@ -198,30 +197,13 @@ function CheckoutB2B() {
       }
 
       toolbarElement.prepend(toggleRef.current)
-      toolbarElement.prepend(autocompleElement)
+      toolbarElement.prepend(autocompleteRef.current)
       toggleRef.current.prepend(inputWrapperElement)
-      inputWrapperElement.id = 'input-search-sku'
       inputWrapperElement.classList.remove('w-40')
       inputWrapperElement.classList.add('flex-auto')
       toggleRef.current.classList.remove('dn')
       toggleRef.current.classList.add('flex', 'flex-wrap', 'items-center')
     })
-
-    const searchStoreElement = document.getElementById('toggle-search-store')
-    const autocompleElement = document.getElementById('autocomplete')
-
-    window.setTimeout(() => {
-      autocompleElement?.querySelector('input')?.classList.add('t-body')
-    })
-
-    if (searchStore) {
-      searchStoreElement?.setAttribute('style', 'display: none;')
-      autocompleElement?.setAttribute('style', 'display: flex;')
-      autocompleElement?.querySelector('input')?.focus()
-    } else {
-      autocompleElement?.setAttribute('style', 'display: none;')
-      searchStoreElement?.setAttribute('style', 'display: flex;')
-    }
 
     if (tableRef.current) {
       observer.observe(tableRef.current, {
@@ -232,7 +214,20 @@ function CheckoutB2B() {
     }
 
     return () => observer.disconnect()
-  }, [searchStore])
+  }, [])
+
+  const handleToggleSearchStore = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchStore(e.target.checked)
+
+    if (e.target.checked) {
+      toggleRef.current?.setAttribute('style', 'display: none;')
+      autocompleteRef.current?.setAttribute('style', 'display: flex;')
+      autocompleteRef.current?.querySelector('input')?.focus()
+    } else {
+      autocompleteRef.current?.setAttribute('style', 'display: none;')
+      toggleRef.current?.setAttribute('style', 'display: flex;')
+    }
+  }
 
   return (
     <div className={handles.container}>
@@ -259,30 +254,24 @@ function CheckoutB2B() {
           )}
 
           <div className={handles.table}>
-            <div id="toggle-search-store" className="dn w-60" ref={toggleRef}>
+            <div className="dn w-60" ref={toggleRef}>
               <Toggle
                 label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearchStore(e.target.checked)
-                }
+                onChange={handleToggleSearchStore}
               />
             </div>
 
             <div
-              id="autocomplete"
-              className={`${handles.containerToggle} dn flex-wrap items-center w-60`}
+              className={`${handles.containerToggle} dn items-center w-60`}
               ref={autocompleteRef}
             >
               <ProductAutocomplete />
 
               <Toggle
-                id="toggle-autocomplete"
                 label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setSearchStore(e.target.checked)
-                }
+                onChange={handleToggleSearchStore}
               />
             </div>
 

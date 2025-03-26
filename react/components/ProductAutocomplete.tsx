@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { AutocompleteInput } from 'vtex.styleguide'
 
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
+import { useDebounce } from '../hooks'
 import { useAddItems } from '../hooks/useAddItems'
 import { messages } from '../utils/messages'
-import { useDebounce } from '../hooks'
 
 interface CommertialOffer {
   Price: number
@@ -34,8 +35,8 @@ interface ProductsResponse {
 }
 
 const ProductAutocomplete = () => {
-  const [searchQuery, setSearchQuery] = useState('')
   const { formatMessage } = useIntl()
+  const { searchQuery, setSearchQuery } = useCheckoutB2BContext()
 
   const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
 
@@ -105,6 +106,7 @@ const ProductAutocomplete = () => {
     onClear: () => setSearchQuery(''),
     placeholder: formatMessage(messages.searchProductsPlaceholder),
     value: searchQuery,
+    className: 't-body w-100 ph5 b--none outline-0',
   }
 
   if (queryError) {
