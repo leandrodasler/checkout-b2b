@@ -84,22 +84,13 @@
 }
 
 .containerToggle {
-  display: flex;
   justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  width: fit-content;
+}
+
+.containerToggle > :local(div) {
+  flex: 1;
 }
 
 .containerToggle input {
-  width: 611px;
-  height: 30px;
-}
-
-:global(#toggle-autocomplete) {
-  width: fit-content;
-}
-
-.containerToggle label {
-  width: 100%;
+  font-size: var(--base-font-size);
 }

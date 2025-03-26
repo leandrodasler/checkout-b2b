@@ -73,7 +73,7 @@
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
   "store/checkout.b2b.search.products.error": "Error loading products. Please try again later.",
-  "store/checkout.b2b.search.products.placeholder": "Search products...",
+  "store/checkout.b2b.search.products.placeholder": "Search products in the entire store",
   "store/checkout.b2b.search.products.toggle": "Search the entire store",
 
   "store/checkout.b2b.empty.cart": "Cart is empty.",

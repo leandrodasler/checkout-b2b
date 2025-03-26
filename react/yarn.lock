@@ -4990,9 +4990,9 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.12/public/@types/ssesandbox04.checkout-b2b":
-  version "1.0.12"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.12/public/@types/ssesandbox04.checkout-b2b#d1a50abadfc2c16d8d2fcb95e3aff732ab295926"
+"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.13/public/@types/ssesandbox04.checkout-b2b":
+  version "1.0.13"
+  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.13/public/@types/ssesandbox04.checkout-b2b#030111be35989e3fb5c85a889c65e779f468e0f2"
 
 sshpk@^1.7.0:
   version "1.17.0"
@@ -5402,9 +5402,9 @@ verror@1.10.0:
   version "3.17.4"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.4/public/@types/vtex.apps-graphql#0e0abc699713a7113f1ec4948456bcd9e330d0f9"
 
-"vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.4/public/@types/vtex.b2b-organizations-graphql":
-  version "0.63.4"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.63.4/public/@types/vtex.b2b-organizations-graphql#0e6351790246bd525a69c5d6924089a030aaba7f"
+"vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.64.0/public/@types/vtex.b2b-organizations-graphql":
+  version "0.64.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.64.0/public/@types/vtex.b2b-organizations-graphql#ed340b99bf697b5ed3837a6ca2bc9246f92f152b"
 
 "vtex.checkout-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql":
   version "0.67.1"

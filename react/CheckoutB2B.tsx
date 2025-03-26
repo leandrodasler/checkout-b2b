@@ -210,9 +210,14 @@ function CheckoutB2B() {
     const searchStoreElement = document.getElementById('toggle-search-store')
     const autocompleElement = document.getElementById('autocomplete')
 
+    window.setTimeout(() => {
+      autocompleElement?.querySelector('input')?.classList.add('t-body')
+    })
+
     if (searchStore) {
       searchStoreElement?.setAttribute('style', 'display: none;')
       autocompleElement?.setAttribute('style', 'display: flex;')
+      autocompleElement?.querySelector('input')?.focus()
     } else {
       autocompleElement?.setAttribute('style', 'display: none;')
       searchStoreElement?.setAttribute('style', 'display: flex;')
@@ -266,7 +271,7 @@ function CheckoutB2B() {
 
             <div
               id="autocomplete"
-              className={handles.containerToggle}
+              className={`${handles.containerToggle} dn flex-wrap items-center w-60`}
               ref={autocompleteRef}
             >
               <ProductAutocomplete />
