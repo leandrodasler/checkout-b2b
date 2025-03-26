@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
+import { useIntl } from 'react-intl'
 import { AutocompleteInput } from 'vtex.styleguide'
 
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
 import { useAddItems } from '../hooks/useAddItems'
+import { messages } from '../utils/messages'
+import { useDebounce } from '../hooks'
 
 interface CommertialOffer {
   Price: number
@@ -32,6 +35,10 @@ interface ProductsResponse {
 
 const ProductAutocomplete = () => {
   const [searchQuery, setSearchQuery] = useState('')
+  const { formatMessage } = useIntl()
+
+  const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
+
   const {
     data,
     error: queryError,
@@ -45,6 +52,13 @@ const ProductAutocomplete = () => {
     addItemsMutation,
     { loading: mutationLoading, error: mutationError },
   ] = useAddItems()
+
+  const handleSearchChange = useCallback(
+    (term: string) => {
+      setSearchQueryDebounced(term)
+    },
+    [setSearchQueryDebounced]
+  )
 
   const handleAddItem = (item: Item) => {
     if (!item?.sellers || item.sellers.length === 0) {
@@ -70,7 +84,9 @@ const ProductAutocomplete = () => {
     onSelect: (option: { label: string; value: string; item: Item }) => {
       handleAddItem(option.item)
     },
+    size: 'small',
     loading: queryLoading || mutationLoading,
+    maxHeight: 400,
     value:
       data?.products
         ?.map((product) =>
@@ -84,19 +100,17 @@ const ProductAutocomplete = () => {
   }
 
   const input = {
-    onChange: (term: string) => {
-      setSearchQuery(term)
-    },
+    onChange: handleSearchChange,
 
     onClear: () => setSearchQuery(''),
-    placeholder: 'Buscar produtos...',
+    placeholder: formatMessage(messages.searchProductsPlaceholder),
     value: searchQuery,
   }
 
   if (queryError) {
     console.error('Erro na query:', queryError)
 
-    return <div>Erro ao carregar os produtos. Tente novamente mais tarde.</div>
+    return <div>{formatMessage(messages.searchProductsError)}</div>
   }
 
   if (mutationError) {

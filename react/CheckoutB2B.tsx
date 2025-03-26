@@ -210,9 +210,14 @@ function CheckoutB2B() {
     const searchStoreElement = document.getElementById('toggle-search-store')
     const autocompleElement = document.getElementById('autocomplete')
 
+    window.setTimeout(() => {
+      autocompleElement?.querySelector('input')?.classList.add('t-body')
+    })
+
     if (searchStore) {
       searchStoreElement?.setAttribute('style', 'display: none;')
       autocompleElement?.setAttribute('style', 'display: flex;')
+      autocompleElement?.querySelector('input')?.focus()
     } else {
       autocompleElement?.setAttribute('style', 'display: none;')
       searchStoreElement?.setAttribute('style', 'display: flex;')
@@ -256,7 +261,7 @@ function CheckoutB2B() {
           <div className={handles.table}>
             <div id="toggle-search-store" className="dn w-60" ref={toggleRef}>
               <Toggle
-                label="Buscar em toda a loja"
+                label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchStore(e.target.checked)
@@ -266,14 +271,14 @@ function CheckoutB2B() {
 
             <div
               id="autocomplete"
-              className={handles.containerToggle}
+              className={`${handles.containerToggle} dn flex-wrap items-center w-60`}
               ref={autocompleteRef}
             >
               <ProductAutocomplete />
 
               <Toggle
                 id="toggle-autocomplete"
-                label="Buscar em toda a loja"
+                label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchStore(e.target.checked)
