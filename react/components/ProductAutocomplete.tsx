@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { AutocompleteInput } from 'vtex.styleguide'
@@ -88,6 +88,9 @@ const ProductAutocomplete = () => {
     size: 'small',
     loading: queryLoading || mutationLoading,
     maxHeight: 400,
+    renderOption: function RenderOption(props: any) {
+      return <CustomOption {...props} handleAddItem={handleAddItem} />
+    },
     value:
       data?.products
         ?.map((product) =>
@@ -120,6 +123,55 @@ const ProductAutocomplete = () => {
   }
 
   return <AutocompleteInput input={input} options={options} />
+}
+
+function CustomOption(props: any) {
+  const { roundedBottom, searchTerm, value, selected, handleAddItem } = props
+  const [highlightOption, setHighlightOption] = useState(false)
+
+  const renderOptionHighlightedText = () => {
+    const highlightableText = typeof value === 'string' ? value : value.label
+    const index = highlightableText
+      .toLowerCase()
+      .indexOf(searchTerm.toLowerCase())
+
+    if (index === -1) {
+      return highlightableText
+    }
+
+    const prefix = highlightableText.substring(0, index)
+    const match = highlightableText.substr(index, searchTerm.length)
+    const suffix = highlightableText.substring(+index + +match.length)
+
+    return (
+      <span className="truncate">
+        {prefix}
+        <span className="fw7">{match}</span>
+        {suffix}
+      </span>
+    )
+  }
+
+  const buttonClasses = `bn w-100 tl pointer pa4 f6 ${
+    roundedBottom ? 'br2 br--bottom' : ''
+  } ${highlightOption || selected ? 'bg-muted-5' : 'bg-base'}`
+
+  return (
+    <button
+      className={buttonClasses}
+      onFocus={() => setHighlightOption(true)}
+      onMouseEnter={() => setHighlightOption(true)}
+      onMouseLeave={() => setHighlightOption(false)}
+      onClick={() => handleAddItem(value.item)}
+    >
+      <div className="flex items-center">
+        <span className="pr2">{renderOptionHighlightedText()}</span>
+        {typeof value !== 'string' && (
+          <div className="t-mini c-muted-1">{value.caption}</div>
+        )}
+      </div>
+    </button>
+  )
 }
 
 export default ProductAutocomplete
