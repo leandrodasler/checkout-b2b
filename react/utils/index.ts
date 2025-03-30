@@ -12,13 +12,17 @@ export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CUSTOMER_CREDIT_ID = '64'
 
-export function normalizeString(str?: string | null) {
+export function removeAccents(str?: string | null) {
   return (
     str
       ?.normalize('NFD')
-      .replace(/[\u0300-\u036f\s]/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase() ?? ''
   )
+}
+
+export function normalizeString(str?: string | null) {
+  return removeAccents(str)?.replace(/\s/g, '') ?? ''
 }
 
 export function isWithoutStock(item: Item) {

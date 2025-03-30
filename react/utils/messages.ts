@@ -103,6 +103,9 @@ export const messages = defineMessages({
   searchProductsError: {
     id: 'store/checkout.b2b.search.products.error',
   },
+  searchProductsEmpty: {
+    id: 'store/checkout.b2b.search.products.empty',
+  },
   searchProductsPlaceholder: {
     id: 'store/checkout.b2b.search.products.placeholder',
   },

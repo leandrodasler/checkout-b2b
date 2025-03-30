@@ -180,6 +180,30 @@ function CheckoutB2B() {
   const tableRef = useRef<HTMLDivElement>(null)
   const autocompleteRef = useRef<HTMLInputElement>(null)
 
+  const handleToggleSearchStore = (
+    e?: React.ChangeEvent<HTMLInputElement>,
+    checked?: boolean
+  ) => {
+    const newToggleValue = checked ?? e?.target?.checked ?? false
+
+    setSearchStore(newToggleValue)
+
+    if (newToggleValue) {
+      toggleRef.current?.setAttribute('style', 'display: none;')
+      autocompleteRef.current?.setAttribute('style', 'display: flex;')
+      autocompleteRef.current?.querySelector('input')?.focus()
+    } else {
+      autocompleteRef.current?.setAttribute('style', 'display: none;')
+      toggleRef.current?.setAttribute('style', 'display: flex;')
+    }
+  }
+
+  useEffect(() => {
+    if (!loading && !items.length) {
+      window.setTimeout(() => handleToggleSearchStore(undefined, true))
+    }
+  }, [items.length, loading])
+
   useEffect(() => {
     const observer = new MutationObserver(() => {
       if (!toggleRef.current || !tableRef.current || !autocompleteRef.current)
@@ -215,19 +239,6 @@ function CheckoutB2B() {
 
     return () => observer.disconnect()
   }, [])
-
-  const handleToggleSearchStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchStore(e.target.checked)
-
-    if (e.target.checked) {
-      toggleRef.current?.setAttribute('style', 'display: none;')
-      autocompleteRef.current?.setAttribute('style', 'display: flex;')
-      autocompleteRef.current?.querySelector('input')?.focus()
-    } else {
-      autocompleteRef.current?.setAttribute('style', 'display: none;')
-      toggleRef.current?.setAttribute('style', 'display: flex;')
-    }
-  }
 
   return (
     <div className={handles.container}>

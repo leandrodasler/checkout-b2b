@@ -1,17 +1,18 @@
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 
-import { useOrderFormCustom, usePlaceOrder } from '.'
+import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { messages } from '../utils'
 
 export function useToolbar() {
   const { formatMessage } = useIntl()
-  const { orderForm } = useOrderFormCustom()
+  const { loading: loadingOrganization } = useOrganization()
+  const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
   const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
   const { placeOrder, isLoading, isSuccess } = usePlaceOrder()
 
-  if (!orderForm?.items?.length) return null
+  if (loadingOrganization || loadingOrderForm) return null
 
   const handleFilterItems = (items: Item[]) => {
     return items.filter(
@@ -46,7 +47,7 @@ export function useToolbar() {
       onSubmit: handleSubmit,
     },
     newLine: {
-      disabled: isLoading || isSuccess || pending,
+      disabled: isLoading || isSuccess || pending || !orderForm.items.length,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,

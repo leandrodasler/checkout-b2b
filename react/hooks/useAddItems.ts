@@ -17,6 +17,8 @@ export function useAddItems(completeData?: Record<string, unknown>) {
     MutationAddToCart,
     {
       onError({ message }) {
+        if (message.includes('code 429')) return
+
         showToast({ message })
       },
       onCompleted({ addToCart }) {
