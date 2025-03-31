@@ -51,7 +51,7 @@ type CustomOptionProps = {
 
 const ProductAutocomplete = () => {
   const { formatMessage } = useIntl()
-  const { searchQuery, setSearchQuery } = useCheckoutB2BContext()
+  const { searchStore, searchQuery, setSearchQuery } = useCheckoutB2BContext()
   const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
   const { orderForm } = useOrderFormCustom()
 
@@ -70,7 +70,7 @@ const ProductAutocomplete = () => {
     networkStatus,
   } = useQuery<ProductsResponse>(SEARCH_PRODUCTSS, {
     variables: { query: searchQuery },
-    skip: !searchQuery,
+    skip: !searchStore || !searchQuery,
   })
 
   const [addItemsMutation, { error: mutationError }] = useAddItems()
@@ -163,6 +163,14 @@ const ProductAutocomplete = () => {
   if (mutationError) {
     console.error('Erro na mutation:', mutationError)
   }
+
+  useEffect(() => {
+    if (searchStore) {
+      rootRef.current?.querySelector('input')?.focus()
+    }
+  }, [searchStore])
+
+  if (!searchStore) return null
 
   return (
     <div ref={rootRef}>

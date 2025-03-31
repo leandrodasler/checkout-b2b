@@ -38,6 +38,8 @@ type CheckoutB2BContextData = {
   setPercentualDiscount: React.Dispatch<React.SetStateAction<number>>
   searchQuery: string
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  searchStore: boolean
+  setSearchStore: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -54,6 +56,7 @@ function CheckoutB2BProviderWrapper({
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchStore, setSearchStore] = useState(false)
 
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)
@@ -119,6 +122,8 @@ function CheckoutB2BProviderWrapper({
       setPercentualDiscount,
       searchQuery,
       setSearchQuery,
+      searchStore,
+      setSearchStore,
     }),
     [
       pending,
@@ -142,6 +147,8 @@ function CheckoutB2BProviderWrapper({
       setPercentualDiscount,
       searchQuery,
       setSearchQuery,
+      searchStore,
+      setSearchStore,
     ]
   )
 

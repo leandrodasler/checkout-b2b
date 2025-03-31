@@ -64,9 +64,10 @@ function CheckoutB2B() {
     percentualDiscount,
     setPercentualDiscount,
     searchQuery,
+    searchStore,
+    setSearchStore,
   } = useCheckoutB2BContext()
 
-  const [searchStore, setSearchStore] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
   const toolbar = useToolbar()
@@ -181,35 +182,34 @@ function CheckoutB2B() {
   const tableRef = useRef<HTMLDivElement>(null)
   const autocompleteRef = useRef<HTMLInputElement>(null)
 
-  const handleToggleSearchStore = (
-    e?: React.ChangeEvent<HTMLInputElement>,
-    checked?: boolean
-  ) => {
-    const newToggleValue = checked ?? e?.target?.checked ?? false
+  const handleToggleSearchStore = useCallback(
+    (e?: React.ChangeEvent<HTMLInputElement>, checked?: boolean) => {
+      const newToggleValue = checked ?? e?.target?.checked ?? false
 
-    setSearchStore(newToggleValue)
+      setSearchStore(newToggleValue)
 
-    if (newToggleValue) {
-      toggleRef.current?.setAttribute('style', 'display: none;')
-      autocompleteRef.current?.setAttribute('style', 'display: flex;')
-      autocompleteRef.current?.querySelector('input')?.focus()
-    } else {
-      autocompleteRef.current?.setAttribute('style', 'display: none;')
-      toggleRef.current?.setAttribute('style', 'display: flex;')
+      if (newToggleValue) {
+        toggleRef.current?.setAttribute('style', 'display: none;')
+        autocompleteRef.current?.setAttribute('style', 'display: flex;')
+      } else {
+        autocompleteRef.current?.setAttribute('style', 'display: none;')
+        toggleRef.current?.setAttribute('style', 'display: flex;')
 
-      const searchCartInput = tableRef.current?.querySelector(
-        '#toolbar .vtex-styleguide-9-x-input'
-      ) as HTMLInputElement | null
+        const searchCartInput = tableRef.current?.querySelector(
+          '#toolbar .vtex-styleguide-9-x-input'
+        ) as HTMLInputElement | null
 
-      searchCartInput?.focus()
-    }
-  }
+        searchCartInput?.focus()
+      }
+    },
+    [setSearchStore]
+  )
 
   useEffect(() => {
     if (!loading && !items.length) {
       window.setTimeout(() => handleToggleSearchStore(undefined, true))
     }
-  }, [items.length, loading])
+  }, [handleToggleSearchStore, items.length, loading])
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
