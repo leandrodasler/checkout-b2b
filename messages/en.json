@@ -75,7 +75,7 @@
   "store/checkout.b2b.search.products.error": "Error loading products. Please try again later.",
   "store/checkout.b2b.search.products.placeholder": "Search products in the entire store",
   "store/checkout.b2b.search.products.toggle": "Search the entire store",
-  "store/checkout.b2b.search.products.empty": "No products found with the term \"{term}\"",
+  "store/checkout.b2b.search.products.empty": "No products found {type, plural, =0 {in the cart} one {in the store}} when searching for \"{term}\"",
 
   "store/checkout.b2b.empty.cart": "Cart is empty.",
   "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "The quantity has been adjusted to the minimum allowed for this item: "

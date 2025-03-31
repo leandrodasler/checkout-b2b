@@ -40,7 +40,7 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm } from './typings'
-import { messages } from './utils'
+import { messages, SEARCH_TYPE } from './utils'
 
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
@@ -63,6 +63,7 @@ function CheckoutB2B() {
     listedPrice,
     percentualDiscount,
     setPercentualDiscount,
+    searchQuery,
   } = useCheckoutB2BContext()
 
   const [searchStore, setSearchStore] = useState(false)
@@ -299,7 +300,29 @@ function CheckoutB2B() {
                 schema={schema}
                 items={filteredItems}
                 density="high"
-                emptyStateLabel={formatMessage(messages.emptyCart)}
+                emptyStateLabel={
+                  searchQuery && !searchStore ? (
+                    <div className="flex flex-column">
+                      {formatMessage(messages.searchProductsEmpty, {
+                        term: searchQuery,
+                        type: SEARCH_TYPE.CART,
+                      })}
+                      <div className="mt4">
+                        <Button
+                          size="small"
+                          variation="secondary"
+                          onClick={() =>
+                            handleToggleSearchStore(undefined, true)
+                          }
+                        >
+                          {formatMessage(messages.searchProductsToggle)}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    formatMessage(messages.emptyCart)
+                  )
+                }
                 toolbar={toolbar}
               />
             </div>

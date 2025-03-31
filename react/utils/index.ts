@@ -11,6 +11,7 @@ export const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
 export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CUSTOMER_CREDIT_ID = '64'
+export const SEARCH_TYPE = { CART: 0, STORE: 1 }
 
 export function removeAccents(str?: string | null) {
   return (

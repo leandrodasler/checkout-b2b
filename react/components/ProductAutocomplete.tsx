@@ -13,7 +13,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
 import { useDebounce, useOrderFormCustom } from '../hooks'
 import { useAddItems } from '../hooks/useAddItems'
-import { removeAccents } from '../utils'
+import { removeAccents, SEARCH_TYPE } from '../utils'
 import { messages } from '../utils/messages'
 
 interface CommertialOffer {
@@ -143,6 +143,7 @@ const ProductAutocomplete = () => {
     ...(isEmpty && {
       customMessage: formatMessage(messages.searchProductsEmpty, {
         term: searchQuery,
+        type: SEARCH_TYPE.STORE,
       }),
     }),
   }
