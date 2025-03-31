@@ -4990,9 +4990,9 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.13/public/@types/ssesandbox04.checkout-b2b":
-  version "1.0.13"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.13/public/@types/ssesandbox04.checkout-b2b#030111be35989e3fb5c85a889c65e779f468e0f2"
+"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.15/public/@types/ssesandbox04.checkout-b2b":
+  version "1.0.15"
+  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.15/public/@types/ssesandbox04.checkout-b2b#9b4f799d3e79e880bb2a4898a1f12d41d495e0c7"
 
 sshpk@^1.7.0:
   version "1.17.0"
@@ -5438,9 +5438,9 @@ verror@1.10.0:
   version "0.12.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-manager@0.12.0/public/@types/vtex.order-manager#2cf6a9d2a31bc503b783c257695b0d17c09b5696"
 
-"vtex.render-runtime@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.135.1/public/@types/vtex.render-runtime":
-  version "8.135.1"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.135.1/public/@types/vtex.render-runtime#357ddee2f9249db4209de73b26c43997a5ca4422"
+"vtex.render-runtime@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.136.1/public/@types/vtex.render-runtime":
+  version "8.136.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.136.1/public/@types/vtex.render-runtime#f163acbdb0fcc9be2065a34eb4fc797093f6d0ce"
 
 "vtex.rich-text@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text":
   version "0.16.0"
@@ -5462,9 +5462,9 @@ verror@1.10.0:
   version "2.173.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.173.0/public/@types/vtex.store-graphql#362658f92478790755777fe325c4e3a90afc877d"
 
-"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.139.0/public/@types/vtex.store":
-  version "2.139.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.139.0/public/@types/vtex.store#8e70800bb49c595b94636b85de18ba55d303a4c0"
+"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.141.0/public/@types/vtex.store":
+  version "2.141.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.141.0/public/@types/vtex.store#537010362d8d85c071623e7582bed978a6e86331"
 
 "vtex.storefront-permissions-ui@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui":
   version "1.2.2"
