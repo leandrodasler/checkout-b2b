@@ -43,10 +43,10 @@ interface ProductsResponse {
 
 type CustomOptionProps = {
   searchTerm: string
-  value: { label: string; item: Item }
+  value: { label: string; item: Item; type?: 'product' | 'sku' }
   selected: boolean
   inserted: boolean
-  handleAddItem: (item: Item) => void
+  handleAddItem: (item: Item | Item[]) => void
 }
 
 const ProductAutocomplete = () => {
@@ -82,23 +82,47 @@ const ProductAutocomplete = () => {
     [setSearchQueryDebounced]
   )
 
-  const itemsOptions =
-    data?.products
-      ?.map((product) =>
-        product.items.map((item) => ({
+  const itemsOptions = React.useMemo(() => {
+    if (!data?.products) return []
+
+    const options: Array<{
+      label: string
+      value: string
+      item: Item | Item[]
+      type: 'product' | 'sku'
+    }> = []
+
+    data.products.forEach((product) => {
+      options.push({
+        label: `${product.productName} `,
+        value: `product-${product.productId}`,
+        item: product.items,
+        type: 'product',
+      })
+
+      product.items.forEach((item) => {
+        options.push({
           label: `${product.productName} - ${item.name}`,
           value: item.itemId,
           item,
-        }))
-      )
-      .reduce((acc, curr) => [...acc, ...curr], []) ?? []
+          type: 'sku',
+        })
+      })
+    })
+
+    return options
+  }, [data?.products])
 
   const rootRef = useRef<HTMLDivElement>(null)
 
   const handleAddItem = useCallback(
-    (item: Item) => {
-      if (!item?.sellers || item.sellers.length === 0) {
-        console.error('Nenhum seller disponível para o item:', item)
+    (item: Item | Item[]) => {
+      const items = Array.isArray(item) ? item : [item]
+
+      const validItems = items.filter((i) => i?.sellers && i.sellers.length > 0)
+
+      if (validItems.length === 0) {
+        console.error('Nenhum seller disponível para os itens:', items)
 
         return
       }
@@ -107,13 +131,11 @@ const ProductAutocomplete = () => {
 
       addItemsMutation({
         variables: {
-          items: [
-            {
-              id: Number(item.itemId),
-              quantity: 1,
-              seller: item.sellers[0].sellerId,
-            },
-          ],
+          items: validItems.map((validItem) => ({
+            id: Number(validItem.itemId),
+            quantity: 1,
+            seller: validItem.sellers[0].sellerId,
+          })),
         },
       })
     },
@@ -130,11 +152,14 @@ const ProductAutocomplete = () => {
     renderOption: function RenderOption(props: CustomOptionProps) {
       if (!props.value) return null
 
+      const allItemsInserted = Array.isArray(props.value.item)
+        ? props.value.item.every((item) => orderFormHasItem(item))
+        : orderFormHasItem(props.value.item)
+
       return (
         <CustomOption
           {...props}
-          {...(props.value.item &&
-            orderFormHasItem(props.value.item) && { inserted: true })}
+          {...(props.value.item && { inserted: allItemsInserted })}
           handleAddItem={handleAddItem}
         />
       )
@@ -184,7 +209,7 @@ function CustomOption(props: CustomOptionProps) {
   const [highlightOption, setHighlightOption] = useState(false)
   const [loading, setLoading] = useState(false)
   const wrapperRef = useRef<HTMLButtonElement>(null)
-  const { label } = value
+  const { label, type } = value
   const searchWords = searchTerm.trim().split(/\s+/).filter(Boolean)
   const labelSplitted = label.split(/\s+/)
   const highlightedLabel = labelSplitted.map((part, index) => (
@@ -202,7 +227,7 @@ function CustomOption(props: CustomOptionProps) {
 
   const buttonClasses = `bn w-100 tl pointer pa4 f6 outline-0 ${
     selected || (highlightOption && !inserted) ? 'bg-muted-5' : 'bg-base'
-  }${inserted ? ' strike' : ''}`
+  }${inserted ? ' strike' : ''}${type === 'product' ? ' b--primary bw1' : ''}`
 
   useEffect(() => {
     if (selected) {
@@ -223,10 +248,14 @@ function CustomOption(props: CustomOptionProps) {
 
         setLoading(true)
         handleAddItem(value.item)
+        setLoading(false)
       }}
     >
       <div className="flex flex-wrap items-center">
-        <span className="truncate">{highlightedLabel}</span>
+        <span className="truncate">
+          {type === 'product' && '📦 '}
+          {highlightedLabel}
+        </span>
         {loading && !inserted && <Spinner size={16} />}
       </div>
     </button>
