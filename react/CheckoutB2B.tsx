@@ -195,6 +195,12 @@ function CheckoutB2B() {
     } else {
       autocompleteRef.current?.setAttribute('style', 'display: none;')
       toggleRef.current?.setAttribute('style', 'display: flex;')
+
+      const searchCartInput = tableRef.current?.querySelector(
+        '#toolbar .vtex-styleguide-9-x-input'
+      ) as HTMLInputElement | null
+
+      searchCartInput?.focus()
     }
   }
 

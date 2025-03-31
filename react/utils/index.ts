@@ -17,7 +17,8 @@ export function removeAccents(str?: string | null) {
     str
       ?.normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase() ?? ''
+      .toLowerCase()
+      .trim() ?? ''
   )
 }
 

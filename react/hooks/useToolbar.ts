@@ -3,7 +3,7 @@ import type { Item } from 'vtex.checkout-graphql'
 
 import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { messages } from '../utils'
+import { messages, removeAccents } from '../utils'
 
 export function useToolbar() {
   const { formatMessage } = useIntl()
@@ -15,12 +15,19 @@ export function useToolbar() {
   if (loadingOrganization || loadingOrderForm) return null
 
   const handleFilterItems = (items: Item[]) => {
-    return items.filter(
-      ({ name, skuName, refId }) =>
-        (name?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
-        (skuName?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
-        (refId?.toLowerCase() ?? '').includes(searchQuery.toLowerCase())
-    )
+    return searchQuery
+      ? items.filter(({ name, skuName, refId }) =>
+          removeAccents(searchQuery)
+            .split(/\s+/)
+            .filter(Boolean)
+            .every(
+              (word) =>
+                removeAccents(name).includes(word) ||
+                removeAccents(skuName).includes(word) ||
+                removeAccents(refId).includes(word)
+            )
+        )
+      : items
   }
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

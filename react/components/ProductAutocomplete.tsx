@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { AutocompleteInput, Spinner } from 'vtex.styleguide'
@@ -173,18 +179,16 @@ function CustomOption(props: CustomOptionProps) {
   const searchWords = searchTerm.trim().split(/\s+/).filter(Boolean)
   const labelSplitted = label.split(/\s+/)
   const highlightedLabel = labelSplitted.map((part, index) => (
-    <>
+    <Fragment key={index}>
       {searchWords.some(
         (word) => removeAccents(word) === removeAccents(part)
       ) ? (
-        <span key={index} className="fw7">
-          {part}
-        </span>
+        <span className="fw7">{part}</span>
       ) : (
         part
       )}
       {index < labelSplitted.length - 1 && ' '}
-    </>
+    </Fragment>
   ))
 
   const buttonClasses = `bn w-100 tl pointer pa4 f6 outline-0 ${
