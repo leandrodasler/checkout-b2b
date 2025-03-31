@@ -281,7 +281,7 @@ function CheckoutB2B() {
             </div>
 
             <div
-              className={`${handles.containerToggle} dn items-center w-60`}
+              className={`${handles.containerToggle} dn flex-wrap items-center w-60`}
               ref={autocompleteRef}
             >
               <ProductAutocomplete />

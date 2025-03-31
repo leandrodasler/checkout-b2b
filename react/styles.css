@@ -17,8 +17,8 @@
   flex: 1;
 }
 
-.container :global(.flex.flex-wrap),
-.containerToggle {
+.container :global(.flex-wrap),
+.container .table :global(#toolbar) {
   gap: var(--small-gap);
 }
 
@@ -66,13 +66,12 @@
   margin: 0 0 0 calc(var(--base-font-size) / 2);
 }
 
-.container .table :global(#toolbar) {
-  align-items: center;
-}
-
 .container :global(.vtex-input-prefix__group),
 .container .table :global(#toolbar) :global(.vtex-button) {
   min-height: var(--input-height);
+}
+
+.container :global(.vtex-input-prefix__group) {
   max-height: var(--input-height);
 }
 
@@ -85,5 +84,5 @@
 }
 
 .containerToggle > :local(div) {
-  flex: 1;
+  flex: auto;
 }
