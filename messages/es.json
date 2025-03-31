@@ -75,6 +75,7 @@
   "store/checkout.b2b.search.products.error": "Error al cargar los productos. Inténtelo de nuevo más tarde.",
   "store/checkout.b2b.search.products.placeholder": "Buscar productos en toda la tienda",
   "store/checkout.b2b.search.products.toggle": "Buscar en toda la tienda",
+  "store/checkout.b2b.search.products.empty": "No se encontraron productos {type, plural, =0 {en el carrito} one {en la tienda}} al buscar \"{term}\"",
 
   "store/checkout.b2b.empty.cart": "El carrito está vacío.",
   "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "La cantidad se ha ajustado al valor mínimo permitido para este artículo: "

@@ -1,25 +1,33 @@
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 
-import { useOrderFormCustom, usePlaceOrder } from '.'
+import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { messages } from '../utils'
+import { messages, removeAccents } from '../utils'
 
 export function useToolbar() {
   const { formatMessage } = useIntl()
-  const { orderForm } = useOrderFormCustom()
+  const { loading: loadingOrganization } = useOrganization()
+  const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
   const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
   const { placeOrder, isLoading, isSuccess } = usePlaceOrder()
 
-  if (!orderForm?.items?.length) return null
+  if (loadingOrganization || loadingOrderForm) return null
 
   const handleFilterItems = (items: Item[]) => {
-    return items.filter(
-      ({ name, skuName, refId }) =>
-        (name?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
-        (skuName?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
-        (refId?.toLowerCase() ?? '').includes(searchQuery.toLowerCase())
-    )
+    return searchQuery
+      ? items.filter(({ name, skuName, refId }) =>
+          removeAccents(searchQuery)
+            .split(/\s+/)
+            .filter(Boolean)
+            .every(
+              (word) =>
+                removeAccents(name).includes(word) ||
+                removeAccents(skuName).includes(word) ||
+                removeAccents(refId).includes(word)
+            )
+        )
+      : items
   }
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +54,7 @@ export function useToolbar() {
       onSubmit: handleSubmit,
     },
     newLine: {
-      disabled: isLoading || isSuccess || pending,
+      disabled: isLoading || isSuccess || pending || !orderForm.items.length,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,

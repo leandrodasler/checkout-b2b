@@ -40,7 +40,7 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm } from './typings'
-import { messages } from './utils'
+import { messages, SEARCH_TYPE } from './utils'
 
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
@@ -63,6 +63,7 @@ function CheckoutB2B() {
     listedPrice,
     percentualDiscount,
     setPercentualDiscount,
+    searchQuery,
   } = useCheckoutB2BContext()
 
   const [searchStore, setSearchStore] = useState(false)
@@ -180,6 +181,36 @@ function CheckoutB2B() {
   const tableRef = useRef<HTMLDivElement>(null)
   const autocompleteRef = useRef<HTMLInputElement>(null)
 
+  const handleToggleSearchStore = (
+    e?: React.ChangeEvent<HTMLInputElement>,
+    checked?: boolean
+  ) => {
+    const newToggleValue = checked ?? e?.target?.checked ?? false
+
+    setSearchStore(newToggleValue)
+
+    if (newToggleValue) {
+      toggleRef.current?.setAttribute('style', 'display: none;')
+      autocompleteRef.current?.setAttribute('style', 'display: flex;')
+      autocompleteRef.current?.querySelector('input')?.focus()
+    } else {
+      autocompleteRef.current?.setAttribute('style', 'display: none;')
+      toggleRef.current?.setAttribute('style', 'display: flex;')
+
+      const searchCartInput = tableRef.current?.querySelector(
+        '#toolbar .vtex-styleguide-9-x-input'
+      ) as HTMLInputElement | null
+
+      searchCartInput?.focus()
+    }
+  }
+
+  useEffect(() => {
+    if (!loading && !items.length) {
+      window.setTimeout(() => handleToggleSearchStore(undefined, true))
+    }
+  }, [items.length, loading])
+
   useEffect(() => {
     const observer = new MutationObserver(() => {
       if (!toggleRef.current || !tableRef.current || !autocompleteRef.current)
@@ -215,19 +246,6 @@ function CheckoutB2B() {
 
     return () => observer.disconnect()
   }, [])
-
-  const handleToggleSearchStore = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchStore(e.target.checked)
-
-    if (e.target.checked) {
-      toggleRef.current?.setAttribute('style', 'display: none;')
-      autocompleteRef.current?.setAttribute('style', 'display: flex;')
-      autocompleteRef.current?.querySelector('input')?.focus()
-    } else {
-      autocompleteRef.current?.setAttribute('style', 'display: none;')
-      toggleRef.current?.setAttribute('style', 'display: flex;')
-    }
-  }
 
   return (
     <div className={handles.container}>
@@ -282,7 +300,29 @@ function CheckoutB2B() {
                 schema={schema}
                 items={filteredItems}
                 density="high"
-                emptyStateLabel={formatMessage(messages.emptyCart)}
+                emptyStateLabel={
+                  searchQuery && !searchStore ? (
+                    <div className="flex flex-column">
+                      {formatMessage(messages.searchProductsEmpty, {
+                        term: searchQuery,
+                        type: SEARCH_TYPE.CART,
+                      })}
+                      <div className="mt4">
+                        <Button
+                          size="small"
+                          variation="secondary"
+                          onClick={() =>
+                            handleToggleSearchStore(undefined, true)
+                          }
+                        >
+                          {formatMessage(messages.searchProductsToggle)}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    formatMessage(messages.emptyCart)
+                  )
+                }
                 toolbar={toolbar}
               />
             </div>
