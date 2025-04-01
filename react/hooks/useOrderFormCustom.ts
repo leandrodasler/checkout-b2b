@@ -56,6 +56,7 @@ export function useOrderFormCustom() {
         ...item,
         tax: data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
       })),
+      sellers: data?.sellers,
       paymentAddress,
     },
     setOrderForm,

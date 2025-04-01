@@ -47,8 +47,14 @@ type CustomOptionProps = {
   value: { label: string; item: Item; type?: 'product' | 'sku' }
   selected: boolean
   inserted: boolean
-  handleAddItem: (item: Item | Item[]) => void
+  handleAddItem: (
+    item: Item | Item[],
+    callback: () => void,
+    retryCount?: number
+  ) => void
 }
+
+const MAX_ADD_TO_CART_RETRIES = 5
 
 const ProductAutocomplete = () => {
   const { formatMessage } = useIntl()
@@ -116,8 +122,8 @@ const ProductAutocomplete = () => {
 
   const rootRef = useRef<HTMLDivElement>(null)
 
-  const handleAddItem = useCallback(
-    (item: Item | Item[]) => {
+  const handleAddItem: CustomOptionProps['handleAddItem'] = useCallback(
+    (item, callback, retryCount = 0) => {
       const items = Array.isArray(item) ? item : [item]
 
       const validItems = items.filter((i) => i?.sellers && i.sellers.length > 0)
@@ -138,6 +144,17 @@ const ProductAutocomplete = () => {
             seller: validItem.sellers[0].sellerId,
           })),
         },
+      }).then(callback, (e) => {
+        if (
+          (e.message.includes('code 429') || e.message.includes('code 500')) &&
+          retryCount < MAX_ADD_TO_CART_RETRIES
+        ) {
+          return handleAddItem(item, callback, retryCount + 1)
+        }
+
+        callback()
+
+        throw e
       })
     },
     [addItemsMutation, rootRef]
@@ -253,7 +270,7 @@ function CustomOption(props: CustomOptionProps) {
         if (inserted || loading) return
 
         setLoading(true)
-        handleAddItem(value.item)
+        handleAddItem(value.item, () => setLoading(false))
       }}
     >
       <div className="flex flex-wrap items-center">
@@ -268,7 +285,7 @@ function CustomOption(props: CustomOptionProps) {
           )}
           {highlightedLabel}
         </span>
-        {loading && !inserted && <Spinner size={16} />}
+        {loading && <Spinner size={16} />}
       </div>
     </button>
   )
