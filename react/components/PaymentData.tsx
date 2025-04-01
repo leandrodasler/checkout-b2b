@@ -29,14 +29,14 @@ export function PaymentData() {
   const filteredPaymentSystems = useMemo(
     () =>
       paymentSystems.filter(
-        (paymentSystem) => paymentSystem.groupName !== 'creditCardPaymentGroup'
+        (paymentSystem) => paymentSystem?.groupName !== 'creditCardPaymentGroup'
       ),
     [paymentSystems]
   )
 
   const options = filteredPaymentSystems.map((paymentSystem) => ({
-    value: paymentSystem.stringId,
-    label: paymentSystem.name,
+    value: paymentSystem?.stringId ?? '',
+    label: paymentSystem?.name ?? '',
   }))
 
   const [selectedPayment] = payments
@@ -88,7 +88,8 @@ export function PaymentData() {
   )
 
   const validPaymentSystem = filteredPaymentSystems.find(
-    (paymentSystem) => paymentSystem.stringId === selectedPayment?.paymentSystem
+    (paymentSystem) =>
+      paymentSystem?.stringId === selectedPayment?.paymentSystem
   )
 
   useEffect(() => {
