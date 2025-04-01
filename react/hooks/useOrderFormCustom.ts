@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { OrderForm } from 'vtex.order-manager'
+import { useRuntime } from 'vtex.render-runtime'
 
 import { apiRequest } from '../services'
 import type { CompleteOrderForm, CompleteOrderFormData } from '../typings'
@@ -13,10 +14,17 @@ export type UseOrderFormReturn = {
 }
 
 export function useOrderFormCustom() {
+  const { query } = useRuntime()
+
+  const orderFormId = query?.orderFormId ?? ''
+
   const { data, isLoading } = useQuery<CompleteOrderFormData, Error>({
-    queryKey: ['invoiceData'],
+    queryKey: ['invoiceData', orderFormId],
     queryFn: () =>
-      apiRequest<CompleteOrderFormData>(`/api/checkout/pub/orderForm`, 'GET'),
+      apiRequest<CompleteOrderFormData>(
+        `/api/checkout/pub/orderForm/${orderFormId}`,
+        'GET'
+      ),
   })
 
   const {
