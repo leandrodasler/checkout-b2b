@@ -40,7 +40,7 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm } from './typings'
-import { messages, SEARCH_TYPE } from './utils'
+import { messages, SEARCH_TYPE, welcome } from './utils'
 
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
@@ -386,6 +386,8 @@ function CheckoutB2B() {
 }
 
 function CheckoutB2BWrapper() {
+  welcome()
+
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider positioning="window">

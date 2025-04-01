@@ -7,9 +7,10 @@ import { Layout, PageBlock, PageHeader, ToastProvider } from 'vtex.styleguide'
 import { CheckoutB2BProvider } from './CheckoutB2BContext'
 import { SavedCartsTable } from './components/SavedCartTable'
 import { queryClient } from './services'
-import { messages } from './utils'
+import { messages, welcome } from './utils'
 
 export default function B2BSavedCarts() {
+  welcome()
   const { formatMessage } = useIntl()
   const { navigate } = useRuntime()
 
