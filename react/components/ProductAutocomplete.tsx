@@ -7,13 +7,13 @@ import React, {
 } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { AutocompleteInput, Spinner } from 'vtex.styleguide'
+import { AutocompleteInput, Spinner, Tooltip } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
 import { useDebounce, useOrderFormCustom } from '../hooks'
 import { useAddItems } from '../hooks/useAddItems'
-import { removeAccents, SEARCH_TYPE } from '../utils'
+import { removeAccents, SEARCH_TYPE, transformImageUrl } from '../utils'
 import { messages } from '../utils/messages'
 
 interface CommertialOffer {
@@ -29,6 +29,7 @@ interface Item {
   itemId: string
   name: string
   sellers: Seller[]
+  images: Array<{ imageUrl: string }>
 }
 
 interface Product {
@@ -102,7 +103,7 @@ const ProductAutocomplete = () => {
 
       product.items.forEach((item) => {
         options.push({
-          label: `${product.productName} - ${item.name}`,
+          label: `${item.name}`,
           value: item.itemId,
           item,
           type: 'sku',
@@ -205,6 +206,7 @@ const ProductAutocomplete = () => {
 }
 
 function CustomOption(props: CustomOptionProps) {
+  const { formatMessage } = useIntl()
   const { searchTerm, value, selected, inserted, handleAddItem } = props
   const [highlightOption, setHighlightOption] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -226,8 +228,12 @@ function CustomOption(props: CustomOptionProps) {
   ))
 
   const buttonClasses = `bn w-100 tl pointer pa4 f6 outline-0 ${
-    selected || (highlightOption && !inserted) ? 'bg-muted-5' : 'bg-base'
-  }${inserted ? ' strike' : ''}${type === 'product' ? ' b--primary bw1' : ''}`
+    selected || (highlightOption && !inserted)
+      ? 'bg-muted-4'
+      : type === 'product'
+      ? 'bg-muted-5'
+      : 'bg-base'
+  }${inserted ? ' strike' : ''}`
 
   useEffect(() => {
     if (selected) {
@@ -235,7 +241,7 @@ function CustomOption(props: CustomOptionProps) {
     }
   }, [selected])
 
-  return (
+  const button = (
     <button
       ref={wrapperRef}
       className={buttonClasses}
@@ -248,18 +254,34 @@ function CustomOption(props: CustomOptionProps) {
 
         setLoading(true)
         handleAddItem(value.item)
-        setLoading(false)
       }}
     >
       <div className="flex flex-wrap items-center">
         <span className="truncate">
-          {type === 'product' && '📦 '}
+          {type === 'sku' && (
+            <img
+              width="30"
+              src={transformImageUrl(value.item.images[0].imageUrl, 30)}
+              alt={value.item.name}
+              className="mr2 v-mid"
+            />
+          )}
           {highlightedLabel}
         </span>
         {loading && !inserted && <Spinner size={16} />}
       </div>
     </button>
   )
+
+  if (type === 'product' && !inserted) {
+    return (
+      <Tooltip label={formatMessage(messages.searchProductsAddAll)}>
+        <div>{button}</div>
+      </Tooltip>
+    )
+  }
+
+  return button
 }
 
 export default ProductAutocomplete

@@ -17,6 +17,9 @@ query getProductss($query: String) {
           Price
         }
       }
+      images(quantity: 1) {
+        imageUrl
+      }
     }
   }
 }
