@@ -106,6 +106,9 @@ export const messages = defineMessages({
   searchProductsEmpty: {
     id: 'store/checkout.b2b.search.products.empty',
   },
+  searchProductsAddAll: {
+    id: 'store/checkout.b2b.search.products.addAll',
+  },
   searchProductsPlaceholder: {
     id: 'store/checkout.b2b.search.products.placeholder',
   },

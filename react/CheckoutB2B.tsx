@@ -349,36 +349,37 @@ function CheckoutB2B() {
             formatValue={(value: number) => `${value}%`}
           />
         )}
-        {isSalesUser && (
-          <div className="flex flex-wrap">
-            <Button
-              variation={isEditing ? 'danger' : 'primary'}
-              onClick={toggleEditMode}
-            >
-              {isEditing
-                ? formatMessage(messages.manualPriceStopEdit)
-                : formatMessage(messages.editManualPrice)}
-            </Button>
-            <Button
-              variation="primary"
-              onClick={handleSavePrices}
-              isLoading={saving}
-              disabled={!items.length || saving}
-            >
-              {formatMessage(messages.saveManualPrice)}
-            </Button>
-
-            {!!items.length && !loading && (
+        <div className="flex flex-wrap">
+          {isSalesUser && (
+            <>
               <Button
-                variation="danger-tertiary"
-                onClick={clearCart}
-                isLoading={clearCartLoading}
+                variation={isEditing ? 'danger' : 'primary'}
+                onClick={toggleEditMode}
               >
-                {formatMessage(messages.clearCart)}
+                {isEditing
+                  ? formatMessage(messages.manualPriceStopEdit)
+                  : formatMessage(messages.editManualPrice)}
               </Button>
-            )}
-          </div>
-        )}
+              <Button
+                variation="primary"
+                onClick={handleSavePrices}
+                isLoading={saving}
+                disabled={!items.length || saving}
+              >
+                {formatMessage(messages.saveManualPrice)}
+              </Button>
+            </>
+          )}
+          {!!items.length && !loading && (
+            <Button
+              variation="danger-tertiary"
+              onClick={clearCart}
+              isLoading={clearCartLoading}
+            >
+              {formatMessage(messages.clearCart)}
+            </Button>
+          )}
+        </div>
       </Layout>
     </div>
   )

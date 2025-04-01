@@ -88,3 +88,19 @@ export const buildBillingAddress = (
   addressType: 'commercial',
   receiverName: newAddress?.receiverName ?? shippingAddress?.receiverName ?? '',
 })
+
+export function transformImageUrl(
+  url: string,
+  width: number,
+  height: string | number = 'auto'
+) {
+  const idMatch = url.match(/ids\/(\d+)\/.*?(\.\w+)(?:\?.*)?$/)
+
+  if (!idMatch) {
+    return url
+  }
+
+  return url
+    .replace(/ids\/\d+/, `ids/${idMatch[1]}-${width}-${height}`)
+    .replace(/\?.*$/, '')
+}
