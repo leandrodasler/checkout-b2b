@@ -17,9 +17,13 @@
   flex: 1;
 }
 
-.container :global(.flex-wrap),
-.container .table :global(#toolbar) {
+.container :global(.flex-wrap) {
   gap: var(--small-gap);
+}
+
+.container .table :global(#toolbar) {
+  gap: var(--base-font-size);
+  flex-wrap: wrap;
 }
 
 .container :global(.vtex-dropdown__help-text) {

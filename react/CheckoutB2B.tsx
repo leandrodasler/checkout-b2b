@@ -272,7 +272,7 @@ function CheckoutB2B() {
           )}
 
           <div className={handles.table}>
-            <div className="dn w-60" ref={toggleRef}>
+            <div className="dn w-100 w-60-m" ref={toggleRef}>
               <Toggle
                 label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
@@ -281,7 +281,7 @@ function CheckoutB2B() {
             </div>
 
             <div
-              className={`${handles.containerToggle} dn flex-wrap items-center w-60`}
+              className={`${handles.containerToggle} dn flex-wrap items-center w-100 w-60-m`}
               ref={autocompleteRef}
             >
               <ProductAutocomplete />
