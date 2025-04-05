@@ -141,7 +141,9 @@ const ProductAutocomplete = () => {
           items: validItems.map((validItem) => ({
             id: Number(validItem.itemId),
             quantity: 1,
-            seller: validItem.sellers[0].sellerId,
+            seller: validItem.sellers.sort(
+              (s1, s2) => s1.commertialOffer.Price - s2.commertialOffer.Price
+            )[0].sellerId,
           })),
         },
       }).then(callback, (e) => {

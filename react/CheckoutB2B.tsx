@@ -295,6 +295,7 @@ function CheckoutB2B() {
 
             <div ref={tableRef}>
               <Table
+                onRowClick={() => {}}
                 loading={loading}
                 fullWidth
                 schema={schema}
