@@ -8,7 +8,8 @@ on:
 
 jobs:
   deploy:
-    permissions: write-all
+    permissions:
+      contents: write
     name: Publish and Deploy App
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +20,7 @@ jobs:
         run: |
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --title="$tag" \
               --generate-notes
       - uses: tiago-freire/vtex-publish-deploy-action@v1
         with:
