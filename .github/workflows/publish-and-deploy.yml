@@ -11,6 +11,15 @@ jobs:
     name: Publish and Deploy App
     runs-on: ubuntu-latest
     steps:
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --generate-notes
       - uses: tiago-freire/vtex-publish-deploy-action@v1
         with:
           appKey: ${{ secrets.VTEX_TOOLBELT_KEY }}
