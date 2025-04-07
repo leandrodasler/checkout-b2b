@@ -63,10 +63,7 @@ const ProductAutocomplete = () => {
   const { orderForm } = useOrderFormCustom()
 
   const orderFormHasItem = useCallback(
-    (item: Item) =>
-      orderForm.items.some(
-        (i) => i.id === item.itemId && i.seller === item.sellers[0].sellerId
-      ),
+    (item: Item) => orderForm.items.some((i) => i.id === item.itemId),
     [orderForm.items]
   )
 
