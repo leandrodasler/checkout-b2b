@@ -6,12 +6,13 @@
     "lint": "eslint --ext js,jsx,ts,tsx .",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
     "lint:locales": "intl-equalizer",
-    "test": "cd ./react && yarn test"
+    "test": "cd ./react && yarn test",
+    "postinstall": "yarn --cwd react & yarn --cwd node"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "post-merge": "yarn && yarn --cwd react && yarn --cwd node"
+      "post-merge": "yarn"
     }
   },
   "lint-staged": {
