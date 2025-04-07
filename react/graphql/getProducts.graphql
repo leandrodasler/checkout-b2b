@@ -4,7 +4,7 @@ query getProductss($query: String) {
     hideUnavailableItems: true
     orderBy: "OrderByNameASC"
     from: 0
-    to: 24
+    to: 99
   ) @context(provider: "vtex.search-graphql") {
     productId
     productName
