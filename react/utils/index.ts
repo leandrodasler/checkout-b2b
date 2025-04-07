@@ -106,9 +106,11 @@ export function transformImageUrl(
 }
 
 export function welcome() {
-  console.info(
-    '\n=========================================\nWELCOME TO CHECKOUT B2B | VERSION:',
-    process.env.VTEX_APP_VERSION,
-    '\n=========================================\n\n'
-  )
+  console.info(`
+
+=========================================
+WELCOME TO CHECKOUT B2B | VERSION: ${process.env.VTEX_APP_VERSION}
+=========================================
+
+`)
 }

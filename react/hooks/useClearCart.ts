@@ -9,7 +9,7 @@ import type { ApiResponse, CompleteOrderForm } from '../typings'
 
 export function useClearCart(updateOrderForm = true) {
   const showToast = useToast()
-  const { setQuery } = useRuntime()
+  const { query, setQuery } = useRuntime()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const { setPending, setSelectedCart } = useCheckoutB2BContext()
   const handlePending = useCallback(
@@ -34,7 +34,10 @@ export function useClearCart(updateOrderForm = true) {
 
       setOrderForm(newOrderForm)
       setSelectedCart(null)
-      setQuery({ savedCart: undefined }, { replace: true })
+
+      if (query?.savedCart) {
+        setQuery({ savedCart: undefined }, { replace: true })
+      }
     },
     onError({ message }) {
       showToast({ message })

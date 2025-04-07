@@ -42,25 +42,39 @@ interface ProductsResponse {
   products: Product[]
 }
 
+type ProductValue = {
+  type: 'product'
+  item: Product['items']
+}
+
+type SkuValue = {
+  type: 'sku'
+  item: Item
+}
+
+type CustomOptionValue = { label: string } & (ProductValue | SkuValue)
+
 type CustomOptionProps = {
   searchTerm: string
-  value: { label: string; item: Item; type?: 'product' | 'sku' }
+  value: CustomOptionValue
   selected: boolean
   inserted: boolean
-  handleAddItem: (
-    item: Item | Item[],
-    callback: () => void,
-    retryCount?: number
-  ) => void
+  loading: boolean
+  handleAddItem: (item: CustomOptionValue['item'], retryCount?: number) => void
 }
 
 const MAX_ADD_TO_CART_RETRIES = 5
+
+function sortSellersByPrice(s1: Seller, s2: Seller) {
+  return s1.commertialOffer.Price - s2.commertialOffer.Price
+}
 
 const ProductAutocomplete = () => {
   const { formatMessage } = useIntl()
   const { searchStore, searchQuery, setSearchQuery } = useCheckoutB2BContext()
   const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
   const { orderForm } = useOrderFormCustom()
+  const [loadingItems, setLoadingItems] = useState<string[]>([])
 
   const orderFormHasItem = useCallback(
     (item: Item) => orderForm.items.some((i) => i.id === item.itemId),
@@ -89,12 +103,7 @@ const ProductAutocomplete = () => {
   const itemsOptions = React.useMemo(() => {
     if (!data?.products) return []
 
-    const options: Array<{
-      label: string
-      value: string
-      item: Item | Item[]
-      type: 'product' | 'sku'
-    }> = []
+    const options: Array<CustomOptionValue & { value: string }> = []
 
     data.products.forEach((product) => {
       options.push({
@@ -120,7 +129,7 @@ const ProductAutocomplete = () => {
   const rootRef = useRef<HTMLDivElement>(null)
 
   const handleAddItem: CustomOptionProps['handleAddItem'] = useCallback(
-    (item, callback, retryCount = 0) => {
+    (item, retryCount = 0) => {
       const items = Array.isArray(item) ? item : [item]
 
       const validItems = items.filter((i) => i?.sellers && i.sellers.length > 0)
@@ -131,27 +140,34 @@ const ProductAutocomplete = () => {
         return
       }
 
+      setLoadingItems((prev) => [...prev, ...validItems.map((i) => i.itemId)])
+
+      // this makes the autocomplete keyboard navigation works right after click in an item
       rootRef.current?.querySelector('input')?.focus()
+
+      const clearLoading = () =>
+        setLoadingItems((prev) =>
+          prev.filter((itemId) => !validItems.some((i) => i.itemId === itemId))
+        )
 
       addItemsMutation({
         variables: {
           items: validItems.map((validItem) => ({
             id: Number(validItem.itemId),
             quantity: 1,
-            seller: validItem.sellers.sort(
-              (s1, s2) => s1.commertialOffer.Price - s2.commertialOffer.Price
-            )[0].sellerId,
+            // get the seller with the lowest price
+            seller: validItem.sellers.sort(sortSellersByPrice)[0].sellerId,
           })),
         },
-      }).then(callback, (e) => {
+      }).then(clearLoading, (e) => {
         if (
           (e.message.includes('code 429') || e.message.includes('code 500')) &&
           retryCount < MAX_ADD_TO_CART_RETRIES
         ) {
-          return handleAddItem(item, callback, retryCount + 1)
+          return handleAddItem(item, retryCount + 1)
         }
 
-        callback()
+        clearLoading()
 
         throw e
       })
@@ -169,15 +185,24 @@ const ProductAutocomplete = () => {
     renderOption: function RenderOption(props: CustomOptionProps) {
       if (!props.value) return null
 
-      const allItemsInserted = Array.isArray(props.value.item)
-        ? props.value.item.every((item) => orderFormHasItem(item))
-        : orderFormHasItem(props.value.item)
+      const inserted =
+        props.value.type === 'product'
+          ? props.value.item.every(orderFormHasItem)
+          : orderFormHasItem(props.value.item)
+
+      const loading =
+        props.value.type === 'product'
+          ? props.value.item
+              .filter((item) => !orderFormHasItem(item))
+              .every((i) => loadingItems.includes(i.itemId))
+          : loadingItems.includes(props.value.item.itemId)
 
       return (
         <CustomOption
           {...props}
-          {...(props.value.item && { inserted: allItemsInserted })}
+          {...(props.value.item && { inserted })}
           handleAddItem={handleAddItem}
+          loading={loading}
         />
       )
     },
@@ -223,13 +248,19 @@ const ProductAutocomplete = () => {
 
 function CustomOption(props: CustomOptionProps) {
   const { formatMessage } = useIntl()
-  const { searchTerm, value, selected, inserted, handleAddItem } = props
+  const {
+    searchTerm,
+    value,
+    selected,
+    inserted,
+    handleAddItem,
+    loading,
+  } = props
+
   const [highlightOption, setHighlightOption] = useState(false)
-  const [loading, setLoading] = useState(false)
   const wrapperRef = useRef<HTMLButtonElement>(null)
-  const { label, type } = value
   const searchWords = searchTerm.trim().split(/\s+/).filter(Boolean)
-  const labelSplitted = label.split(/\s+/)
+  const labelSplitted = value.label.split(/\s+/)
   const highlightedLabel = labelSplitted.map((part, index) => (
     <Fragment key={index}>
       {searchWords.some(
@@ -246,7 +277,7 @@ function CustomOption(props: CustomOptionProps) {
   const buttonClasses = `bn w-100 tl pointer pa4 f6 outline-0 ${
     selected || (highlightOption && !inserted)
       ? 'bg-muted-4'
-      : type === 'product'
+      : value.type === 'product'
       ? 'bg-muted-5'
       : 'bg-base'
   }${inserted ? ' strike' : ''}`
@@ -268,13 +299,12 @@ function CustomOption(props: CustomOptionProps) {
       onClick={() => {
         if (inserted || loading) return
 
-        setLoading(true)
-        handleAddItem(value.item, () => setLoading(false))
+        handleAddItem(value.item)
       }}
     >
       <div className="flex flex-wrap items-center">
         <span className="truncate">
-          {type === 'sku' && (
+          {value.type === 'sku' && (
             <img
               width="30"
               src={transformImageUrl(value.item.images[0].imageUrl, 30)}
@@ -284,12 +314,12 @@ function CustomOption(props: CustomOptionProps) {
           )}
           {highlightedLabel}
         </span>
-        {loading && <Spinner size={16} />}
+        {loading && !inserted && <Spinner size={16} />}
       </div>
     </button>
   )
 
-  if (type === 'product' && !inserted) {
+  if (value.type === 'product' && !inserted) {
     return (
       <Tooltip label={formatMessage(messages.searchProductsAddAll)}>
         <div>{button}</div>
