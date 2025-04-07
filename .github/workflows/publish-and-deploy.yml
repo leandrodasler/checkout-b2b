@@ -8,6 +8,7 @@ on:
 
 jobs:
   deploy:
+    permissions: write-all
     name: Publish and Deploy App
     runs-on: ubuntu-latest
     steps:
