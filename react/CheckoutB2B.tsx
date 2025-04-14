@@ -206,10 +206,10 @@ function CheckoutB2B() {
   )
 
   useEffect(() => {
-    if (!loading && !items.length) {
+    if (!loading && (!items.length || searchStore)) {
       window.setTimeout(() => handleToggleSearchStore(undefined, true))
     }
-  }, [handleToggleSearchStore, items.length, loading])
+  }, [loading, items.length, searchStore, handleToggleSearchStore])
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
