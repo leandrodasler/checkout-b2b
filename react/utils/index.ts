@@ -114,3 +114,14 @@ WELCOME TO CHECKOUT B2B | VERSION: ${process.env.VTEX_APP_VERSION}
 
 `)
 }
+
+export const ERROR_TO_RETRY_PATTERNS = [
+  'unhealthy',
+  'genericerror',
+  'network error',
+  'networkerror',
+  '429',
+  '500',
+  '502',
+  '503',
+]

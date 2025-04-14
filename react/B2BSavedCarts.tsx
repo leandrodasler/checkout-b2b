@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import { Layout, PageBlock, PageHeader, ToastProvider } from 'vtex.styleguide'
@@ -10,7 +10,7 @@ import { queryClient } from './services'
 import { messages, welcome } from './utils'
 
 export default function B2BSavedCarts() {
-  welcome()
+  useEffect(welcome, [])
   const { formatMessage } = useIntl()
   const { navigate } = useRuntime()
 

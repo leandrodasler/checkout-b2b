@@ -9,7 +9,12 @@ import { useToast } from '.'
 import { CompleteOrderForm } from '../typings'
 import { useOrderFormCustom } from './useOrderFormCustom'
 
-export function useAddItems(completeData?: Record<string, unknown>) {
+type Props = {
+  completeData?: Partial<CompleteOrderForm>
+  toastError?: boolean
+}
+
+export function useAddItems({ completeData, toastError = true }: Props) {
   const showToast = useToast()
   const { orderForm, setOrderForm } = useOrderFormCustom()
 
@@ -17,7 +22,7 @@ export function useAddItems(completeData?: Record<string, unknown>) {
     MutationAddToCart,
     {
       onError({ message }) {
-        if (message.includes('code 429')) return
+        if (!toastError || message.includes('code 429')) return
 
         showToast({ message })
       },

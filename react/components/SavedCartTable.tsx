@@ -147,9 +147,11 @@ export function SavedCartsTable() {
   })
 
   const [addItemsMutation, { loading: loadingAddItemsToCart }] = useAddItems({
-    customData: selectedCartData.customData,
-    paymentData: selectedCartData.paymentData,
-    sellers: selectedCartData.sellers,
+    completeData: {
+      customData: selectedCartData.customData,
+      paymentData: selectedCartData.paymentData,
+      sellers: selectedCartData.sellers,
+    },
   })
 
   const [

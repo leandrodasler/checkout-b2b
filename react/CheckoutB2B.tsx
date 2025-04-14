@@ -387,7 +387,7 @@ function CheckoutB2B() {
 }
 
 function CheckoutB2BWrapper() {
-  welcome()
+  useEffect(welcome, [])
 
   return (
     <QueryClientProvider client={queryClient}>

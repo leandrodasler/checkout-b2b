@@ -11,9 +11,14 @@ import { AutocompleteInput, Spinner, Tooltip } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
-import { useDebounce, useOrderFormCustom } from '../hooks'
+import { useDebounce, useOrderFormCustom, useToast } from '../hooks'
 import { useAddItems } from '../hooks/useAddItems'
-import { removeAccents, SEARCH_TYPE, transformImageUrl } from '../utils'
+import {
+  ERROR_TO_RETRY_PATTERNS,
+  removeAccents,
+  SEARCH_TYPE,
+  transformImageUrl,
+} from '../utils'
 import { messages } from '../utils/messages'
 
 interface CommertialOffer {
@@ -69,7 +74,14 @@ function sortSellersByPrice(s1: Seller, s2: Seller) {
   return s1.commertialOffer.Price - s2.commertialOffer.Price
 }
 
+function shouldRetryOnError(error: Error) {
+  return ERROR_TO_RETRY_PATTERNS.some((pattern) =>
+    error.message.toLowerCase().includes(pattern)
+  )
+}
+
 const ProductAutocomplete = () => {
+  const showToast = useToast()
   const { formatMessage } = useIntl()
   const { searchStore, searchQuery, setSearchQuery } = useCheckoutB2BContext()
   const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
@@ -91,7 +103,9 @@ const ProductAutocomplete = () => {
     skip: !searchStore || !searchQuery,
   })
 
-  const [addItemsMutation, { error: mutationError }] = useAddItems()
+  const [addItemsMutation, { error: mutationError }] = useAddItems({
+    toastError: false,
+  })
 
   const handleSearchChange = useCallback(
     (term: string) => {
@@ -127,6 +141,7 @@ const ProductAutocomplete = () => {
   }, [data?.products])
 
   const rootRef = useRef<HTMLDivElement>(null)
+  const setInputFocus = () => rootRef.current?.querySelector('input')?.focus()
 
   const handleAddItem: CustomOptionProps['handleAddItem'] = useCallback(
     (item, retryCount = 0) => {
@@ -143,7 +158,7 @@ const ProductAutocomplete = () => {
       setLoadingItems((prev) => [...prev, ...validItems.map((i) => i.itemId)])
 
       // this makes the autocomplete keyboard navigation works right after click in an item
-      rootRef.current?.querySelector('input')?.focus()
+      setInputFocus()
 
       const clearLoading = () =>
         setLoadingItems((prev) =>
@@ -159,20 +174,28 @@ const ProductAutocomplete = () => {
             seller: validItem.sellers.sort(sortSellersByPrice)[0].sellerId,
           })),
         },
-      }).then(clearLoading, (e) => {
-        if (
-          (e.message.includes('code 429') || e.message.includes('code 500')) &&
-          retryCount < MAX_ADD_TO_CART_RETRIES
-        ) {
-          return handleAddItem(item, retryCount + 1)
-        }
-
-        clearLoading()
-
-        throw e
       })
+        .then((result) => {
+          const retryError = result.errors?.find(shouldRetryOnError)
+
+          if (retryError) {
+            throw retryError
+          }
+
+          clearLoading()
+        })
+        .catch((e) => {
+          if (retryCount < MAX_ADD_TO_CART_RETRIES && shouldRetryOnError(e)) {
+            window.setTimeout(() => handleAddItem(item, retryCount + 1), 500)
+
+            return
+          }
+
+          clearLoading()
+          showToast({ message: e.message })
+        })
     },
-    [addItemsMutation, rootRef]
+    [addItemsMutation, showToast]
   )
 
   const isEmpty = networkStatus === 7 && !itemsOptions.length
@@ -233,7 +256,7 @@ const ProductAutocomplete = () => {
 
   useEffect(() => {
     if (searchStore) {
-      rootRef.current?.querySelector('input')?.focus()
+      setInputFocus()
     }
   }, [searchStore])
 
