@@ -186,6 +186,14 @@ function CheckoutB2B() {
     (e?: React.ChangeEvent<HTMLInputElement>, checked?: boolean) => {
       const newToggleValue = checked ?? e?.target?.checked ?? false
 
+      if (!newToggleValue && items.length === 0) {
+        showToast?.({
+          message: formatMessage(messages.searchEmptyCart),
+        })
+
+        return
+      }
+
       setSearchStore(newToggleValue)
 
       if (newToggleValue) {
@@ -202,14 +210,14 @@ function CheckoutB2B() {
         searchCartInput?.focus()
       }
     },
-    [setSearchStore]
+    [setSearchStore, items.length, showToast, formatMessage]
   )
 
   useEffect(() => {
-    if (!loading && !items.length) {
+    if (!loading && (!items.length || searchStore)) {
       window.setTimeout(() => handleToggleSearchStore(undefined, true))
     }
-  }, [handleToggleSearchStore, items.length, loading])
+  }, [loading, items.length, searchStore, handleToggleSearchStore])
 
   useEffect(() => {
     const observer = new MutationObserver(() => {

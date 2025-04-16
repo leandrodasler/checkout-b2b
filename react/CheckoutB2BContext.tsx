@@ -56,7 +56,7 @@ function CheckoutB2BProviderWrapper({
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchStore, setSearchStore] = useState(false)
+  const [searchStore, setSearchStore] = useState(true)
 
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)

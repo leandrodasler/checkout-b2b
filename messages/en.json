@@ -77,6 +77,7 @@
   "store/checkout.b2b.search.products.toggle": "Search the entire store",
   "store/checkout.b2b.search.products.empty": "No products found {type, plural, =0 {in the cart} one {in the store}} when searching for \"{term}\"",
   "store/checkout.b2b.search.products.addAll": "Add all variations of this product",
+  "store/checkout.b2b.search.products.EmptyCart": "Cannot search in the cart because it is empty",
 
   "store/checkout.b2b.empty.cart": "Cart is empty.",
   "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "The quantity has been adjusted to the minimum allowed for this item: "
