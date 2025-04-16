@@ -65,10 +65,15 @@ type CustomOptionProps = {
   selected: boolean
   inserted: boolean
   loading: boolean
-  handleAddItem: (item: CustomOptionValue['item'], retryCount?: number) => void
+  handleAddItem: (item: CustomOptionValue['item']) => void
 }
 
+type AddToCartFn = (newItems: Item[], retryCount?: number) => void
+
 const MAX_ADD_TO_CART_RETRIES = 5
+const SEARCH_TIMEOUT = 1000
+const ADD_TO_CART_TIMEOUT = 2000
+const RETRY_ADD_TO_CART_TIMEOUT = 500
 
 function sortSellersByPrice(s1: Seller, s2: Seller) {
   return s1.commertialOffer.Price - s2.commertialOffer.Price
@@ -84,9 +89,9 @@ const ProductAutocomplete = () => {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { searchStore, searchQuery, setSearchQuery } = useCheckoutB2BContext()
-  const setSearchQueryDebounced = useDebounce(setSearchQuery, 1000)
+  const setSearchQueryDebounced = useDebounce(setSearchQuery, SEARCH_TIMEOUT)
   const { orderForm } = useOrderFormCustom()
-  const [loadingItems, setLoadingItems] = useState<string[]>([])
+  const [itemsQueue, setItemsQueue] = useState<Item[]>([])
 
   const orderFormHasItem = useCallback(
     (item: Item) => orderForm.items.some((i) => i.id === item.itemId),
@@ -143,10 +148,54 @@ const ProductAutocomplete = () => {
   const rootRef = useRef<HTMLDivElement>(null)
   const setInputFocus = () => rootRef.current?.querySelector('input')?.focus()
 
-  const handleAddItem: CustomOptionProps['handleAddItem'] = useCallback(
-    (item, retryCount = 0) => {
-      const items = Array.isArray(item) ? item : [item]
+  const addToCart: AddToCartFn = useCallback(
+    (newItems, retryCount = 0) => {
+      addItemsMutation({
+        variables: {
+          items: newItems.map((item) => ({
+            id: Number(item.itemId),
+            quantity: 1,
+            // get the seller with the lowest price
+            seller: item.sellers.sort(sortSellersByPrice)[0].sellerId,
+          })),
+        },
+      })
+        .then((result) => {
+          if (!result) return
 
+          const retryError = result.errors?.find(shouldRetryOnError)
+
+          if (retryError) {
+            throw retryError
+          }
+
+          setItemsQueue([])
+        })
+        .catch((e) => {
+          if (retryCount < MAX_ADD_TO_CART_RETRIES && shouldRetryOnError(e)) {
+            window.setTimeout(
+              () => addToCart(newItems, retryCount + 1),
+              RETRY_ADD_TO_CART_TIMEOUT
+            )
+
+            return
+          }
+
+          setItemsQueue([])
+          showToast({ message: e.message })
+        })
+    },
+    [addItemsMutation, showToast]
+  )
+
+  const addToCartDebounced = useDebounce(addToCart, ADD_TO_CART_TIMEOUT)
+
+  const handleAddItem: CustomOptionProps['handleAddItem'] = useCallback(
+    (item) => {
+      // this makes the autocomplete keyboard navigation works right after click in an item
+      setInputFocus()
+
+      const items = Array.isArray(item) ? item : [item]
       const validItems = items.filter((i) => i?.sellers && i.sellers.length > 0)
 
       if (validItems.length === 0) {
@@ -155,47 +204,17 @@ const ProductAutocomplete = () => {
         return
       }
 
-      setLoadingItems((prev) => [...prev, ...validItems.map((i) => i.itemId)])
+      const newItems = [
+        ...itemsQueue,
+        ...validItems.filter(
+          (i) => !itemsQueue.some((prevItem) => prevItem.itemId === i.itemId)
+        ),
+      ]
 
-      // this makes the autocomplete keyboard navigation works right after click in an item
-      setInputFocus()
-
-      const clearLoading = () =>
-        setLoadingItems((prev) =>
-          prev.filter((itemId) => !validItems.some((i) => i.itemId === itemId))
-        )
-
-      addItemsMutation({
-        variables: {
-          items: validItems.map((validItem) => ({
-            id: Number(validItem.itemId),
-            quantity: 1,
-            // get the seller with the lowest price
-            seller: validItem.sellers.sort(sortSellersByPrice)[0].sellerId,
-          })),
-        },
-      })
-        .then((result) => {
-          const retryError = result.errors?.find(shouldRetryOnError)
-
-          if (retryError) {
-            throw retryError
-          }
-
-          clearLoading()
-        })
-        .catch((e) => {
-          if (retryCount < MAX_ADD_TO_CART_RETRIES && shouldRetryOnError(e)) {
-            window.setTimeout(() => handleAddItem(item, retryCount + 1), 500)
-
-            return
-          }
-
-          clearLoading()
-          showToast({ message: e.message })
-        })
+      setItemsQueue(newItems)
+      addToCartDebounced(newItems)
     },
-    [addItemsMutation, showToast]
+    [addToCartDebounced, itemsQueue]
   )
 
   const isEmpty = networkStatus === 7 && !itemsOptions.length
@@ -217,8 +236,14 @@ const ProductAutocomplete = () => {
         props.value.type === 'product'
           ? props.value.item
               .filter((item) => !orderFormHasItem(item))
-              .every((i) => loadingItems.includes(i.itemId))
-          : loadingItems.includes(props.value.item.itemId)
+              .every((i) =>
+                itemsQueue.some((itemQueue) => i.itemId === itemQueue.itemId)
+              )
+          : itemsQueue.some(
+              (itemQueue) =>
+                props.value.type === 'sku' &&
+                props.value.item.itemId === itemQueue.itemId
+            )
 
       return (
         <CustomOption
