@@ -1,25 +1,18 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-export const useDebounce = (cb: (term: string) => void, delay = 500) => {
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+export const useDebounce = <T extends unknown[]>(
+  cb: (...args: T) => void,
+  delay = 500
+) => {
+  const timerRef = useRef<number>()
+  const clear = () => window.clearTimeout(timerRef.current)
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current)
-      }
-    }
-  }, [])
+  useEffect(() => clear, [])
 
   return useCallback(
-    (term: string) => {
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current)
-      }
-
-      timerRef.current = setTimeout(() => {
-        cb(term)
-      }, delay)
+    (...args: T) => {
+      clear()
+      timerRef.current = window.setTimeout(() => cb(...args), delay)
     },
     [cb, delay]
   )
