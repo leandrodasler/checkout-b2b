@@ -68,6 +68,10 @@ export function useTableSchema(
     setSubtotal(totalValue)
   }, [orderForm.items, updatedPrices, setSubtotal, setListedPrice])
 
+  const hasTax = useMemo(() => {
+    return orderForm.items?.some((item) => !!item.tax) ?? false
+  }, [orderForm.items])
+
   return useMemo(
     () => ({
       properties: {
@@ -178,24 +182,26 @@ export function useTableSchema(
             return <QuantitySelector item={rowData} />
           },
         },
-        tax: {
-          width: 100,
-          title: formatMessage(messages.tax),
-          cellRenderer({ rowData }) {
-            return rowData.tax ? (
-              <TruncatedText
-                text={
-                  <FormattedPrice
-                    value={(rowData.tax * rowData.quantity) / 100}
-                  />
-                }
-                {...getStrike(rowData)}
-              />
-            ) : (
-              <>N/A</>
-            )
+        ...(hasTax && {
+          tax: {
+            width: 100,
+            title: formatMessage(messages.tax),
+            cellRenderer({ rowData }) {
+              return rowData.tax ? (
+                <TruncatedText
+                  text={
+                    <FormattedPrice
+                      value={(rowData.tax * rowData.quantity) / 100}
+                    />
+                  }
+                  {...getStrike(rowData)}
+                />
+              ) : (
+                <>N/A</>
+              )
+            },
           },
-        },
+        }),
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
@@ -247,6 +253,7 @@ export function useTableSchema(
       getDiscountedPrice,
       isSalesUser,
       handlesNewPrice,
+      hasTax,
     ]
   )
 }
