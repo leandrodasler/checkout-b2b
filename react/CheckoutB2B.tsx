@@ -303,6 +303,9 @@ function CheckoutB2B() {
 
             <div ref={tableRef}>
               <Table
+                updateTableKey={`table-${
+                  'tax' in schema.properties ? 'with-tax' : 'no-tax'
+                }`}
                 onRowClick={() => {}}
                 loading={loading}
                 fullWidth
