@@ -295,7 +295,7 @@ function CheckoutB2B() {
 
             <div ref={tableRef}>
               <Table
-                key={`table-${
+                updateTableKey={`table-${
                   'tax' in schema.properties ? 'with-tax' : 'no-tax'
                 }`}
                 onRowClick={() => {}}
