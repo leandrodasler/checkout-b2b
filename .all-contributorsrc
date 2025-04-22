@@ -36,6 +36,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "raabelo",
+      "name": "Fabiano Rabelo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/80130507?v=4",
+      "profile": "https://www.linkedin.com/in/raabelo/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
