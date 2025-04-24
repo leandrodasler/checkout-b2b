@@ -69,5 +69,10 @@ export function useTotalMargin() {
     [data, items]
   )
 
-  return totalMargin
+  const hasMargin = useMemo(
+    () => data?.some((item) => !!item.costPrice) ?? false,
+    [data]
+  )
+
+  return { totalMargin, hasMargin }
 }
