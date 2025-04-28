@@ -37,7 +37,7 @@ export function useTotalMargin() {
   const priceTable = organization?.priceTables?.[0] ?? '1'
 
   const { data } = useQuery<PriceResponse[], Error>({
-    queryKey: ['fetchPrices', priceTable],
+    queryKey: ['fetchPrices', priceTable, items],
     enabled: isSalesUser && !!items.length,
     queryFn: async () =>
       Promise.all(
@@ -69,5 +69,7 @@ export function useTotalMargin() {
     [data, items]
   )
 
-  return totalMargin
+  const hasMargin = useMemo(() => !!totalMargin, [totalMargin])
+
+  return { totalMargin, hasMargin }
 }

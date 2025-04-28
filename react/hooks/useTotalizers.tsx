@@ -25,7 +25,7 @@ export function useTotalizers() {
     [items]
   )
 
-  const totalMargin = useTotalMargin()
+  const { totalMargin } = useTotalMargin()
 
   const { data: taxes } = useTaxes()
 

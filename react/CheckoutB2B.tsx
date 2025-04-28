@@ -305,6 +305,8 @@ function CheckoutB2B() {
               <Table
                 updateTableKey={`table-${
                   'tax' in schema.properties ? 'with-tax' : 'no-tax'
+                }${
+                  'listPrice' in schema.properties ? 'with-margin' : 'no-margin'
                 }`}
                 onRowClick={() => {}}
                 loading={loading}

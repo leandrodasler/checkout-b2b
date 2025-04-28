@@ -4,7 +4,7 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
 
-import { useOrderFormCustom, usePermissions } from '.'
+import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
@@ -24,6 +24,7 @@ export function useTableSchema(
   discount: number,
   onUpdatePrice: (id: string, newPrice: number) => void
 ): TableSchema<CustomItem> {
+  const { hasMargin } = useTotalMargin()
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
@@ -154,27 +155,28 @@ export function useTableSchema(
             )
           },
         },
-        ...(isSalesUser && {
-          listPrice: {
-            width: 100,
-            title: formatMessage(messages.margin),
-            cellRenderer({ rowData }) {
-              const sellingPrice = getSellingPrice(rowData, discount)
+        ...(hasMargin &&
+          isSalesUser && {
+            listPrice: {
+              width: 100,
+              title: formatMessage(messages.margin),
+              cellRenderer({ rowData }) {
+                const sellingPrice = getSellingPrice(rowData, discount)
 
-              return (
-                <TruncatedText
-                  text={
-                    <MarginProductPrice
-                      itemId={rowData.id}
-                      sellingPrice={sellingPrice}
-                    />
-                  }
-                  {...getStrike(rowData)}
-                />
-              )
+                return (
+                  <TruncatedText
+                    text={
+                      <MarginProductPrice
+                        itemId={rowData.id}
+                        sellingPrice={sellingPrice}
+                      />
+                    }
+                    {...getStrike(rowData)}
+                  />
+                )
+              },
             },
-          },
-        }),
+          }),
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
@@ -251,8 +253,9 @@ export function useTableSchema(
       discount,
       getSellingPrice,
       getDiscountedPrice,
-      isSalesUser,
       handlesNewPrice,
+      isSalesUser,
+      hasMargin,
       hasTax,
     ]
   )
