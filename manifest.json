@@ -154,6 +154,29 @@
         "description": "Set the discount value to be applied by the sales admin",
         "type": "number",
         "default": 0
+      },
+      "rolesAllowedToSeeMargin": {
+        "title": "Roles allowed to see margin",
+        "description": "Set the roles that are allowed to see the margin in the checkout",
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "store-admin",
+            "sales-admin",
+            "sales-manager",
+            "sales-representative",
+            "customer-admin",
+            "customer-approver",
+            "customer-buyer"
+          ]
+        },
+        "default": [
+          "store-admin",
+          "sales-admin",
+          "sales-manager",
+          "sales-representative"
+        ]
       }
     }
   },

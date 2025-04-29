@@ -6,6 +6,7 @@ interface AppSettings {
   salesRepresentative: number
   salesManager: number
   salesAdmin: number
+  rolesAllowedToSeeMargin?: string[]
 }
 
 export function usePermissions(appSettings?: AppSettings | undefined) {
@@ -39,5 +40,10 @@ export function usePermissions(appSettings?: AppSettings | undefined) {
     }
   }, [appSettings, role])
 
-  return { isSalesUser, maximumDiscount }
+  const canSeeMargin = useMemo(
+    () => appSettings?.rolesAllowedToSeeMargin?.includes(role) ?? false,
+    [appSettings, role]
+  )
+
+  return { isSalesUser, maximumDiscount, canSeeMargin }
 }

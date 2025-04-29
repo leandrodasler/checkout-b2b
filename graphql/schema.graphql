@@ -16,6 +16,7 @@ type AppSettings {
   salesRepresentative: Int!
   salesManager: Int!
   salesAdmin: Int!
+  rolesAllowedToSeeMargin: [String]
 }
 
 type Query {
