@@ -1,0 +1,8 @@
+{
+  "name": "Node.js & TypeScript",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/marlonpassos-git/dev-container-features/vtex-cli:0": {}
+  },
+  "postCreateCommand": "yarn"
+}
