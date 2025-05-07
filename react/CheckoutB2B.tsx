@@ -1,8 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useMutation, useQuery } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { Query } from 'ssesandbox04.checkout-b2b'
 import { MutationSetManualPrice } from 'vtex.checkout-resources'
 import 'vtex.country-codes/locales'
 import { useCssHandles } from 'vtex.css-handles'
@@ -26,7 +25,6 @@ import {
 import { ContactInfos } from './components/ContactInfos'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
-import GET_APP_SETTINGS from './graphql/getAppSettings.graphql'
 import {
   useClearCart,
   useOrderFormCustom,
@@ -41,8 +39,6 @@ import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm } from './typings'
 import { messages, SEARCH_TYPE, welcome } from './utils'
-
-type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
 function CheckoutB2B() {
   const handles = useCssHandles(['container', 'table', 'containerToggle'])
@@ -83,8 +79,7 @@ function CheckoutB2B() {
 
   const showToast = useToast()
 
-  const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, { ssr: false })
-  const { maximumDiscount, isSalesUser } = usePermissions(data?.getAppSettings)
+  const { maximumDiscount, isSalesUser } = usePermissions()
 
   useEffect(() => {
     if (listedPrice > 0) {

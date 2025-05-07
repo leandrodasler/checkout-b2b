@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
-import { useQuery } from 'react-apollo'
-import type { Query } from 'ssesandbox04.checkout-b2b'
 
-import GET_APP_SETTINGS from '../graphql/getAppSettings.graphql'
 import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import ManualPrice from '../components/ManualPrice'
@@ -15,8 +12,6 @@ import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
-
-type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
 const { useOrderItems } = OrderItems
 
@@ -29,13 +24,11 @@ export function useTableSchema(
   discount: number,
   onUpdatePrice: (id: string, newPrice: number) => void
 ): TableSchema<CustomItem> {
-  const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, { ssr: false })
-
   const { hasMargin } = useTotalMargin()
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
-  const { canSeeMargin } = usePermissions(data?.getAppSettings)
+  const { canSeeMargin } = usePermissions()
   const {
     getSellingPrice,
     getDiscountedPrice,

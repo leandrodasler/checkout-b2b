@@ -1,6 +1,11 @@
 import { useMemo } from 'react'
+import { useQuery } from 'react-apollo'
+import { Query } from 'ssesandbox04.checkout-b2b'
 
 import { useOrganization } from '.'
+import GET_APP_SETTINGS from '../graphql/getAppSettings.graphql'
+
+type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
 interface AppSettings {
   salesRepresentative: number
@@ -9,7 +14,13 @@ interface AppSettings {
   rolesAllowedToSeeMargin?: string[]
 }
 
-export function usePermissions(appSettings?: AppSettings | undefined) {
+export function usePermissions() {
+  const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, {
+    ssr: false,
+  })
+
+  const appSettings = data?.getAppSettings as AppSettings
+
   const { organization } = useOrganization()
   const { role } = organization
 
