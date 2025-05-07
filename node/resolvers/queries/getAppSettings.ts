@@ -7,5 +7,18 @@ export const getAppSettings = async (
   __: unknown,
   context: ServiceContext<Clients>
 ) => {
-  return context.clients.apps.getAppSettings(process.env.VTEX_APP_ID ?? '')
+  const settings = await context.clients.apps.getAppSettings(
+    process.env.VTEX_APP_ID ?? ''
+  )
+
+  const rolesAllowedToSeeMargin = settings.rolesAllowedToSeeMargin
+    ? Object.entries(settings.rolesAllowedToSeeMargin)
+        .filter(([, isAllowed]) => isAllowed)
+        .map(([role]) => role)
+    : []
+
+  return {
+    ...settings,
+    rolesAllowedToSeeMargin,
+  }
 }

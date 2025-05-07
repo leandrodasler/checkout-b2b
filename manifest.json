@@ -158,25 +158,41 @@
       "rolesAllowedToSeeMargin": {
         "title": "Roles allowed to see margin",
         "description": "Set the roles that are allowed to see the margin in the checkout",
-        "type": "array",
-        "items": {
-          "type": "string",
-          "enum": [
-            "store-admin",
-            "sales-admin",
-            "sales-manager",
-            "sales-representative",
-            "customer-admin",
-            "customer-approver",
-            "customer-buyer"
-          ]
-        },
-        "default": [
-          "store-admin",
-          "sales-admin",
-          "sales-manager",
-          "sales-representative"
-        ]
+        "type": "object",
+        "properties": {
+          "store-admin": {
+            "type": "boolean",
+            "title": "Store Admin",
+            "default": true
+          },
+          "sales-admin": {
+            "type": "boolean",
+            "title": "Sales Admin",
+            "default": true
+          },
+          "sales-manager": {
+            "type": "boolean",
+            "title": "Sales Manager",
+            "default": true
+          },
+          "sales-representative": {
+            "type": "boolean",
+            "title": "Sales Representative",
+            "default": true
+          },
+          "customer-admin": {
+            "type": "boolean",
+            "title": "Customer Admin"
+          },
+          "customer-approver": {
+            "type": "boolean",
+            "title": "Customer Approver"
+          },
+          "customer-buyer": {
+            "type": "boolean",
+            "title": "Customer Buyer"
+          }
+        }
       }
     }
   },
