@@ -28,7 +28,7 @@ export function useTableSchema(
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { removeItem } = useOrderItems()
-  const { isSalesUser } = usePermissions()
+  const { canSeeMargin } = usePermissions()
   const {
     getSellingPrice,
     getDiscountedPrice,
@@ -156,7 +156,7 @@ export function useTableSchema(
           },
         },
         ...(hasMargin &&
-          isSalesUser && {
+          canSeeMargin && {
             listPrice: {
               width: 100,
               title: formatMessage(messages.margin),
@@ -254,7 +254,7 @@ export function useTableSchema(
       getSellingPrice,
       getDiscountedPrice,
       handlesNewPrice,
-      isSalesUser,
+      canSeeMargin,
       hasMargin,
       hasTax,
     ]

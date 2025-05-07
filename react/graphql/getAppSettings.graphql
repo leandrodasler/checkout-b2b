@@ -3,5 +3,6 @@ query getSettings {
     salesRepresentative
     salesManager
     salesAdmin
+    rolesAllowedToSeeMargin
   }
 }
