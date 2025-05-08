@@ -178,7 +178,7 @@ const ProductAutocomplete = () => {
             throw retryError
           }
 
-          setItemsQueue([]) // Reset the queue after successfully adding to the cart
+          setItemsQueue([])
         })
         .catch((e) => {
           if (retryCount < MAX_ADD_TO_CART_RETRIES && shouldRetryOnError(e)) {
@@ -190,7 +190,7 @@ const ProductAutocomplete = () => {
             return
           }
 
-          setItemsQueue([]) // Reset the queue after error
+          setItemsQueue([])
           showToast({ message: e.message })
         })
     },
