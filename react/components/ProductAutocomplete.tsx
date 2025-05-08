@@ -347,13 +347,8 @@ function CustomOption(props: CustomOptionProps) {
     }
   }, [selected])
 
-  const handleRemoveItem = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation()
-      e.preventDefault()
-
-      const itemsToRemove = value.type === 'product' ? value.item : [value.item]
-
+  const removeItems = useCallback(
+    (itemsToRemove: Item[]) => {
       itemsToRemove.forEach((item) => {
         const sellerId = item.sellers[0]?.sellerId
 
@@ -382,7 +377,21 @@ function CustomOption(props: CustomOptionProps) {
         )
       )
     },
-    [removeItem, value, setItemsQueue]
+    [removeItem, setItemsQueue]
+  )
+
+  const debouncedRemoveItems = useDebounce(removeItems, 500)
+
+  const handleRemoveItem = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      e.preventDefault()
+
+      const itemsToRemove = value.type === 'product' ? value.item : [value.item]
+
+      debouncedRemoveItems(itemsToRemove)
+    },
+    [debouncedRemoveItems, value]
   )
 
   const mainElement = (
@@ -439,7 +448,6 @@ function CustomOption(props: CustomOptionProps) {
                 stopPropagation: () => void
               }) => {
                 if (e.key !== 'Enter' && e.key !== ' ') return
-
                 e.preventDefault()
                 e.stopPropagation()
                 handleRemoveItem(e as never)
