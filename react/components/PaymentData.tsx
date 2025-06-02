@@ -7,6 +7,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import {
   useFetchCustomerCredit,
   useOrderFormCustom,
+  useOrganization,
   useUpdatePayment,
 } from '../hooks'
 import {
@@ -23,13 +24,30 @@ export function PaymentData() {
   const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
   const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
+  const { organization } = useOrganization()
+  const organizationPaymentSystems = useMemo(
+    () =>
+      organization.costCenter?.paymentTerms?.length
+        ? organization.costCenter.paymentTerms
+        : organization.paymentTerms ?? [],
+    [organization.costCenter?.paymentTerms, organization.paymentTerms]
+  )
+
+  const organizationAcceptsPaymentSystem = useCallback(
+    (id: string) =>
+      !organizationPaymentSystems?.length ||
+      organizationPaymentSystems?.some((paymentTerm) => paymentTerm?.id === id),
+    [organizationPaymentSystems]
+  )
 
   const filteredPaymentSystems = useMemo(
     () =>
       paymentSystems.filter(
-        (paymentSystem) => paymentSystem?.groupName !== 'creditCardPaymentGroup'
+        (paymentSystem) =>
+          paymentSystem?.groupName !== 'creditCardPaymentGroup' &&
+          organizationAcceptsPaymentSystem(paymentSystem.stringId)
       ),
-    [paymentSystems]
+    [organizationAcceptsPaymentSystem, paymentSystems]
   )
 
   const options = filteredPaymentSystems.map((paymentSystem) => ({
