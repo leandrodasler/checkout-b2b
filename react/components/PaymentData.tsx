@@ -7,7 +7,6 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import {
   useFetchCustomerCredit,
   useOrderFormCustom,
-  useOrganization,
   useUpdatePayment,
 } from '../hooks'
 import {
@@ -20,7 +19,6 @@ import { TotalizerSpinner } from './TotalizerSpinner'
 export function PaymentData() {
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
-  const { organization } = useOrganization()
   const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
   const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
@@ -42,9 +40,7 @@ export function PaymentData() {
   const [selectedPayment] = payments
 
   const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
-    enabled:
-      !!organization?.salesChannel &&
-      selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
+    enabled: selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
   })
 
   const customerCreditLoading = useMemo(
