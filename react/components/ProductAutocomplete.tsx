@@ -7,7 +7,14 @@ import React, {
 } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { AutocompleteInput, Spinner, Tooltip } from 'vtex.styleguide'
+import { OrderItems } from 'vtex.order-items'
+import {
+  AutocompleteInput,
+  ButtonWithIcon,
+  IconDelete,
+  Spinner,
+  Tooltip,
+} from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
@@ -20,6 +27,8 @@ import {
   transformImageUrl,
 } from '../utils'
 import { messages } from '../utils/messages'
+
+const { useOrderItems } = OrderItems
 
 interface CommertialOffer {
   Price: number
@@ -66,6 +75,7 @@ type CustomOptionProps = {
   inserted: boolean
   loading: boolean
   handleAddItem: (item: CustomOptionValue['item']) => void
+  setItemsQueue: React.Dispatch<React.SetStateAction<Item[]>>
 }
 
 type AddToCartFn = (newItems: Item[], retryCount?: number) => void
@@ -155,7 +165,6 @@ const ProductAutocomplete = () => {
           items: newItems.map((item) => ({
             id: Number(item.itemId),
             quantity: 1,
-            // get the seller with the lowest price
             seller: item.sellers.sort(sortSellersByPrice)[0].sellerId,
           })),
         },
@@ -192,7 +201,6 @@ const ProductAutocomplete = () => {
 
   const handleAddItem: CustomOptionProps['handleAddItem'] = useCallback(
     (item) => {
-      // this makes the autocomplete keyboard navigation works right after click in an item
       setInputFocus()
 
       const items = Array.isArray(item) ? item : [item]
@@ -248,9 +256,10 @@ const ProductAutocomplete = () => {
       return (
         <CustomOption
           {...props}
-          {...(props.value.item && { inserted })}
+          inserted={inserted}
           handleAddItem={handleAddItem}
           loading={loading}
+          setItemsQueue={setItemsQueue}
         />
       )
     },
@@ -296,6 +305,7 @@ const ProductAutocomplete = () => {
 
 function CustomOption(props: CustomOptionProps) {
   const { formatMessage } = useIntl()
+  const { removeItem } = useOrderItems()
   const {
     searchTerm,
     value,
@@ -303,10 +313,11 @@ function CustomOption(props: CustomOptionProps) {
     inserted,
     handleAddItem,
     loading,
+    setItemsQueue,
   } = props
 
   const [highlightOption, setHighlightOption] = useState(false)
-  const wrapperRef = useRef<HTMLButtonElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const searchWords = searchTerm.trim().split(/\s+/).filter(Boolean)
   const labelSplitted = value.label.split(/\s+/)
   const highlightedLabel = labelSplitted.map((part, index) => (
@@ -336,21 +347,82 @@ function CustomOption(props: CustomOptionProps) {
     }
   }, [selected])
 
-  const button = (
-    <button
+  const removeItems = useCallback(
+    (itemsToRemove: Item[]) => {
+      itemsToRemove.forEach((item) => {
+        const sellerId = item.sellers[0]?.sellerId
+
+        if (!sellerId) {
+          console.error(`No seller found for item ${item.itemId}`)
+
+          return
+        }
+
+        try {
+          removeItem({
+            id: item.itemId,
+            seller: sellerId,
+          })
+        } catch (error) {
+          console.error(`Failed to remove item ${item.itemId}:`, error)
+        }
+      })
+
+      setItemsQueue((prevQueue) =>
+        prevQueue.filter(
+          (queueItem) =>
+            !itemsToRemove.some(
+              (removedItem) => removedItem.itemId === queueItem.itemId
+            )
+        )
+      )
+    },
+    [removeItem, setItemsQueue]
+  )
+
+  const debouncedRemoveItems = useDebounce(removeItems, 500)
+
+  const handleRemoveItem = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      e.preventDefault()
+
+      const itemsToRemove = value.type === 'product' ? value.item : [value.item]
+
+      debouncedRemoveItems(itemsToRemove)
+    },
+    [debouncedRemoveItems, value]
+  )
+
+  const mainElement = (
+    <div
       ref={wrapperRef}
       className={buttonClasses}
+      role="button"
+      tabIndex={0}
+      aria-label={
+        value.type === 'product'
+          ? formatMessage(messages.searchProductsAddAll)
+          : 'add'
+      }
       onFocus={() => setHighlightOption(true)}
       onBlur={() => setHighlightOption(false)}
       onMouseEnter={() => setHighlightOption(true)}
       onMouseLeave={() => setHighlightOption(false)}
-      onClick={() => {
+      onClick={(e) => {
         if (inserted || loading) return
-
         handleAddItem(value.item)
+        e.currentTarget.focus()
+      }}
+      onKeyDown={(e) => {
+        if (inserted || loading) return
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleAddItem(value.item)
+        }
       }}
     >
-      <div className="flex flex-wrap items-center">
+      <div className="flex flex-wrap items-center justify-between">
         <span className="truncate">
           {value.type === 'sku' && (
             <img
@@ -362,20 +434,41 @@ function CustomOption(props: CustomOptionProps) {
           )}
           {highlightedLabel}
         </span>
-        {loading && !inserted && <Spinner size={16} />}
+        <div className="flex items-center">
+          {loading && !inserted && <Spinner size={16} />}
+          {inserted && (
+            <ButtonWithIcon
+              size="small"
+              icon={<IconDelete />}
+              variation="danger-tertiary"
+              onClick={handleRemoveItem}
+              onKeyDown={(e: {
+                key: string
+                preventDefault: () => void
+                stopPropagation: () => void
+              }) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return
+                e.preventDefault()
+                e.stopPropagation()
+                handleRemoveItem(e as never)
+              }}
+              aria-label={formatMessage(messages.removeItem)}
+            />
+          )}
+        </div>
       </div>
-    </button>
+    </div>
   )
 
   if (value.type === 'product' && !inserted) {
     return (
       <Tooltip label={formatMessage(messages.searchProductsAddAll)}>
-        <div>{button}</div>
+        {mainElement}
       </Tooltip>
     )
   }
 
-  return button
+  return mainElement
 }
 
 export default ProductAutocomplete
