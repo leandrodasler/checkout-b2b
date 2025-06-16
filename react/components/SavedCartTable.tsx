@@ -19,6 +19,7 @@ import {
 } from 'vtex.checkout-resources'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
+import type { LogisticsInfo } from 'vtex.store-graphql'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -228,7 +229,7 @@ export function SavedCartsTable() {
     }
   }
 
-  const handleConfirm = async (cart: SavedCart) => {
+  const handleConfirm = (cart: SavedCart) => {
     setSelectedCart(cart)
     setQuery({ savedCart: cart.id })
 
@@ -242,12 +243,16 @@ export function SavedCartsTable() {
 
     const { utmipage, ...newMarketingData } = marketingData ?? {}
     const { payments } = paymentData
-    const { selectedDeliveryOption } = shippingData ?? {}
+    const { logisticsInfo } = shippingData ?? {}
+
+    const selectedDeliveryOption = (logisticsInfo as LogisticsInfo[]).find(
+      (logisticsInfoItem) => !!logisticsInfoItem.selectedSla
+    )?.selectedSla
 
     setPending(true)
 
     try {
-      await clearCart(undefined, {
+      clearCart(undefined, {
         onSuccess: async () => {
           await addItemsMutation({
             variables: {
@@ -306,10 +311,10 @@ export function SavedCartsTable() {
             })
           }
 
-          if (selectedDeliveryOption?.id) {
+          if (selectedDeliveryOption) {
             await selectDeliveryOption({
               variables: {
-                deliveryOptionId: selectedDeliveryOption.id,
+                deliveryOptionId: selectedDeliveryOption,
               },
             })
           }
