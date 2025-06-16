@@ -71,7 +71,7 @@ function getEmptySimpleCart(parentCartId: string): SavedCartRow {
 export function SavedCartsTable() {
   const showToast = useToast()
   const { formatMessage } = useIntl()
-  const { setQuery, page, navigate } = useRuntime()
+  const { setQuery, page, navigate, query } = useRuntime()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const {
     setPending,
@@ -284,8 +284,12 @@ export function SavedCartsTable() {
 
           if (page !== 'store.checkout-b2b') {
             navigate({
+              page: 'store.checkout-b2b',
               fallbackToWindowLocation: true,
-              to: `/checkout-b2b?savedCart=${cart.id}`,
+              query: new URLSearchParams({
+                ...query,
+                savedCart: cart.id,
+              }).toString(),
             })
           }
         })

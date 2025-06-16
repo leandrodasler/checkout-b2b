@@ -12,7 +12,7 @@ import { messages, welcome } from './utils'
 export default function B2BSavedCarts() {
   useEffect(welcome, [])
   const { formatMessage } = useIntl()
-  const { navigate } = useRuntime()
+  const { navigate, query } = useRuntime()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -28,6 +28,7 @@ export default function B2BSavedCarts() {
                   navigate({
                     page: 'store.checkout-b2b',
                     fallbackToWindowLocation: true,
+                    query: new URLSearchParams(query).toString(),
                   })
                 }
               />
