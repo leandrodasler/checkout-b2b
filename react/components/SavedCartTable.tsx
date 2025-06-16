@@ -8,12 +8,18 @@ import type {
 } from 'ssesandbox04.checkout-b2b'
 import { Item } from 'vtex.checkout-graphql'
 import type {
+  SelectDeliveryOptionMutation,
+  SelectDeliveryOptionMutationVariables,
   SetManualPriceMutation,
   SetManualPriceMutationVariables,
 } from 'vtex.checkout-resources'
-import { MutationSetManualPrice } from 'vtex.checkout-resources'
+import {
+  MutationSelectDeliveryOption,
+  MutationSetManualPrice,
+} from 'vtex.checkout-resources'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
+import type { LogisticsInfo } from 'vtex.store-graphql'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -174,6 +180,21 @@ export function SavedCartsTable() {
     }
   )
 
+  const [selectDeliveryOption] = useMutation<
+    SelectDeliveryOptionMutation,
+    SelectDeliveryOptionMutationVariables
+  >(MutationSelectDeliveryOption, {
+    onCompleted({ selectDeliveryOption: updatedOrderForm }) {
+      setOrderForm({
+        ...orderForm,
+        ...updatedOrderForm,
+      } as CompleteOrderForm)
+    },
+    onError({ message }) {
+      showToast({ message })
+    },
+  })
+
   const { updatePayment, loading: loadingUpdatePayment } = useUpdatePayment()
 
   const loadingApplySavedCart = useMemo(
@@ -212,38 +233,49 @@ export function SavedCartsTable() {
     setSelectedCart(cart)
     setQuery({ savedCart: cart.id })
 
-    const { items, salesChannel, marketingData, paymentData } = JSON.parse(
-      cart.data ?? '{}'
-    )
+    const {
+      items,
+      salesChannel,
+      marketingData,
+      paymentData,
+      shippingData,
+    } = JSON.parse(cart.data ?? '{}')
 
     const { utmipage, ...newMarketingData } = marketingData ?? {}
     const { payments } = paymentData
+    const { logisticsInfo } = shippingData ?? {}
+
+    const selectedDeliveryOption = (logisticsInfo as LogisticsInfo[]).find(
+      (logisticsInfoItem) => !!logisticsInfoItem.selectedSla
+    )?.selectedSla
 
     setPending(true)
 
-    clearCart(undefined, {
-      onSuccess: () => {
-        addItemsMutation({
-          variables: {
-            items: items?.map(
-              (item: Item & { assemblies?: unknown }, index: number) => ({
-                id: +item.id,
-                index,
-                quantity: item.quantity,
-                seller: item.seller,
-                uniqueId: item.uniqueId,
-                options: item.assemblies,
-              })
-            ),
-            salesChannel,
-            marketingData: marketingData
-              ? {
-                  ...newMarketingData,
-                  ...(utmipage && { utmiPage: utmipage }),
-                }
-              : null,
-          },
-        }).then(async () => {
+    try {
+      clearCart(undefined, {
+        onSuccess: async () => {
+          await addItemsMutation({
+            variables: {
+              items: items?.map(
+                (item: Item & { assemblies?: unknown }, index: number) => ({
+                  id: +item.id,
+                  index,
+                  quantity: item.quantity,
+                  seller: item.seller,
+                  uniqueId: item.uniqueId,
+                  options: item.assemblies,
+                })
+              ),
+              salesChannel,
+              marketingData: marketingData
+                ? {
+                    ...newMarketingData,
+                    ...(utmipage && { utmiPage: utmipage }),
+                  }
+                : null,
+            },
+          })
+
           let index = 0
 
           for await (const item of items) {
@@ -279,6 +311,14 @@ export function SavedCartsTable() {
             })
           }
 
+          if (selectedDeliveryOption) {
+            await selectDeliveryOption({
+              variables: {
+                deliveryOptionId: selectedDeliveryOption,
+              },
+            })
+          }
+
           setPending(false)
           setOpenSavedCartModal(false)
 
@@ -292,9 +332,12 @@ export function SavedCartsTable() {
               }).toString(),
             })
           }
-        })
-      },
-    })
+        },
+      })
+    } catch (error) {
+      setPending(false)
+      showToast({ message: error.message })
+    }
   }
 
   const parseCartData = useCallback((savedCartData: string) => {
