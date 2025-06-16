@@ -41,6 +41,7 @@ export const messages = defineMessages({
   category: { id: 'store/checkout.b2b.column.category' },
   brand: { id: 'store/checkout.b2b.column.brand' },
   backToHome: { id: 'store/checkout.b2b.button.backToHome' },
+  backToCheckout: { id: 'store/checkout.b2b.button.backToCheckout' },
   refId: { id: 'store/checkout.b2b.column.refId' },
   seller: { id: 'store/checkout.b2b.column.seller' },
   margin: { id: 'store/checkout.b2b.column.margin' },

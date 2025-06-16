@@ -23,10 +23,10 @@ export default function B2BSavedCarts() {
             pageHeader={
               <PageHeader
                 title={<ExtensionPoint id="rich-text" />}
-                linkLabel={formatMessage(messages.backToHome)}
+                linkLabel={formatMessage(messages.backToCheckout)}
                 onLinkClick={() =>
                   navigate({
-                    page: 'store.home',
+                    page: 'store.checkout-b2b',
                     fallbackToWindowLocation: true,
                   })
                 }

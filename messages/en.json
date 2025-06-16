@@ -59,6 +59,7 @@
   "store/checkout.b2b.column.item": "Items",
 
   "store/checkout.b2b.button.backToHome": "Back to home page",
+  "store/checkout.b2b.button.backToCheckout": "Back to checkout",
   "store/checkout.b2b.button.clearCart": "Clear cart",
   "store/checkout.b2b.button.removeItem": "Remove item",
   "store/checkout.b2b.button.placeOrder": "Place Order",
