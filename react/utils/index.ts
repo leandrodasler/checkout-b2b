@@ -132,3 +132,7 @@ export function compareCostCenters<
 >(a: T, b: T) {
   return a.costCenterName?.localeCompare(b.costCenterName ?? '') ?? 0
 }
+
+export function getOrderPlacedUrl(orderGroup: string) {
+  return `/checkout/orderPlaced?og=${orderGroup}`
+}

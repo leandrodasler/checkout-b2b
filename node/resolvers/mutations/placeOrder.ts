@@ -1,105 +1,87 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
 import { OrderForm } from '@vtex/clients'
-import { Address, PaymentData } from 'vtex.checkout-graphql'
+import { MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
+import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../../clients'
 import { getFirstInstallmentByPaymentSystem, getSessionData } from '../../utils'
 
 const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
-// const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
-
-type PlaceOrderArgs = {
-  poNumber?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  invoiceData?: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectedCostCenters: any[]
-}
 
 export async function placeOrder(
   _: unknown,
-  { poNumber, invoiceData, selectedCostCenters }: PlaceOrderArgs,
+  { poNumber, invoiceData, selectedCostCenters }: MutationPlaceOrderArgs,
   context: ServiceContext<Clients>
 ) {
-  console.log('=================')
-  console.log('place order mutation')
-  const { orderFormId } = await getSessionData(context)
+  const { orderFormId, organizationId } = await getSessionData(context)
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
   const { clients } = context
   const { checkout, checkoutExtension } = clients
-
   const orderForm = await checkout.orderForm(orderFormId)
 
   checkoutExtension.setOrderFormId(orderFormId)
 
   const {
     paymentData,
-    shippingData: { address: singleAddress },
     storePreferencesData,
     value,
+    marketingData,
   } = orderForm as OrderForm & {
     paymentData: PaymentData
   }
 
   const { installmentOptions, payments } = paymentData
-
   const [payment] = payments
-
   const installment = getFirstInstallmentByPaymentSystem(
     installmentOptions,
     payment?.paymentSystem
   )
 
-  if (selectedCostCenters.length === 1) {
-    const orderGroup = await process(singleAddress as Address)
-
-    return [orderGroup]
-  }
-
   const orderGroups: string[] = []
 
   for await (const costCenter of selectedCostCenters) {
-    const orderGroup = await process(costCenter.address as Address)
+    const orderGroup = await process(costCenter)
 
     orderGroups.push(orderGroup)
   }
 
   return orderGroups
 
-  async function process(address: Address) {
+  async function process({ costId, address }: CostCenter) {
     if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-    const orderFormUpdatePromises: Array<Promise<void>> = []
-
-    console.log({ poNumber, invoiceData })
+    const orderFormUpdatePromises = [
+      checkoutExtension.updateOrderFormShipping({
+        address: {
+          ...address,
+          geoCoordinates: address.geoCoordinates ?? [],
+          isDisposable: true,
+        },
+      }),
+      checkoutExtension.updateOrderFormMarketingData({
+        attachmentId: 'marketingData',
+        marketingTags: marketingData?.marketingTags ?? [],
+        utmCampaign: organizationId,
+        utmMedium: costId,
+      }),
+    ]
 
     if (poNumber) {
       orderFormUpdatePromises.push(
-        checkout
-          .setSingleCustomData(orderFormId, {
-            appId: B2B_CHECKOUT_CUSTOM_APP_ID,
-            appFieldName: PO_NUMBER_CUSTOM_FIELD,
-            value: poNumber,
-          })
-          .catch((e) => {
-            console.log('error on setSingleCustomData')
-            throw e
-          })
+        checkout.setSingleCustomData(orderFormId, {
+          appId: B2B_CHECKOUT_CUSTOM_APP_ID,
+          appFieldName: PO_NUMBER_CUSTOM_FIELD,
+          value: poNumber,
+        })
       )
     }
 
     if (invoiceData) {
       orderFormUpdatePromises.push(
-        checkoutExtension.updateOrderFormInvoiceData(invoiceData).catch((e) => {
-          console.log('error on updateOrderFormInvoiceData')
-
-          throw e
-        })
+        checkoutExtension.updateOrderFormInvoiceData(invoiceData)
       )
     }
 
@@ -114,23 +96,15 @@ export async function placeOrder(
       interestValue: installment?.interestRate,
     }
 
-    console.log('starting transaction')
-
-    const transactionResponse = await checkoutExtension
-      .startTransaction(startTransactionBody)
-      .catch((e) => {
-        console.log('error on startTransaction')
-        throw e
-      })
+    const transactionResponse = await checkoutExtension.startTransaction(
+      startTransactionBody
+    )
 
     const {
       id: transactionId,
       orderGroup,
       messages: transactionMessages,
     } = transactionResponse
-
-    console.log('transactionMessages:')
-    console.log(transactionMessages)
 
     const transactionError = transactionMessages.find(
       (message) => message.status === 'error'
@@ -148,10 +122,11 @@ export async function placeOrder(
       installmentsInterestRate: installment?.interestRate ?? 0,
       installmentsValue: installment?.value ?? 0,
       referenceValue: payment?.referenceValue,
-      isBillingAddressDifferent: invoiceData?.addressId !== address?.addressId,
+      isBillingAddressDifferent:
+        invoiceData?.address?.addressId !== address?.addressId,
       fields: {
         accountId: payment?.accountId,
-        address: invoiceData ?? address,
+        address: invoiceData?.address ?? address,
       },
       transaction: {
         id: transactionId,
@@ -160,14 +135,8 @@ export async function placeOrder(
       },
     }
 
-    await checkoutExtension.setPayments(orderGroup, paymentsBody).catch((e) => {
-      console.log('error on setPayments:', e.message)
-      throw e
-    })
-    await checkoutExtension.gatewayCallback(orderGroup).catch((e) => {
-      console.log('error on gatewayCallback')
-      throw e
-    })
+    await checkoutExtension.setPayments(orderGroup, paymentsBody)
+    await checkoutExtension.gatewayCallback(orderGroup)
 
     return orderGroup
   }

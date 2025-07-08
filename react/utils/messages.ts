@@ -2,6 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
   cancel: { id: 'store/checkout.b2b.cancel' },
+  showMore: { id: 'store/checkout.b2b.show-more' },
+  showLess: { id: 'store/checkout.b2b.show-less' },
   confirm: { id: 'store/checkout.b2b.confirm' },
   delete: { id: 'store/checkout.b2b.delete' },
   creditAvailable: { id: 'store/checkout.b2b.creditAvailable' },
@@ -118,5 +120,17 @@ export const messages = defineMessages({
   },
   searchEmptyCart: {
     id: 'store/checkout.b2b.search.products.EmptyCart',
+  },
+  costCentersLabel: {
+    id: 'store/checkout.b2b.cost-centers.label',
+  },
+  costCentersNotEmptyError: {
+    id: 'store/checkout.b2b.cost-centers.not-empty.error',
+  },
+  userCostCenterDefaultInfo: {
+    id: 'store/checkout.b2b.cost-centers.user-cost-center.default.info',
+  },
+  multipleOrdersInfo: {
+    id: 'store/checkout.b2b.cost-centers.multiple-orders.info',
   },
 })

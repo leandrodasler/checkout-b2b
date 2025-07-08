@@ -119,7 +119,7 @@ export function ContactInfos() {
 
         if (newSelectedCostCenters.length === 0) {
           showToast({
-            message: 'Pelo menos um centro de custos deve ser selecionado',
+            message: formatMessage(messages.costCentersNotEmptyError),
           })
 
           return prev
@@ -265,7 +265,7 @@ export function ContactInfos() {
 
   if (costCenters?.length) {
     contactFields.push({
-      label: 'Centros de Custos',
+      label: formatMessage(messages.costCentersLabel),
       value: (
         <>
           {costCenters.map((userCostCenter) => {
@@ -285,7 +285,9 @@ export function ContactInfos() {
                   onChange={handleCheckCostCenter}
                 />
                 {costId === currentCostCenterId && (
-                  <Tooltip label="O centro de custos do usuário é pré-selecionado por padrão">
+                  <Tooltip
+                    label={formatMessage(messages.userCostCenterDefaultInfo)}
+                  >
                     <div className="flex items-center ml1">
                       <IconInfo />
                     </div>
@@ -295,8 +297,7 @@ export function ContactInfos() {
             )
           })}
           <span className="t-mini">
-            Ao finalizar a compra, será gerado um pedido para cada centro de
-            custos selecionado.
+            {formatMessage(messages.multipleOrdersInfo)}
           </span>
         </>
       ),

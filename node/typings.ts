@@ -1,3 +1,4 @@
+import { IOContext, SegmentData } from '@vtex/api'
 import { Address } from 'vtex.checkout-graphql'
 
 declare global {
@@ -8,6 +9,13 @@ declare global {
     value: number
     referenceValue?: number | null
     interestValue?: number | null
+  }
+
+  type TransactionResponse = {
+    id: string
+    orderGroup: string
+    merchantTransactions?: Array<{ merchantName: string }>
+    messages: Array<{ text?: string; status?: string }>
   }
 
   type PaymentsBody = Partial<{
@@ -34,4 +42,15 @@ declare global {
       merchantName?: string
     }
   }>
+
+  type CustomIOContext = IOContext & {
+    segment?: SegmentData
+    orderFormId?: string
+    ownerId?: string
+  }
+
+  type CostCenter = {
+    costId: string
+    address: Address
+  }
 }

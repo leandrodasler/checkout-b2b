@@ -1,7 +1,7 @@
 import type { Query as CheckoutB2BQuery } from 'ssesandbox04.checkout-b2b'
 import type {
-  Query,
   Address as OrganizationAddress,
+  Query,
 } from 'vtex.b2b-organizations-graphql'
 import type {
   Address,
@@ -150,3 +150,8 @@ export type ModalProps = {
 export type GetSavedCartsQuery = Pick<CheckoutB2BQuery, 'getSavedCarts'>
 
 export type Tax = { idCalculatorConfiguration: string; name: string }
+
+export type OrderGroup = {
+  costCenter: string
+  orderGroup: string
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { Dispatch, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
   Query,
@@ -10,44 +10,44 @@ import { useRuntime } from 'vtex.render-runtime'
 import { withToast } from 'vtex.styleguide'
 
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
-import type { CustomOrganization, WithToast } from './typings'
+import type { CustomOrganization, OrderGroup, WithToast } from './typings'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
 
 type CheckoutB2BContextData = {
   pending: boolean
-  setPending: React.Dispatch<React.SetStateAction<boolean>>
+  setPending: Dispatch<React.SetStateAction<boolean>>
   showToast: WithToast['showToast']
   selectedCart?: SavedCart | null
-  setSelectedCart: React.Dispatch<
-    React.SetStateAction<SavedCart | null | undefined>
-  >
+  setSelectedCart: Dispatch<React.SetStateAction<SavedCart | null | undefined>>
   openSavedCartModal: boolean
-  setOpenSavedCartModal: React.Dispatch<React.SetStateAction<boolean>>
+  setOpenSavedCartModal: Dispatch<React.SetStateAction<boolean>>
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
-  setDiscountApplied: React.Dispatch<React.SetStateAction<number>>
+  setDiscountApplied: Dispatch<React.SetStateAction<number>>
   maximumDiscount?: number
-  setMaximumDiscount: React.Dispatch<React.SetStateAction<number | undefined>>
+  setMaximumDiscount: Dispatch<React.SetStateAction<number | undefined>>
   subtotal: number
-  setSubtotal: React.Dispatch<React.SetStateAction<number>>
+  setSubtotal: Dispatch<React.SetStateAction<number>>
   listedPrice: number
-  setListedPrice: React.Dispatch<React.SetStateAction<number>>
+  setListedPrice: Dispatch<React.SetStateAction<number>>
   percentualDiscount: number
-  setPercentualDiscount: React.Dispatch<React.SetStateAction<number>>
+  setPercentualDiscount: Dispatch<React.SetStateAction<number>>
   searchQuery: string
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>
+  setSearchQuery: Dispatch<React.SetStateAction<string>>
   searchStore: boolean
-  setSearchStore: React.Dispatch<React.SetStateAction<boolean>>
+  setSearchStore: Dispatch<React.SetStateAction<boolean>>
   selectedCostCenters: CustomOrganization['userCostCenters']
-  setSelectedCostCenters: React.Dispatch<
+  setSelectedCostCenters: Dispatch<
     React.SetStateAction<CustomOrganization['userCostCenters']>
   >
   loadingShippingAddress: boolean
-  setLoadingShippingAddress: React.Dispatch<React.SetStateAction<boolean>>
+  setLoadingShippingAddress: Dispatch<React.SetStateAction<boolean>>
   poNumber?: string
-  setPoNumber: React.Dispatch<React.SetStateAction<string | undefined>>
+  setPoNumber: Dispatch<React.SetStateAction<string | undefined>>
+  orderGroups?: OrderGroup[]
+  setOrderGroups: Dispatch<React.SetStateAction<OrderGroup[] | undefined>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -74,6 +74,8 @@ function CheckoutB2BProviderWrapper({
   const [selectedCostCenters, setSelectedCostCenters] = useState<
     CustomOrganization['userCostCenters']
   >([])
+
+  const [orderGroups, setOrderGroups] = useState<OrderGroup[]>()
 
   const savedCartId = query?.savedCart
 
@@ -141,6 +143,8 @@ function CheckoutB2BProviderWrapper({
     setLoadingShippingAddress,
     poNumber,
     setPoNumber,
+    orderGroups,
+    setOrderGroups,
   }
 
   return (

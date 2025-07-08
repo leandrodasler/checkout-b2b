@@ -102,3 +102,14 @@ export function getFirstInstallmentByPaymentSystem(
 
   return installmentOption?.installments[0]
 }
+
+const CHECKOUT_COOKIE = 'checkout.vtex.com'
+const OWNERSHIP_COOKIE = 'CheckoutOrderFormOwnership'
+
+export function checkoutCookieFormat(orderFormId: string) {
+  return `${CHECKOUT_COOKIE}=__ofid=${orderFormId};`
+}
+
+export function ownershipCookieFormat(ownerId: string) {
+  return `${OWNERSHIP_COOKIE}=${ownerId};`
+}
