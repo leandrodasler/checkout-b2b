@@ -14,7 +14,7 @@ export function SavedCartsListModal({
   setOpen: (value: boolean) => void
 }) {
   const { formatMessage } = useIntl()
-  const { navigate } = useRuntime()
+  const { navigate, query } = useRuntime()
 
   const handleCloseModal = useCallback(() => {
     setOpen(false)
@@ -34,6 +34,7 @@ export function SavedCartsListModal({
             navigate({
               page: 'store.b2b-saved-carts',
               fallbackToWindowLocation: true,
+              query: new URLSearchParams(query).toString(),
             })
           }
         >

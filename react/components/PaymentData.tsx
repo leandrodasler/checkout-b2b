@@ -20,18 +20,34 @@ import { TotalizerSpinner } from './TotalizerSpinner'
 export function PaymentData() {
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
-  const { organization } = useOrganization()
   const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
   const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
   const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
+  const { organization } = useOrganization()
+  const organizationPaymentSystems = useMemo(
+    () =>
+      organization.costCenter?.paymentTerms?.length
+        ? organization.costCenter.paymentTerms
+        : organization.paymentTerms ?? [],
+    [organization.costCenter?.paymentTerms, organization.paymentTerms]
+  )
+
+  const organizationAcceptsPaymentSystem = useCallback(
+    (id: string) =>
+      !organizationPaymentSystems?.length ||
+      organizationPaymentSystems?.some((paymentTerm) => paymentTerm?.id === id),
+    [organizationPaymentSystems]
+  )
 
   const filteredPaymentSystems = useMemo(
     () =>
       paymentSystems.filter(
-        (paymentSystem) => paymentSystem?.groupName !== 'creditCardPaymentGroup'
+        (paymentSystem) =>
+          paymentSystem?.groupName !== 'creditCardPaymentGroup' &&
+          organizationAcceptsPaymentSystem(paymentSystem.stringId)
       ),
-    [paymentSystems]
+    [organizationAcceptsPaymentSystem, paymentSystems]
   )
 
   const options = filteredPaymentSystems.map((paymentSystem) => ({
@@ -42,9 +58,7 @@ export function PaymentData() {
   const [selectedPayment] = payments
 
   const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
-    enabled:
-      !!organization?.salesChannel &&
-      selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
+    enabled: selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
   })
 
   const customerCreditLoading = useMemo(
