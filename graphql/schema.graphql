@@ -1,3 +1,6 @@
+scalar CostCenter
+scalar InvoiceData
+
 type SavedCart {
   id: ID!
   createdIn: String!
@@ -34,4 +37,10 @@ type Mutation {
   ): SavedCart!
 
   deleteCart(id: ID): ID
+
+  placeOrder(
+    poNumber: String
+    invoiceData: InvoiceData
+    selectedCostCenters: [CostCenter!]!
+  ): [String!]!
 }

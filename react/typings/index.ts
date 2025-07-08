@@ -1,5 +1,8 @@
 import type { Query as CheckoutB2BQuery } from 'ssesandbox04.checkout-b2b'
-import type { Query } from 'vtex.b2b-organizations-graphql'
+import type {
+  Query,
+  Address as OrganizationAddress,
+} from 'vtex.b2b-organizations-graphql'
 import type {
   Address,
   Maybe,
@@ -109,12 +112,23 @@ export type SessionOrganizationData = {
 
 export type GetOrganizationQuery = Pick<
   Query,
-  'getOrganizationByIdStorefront' | 'getUsers' | 'getCostCenterByIdStorefront'
+  | 'getOrganizationByIdStorefront'
+  | 'getCostCenterByIdStorefront'
+  | 'getUsers'
+  | 'getActiveOrganizationsByEmail'
+  | 'getCostCentersByOrganizationId'
 >
 
 export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStorefront'] & {
   users: GetOrganizationQuery['getUsers']
   costCenter: GetOrganizationQuery['getCostCenterByIdStorefront']
+  userCostCenters?: Array<
+    NonNullable<
+      GetOrganizationQuery['getActiveOrganizationsByEmail']
+    >[number] & {
+      address?: OrganizationAddress | null
+    }
+  >
   role: string
   roleName: string
 }

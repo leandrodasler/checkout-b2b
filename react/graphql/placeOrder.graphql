@@ -1,0 +1,11 @@
+mutation PlaceOrder(
+  $poNumber: String
+  $invoiceData: InvoiceData
+  $selectedCostCenters: [CostCenter!]!
+) {
+  placeOrder(
+    poNumber: $poNumber
+    invoiceData: $invoiceData
+    selectedCostCenters: $selectedCostCenters
+  ) @context(provider: "ssesandbox04.checkout-b2b")
+}

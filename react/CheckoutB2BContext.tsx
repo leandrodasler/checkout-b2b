@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
   Query,
@@ -10,7 +10,7 @@ import { useRuntime } from 'vtex.render-runtime'
 import { withToast } from 'vtex.styleguide'
 
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
-import type { WithToast } from './typings'
+import type { CustomOrganization, WithToast } from './typings'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
 
@@ -40,6 +40,14 @@ type CheckoutB2BContextData = {
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>
   searchStore: boolean
   setSearchStore: React.Dispatch<React.SetStateAction<boolean>>
+  selectedCostCenters: CustomOrganization['userCostCenters']
+  setSelectedCostCenters: React.Dispatch<
+    React.SetStateAction<CustomOrganization['userCostCenters']>
+  >
+  loadingShippingAddress: boolean
+  setLoadingShippingAddress: React.Dispatch<React.SetStateAction<boolean>>
+  poNumber?: string
+  setPoNumber: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -56,12 +64,16 @@ function CheckoutB2BProviderWrapper({
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [poNumber, setPoNumber] = useState<string>()
   const [searchStore, setSearchStore] = useState(true)
-
+  const [loadingShippingAddress, setLoadingShippingAddress] = useState(false)
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
   const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
+  const [selectedCostCenters, setSelectedCostCenters] = useState<
+    CustomOrganization['userCostCenters']
+  >([])
 
   const savedCartId = query?.savedCart
 
@@ -99,58 +111,37 @@ function CheckoutB2BProviderWrapper({
     [getSellingPrice]
   )
 
-  const value = useMemo(
-    () => ({
-      pending,
-      setPending,
-      showToast,
-      selectedCart,
-      openSavedCartModal,
-      setOpenSavedCartModal,
-      setSelectedCart,
-      getSellingPrice,
-      getDiscountedPrice,
-      discountApplied,
-      setDiscountApplied,
-      maximumDiscount,
-      setMaximumDiscount,
-      subtotal,
-      setSubtotal,
-      listedPrice,
-      setListedPrice,
-      percentualDiscount,
-      setPercentualDiscount,
-      searchQuery,
-      setSearchQuery,
-      searchStore,
-      setSearchStore,
-    }),
-    [
-      pending,
-      setPending,
-      showToast,
-      selectedCart,
-      setSelectedCart,
-      openSavedCartModal,
-      setOpenSavedCartModal,
-      getSellingPrice,
-      getDiscountedPrice,
-      discountApplied,
-      setDiscountApplied,
-      maximumDiscount,
-      setMaximumDiscount,
-      subtotal,
-      setSubtotal,
-      listedPrice,
-      setListedPrice,
-      percentualDiscount,
-      setPercentualDiscount,
-      searchQuery,
-      setSearchQuery,
-      searchStore,
-      setSearchStore,
-    ]
-  )
+  const value = {
+    pending,
+    setPending,
+    showToast,
+    selectedCart,
+    openSavedCartModal,
+    setOpenSavedCartModal,
+    setSelectedCart,
+    getSellingPrice,
+    getDiscountedPrice,
+    discountApplied,
+    setDiscountApplied,
+    maximumDiscount,
+    setMaximumDiscount,
+    subtotal,
+    setSubtotal,
+    listedPrice,
+    setListedPrice,
+    percentualDiscount,
+    setPercentualDiscount,
+    searchQuery,
+    setSearchQuery,
+    searchStore,
+    setSearchStore,
+    selectedCostCenters,
+    setSelectedCostCenters,
+    loadingShippingAddress,
+    setLoadingShippingAddress,
+    poNumber,
+    setPoNumber,
+  }
 
   return (
     <CheckoutB2BContext.Provider value={value}>

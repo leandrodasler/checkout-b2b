@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
+import { Address } from 'vtex.b2b-organizations-graphql'
 import type {
   SelectDeliveryOptionMutation,
   SelectDeliveryOptionMutationVariables,
@@ -22,8 +23,12 @@ import { messages } from '../utils'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 type QueryShipping = Pick<StoreGraphqlQuery, 'shipping'>
+type Props = {
+  address?: Address | null
+  costCenterName?: string | null
+}
 
-export function ShippingOption() {
+export function ShippingOption({ address, costCenterName }: Props) {
   const showToast = useToast()
   const handles = useCssHandles(['shippingEstimates'])
   const { formatMessage } = useIntl()
@@ -32,16 +37,18 @@ export function ShippingOption() {
   const { selectedAddress, deliveryOptions } = orderForm.shipping
   const formatPrice = useFormatPrice()
 
+  const currentAddress = address ?? selectedAddress
+
   const { data: shippingData, loading: shippingLoading } = useQuery<
     QueryShipping,
     QueryShippingArgs
   >(GET_SHIPPING, {
     ssr: false,
-    skip: !selectedAddress || !!deliveryOptions.length,
+    skip: !currentAddress || !!deliveryOptions.length,
     variables: {
-      postalCode: selectedAddress?.postalCode,
-      geoCoordinates: selectedAddress?.geoCoordinates?.map((c) => String(c)),
-      country: selectedAddress?.country,
+      postalCode: currentAddress?.postalCode,
+      geoCoordinates: currentAddress?.geoCoordinates?.map((c) => String(c)),
+      country: currentAddress?.country,
       items: orderForm.items.map((item) => ({
         id: item.id,
         quantity: String(item.quantity),
@@ -75,7 +82,19 @@ export function ShippingOption() {
     label: `${id} - ${formatPrice(price / 100)}`,
   }))
 
+  // const [selectedCostCenterOption, setSelectedCostCenterOption] = useState(
+  //   selectedOption
+  // )
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // if (!Date.now()) console.log(selectOption.name, setPending)
+
+    // const newDeliveryOption = deliveryOptions?.find(
+    //   (option) => option.id === e.target.value
+    // )
+
+    // setSelectedCostCenterOption(newDeliveryOption)
+
     setPending(true)
 
     selectOption({
@@ -92,6 +111,7 @@ export function ShippingOption() {
   if (options.length === 1) {
     return (
       <>
+        {costCenterName && <div className="b mb1">{costCenterName}</div>}
         {selectedOption?.id} -{' '}
         <TranslateEstimate shippingEstimate={selectedOption?.estimate} />
       </>
@@ -100,21 +120,25 @@ export function ShippingOption() {
 
   if (options.length > 1) {
     return (
-      <Dropdown
-        size="small"
-        placeholder={formatMessage(messages.shippingOption)}
-        options={options}
-        value={selectedOption?.id}
-        onChange={handleChange}
-        helpText={
-          <TranslateEstimate shippingEstimate={selectedOption?.estimate} />
-        }
-      />
+      <>
+        {costCenterName && <div className="b mb1">{costCenterName}</div>}
+        <Dropdown
+          size="small"
+          placeholder={formatMessage(messages.shippingOption)}
+          options={options}
+          value={selectedOption?.id}
+          onChange={handleChange}
+          helpText={
+            <span {...(costCenterName && { className: 't-mini' })}>
+              <TranslateEstimate shippingEstimate={selectedOption?.estimate} />
+            </span>
+          }
+        />
+      </>
     )
   }
 
-  const shipping = shippingData?.shipping
-  const shippingEstimates = shipping?.logisticsInfo
+  const shippingEstimates = shippingData?.shipping?.logisticsInfo
     ?.map((l) => l?.slas?.[0]?.shippingEstimate)
     .filter(Boolean)
     .filter((value, index, self) => self.indexOf(value) === index)
@@ -126,10 +150,14 @@ export function ShippingOption() {
   }
 
   if (packages > 1) {
+    const packageText = formatMessage(messages.shippingOptionPackages, {
+      packages,
+    })
+
     return (
-      <div className="flex items-center">
+      <div className="flex flex-column flex-wrap">
         <span className="b">
-          {formatMessage(messages.shippingOptionPackages, { packages })}:
+          {costCenterName ? `${costCenterName} (${packageText})` : packageText}
         </span>
         <ol className={handles.shippingEstimates}>
           {shippingEstimates?.map(

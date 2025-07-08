@@ -10,73 +10,9 @@ query getShipping(
     geoCoordinates: $geoCoordinates
     country: $country
   ) @context(provider: "vtex.store-graphql") {
-    items {
-      id
-      requestIndex
-      quantity
-      seller
-      sellerChain
-      tax
-      priceValidUntil
-      price
-      listPrice
-      rewardValue
-      sellingPrice
-      measurementUnit
-      unitMultiplier
-      availability
-    }
     logisticsInfo {
-      itemIndex
-      selectedSla
       slas {
-        id
-        name
-        price
         shippingEstimate
-        shippingEstimateDate
-        deliveryIds {
-          courierId
-          warehouseId
-          dockId
-          courierName
-          quantity
-        }
-        deliveryChannel
-        friendlyName
-        pickupPointId
-        pickupStoreInfo {
-          friendlyName
-          address {
-            addressType
-            receiverName
-            addressId
-            postalCode
-            city
-            state
-            country
-            street
-            number
-            neighborhood
-            complement
-            reference
-            geoCoordinates
-          }
-          additionalInfo
-          dockId
-          isPickupStore
-        }
-        pickupDistance
-      }
-    }
-    messages {
-      code
-      text
-      status
-      fields {
-        itemIndex
-        ean
-        skuName
       }
     }
   }

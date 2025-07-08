@@ -1,6 +1,6 @@
 import { Address, Item, PaymentData } from 'vtex.checkout-graphql'
 
-import { PaymentAddressType } from '../typings'
+import { CustomOrganization, PaymentAddressType } from '../typings'
 
 export * from './messages'
 
@@ -12,6 +12,7 @@ export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CUSTOMER_CREDIT_ID = '64'
 export const SEARCH_TYPE = { CART: 0, STORE: 1 }
+export const MAX_SALES_USERS_TO_SHOW = 3
 
 export function removeAccents(str?: string | null) {
   return (
@@ -125,3 +126,9 @@ export const ERROR_TO_RETRY_PATTERNS = [
   '502',
   '503',
 ]
+
+export function compareCostCenters<
+  T extends NonNullable<CustomOrganization['userCostCenters']>[number]
+>(a: T, b: T) {
+  return a.costCenterName?.localeCompare(b.costCenterName ?? '') ?? 0
+}

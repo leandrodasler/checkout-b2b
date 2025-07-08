@@ -1,6 +1,7 @@
 import type { ServiceContext } from '@vtex/api'
 import { ForbiddenError } from '@vtex/api'
 import { SavedCart } from 'ssesandbox04.checkout-b2b'
+import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
 import {
@@ -89,4 +90,15 @@ export async function deleteSavedCart(
     dataEntity: SAVED_CART_ENTITY,
     id,
   })
+}
+
+export function getFirstInstallmentByPaymentSystem(
+  installmentOptions: PaymentData['installmentOptions'],
+  paymentSystem?: string | null
+) {
+  const installmentOption = installmentOptions.find(
+    (option) => option.paymentSystem === paymentSystem
+  )
+
+  return installmentOption?.installments[0]
 }
