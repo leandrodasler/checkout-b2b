@@ -17,6 +17,7 @@ import {
   Toggle,
   Totalizer,
 } from 'vtex.styleguide'
+import { Item } from '@vtex/order-items/types/typings'
 
 import {
   CheckoutB2BProvider,
@@ -64,6 +65,9 @@ function CheckoutB2B() {
     setSearchStore,
   } = useCheckoutB2BContext()
 
+  const [expandedProducts, setExpandedProducts] = useState<string[]>([])
+
+  const [isGrouping, setIsGrouping] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
   const toolbar = useToolbar()
@@ -97,7 +101,38 @@ function CheckoutB2B() {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
   }, [maximumDiscount, percentualDiscount])
 
-  const filteredItems = searchStore ? items : toolbar?.filteredItems ?? items
+  const filteredItems = useMemo(() => {
+    const baseItems = searchStore ? items : toolbar?.filteredItems ?? items
+
+    if (!isGrouping) return baseItems
+
+    const seen = new Set<string>()
+    const result: typeof items = []
+
+    for (const item of baseItems) {
+      const key = item.productId ?? ''
+
+      if (!seen.has(key)) {
+        result.push({
+          __group: true,
+          productId: key,
+          name: item.name,
+          id: `group-${key}`,
+        } as typeof item & { tax: number; __group: boolean })
+
+        seen.add(key)
+      }
+
+      if (expandedProducts.includes(key)) {
+        result.push({
+          ...item,
+          tax: (item as Item & { tax?: number }).tax ?? undefined,
+        })
+      }
+    }
+
+    return result
+  }, [searchStore, toolbar?.filteredItems, items, isGrouping, expandedProducts])
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
     setPrices((prevPrices) => {
@@ -110,7 +145,14 @@ function CheckoutB2B() {
     })
   }, [])
 
-  const schema = useTableSchema(isEditing, discountApplied, updatePrice)
+  const schema = useTableSchema({
+    expandedProducts,
+    setExpandedProducts,
+    isGrouping,
+    isEditing,
+    discount: discountApplied,
+    onUpdatePrice: updatePrice,
+  })
 
   const [setManualPrice, { loading: saving }] = useMutation(
     MutationSetManualPrice,
@@ -294,6 +336,12 @@ function CheckoutB2B() {
                 checked={searchStore}
                 onChange={handleToggleSearchStore}
               />
+
+              <Toggle
+                label={formatMessage(messages.searchProductsGroupToggle)}
+                checked={isGrouping}
+                onChange={() => setIsGrouping((prev) => !prev)}
+              />
             </div>
 
             <div ref={tableRef}>
@@ -302,7 +350,7 @@ function CheckoutB2B() {
                   'tax' in schema.properties ? 'with-tax' : 'no-tax'
                 }${
                   'listPrice' in schema.properties ? 'with-margin' : 'no-margin'
-                }`}
+                }${isGrouping ? 'grouping-products' : 'ungrouped-products'}`}
                 onRowClick={() => {}}
                 loading={loading}
                 fullWidth

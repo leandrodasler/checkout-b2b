@@ -37,6 +37,7 @@ import { messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
 import { TruncatedText } from './TruncatedText'
+import { CellWrapper } from './CellWrapper'
 
 type SavedCartRow = SavedCart &
   Partial<{
@@ -485,12 +486,4 @@ export function SavedCartsTable() {
       loading={loading}
     />
   )
-}
-
-type CellWrapperProps = React.PropsWithChildren<{
-  isChildren?: boolean | string | null
-}>
-
-function CellWrapper({ children, isChildren }: CellWrapperProps) {
-  return <span className={isChildren ? 'c-muted-1' : ''}>{children}</span>
 }
