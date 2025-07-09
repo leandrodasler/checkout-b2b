@@ -52,6 +52,7 @@ export type CompleteOrderFormData = ApiResponse &
       customerClass?: string | null
     }
     items: CustomItem[]
+    poNumber?: string
   }
 
 export type PaymentAddress = {

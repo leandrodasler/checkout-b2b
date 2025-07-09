@@ -1,4 +1,4 @@
-import { Address, Item, PaymentData } from 'vtex.checkout-graphql'
+import { Address, CustomData, Item, PaymentData } from 'vtex.checkout-graphql'
 
 import { CustomOrganization, PaymentAddressType } from '../typings'
 
@@ -135,4 +135,19 @@ export function compareCostCenters<
 
 export function getOrderPlacedUrl(orderGroup: string) {
   return `/checkout/orderPlaced?og=${orderGroup}`
+}
+
+export function getOrderFormPoNumber(customData?: CustomData | null): string {
+  return (
+    customData?.customApps?.find((app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID)
+      ?.fields?.[PO_NUMBER_CUSTOM_FIELD] ?? ''
+  )
+}
+
+export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
+  return (
+    customData?.customApps?.filter(
+      (customApp) => customApp.id !== B2B_CHECKOUT_CUSTOM_APP_ID
+    ) ?? []
+  )
 }

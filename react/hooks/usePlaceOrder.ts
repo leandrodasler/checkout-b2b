@@ -14,12 +14,8 @@ export function usePlaceOrder() {
   const { formatMessage } = useIntl()
   const { clearCart } = useClearCart()
   const { orderForm } = useOrderFormCustom()
-  const { paymentAddress, shipping } = orderForm
-  const {
-    selectedCostCenters = [],
-    poNumber,
-    setOrderGroups,
-  } = useCheckoutB2BContext()
+  const { poNumber, paymentAddress, shipping } = orderForm
+  const { selectedCostCenters = [], setOrderGroups } = useCheckoutB2BContext()
 
   const [placeOrder, { loading }] = useGraphQLMutation<
     MutationPlaceOrder,

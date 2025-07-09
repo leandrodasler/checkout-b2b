@@ -45,8 +45,6 @@ type CheckoutB2BContextData = {
   >
   loadingShippingAddress: boolean
   setLoadingShippingAddress: Dispatch<React.SetStateAction<boolean>>
-  poNumber?: string
-  setPoNumber: Dispatch<React.SetStateAction<string | undefined>>
   orderGroups?: Mutation['placeOrder']
   setOrderGroups: Dispatch<
     React.SetStateAction<Mutation['placeOrder'] | undefined>
@@ -67,7 +65,6 @@ function CheckoutB2BProviderWrapper({
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
-  const [poNumber, setPoNumber] = useState<string>()
   const [searchStore, setSearchStore] = useState(true)
   const [loadingShippingAddress, setLoadingShippingAddress] = useState(false)
   const [subtotal, setSubtotal] = useState(0)
@@ -144,8 +141,6 @@ function CheckoutB2BProviderWrapper({
     setSelectedCostCenters,
     loadingShippingAddress,
     setLoadingShippingAddress,
-    poNumber,
-    setPoNumber,
     orderGroups,
     setOrderGroups,
   }

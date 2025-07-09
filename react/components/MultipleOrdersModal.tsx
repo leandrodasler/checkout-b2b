@@ -40,7 +40,15 @@ export function MultipleOrdersModal() {
       },
       orderGroup: {
         title: formatMessage(messages.order),
-        cellRenderer({ rowData: { orderGroup } }) {
+        cellRenderer({ rowData: { orderGroup, isTotal } }) {
+          if (isTotal) {
+            return (
+              <span className="b w-100 tr">
+                {formatMessage(messages.total)}
+              </span>
+            )
+          }
+
           if (!orderGroup) return null
 
           return (
