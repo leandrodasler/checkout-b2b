@@ -26,9 +26,7 @@
   flex-wrap: wrap;
 }
 
-.container
-  .table
-  :global(.flex.items-center.w-100.h-100.ph4.bb.b--muted-4.truncate) {
+.table :global(.flex.items-center.w-100.h-100.ph4.bb.b--muted-4.truncate) {
   cursor: auto;
 }
 

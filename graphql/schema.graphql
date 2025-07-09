@@ -28,6 +28,13 @@ type Query {
   getAppSettings: AppSettings!
 }
 
+type B2BOrder {
+  costId: String!
+  costCenterName: String!
+  orderGroup: String!
+  value: Float!
+}
+
 type Mutation {
   saveCart(
     id: ID
@@ -42,5 +49,5 @@ type Mutation {
     poNumber: String
     invoiceData: InvoiceData
     selectedCostCenters: [CostCenter!]!
-  ): [String!]!
+  ): [B2BOrder!]!
 }

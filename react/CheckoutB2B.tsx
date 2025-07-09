@@ -337,6 +337,13 @@ function CheckoutB2B() {
                 toolbar={toolbar}
               />
             </div>
+            {!loading && !!filteredItems.length && (
+              <div className="mt4 c-muted-2">
+                {formatMessage(messages.itemCount, {
+                  count: filteredItems.length,
+                })}
+              </div>
+            )}
           </div>
         </PageBlock>
         {isEditing && (

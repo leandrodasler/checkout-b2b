@@ -1,4 +1,6 @@
 {
+  "store/checkout.b2b.order": "Pedido",
+  "store/checkout.b2b.itemCount": "{count, plural, one {1 item} other {{count} itens}}",
   "store/checkout.b2b.confirm": "Confirmar",
   "store/checkout.b2b.delete": "Excluir",
   "store/checkout.b2b.cancel": "Cancelar",
@@ -86,7 +88,10 @@
   "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "A quantidade foi ajustada para o valor mínimo permitido para este item: ",
 
   "store/checkout.b2b.cost-centers.label": "Centros de Custo",
+  "store/checkout.b2b.cost-centers.single.label": "Centro de Custo",
   "store/checkout.b2b.cost-centers.not-empty.error": "Pelo menos um centro de custo deve ser selecionado",
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "O centro de custo do usuário é pré-selecionado por padrão",
-  "store/checkout.b2b.cost-centers.multiple-orders.info": "Ao finalizar a compra, será gerado um pedido para cada centro de custo selecionado."
+  "store/checkout.b2b.cost-centers.multiple-orders.info": "Ao finalizar a compra, será gerado um pedido para cada centro de custo selecionado.",
+  "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} pedidos realizados com sucesso",
+  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Abrir confirmação do pedido em outra aba"
 }

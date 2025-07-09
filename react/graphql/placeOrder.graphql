@@ -7,5 +7,10 @@ mutation PlaceOrder(
     poNumber: $poNumber
     invoiceData: $invoiceData
     selectedCostCenters: $selectedCostCenters
-  ) @context(provider: "ssesandbox04.checkout-b2b")
+  ) @context(provider: "ssesandbox04.checkout-b2b") {
+    costId
+    costCenterName
+    orderGroup
+    value
+  }
 }

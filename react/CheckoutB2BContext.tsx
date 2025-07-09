@@ -1,6 +1,7 @@
 import React, { Dispatch, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
+  Mutation,
   Query,
   QueryGetCartArgs,
   SavedCart,
@@ -10,7 +11,7 @@ import { useRuntime } from 'vtex.render-runtime'
 import { withToast } from 'vtex.styleguide'
 
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
-import type { CustomOrganization, OrderGroup, WithToast } from './typings'
+import type { CustomOrganization, WithToast } from './typings'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
 
@@ -46,8 +47,10 @@ type CheckoutB2BContextData = {
   setLoadingShippingAddress: Dispatch<React.SetStateAction<boolean>>
   poNumber?: string
   setPoNumber: Dispatch<React.SetStateAction<string | undefined>>
-  orderGroups?: OrderGroup[]
-  setOrderGroups: Dispatch<React.SetStateAction<OrderGroup[] | undefined>>
+  orderGroups?: Mutation['placeOrder']
+  setOrderGroups: Dispatch<
+    React.SetStateAction<Mutation['placeOrder'] | undefined>
+  >
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -75,7 +78,7 @@ function CheckoutB2BProviderWrapper({
     CustomOrganization['userCostCenters']
   >([])
 
-  const [orderGroups, setOrderGroups] = useState<OrderGroup[]>()
+  const [orderGroups, setOrderGroups] = useState<Mutation['placeOrder']>()
 
   const savedCartId = query?.savedCart
 

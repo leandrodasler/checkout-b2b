@@ -51,6 +51,7 @@ declare global {
 
   type CostCenter = {
     costId: string
+    costCenterName: string
     address: Address
   }
 }

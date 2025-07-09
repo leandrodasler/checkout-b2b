@@ -1,6 +1,6 @@
 import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
 import { OrderForm } from '@vtex/clients'
-import { MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
+import { Mutation, MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../../clients'
@@ -40,7 +40,7 @@ export async function placeOrder(
     payment?.paymentSystem
   )
 
-  const orderGroups: string[] = []
+  const orderGroups: Mutation['placeOrder'] = []
 
   for await (const costCenter of selectedCostCenters) {
     const orderGroup = await process(costCenter)
@@ -50,7 +50,7 @@ export async function placeOrder(
 
   return orderGroups
 
-  async function process({ costId, address }: CostCenter) {
+  async function process({ costId, costCenterName, address }: CostCenter) {
     if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
     const orderFormUpdatePromises = [
@@ -138,6 +138,11 @@ export async function placeOrder(
     await checkoutExtension.setPayments(orderGroup, paymentsBody)
     await checkoutExtension.gatewayCallback(orderGroup)
 
-    return orderGroup
+    return {
+      orderGroup,
+      costId,
+      costCenterName,
+      value: payment?.value ?? value,
+    }
   }
 }

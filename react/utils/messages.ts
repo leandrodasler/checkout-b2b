@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  order: { id: 'store/checkout.b2b.order' },
+  itemCount: { id: 'store/checkout.b2b.itemCount' },
   cancel: { id: 'store/checkout.b2b.cancel' },
   showMore: { id: 'store/checkout.b2b.show-more' },
   showLess: { id: 'store/checkout.b2b.show-less' },
@@ -124,6 +126,9 @@ export const messages = defineMessages({
   costCentersLabel: {
     id: 'store/checkout.b2b.cost-centers.label',
   },
+  costCenterSingleLabel: {
+    id: 'store/checkout.b2b.cost-centers.single.label',
+  },
   costCentersNotEmptyError: {
     id: 'store/checkout.b2b.cost-centers.not-empty.error',
   },
@@ -132,5 +137,11 @@ export const messages = defineMessages({
   },
   multipleOrdersInfo: {
     id: 'store/checkout.b2b.cost-centers.multiple-orders.info',
+  },
+  multipleOrdersTitle: {
+    id: 'store/checkout.b2b.cost-centers.multiple-orders.title',
+  },
+  multipleOrdersLink: {
+    id: 'store/checkout.b2b.cost-centers.multiple-orders.order.link',
   },
 })
