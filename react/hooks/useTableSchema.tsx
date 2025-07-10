@@ -15,6 +15,8 @@ import { isWithoutStock, messages, normalizeString } from '../utils'
 import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
 import { CellWrapper } from '../components/CellWrapper'
 
+type SchemaRowData = CustomItem & { __group?: boolean }
+
 const { useOrderItems } = OrderItems
 
 function getStrike(item: CustomItem) {
@@ -92,7 +94,7 @@ export function useTableSchema({
   }) => {
     const data = (rowData as unknown) as CustomItem & { __group?: boolean }
 
-    return data?.__group ? ' ' : render(rowData)
+    return data?.__group ? '--' : render(rowData)
   }
 
   return useMemo(
@@ -102,11 +104,7 @@ export function useTableSchema({
           expand: {
             title: ' ',
             width: 10,
-            cellRenderer({
-              rowData,
-            }: {
-              rowData: CustomItem & { __group?: boolean }
-            }) {
+            cellRenderer({ rowData }: { rowData: SchemaRowData }) {
               return (
                 <ChildrenProductsColumn
                   isParent={rowData.__group}
@@ -121,20 +119,19 @@ export function useTableSchema({
         refId: {
           title: formatMessage(messages.refId),
           width: 120,
-          cellRenderer({ rowData }) {
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
             return (
-              <TruncatedText text={rowData.refId} {...getStrike(rowData)} />
+              <TruncatedText
+                text={rowData.__group ? ' ' : rowData.refId}
+                {...getStrike(rowData)}
+              />
             )
           },
         },
         skuName: {
           minWidth: 250,
           title: formatMessage(messages.name),
-          cellRenderer({
-            rowData,
-          }: {
-            rowData: CustomItem & { __group?: boolean }
-          }) {
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
             const { name, skuName, __group: isParent } = rowData
             const displayName = isParent
               ? name
@@ -156,16 +153,26 @@ export function useTableSchema({
         additionalInfo: {
           width: 120,
           title: formatMessage(messages.brand),
-          cellRenderer: makeSafeCell((rowData) => {
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
             const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
 
-            return <TruncatedText text={brandName} {...getStrike(rowData)} />
-          }),
+            return (
+              <TruncatedText
+                label={brandName}
+                text={
+                  <CellWrapper isChildren={rowData.__group}>
+                    {brandName}
+                  </CellWrapper>
+                }
+                {...getStrike(rowData)}
+              />
+            )
+          },
         },
         productCategories: {
           width: 150,
           title: formatMessage(messages.category),
-          cellRenderer: makeSafeCell((rowData) => {
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
             const categoriesArray = Object.values(
               rowData.productCategories as Record<string, string>
             )
@@ -176,11 +183,15 @@ export function useTableSchema({
             return (
               <TruncatedText
                 label={categories}
-                text={leadCategory}
+                text={
+                  <CellWrapper isChildren={rowData.__group}>
+                    {leadCategory}
+                  </CellWrapper>
+                }
                 {...getStrike(rowData)}
               />
             )
-          }),
+          },
         },
         seller: {
           width: 150,
@@ -234,15 +245,17 @@ export function useTableSchema({
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
-          cellRenderer: makeSafeCell((rowData) => {
-            return <QuantitySelector item={rowData} />
-          }),
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+            return (
+              <QuantitySelector item={rowData} disabled={rowData.__group} />
+            )
+          },
         },
         ...(hasTax && {
           tax: {
             width: 100,
             title: formatMessage(messages.tax),
-            cellRenderer({ rowData }) {
+            cellRenderer: makeSafeCell((rowData) => {
               return rowData.tax ? (
                 <TruncatedText
                   text={
@@ -255,47 +268,52 @@ export function useTableSchema({
               ) : (
                 <>N/A</>
               )
-            },
+            }),
           },
         }),
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
-          cellRenderer: makeSafeCell((rowData) => {
-            const discountedPrice = getDiscountedPrice(rowData, discount)
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+            const discountedPrice =
+              (rowData.__group
+                ? rowData.price ?? 0
+                : getDiscountedPrice(rowData, discount)) / 100
 
             return (
               discountedPrice && (
                 <TruncatedText
-                  text={<FormattedPrice value={discountedPrice / 100} />}
+                  text={<FormattedPrice value={discountedPrice} />}
                   {...getStrike(rowData)}
                 />
               )
             )
-          }),
+          },
         },
         id: {
           width: 50,
           title: ' ',
-          cellRenderer: makeSafeCell((rowData) => {
+          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
             return (
-              <Tooltip label={formatMessage(messages.delete)}>
-                <div>
-                  <ButtonWithIcon
-                    size="small"
-                    icon={<IconDelete />}
-                    variation="danger-tertiary"
-                    onClick={() => {
-                      removeItem({
-                        id: rowData.id,
-                        seller: rowData.seller ?? '1',
-                      })
-                    }}
-                  />
-                </div>
-              </Tooltip>
+              !rowData.__group && (
+                <Tooltip label={formatMessage(messages.delete)}>
+                  <div>
+                    <ButtonWithIcon
+                      size="small"
+                      icon={<IconDelete />}
+                      variation="danger-tertiary"
+                      onClick={() => {
+                        removeItem({
+                          id: rowData.id,
+                          seller: rowData.seller ?? '1',
+                        })
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+              )
             )
-          }),
+          },
         },
       },
     }),

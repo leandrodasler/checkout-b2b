@@ -13,9 +13,9 @@ import { isWithoutStock, messages } from '../utils'
 const { useOrderItems } = OrderItems
 const DELAY = 500
 
-type Props = { item: Item }
+type Props = { item: Item; disabled?: boolean }
 
-export function QuantitySelector({ item }: Props) {
+export function QuantitySelector({ item, disabled }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
@@ -99,6 +99,7 @@ export function QuantitySelector({ item }: Props) {
       value={newQuantity}
       minValue={minQuantity}
       onChange={handleQuantityChange}
+      readOnly={disabled}
     />
   )
 }

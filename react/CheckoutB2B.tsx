@@ -63,6 +63,7 @@ function CheckoutB2B() {
     searchQuery,
     searchStore,
     setSearchStore,
+    getDiscountedPrice,
   } = useCheckoutB2BContext()
 
   const [expandedProducts, setExpandedProducts] = useState<string[]>([])
@@ -109,30 +110,70 @@ function CheckoutB2B() {
     const seen = new Set<string>()
     const result: typeof items = []
 
+    const groupedByProductId = new Map<string, typeof items>()
+
     for (const item of baseItems) {
       const key = item.productId ?? ''
 
+      if (!groupedByProductId.has(key)) {
+        groupedByProductId.set(key, [])
+      }
+
+      groupedByProductId.get(key)?.push({
+        ...item,
+        tax: (item as Item & { tax?: number }).tax ?? undefined,
+      })
+    }
+
+    for (const [key, groupItems] of groupedByProductId.entries()) {
       if (!seen.has(key)) {
+        const [firstItem] = groupItems
+
+        const totalDiscountedPrice = groupItems.reduce((acc, curr) => {
+          const discounted = getDiscountedPrice(curr, discountApplied) ?? 0
+
+          return acc + discounted
+        }, 0)
+
+        const totalQuantity = groupItems.reduce(
+          (acc, curr) => acc + (curr.quantity ?? 0),
+          0
+        )
+
         result.push({
+          ...firstItem,
           __group: true,
           productId: key,
-          name: item.name,
+          quantity: totalQuantity,
+          price: totalDiscountedPrice,
           id: `group-${key}`,
-        } as typeof item & { tax: number; __group: boolean })
+        } as typeof firstItem & {
+          __group: boolean
+        })
 
         seen.add(key)
       }
 
       if (expandedProducts.includes(key)) {
-        result.push({
-          ...item,
-          tax: (item as Item & { tax?: number }).tax ?? undefined,
-        })
+        for (const item of groupItems) {
+          result.push({
+            ...item,
+            tax: (item as Item & { tax?: number }).tax ?? undefined,
+          })
+        }
       }
     }
 
     return result
-  }, [searchStore, toolbar?.filteredItems, items, isGrouping, expandedProducts])
+  }, [
+    searchStore,
+    items,
+    toolbar?.filteredItems,
+    isGrouping,
+    expandedProducts,
+    getDiscountedPrice,
+    discountApplied,
+  ])
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
     setPrices((prevPrices) => {
