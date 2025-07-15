@@ -28,12 +28,11 @@
   "store/checkout.b2b.savedCarts.save-cart.current": "Guardar carrito en la misma transacción",
   "store/checkout.b2b.savedCarts.save-cart.new": "Guardar carrito in nueva transacción",
 
-  "store/checkout.b2b.totalizer.shippingAddress": "Dirección de Envío",
+  "store/checkout.b2b.totalizer.shippingAddress": "Envío",
   "store/checkout.b2b.totalizer.billingAddress": "Dirección de Facturación",
   "store/checkout.b2b.totalizer.editAddress": "Editar",
   "store/checkout.b2b.totalizer.shippingOption": "Opción de Envío",
   "store/checkout.b2b.totalizer.shippingOption.empty": "No hay opciones de entrega disponibles",
-  "store/checkout.b2b.totalizer.shippingOption.packages": "{packages} paquetes",
   "store/checkout.b2b.totalizer.emptyAddress": "Dirección no proporcionada",
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Método de Pago",

@@ -2,7 +2,7 @@ import { useMutation as useGraphQLMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { Mutation, MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 
-import { useClearCart, useOrderFormCustom, useToast } from '.'
+import { useClearCart, useOrderFormCustom, useOrganization, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import MUTATION_PLACE_ORDER from '../graphql/placeOrder.graphql'
 import { getOrderPlacedUrl, messages } from '../utils'
@@ -14,8 +14,13 @@ export function usePlaceOrder() {
   const { formatMessage } = useIntl()
   const { clearCart } = useClearCart()
   const { orderForm } = useOrderFormCustom()
+  const { organization } = useOrganization()
   const { poNumber, paymentAddress, shipping } = orderForm
-  const { selectedCostCenters = [], setOrderGroups } = useCheckoutB2BContext()
+  const {
+    selectedCostCenters = [],
+    setOrderGroups,
+    deliveryOptionsByCostCenter,
+  } = useCheckoutB2BContext()
 
   const [placeOrder, { loading }] = useGraphQLMutation<
     MutationPlaceOrder,
@@ -25,6 +30,8 @@ export function usePlaceOrder() {
       poNumber,
       invoiceData: { address: paymentAddress ?? shipping.selectedAddress },
       selectedCostCenters,
+      defaultCostCenter: organization.costCenter,
+      deliveryOptionsByCostCenter,
     },
     onCompleted(data) {
       if (!data.placeOrder.length) {

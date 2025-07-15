@@ -71,7 +71,7 @@
 
 .container .shippingEstimates {
   padding: 0;
-  list-style-position: inside;
+  list-style: none;
   margin: 0;
 }
 

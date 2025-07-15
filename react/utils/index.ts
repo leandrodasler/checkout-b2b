@@ -1,4 +1,5 @@
 import { Address, CustomData, Item, PaymentData } from 'vtex.checkout-graphql'
+import { DeliveryIds, ShippingData, ShippingSla } from 'vtex.store-graphql'
 
 import { CustomOrganization, PaymentAddressType } from '../typings'
 
@@ -93,7 +94,7 @@ export const buildBillingAddress = (
 export function transformImageUrl(
   url: string,
   width: number,
-  height: string | number = 'auto'
+  height: 'auto' | number = 'auto'
 ) {
   const idMatch = url.match(/ids\/(\d+)\/.*?(\.\w+)(?:\?.*)?$/)
 
@@ -150,4 +151,84 @@ export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
       (customApp) => customApp.id !== B2B_CHECKOUT_CUSTOM_APP_ID
     ) ?? []
   )
+}
+
+export function groupShippingOptionsBySeller(
+  shippingData?: ShippingData | null
+) {
+  const sellerItemIndexMap: Record<string, number[]> = {}
+
+  shippingData?.items?.forEach((item) => {
+    if (!item?.seller) return
+
+    if (!sellerItemIndexMap[item.seller]) {
+      sellerItemIndexMap[item.seller] = []
+    }
+
+    if (item.requestIndex !== undefined && item.requestIndex !== null) {
+      sellerItemIndexMap[item.seller].push(item.requestIndex)
+    }
+  })
+
+  const sellerSlasMap: Record<string, ShippingSla[]> = {}
+
+  Object.entries(sellerItemIndexMap).forEach(([seller, itemIndexes]) => {
+    const slasBySeller = shippingData?.logisticsInfo
+      ?.filter((logisticInfo) =>
+        itemIndexes.includes(Number(logisticInfo?.itemIndex))
+      )
+      .map((logisticInfo) => logisticInfo?.slas ?? [])
+
+    let commonSlaIds =
+      slasBySeller && slasBySeller.length > 0
+        ? slasBySeller[0].map((sla) => sla?.id)
+        : []
+
+    for (let i = 1; i < (slasBySeller?.length ?? 0); i++) {
+      const currentIds = slasBySeller?.[i].map((sla) => sla?.id)
+
+      commonSlaIds = commonSlaIds.filter((id) => currentIds?.includes(id))
+    }
+
+    const slaMap: Record<string, ShippingSla> = {}
+
+    commonSlaIds.forEach((slaId) => {
+      if (!slaId) return
+
+      const mergedSla: ShippingSla = {
+        id: slaId,
+        name: '',
+        shippingEstimate: '',
+        price: 0,
+        deliveryIds: [],
+        __typename: 'ShippingSLA',
+      }
+
+      slasBySeller?.forEach((slaList) => {
+        const sla = slaList.find((s) => s?.id === slaId)
+
+        if (!sla) return
+
+        mergedSla.name = sla.name
+        mergedSla.shippingEstimate = sla.shippingEstimate
+        mergedSla.price = (mergedSla.price ?? 0) + (sla.price ?? 0)
+
+        sla.deliveryIds?.forEach((delivery, index) => {
+          if (!mergedSla.deliveryIds?.[index]) {
+            ;(mergedSla.deliveryIds as DeliveryIds[])[index] = { ...delivery }
+          } else {
+            ;(mergedSla.deliveryIds as DeliveryIds[])[index].quantity =
+              ((mergedSla.deliveryIds as DeliveryIds[])[index].quantity ?? 0) +
+              (delivery?.quantity ?? 0)
+          }
+        })
+      })
+
+      slaMap[slaId] = mergedSla
+    })
+
+    sellerSlasMap[seller] = Object.values(slaMap)
+  })
+
+  return sellerSlasMap
 }

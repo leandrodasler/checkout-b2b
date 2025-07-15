@@ -10,9 +10,20 @@ query getShipping(
     geoCoordinates: $geoCoordinates
     country: $country
   ) @context(provider: "vtex.store-graphql") {
+    items {
+      requestIndex
+      seller
+    }
     logisticsInfo {
+      itemIndex
       slas {
+        id
+        name
         shippingEstimate
+        price
+        deliveryIds {
+          quantity
+        }
       }
     }
   }

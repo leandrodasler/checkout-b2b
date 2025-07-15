@@ -11,6 +11,7 @@ import {
 } from '../hooks'
 import { messages } from '../utils'
 import { Address } from './Address'
+import { ShippingOption } from './ShippingOption'
 import { TotalizerSpinner } from './TotalizerSpinner'
 
 export function ShippingAddress() {
@@ -24,7 +25,7 @@ export function ShippingAddress() {
 
   const { organization } = useOrganization()
   const { orderForm } = useOrderFormCustom()
-  const { shipping } = orderForm
+  const { shipping, items } = orderForm
   const [updateShippingAddress, { loading }] = useUpdateShippingAddress()
   const shippingAddress = shipping?.selectedAddress
   const [costCenterAddress] = organization.costCenter?.addresses ?? []
@@ -64,22 +65,47 @@ export function ShippingAddress() {
     return (
       <div className="flex flex-column flex-wrap t-mini">
         {(selectedCostCenters?.length ?? 0) > 1 &&
-          selectedCostCenters?.map((selectedCostCenter, index, array) => (
+          selectedCostCenters?.map((costCenter, index, array) => (
             <div
-              key={selectedCostCenter.costId}
+              key={costCenter.costId}
               className={
                 index < array.length - 1
-                  ? `flex flex-column flex-wrap bb b--muted-3 mb2 pb2 ${handles.itemContent}`
-                  : 'flex flex-column flex-wrap'
+                  ? `flex bb b--muted-3 mb2 pb2 ${handles.itemContent}`
+                  : 'flex'
               }
             >
-              <div className="b">{selectedCostCenter?.costCenterName}</div>
-              <Address address={selectedCostCenter?.address} />
+              <div
+                className={`flex flex-column flex-wrap ${
+                  items.length ? 'w-50' : ''
+                }`}
+              >
+                <div className="b">{costCenter.costCenterName}</div>
+                <Address address={costCenter.address} />
+              </div>
+              {!!items.length && costCenter.costCenterName && (
+                <div className="ml3 w-50">
+                  <ShippingOption
+                    costCenter={costCenter.costCenterName}
+                    address={{ ...costCenter.address }}
+                  />
+                </div>
+              )}
             </div>
           ))}
       </div>
     )
   }
 
-  return <Address address={shippingAddress} />
+  const costCenterName = selectedCostCenters?.[0]?.costCenterName
+
+  return (
+    <div className="flex flex-column flex-wrap">
+      <Address address={shippingAddress} />
+      {!!items.length && costCenterName && (
+        <div className="mt3">
+          <ShippingOption costCenter={costCenterName} />
+        </div>
+      )}
+    </div>
+  )
 }

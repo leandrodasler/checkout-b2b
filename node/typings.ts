@@ -1,7 +1,10 @@
 import { IOContext, SegmentData } from '@vtex/api'
-import { Address } from 'vtex.checkout-graphql'
+import { OrderForm as OrderFormType } from '@vtex/clients'
+import { Address, PaymentData } from 'vtex.checkout-graphql'
 
 declare global {
+  type OrderForm = OrderFormType & { paymentData: PaymentData }
+
   type TransactionBody = {
     referenceId: string
     savePersonalData: boolean
@@ -53,5 +56,6 @@ declare global {
     costId: string
     costCenterName: string
     address: Address
+    addresses: Address[]
   }
 }

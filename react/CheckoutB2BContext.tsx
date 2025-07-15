@@ -1,4 +1,4 @@
-import React, { Dispatch, useCallback, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
   Mutation,
@@ -8,6 +8,7 @@ import type {
 } from 'ssesandbox04.checkout-b2b'
 import type { Item } from 'vtex.checkout-graphql'
 import { useRuntime } from 'vtex.render-runtime'
+import { ShippingSla } from 'vtex.store-graphql'
 import { withToast } from 'vtex.styleguide'
 
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
@@ -17,38 +18,42 @@ type QueryGetSavedCart = Pick<Query, 'getCart'>
 
 type CheckoutB2BContextData = {
   pending: boolean
-  setPending: Dispatch<React.SetStateAction<boolean>>
+  setPending: Dispatch<SetStateAction<boolean>>
   showToast: WithToast['showToast']
   selectedCart?: SavedCart | null
-  setSelectedCart: Dispatch<React.SetStateAction<SavedCart | null | undefined>>
+  setSelectedCart: Dispatch<SetStateAction<SavedCart | null | undefined>>
   openSavedCartModal: boolean
-  setOpenSavedCartModal: Dispatch<React.SetStateAction<boolean>>
+  setOpenSavedCartModal: Dispatch<SetStateAction<boolean>>
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
-  setDiscountApplied: Dispatch<React.SetStateAction<number>>
+  setDiscountApplied: Dispatch<SetStateAction<number>>
   maximumDiscount?: number
-  setMaximumDiscount: Dispatch<React.SetStateAction<number | undefined>>
+  setMaximumDiscount: Dispatch<SetStateAction<number | undefined>>
   subtotal: number
-  setSubtotal: Dispatch<React.SetStateAction<number>>
+  setSubtotal: Dispatch<SetStateAction<number>>
   listedPrice: number
-  setListedPrice: Dispatch<React.SetStateAction<number>>
+  setListedPrice: Dispatch<SetStateAction<number>>
   percentualDiscount: number
-  setPercentualDiscount: Dispatch<React.SetStateAction<number>>
+  setPercentualDiscount: Dispatch<SetStateAction<number>>
   searchQuery: string
-  setSearchQuery: Dispatch<React.SetStateAction<string>>
+  setSearchQuery: Dispatch<SetStateAction<string>>
   searchStore: boolean
-  setSearchStore: Dispatch<React.SetStateAction<boolean>>
+  setSearchStore: Dispatch<SetStateAction<boolean>>
   selectedCostCenters: CustomOrganization['userCostCenters']
   setSelectedCostCenters: Dispatch<
-    React.SetStateAction<CustomOrganization['userCostCenters']>
+    SetStateAction<CustomOrganization['userCostCenters']>
   >
   loadingShippingAddress: boolean
-  setLoadingShippingAddress: Dispatch<React.SetStateAction<boolean>>
+  setLoadingShippingAddress: Dispatch<SetStateAction<boolean>>
   orderGroups?: Mutation['placeOrder']
-  setOrderGroups: Dispatch<
-    React.SetStateAction<Mutation['placeOrder'] | undefined>
+  setOrderGroups: Dispatch<SetStateAction<Mutation['placeOrder'] | undefined>>
+  deliveryOptionsByCostCenter: Record<string, Record<string, ShippingSla>>
+  setDeliveryOptionsByCostCenter: Dispatch<
+    SetStateAction<Record<string, Record<string, ShippingSla>>>
   >
+  loadingGetShipping: boolean
+  setLoadingGetShipping: Dispatch<SetStateAction<boolean>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -67,6 +72,7 @@ function CheckoutB2BProviderWrapper({
   const [searchQuery, setSearchQuery] = useState('')
   const [searchStore, setSearchStore] = useState(true)
   const [loadingShippingAddress, setLoadingShippingAddress] = useState(false)
+  const [loadingGetShipping, setLoadingGetShipping] = useState(false)
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
@@ -76,6 +82,10 @@ function CheckoutB2BProviderWrapper({
   >([])
 
   const [orderGroups, setOrderGroups] = useState<Mutation['placeOrder']>()
+  const [
+    deliveryOptionsByCostCenter,
+    setDeliveryOptionsByCostCenter,
+  ] = useState<Record<string, Record<string, ShippingSla>>>({})
 
   const savedCartId = query?.savedCart
 
@@ -143,6 +153,10 @@ function CheckoutB2BProviderWrapper({
     setLoadingShippingAddress,
     orderGroups,
     setOrderGroups,
+    deliveryOptionsByCostCenter,
+    setDeliveryOptionsByCostCenter,
+    loadingGetShipping,
+    setLoadingGetShipping,
   }
 
   return (

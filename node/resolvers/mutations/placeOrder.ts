@@ -1,7 +1,5 @@
 import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
-import { OrderForm } from '@vtex/clients'
 import { Mutation, MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
-import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../../clients'
 import { getFirstInstallmentByPaymentSystem, getSessionData } from '../../utils'
@@ -11,56 +9,99 @@ const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 
 export async function placeOrder(
   _: unknown,
-  { poNumber, invoiceData, selectedCostCenters }: MutationPlaceOrderArgs,
+  {
+    poNumber,
+    invoiceData,
+    selectedCostCenters,
+    deliveryOptionsByCostCenter,
+    defaultCostCenter,
+  }: MutationPlaceOrderArgs,
   context: ServiceContext<Clients>
 ) {
   const { orderFormId, organizationId } = await getSessionData(context)
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-  const { clients } = context
-  const { checkout, checkoutExtension } = clients
-  const orderForm = await checkout.orderForm(orderFormId)
+  const { checkout, checkoutExtension } = context.clients
+  const initialOrderForm = await checkout.orderForm(orderFormId)
+  const {
+    items,
+    marketingData,
+    shippingData: { logisticsInfo },
+  } = initialOrderForm
 
   checkoutExtension.setOrderFormId(orderFormId)
 
-  const {
-    paymentData,
-    storePreferencesData,
-    value,
-    marketingData,
-  } = orderForm as OrderForm & {
-    paymentData: PaymentData
-  }
-
-  const { installmentOptions, payments } = paymentData
-  const [payment] = payments
-  const installment = getFirstInstallmentByPaymentSystem(
-    installmentOptions,
-    payment?.paymentSystem
-  )
-
-  const orderGroups: Mutation['placeOrder'] = []
+  const orders: Mutation['placeOrder'] = []
+  let lastError: Error | null = null
 
   for await (const costCenter of selectedCostCenters) {
-    const orderGroup = await process(costCenter)
+    try {
+      const order = await process(costCenter)
 
-    orderGroups.push(orderGroup)
+      orders.push(order)
+    } catch (e) {
+      lastError = e
+    }
   }
 
-  return orderGroups
+  const resetCostCenter = defaultCostCenter as CostCenter
+  const [defaultCostCenterAddress] = resetCostCenter.addresses
+  const orderFormResetPromises = [
+    checkoutExtension.updateOrderFormShipping({
+      address: {
+        ...defaultCostCenterAddress,
+        geoCoordinates: defaultCostCenterAddress.geoCoordinates ?? [],
+        isDisposable: true,
+      },
+    }),
+    checkoutExtension.updateOrderFormMarketingData({
+      attachmentId: 'marketingData',
+      marketingTags: marketingData?.marketingTags ?? [],
+      utmCampaign: organizationId,
+      utmMedium: resetCostCenter.costId,
+    }),
+  ]
+
+  await Promise.all(orderFormResetPromises)
+
+  if (!orders.length && lastError) {
+    throw lastError
+  }
+
+  return orders
 
   async function process({ costId, costCenterName, address }: CostCenter) {
-    if (!orderFormId) throw new NotFoundError('order-form-not-found')
+    const optionsBySeller = deliveryOptionsByCostCenter[
+      costCenterName
+    ] as Record<string, { id: string }>
+
+    const updatedLogisticsInfo = logisticsInfo.map((logisticsItem) => ({
+      ...logisticsItem,
+      selectedSla: optionsBySeller[items[logisticsItem.itemIndex].seller].id,
+    }))
+
+    const newAddress = {
+      ...address,
+      geoCoordinates: address.geoCoordinates ?? [],
+      isDisposable: true,
+    }
+
+    const updatedOrderForm = await checkoutExtension.updateOrderFormShipping({
+      address: newAddress,
+      selectedAddresses: [newAddress],
+      logisticsInfo: updatedLogisticsInfo,
+    })
+
+    const { paymentData, storePreferencesData, value } = updatedOrderForm
+    const { installmentOptions, payments } = paymentData
+    const [payment] = payments
+    const installment = getFirstInstallmentByPaymentSystem(
+      installmentOptions,
+      payment?.paymentSystem
+    )
 
     const orderFormUpdatePromises = [
-      checkoutExtension.updateOrderFormShipping({
-        address: {
-          ...address,
-          geoCoordinates: address.geoCoordinates ?? [],
-          isDisposable: true,
-        },
-      }),
       checkoutExtension.updateOrderFormMarketingData({
         attachmentId: 'marketingData',
         marketingTags: marketingData?.marketingTags ?? [],
@@ -71,7 +112,7 @@ export async function placeOrder(
 
     if (poNumber) {
       orderFormUpdatePromises.push(
-        checkout.setSingleCustomData(orderFormId, {
+        checkout.setSingleCustomData(orderFormId as string, {
           appId: B2B_CHECKOUT_CUSTOM_APP_ID,
           appFieldName: PO_NUMBER_CUSTOM_FIELD,
           value: poNumber,
@@ -88,7 +129,7 @@ export async function placeOrder(
     await Promise.all(orderFormUpdatePromises)
 
     const startTransactionBody: TransactionBody = {
-      referenceId: orderFormId,
+      referenceId: orderFormId as string,
       optinNewsLetter: true,
       savePersonalData: true,
       value: installment?.total ?? value,

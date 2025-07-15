@@ -35,6 +35,7 @@ interface CommertialOffer {
 }
 
 interface Seller {
+  sellerDefault: boolean
   sellerId: string
   commertialOffer: CommertialOffer
 }
@@ -75,14 +76,13 @@ type CustomOptionProps = {
   inserted: boolean
   loading: boolean
   handleAddItem: (item: CustomOptionValue['item']) => void
-  setItemsQueue: React.Dispatch<React.SetStateAction<Item[]>>
 }
 
 type AddToCartFn = (newItems: Item[], retryCount?: number) => void
 
 const MAX_ADD_TO_CART_RETRIES = 5
 const SEARCH_TIMEOUT = 1000
-const ADD_TO_CART_TIMEOUT = 2000
+const ADD_TO_CART_TIMEOUT = 1500
 const RETRY_ADD_TO_CART_TIMEOUT = 500
 
 function sortSellersByPrice(s1: Seller, s2: Seller) {
@@ -165,7 +165,9 @@ const ProductAutocomplete = () => {
           items: newItems.map((item) => ({
             id: Number(item.itemId),
             quantity: 1,
-            seller: item.sellers.sort(sortSellersByPrice)[0].sellerId,
+            seller:
+              item.sellers.find((s) => s.sellerDefault)?.sellerId ??
+              item.sellers.sort(sortSellersByPrice)[0].sellerId,
           })),
         },
       })
@@ -259,7 +261,6 @@ const ProductAutocomplete = () => {
           inserted={inserted}
           handleAddItem={handleAddItem}
           loading={loading}
-          setItemsQueue={setItemsQueue}
         />
       )
     },
@@ -313,7 +314,6 @@ function CustomOption(props: CustomOptionProps) {
     inserted,
     handleAddItem,
     loading,
-    setItemsQueue,
   } = props
 
   const [highlightOption, setHighlightOption] = useState(false)
@@ -338,6 +338,8 @@ function CustomOption(props: CustomOptionProps) {
       ? 'bg-muted-4'
       : value.type === 'product'
       ? 'bg-muted-5'
+      : loading
+      ? 'bg-washed-blue'
       : 'bg-base'
   }${inserted ? ' strike' : ''}`
 
@@ -347,10 +349,15 @@ function CustomOption(props: CustomOptionProps) {
     }
   }, [selected])
 
-  const removeItems = useCallback(
-    (itemsToRemove: Item[]) => {
+  const handleRemoveItem = useCallback(
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      e.stopPropagation()
+      e.preventDefault()
+
+      const itemsToRemove = value.type === 'product' ? value.item : [value.item]
+
       itemsToRemove.forEach((item) => {
-        const sellerId = item.sellers[0]?.sellerId
+        const sellerId = item.sellers.find((s) => s.sellerDefault)?.sellerId
 
         if (!sellerId) {
           console.error(`No seller found for item ${item.itemId}`)
@@ -367,31 +374,8 @@ function CustomOption(props: CustomOptionProps) {
           console.error(`Failed to remove item ${item.itemId}:`, error)
         }
       })
-
-      setItemsQueue((prevQueue) =>
-        prevQueue.filter(
-          (queueItem) =>
-            !itemsToRemove.some(
-              (removedItem) => removedItem.itemId === queueItem.itemId
-            )
-        )
-      )
     },
-    [removeItem, setItemsQueue]
-  )
-
-  const debouncedRemoveItems = useDebounce(removeItems, 500)
-
-  const handleRemoveItem = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation()
-      e.preventDefault()
-
-      const itemsToRemove = value.type === 'product' ? value.item : [value.item]
-
-      debouncedRemoveItems(itemsToRemove)
-    },
-    [debouncedRemoveItems, value]
+    [removeItem, value.item, value.type]
   )
 
   const mainElement = (
@@ -442,15 +426,11 @@ function CustomOption(props: CustomOptionProps) {
               icon={<IconDelete />}
               variation="danger-tertiary"
               onClick={handleRemoveItem}
-              onKeyDown={(e: {
-                key: string
-                preventDefault: () => void
-                stopPropagation: () => void
-              }) => {
+              onKeyDown={(e: React.KeyboardEvent) => {
                 if (e.key !== 'Enter' && e.key !== ' ') return
                 e.preventDefault()
                 e.stopPropagation()
-                handleRemoveItem(e as never)
+                handleRemoveItem(e)
               }}
               aria-label={formatMessage(messages.removeItem)}
             />

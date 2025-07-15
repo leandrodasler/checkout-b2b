@@ -7,7 +7,6 @@ import type {
   UpdateOrderFormProfileMutationVariables,
 } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
-import { useCssHandles } from 'vtex.css-handles'
 import { Checkbox, IconInfo, Tag, Tooltip, Totalizer } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
@@ -21,23 +20,24 @@ import {
 import { compareCostCenters, MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
 import { ShippingAddress } from './ShippingAddress'
-import { ShippingOption } from './ShippingOption'
 import { ShowMoreButton } from './ShowMoreButton'
 
 export function ContactInfos() {
-  const handles = useCssHandles(['itemContent'])
   const { formatMessage } = useIntl()
   const showToast = useToast()
   const { organization } = useOrganization()
   const {
-    orderForm: { clientProfileData, items },
+    orderForm: { clientProfileData, shipping },
   } = useOrderFormCustom()
+
+  const selectedAddressId = shipping.selectedAddress?.addressId
 
   const {
     selectedCostCenters,
     setSelectedCostCenters,
     setPending,
     setLoadingShippingAddress,
+    setDeliveryOptionsByCostCenter,
   } = useCheckoutB2BContext()
 
   const { costCenter, users, tradeName, name, roleName } = organization
@@ -69,7 +69,8 @@ export function ContactInfos() {
 
     const costCenterAddress = selectedCostCenters?.[0]?.address
 
-    if (!costCenterAddress) return
+    if (!costCenterAddress || costCenterAddress.addressId === selectedAddressId)
+      return
 
     setPending(true)
     setLoadingShippingAddress(true)
@@ -94,6 +95,7 @@ export function ContactInfos() {
       setLoadingShippingAddress(false)
     })
   }, [
+    selectedAddressId,
     selectedCostCenters,
     setLoadingShippingAddress,
     setPending,
@@ -127,6 +129,28 @@ export function ContactInfos() {
 
         return newSelectedCostCenters.sort(compareCostCenters)
       })
+
+      const costCenterName = costCenters?.find((c) => c.costId === value)
+        ?.costCenterName
+
+      if (costCenterName) {
+        setDeliveryOptionsByCostCenter((prev) => {
+          const filtered = Object.entries(prev).reduce(
+            (acc, [costCenterFromMap, sellerSla]) => {
+              if (costCenterFromMap !== costCenterName) {
+                acc[costCenterFromMap] = sellerSla
+              }
+
+              return acc
+            },
+            {} as typeof prev
+          )
+
+          return {
+            ...filtered,
+          }
+        })
+      }
     }
   }
 
@@ -263,7 +287,7 @@ export function ContactInfos() {
     ),
   })
 
-  if (costCenters?.length) {
+  if (costCenters && costCenters.length > 1) {
     contactFields.push({
       label: formatMessage(messages.costCentersLabel),
       value: (
@@ -308,32 +332,6 @@ export function ContactInfos() {
     label: formatMessage(messages.shippingAddress),
     value: <ShippingAddress />,
   })
-
-  if (items.length) {
-    contactFields.push({
-      label: formatMessage(messages.shippingOption),
-      value:
-        (selectedCostCenters?.length ?? 0) > 1 ? (
-          <div className="flex flex-column flex-wrap t-mini">
-            {selectedCostCenters?.map((c, index, array) => (
-              <div
-                key={c.costId}
-                {...(index < array.length - 1 && {
-                  className: `bb b--muted-3 mb2 pb2 ${handles.itemContent}`,
-                })}
-              >
-                <ShippingOption
-                  address={c.address}
-                  costCenterName={c.costCenterName}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <ShippingOption />
-        ),
-    })
-  }
 
   contactFields.push({
     label: formatMessage(messages.billingAddress),

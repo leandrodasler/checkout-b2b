@@ -18,9 +18,6 @@ export const messages = defineMessages({
   shippingOptionEmpty: {
     id: 'store/checkout.b2b.totalizer.shippingOption.empty',
   },
-  shippingOptionPackages: {
-    id: 'store/checkout.b2b.totalizer.shippingOption.packages',
-  },
   emptyAddress: { id: 'store/checkout.b2b.totalizer.emptyAddress' },
   editAddress: { id: 'store/checkout.b2b.totalizer.editAddress' },
   total: { id: 'store/checkout.b2b.totalizer.total' },

@@ -1,5 +1,6 @@
 scalar CostCenter
 scalar InvoiceData
+scalar CostCenterDeliveryOptions
 
 type SavedCart {
   id: ID!
@@ -49,5 +50,7 @@ type Mutation {
     poNumber: String
     invoiceData: InvoiceData
     selectedCostCenters: [CostCenter!]!
+    defaultCostCenter: CostCenter!
+    deliveryOptionsByCostCenter: CostCenterDeliveryOptions!
   ): [B2BOrder!]!
 }

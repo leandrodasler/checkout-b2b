@@ -53,7 +53,7 @@ export class CheckoutExtension extends JanusClient {
   }
 
   public async updateOrderFormShipping(shippingData: unknown) {
-    return this.post(this.routes.shippingData, shippingData, {
+    return this.post<OrderForm>(this.routes.shippingData, shippingData, {
       metric: 'checkoutExtension-updateOrderFormShipping',
     })
   }

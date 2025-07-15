@@ -340,7 +340,10 @@ function CheckoutB2B() {
             {!loading && !!filteredItems.length && (
               <div className="mt4 c-muted-2">
                 {formatMessage(messages.itemCount, {
-                  count: filteredItems.length,
+                  count: filteredItems.reduce(
+                    (acc, item) => acc + item.quantity,
+                    0
+                  ),
                 })}
               </div>
             )}
