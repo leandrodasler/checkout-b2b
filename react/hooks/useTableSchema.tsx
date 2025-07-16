@@ -15,8 +15,6 @@ import { isWithoutStock, messages, normalizeString } from '../utils'
 import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
 import { CellWrapper } from '../components/CellWrapper'
 
-type SchemaRowData = CustomItem & { __group?: boolean }
-
 const { useOrderItems } = OrderItems
 
 function getStrike(item: CustomItem) {
@@ -92,7 +90,7 @@ export function useTableSchema({
   }: {
     rowData: T
   }) => {
-    const data = (rowData as unknown) as CustomItem & { __group?: boolean }
+    const data = (rowData as unknown) as CustomItem
 
     return data?.__group ? '--' : render(rowData)
   }
@@ -104,7 +102,7 @@ export function useTableSchema({
           expand: {
             title: ' ',
             width: 10,
-            cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+            cellRenderer({ rowData }: { rowData: CustomItem }) {
               return (
                 <ChildrenProductsColumn
                   isParent={rowData.__group}
@@ -119,7 +117,7 @@ export function useTableSchema({
         refId: {
           title: formatMessage(messages.refId),
           width: 120,
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             return (
               <TruncatedText
                 text={rowData.__group ? ' ' : rowData.refId}
@@ -131,7 +129,7 @@ export function useTableSchema({
         skuName: {
           minWidth: 250,
           title: formatMessage(messages.name),
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             const { name, skuName, __group: isParent } = rowData
             const displayName = isParent
               ? name
@@ -153,7 +151,7 @@ export function useTableSchema({
         additionalInfo: {
           width: 120,
           title: formatMessage(messages.brand),
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
 
             return (
@@ -172,7 +170,7 @@ export function useTableSchema({
         productCategories: {
           width: 150,
           title: formatMessage(messages.category),
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             const categoriesArray = Object.values(
               rowData.productCategories as Record<string, string>
             )
@@ -245,7 +243,7 @@ export function useTableSchema({
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             return (
               <QuantitySelector item={rowData} disabled={rowData.__group} />
             )
@@ -274,7 +272,7 @@ export function useTableSchema({
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             const discountedPrice =
               (rowData.__group
                 ? rowData.price ?? 0
@@ -293,7 +291,7 @@ export function useTableSchema({
         id: {
           width: 50,
           title: ' ',
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             return (
               !rowData.__group && (
                 <Tooltip label={formatMessage(messages.delete)}>

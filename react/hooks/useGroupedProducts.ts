@@ -13,6 +13,13 @@ type UseGroupedProductsProps = {
   discountApplied: number
 }
 
+function normalizeTax(item: CustomItem): CustomItem {
+  return {
+    ...item,
+    tax: item.tax ?? undefined,
+  }
+}
+
 export function useGroupedProducts({
   items,
   fallbackItems,
@@ -27,60 +34,45 @@ export function useGroupedProducts({
 
     if (!isGrouping) return baseItems
 
-    const seen = new Set<string>()
-    const result: CustomItem[] = []
-
-    const groupedByProductId = new Map<string, CustomItem[]>()
-
-    for (const item of baseItems) {
+    const grouped = baseItems.reduce<Map<string, CustomItem[]>>((acc, item) => {
       const key = item.productId ?? ''
 
-      if (!groupedByProductId.has(key)) {
-        groupedByProductId.set(key, [])
+      if (!acc.has(key)) {
+        acc.set(key, [])
       }
 
-      groupedByProductId.get(key)?.push({
-        ...item,
-        tax: (item as CustomItem & { tax?: number }).tax ?? undefined,
-      })
-    }
+      acc.get(key)?.push(normalizeTax(item))
 
-    for (const [key, groupItems] of groupedByProductId.entries()) {
-      if (!seen.has(key)) {
-        const [firstItem] = groupItems
+      return acc
+    }, new Map())
 
-        const totalDiscountedPrice = groupItems.reduce((acc, curr) => {
-          const discounted = getDiscountedPrice(curr, discountApplied) ?? 0
+    const result: CustomItem[] = []
 
-          return acc + discounted
-        }, 0)
+    for (const [productId, groupItems] of grouped.entries()) {
+      const [firstItem] = groupItems
 
-        const totalQuantity = groupItems.reduce(
-          (acc, curr) => acc + (curr.quantity ?? 0),
-          0
-        )
+      const totalPrice = groupItems.reduce((acc, curr) => {
+        return acc + (getDiscountedPrice(curr, discountApplied) ?? 0)
+      }, 0)
 
-        result.push({
-          ...firstItem,
-          __group: true,
-          productId: key,
-          quantity: totalQuantity,
-          price: totalDiscountedPrice,
-          id: `group-${key}`,
-        } as typeof firstItem & {
-          __group: boolean
-        })
+      const totalQuantity = groupItems.reduce(
+        (acc, curr) => acc + (curr.quantity ?? 0),
+        0
+      )
 
-        seen.add(key)
+      const groupedItem: CustomItem = {
+        ...firstItem,
+        __group: true,
+        id: `group-${productId}`,
+        productId,
+        price: totalPrice,
+        quantity: totalQuantity,
       }
 
-      if (expandedProducts.includes(key)) {
-        for (const item of groupItems) {
-          result.push({
-            ...item,
-            tax: (item as CustomItem & { tax?: number }).tax ?? undefined,
-          })
-        }
+      result.push(groupedItem)
+
+      if (expandedProducts.includes(productId)) {
+        result.push(...groupItems)
       }
     }
 

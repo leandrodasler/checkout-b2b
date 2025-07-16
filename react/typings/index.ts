@@ -37,7 +37,9 @@ export type ApiResponse = {
   error?: { message?: string }
 }
 
-export type CustomItem = OrderFormType['items'][number] & { tax?: number }
+export type CustomItem = OrderFormType['items'][number] & { tax?: number } & {
+  __group?: boolean
+}
 
 export type CompleteOrderFormData = ApiResponse &
   Pick<OrderFormStore, 'sellers'> & {
