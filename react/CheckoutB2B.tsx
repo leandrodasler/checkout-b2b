@@ -17,7 +17,6 @@ import {
   Toggle,
   Totalizer,
 } from 'vtex.styleguide'
-import { Item } from '@vtex/order-items/types/typings'
 
 import {
   CheckoutB2BProvider,
@@ -28,6 +27,7 @@ import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import {
   useClearCart,
+  useGroupedProducts,
   useOrderFormCustom,
   useOrganization,
   usePermissions,
@@ -102,78 +102,15 @@ function CheckoutB2B() {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
   }, [maximumDiscount, percentualDiscount])
 
-  const filteredItems = useMemo(() => {
-    const baseItems = searchStore ? items : toolbar?.filteredItems ?? items
-
-    if (!isGrouping) return baseItems
-
-    const seen = new Set<string>()
-    const result: typeof items = []
-
-    const groupedByProductId = new Map<string, typeof items>()
-
-    for (const item of baseItems) {
-      const key = item.productId ?? ''
-
-      if (!groupedByProductId.has(key)) {
-        groupedByProductId.set(key, [])
-      }
-
-      groupedByProductId.get(key)?.push({
-        ...item,
-        tax: (item as Item & { tax?: number }).tax ?? undefined,
-      })
-    }
-
-    for (const [key, groupItems] of groupedByProductId.entries()) {
-      if (!seen.has(key)) {
-        const [firstItem] = groupItems
-
-        const totalDiscountedPrice = groupItems.reduce((acc, curr) => {
-          const discounted = getDiscountedPrice(curr, discountApplied) ?? 0
-
-          return acc + discounted
-        }, 0)
-
-        const totalQuantity = groupItems.reduce(
-          (acc, curr) => acc + (curr.quantity ?? 0),
-          0
-        )
-
-        result.push({
-          ...firstItem,
-          __group: true,
-          productId: key,
-          quantity: totalQuantity,
-          price: totalDiscountedPrice,
-          id: `group-${key}`,
-        } as typeof firstItem & {
-          __group: boolean
-        })
-
-        seen.add(key)
-      }
-
-      if (expandedProducts.includes(key)) {
-        for (const item of groupItems) {
-          result.push({
-            ...item,
-            tax: (item as Item & { tax?: number }).tax ?? undefined,
-          })
-        }
-      }
-    }
-
-    return result
-  }, [
-    searchStore,
+  const filteredItems = useGroupedProducts({
     items,
-    toolbar?.filteredItems,
+    fallbackItems: toolbar?.filteredItems,
     isGrouping,
     expandedProducts,
+    searchStore,
     getDiscountedPrice,
     discountApplied,
-  ])
+  })
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
     setPrices((prevPrices) => {
