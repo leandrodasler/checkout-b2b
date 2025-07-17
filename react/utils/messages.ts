@@ -123,6 +123,9 @@ export const messages = defineMessages({
   searchEmptyCart: {
     id: 'store/checkout.b2b.search.products.EmptyCart',
   },
+  totalizerBoxTitle: {
+    id: 'store/checkout.b2b.totalizer.boxTitle',
+  },
   costCentersLabel: {
     id: 'store/checkout.b2b.cost-centers.label',
   },

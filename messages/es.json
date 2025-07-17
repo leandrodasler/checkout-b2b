@@ -28,6 +28,7 @@
   "store/checkout.b2b.savedCarts.save-cart.current": "Guardar carrito en la misma transacción",
   "store/checkout.b2b.savedCarts.save-cart.new": "Guardar carrito in nueva transacción",
 
+  "store/checkout.b2b.totalizer.boxTitle": "Encabezado del Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Envío",
   "store/checkout.b2b.totalizer.billingAddress": "Dirección de Facturación",
   "store/checkout.b2b.totalizer.editAddress": "Editar",
