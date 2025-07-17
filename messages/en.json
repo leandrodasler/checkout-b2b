@@ -92,7 +92,7 @@
   "store/checkout.b2b.cost-centers.single.label": "Cost Center",
   "store/checkout.b2b.cost-centers.not-empty.error": "At least one cost center must be selected",
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "The user cost center is pre-selected by default",
-  "store/checkout.b2b.cost-centers.multiple-orders.info": "When placing the order, a separate order will be created for each selected cost center.",
+  "store/checkout.b2b.cost-centers.multiple-orders.info": "Upon completing the purchase, a separate order will be created for each selected cost center.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} orders placed successfully",
   "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab"
 }
