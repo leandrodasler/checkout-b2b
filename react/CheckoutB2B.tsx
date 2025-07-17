@@ -27,6 +27,7 @@ import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import {
   useClearCart,
+  useGroupedProducts,
   useOrderFormCustom,
   useOrganization,
   usePermissions,
@@ -62,8 +63,12 @@ function CheckoutB2B() {
     searchQuery,
     searchStore,
     setSearchStore,
+    getDiscountedPrice,
   } = useCheckoutB2BContext()
 
+  const [expandedProducts, setExpandedProducts] = useState<string[]>([])
+
+  const [isGrouping, setIsGrouping] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
   const toolbar = useToolbar()
@@ -97,7 +102,15 @@ function CheckoutB2B() {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
   }, [maximumDiscount, percentualDiscount])
 
-  const filteredItems = searchStore ? items : toolbar?.filteredItems ?? items
+  const filteredItems = useGroupedProducts({
+    items,
+    fallbackItems: toolbar?.filteredItems,
+    isGrouping,
+    expandedProducts,
+    searchStore,
+    getDiscountedPrice,
+    discountApplied,
+  })
 
   const updatePrice = useCallback((id: string, newPrice: number) => {
     setPrices((prevPrices) => {
@@ -110,7 +123,14 @@ function CheckoutB2B() {
     })
   }, [])
 
-  const schema = useTableSchema(isEditing, discountApplied, updatePrice)
+  const schema = useTableSchema({
+    expandedProducts,
+    setExpandedProducts,
+    isGrouping,
+    isEditing,
+    discount: discountApplied,
+    onUpdatePrice: updatePrice,
+  })
 
   const [setManualPrice, { loading: saving }] = useMutation(
     MutationSetManualPrice,
@@ -294,6 +314,12 @@ function CheckoutB2B() {
                 checked={searchStore}
                 onChange={handleToggleSearchStore}
               />
+
+              <Toggle
+                label={formatMessage(messages.searchProductsGroupToggle)}
+                checked={isGrouping}
+                onChange={() => setIsGrouping((prev) => !prev)}
+              />
             </div>
 
             <div ref={tableRef}>
@@ -302,7 +328,7 @@ function CheckoutB2B() {
                   'tax' in schema.properties ? 'with-tax' : 'no-tax'
                 }${
                   'listPrice' in schema.properties ? 'with-margin' : 'no-margin'
-                }`}
+                }${isGrouping ? 'grouping-products' : 'ungrouped-products'}`}
                 onRowClick={() => {}}
                 loading={loading}
                 fullWidth

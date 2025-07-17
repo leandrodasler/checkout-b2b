@@ -116,6 +116,9 @@ export const messages = defineMessages({
   searchProductsToggle: {
     id: 'store/checkout.b2b.search.products.toggle',
   },
+  searchProductsGroupToggle: {
+    id: 'store/checkout.b2b.search.products.groupToggle',
+  },
   searchEmptyCart: {
     id: 'store/checkout.b2b.search.products.EmptyCart',
   },

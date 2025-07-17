@@ -76,6 +76,7 @@
   "store/checkout.b2b.search.products.error": "Erro ao carregar os produtos. Tente novamente mais tarde.",
   "store/checkout.b2b.search.products.placeholder": "Buscar produtos em toda a loja",
   "store/checkout.b2b.search.products.toggle": "Buscar em toda a loja",
+  "store/checkout.b2b.search.products.groupToggle": "Agrupar por produtos",
   "store/checkout.b2b.search.products.empty": "Nenhum produto encontrado {type, plural, =0 {no carrinho} one {na loja}} ao buscar por \"{term}\"",
   "store/checkout.b2b.search.products.addAll": "Adicionar todas as variações deste produto",
   "store/checkout.b2b.search.products.EmptyCart": "Não é possível buscar no carrinho porque ele está vazio",

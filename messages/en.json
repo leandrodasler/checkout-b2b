@@ -76,6 +76,7 @@
   "store/checkout.b2b.search.products.error": "Error loading products. Please try again later.",
   "store/checkout.b2b.search.products.placeholder": "Search products in the entire store",
   "store/checkout.b2b.search.products.toggle": "Search the entire store",
+  "store/checkout.b2b.search.products.groupToggle": "Group by products",
   "store/checkout.b2b.search.products.empty": "No products found {type, plural, =0 {in the cart} one {in the store}} when searching for \"{term}\"",
   "store/checkout.b2b.search.products.addAll": "Add all variations of this product",
   "store/checkout.b2b.search.products.EmptyCart": "Cannot search in the cart because it is empty",

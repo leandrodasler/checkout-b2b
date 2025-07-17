@@ -12,6 +12,8 @@ import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
+import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
+import { CellWrapper } from '../components/CellWrapper'
 
 const { useOrderItems } = OrderItems
 
@@ -19,11 +21,21 @@ function getStrike(item: CustomItem) {
   return { strike: isWithoutStock(item) }
 }
 
-export function useTableSchema(
-  isEditing: boolean,
-  discount: number,
+export function useTableSchema({
+  expandedProducts,
+  setExpandedProducts,
+  isGrouping,
+  isEditing,
+  discount,
+  onUpdatePrice,
+}: {
+  expandedProducts: string[]
+  setExpandedProducts: React.Dispatch<React.SetStateAction<string[]>>
+  isGrouping: boolean
+  isEditing: boolean
+  discount: number
   onUpdatePrice: (id: string, newPrice: number) => void
-): TableSchema<CustomItem> {
+}): TableSchema<CustomItem> {
   const { hasMargin } = useTotalMargin()
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
@@ -73,15 +85,44 @@ export function useTableSchema(
     return orderForm.items?.some((item) => !!item.tax) ?? false
   }, [orderForm.items])
 
+  const makeSafeCell = <T,>(render: (rowData: T) => React.ReactNode) => ({
+    rowData,
+  }: {
+    rowData: T
+  }) => {
+    const data = (rowData as unknown) as CustomItem
+
+    return data?.__group ? '--' : render(rowData)
+  }
+
   return useMemo(
     () => ({
       properties: {
+        ...(isGrouping && {
+          expand: {
+            title: ' ',
+            width: 10,
+            cellRenderer({ rowData }: { rowData: CustomItem }) {
+              return (
+                <ChildrenProductsColumn
+                  isParent={rowData.__group}
+                  productId={rowData.productId ?? ''}
+                  expandedProducts={expandedProducts}
+                  setExpandedProducts={setExpandedProducts}
+                />
+              )
+            },
+          },
+        }),
         refId: {
           title: formatMessage(messages.refId),
           width: 120,
           cellRenderer({ rowData }) {
             return (
-              <TruncatedText text={rowData.refId} {...getStrike(rowData)} />
+              <TruncatedText
+                text={rowData.__group ? ' ' : rowData.refId}
+                {...getStrike(rowData)}
+              />
             )
           },
         },
@@ -89,14 +130,22 @@ export function useTableSchema(
           minWidth: 250,
           title: formatMessage(messages.name),
           cellRenderer({ rowData }) {
-            const { name, skuName } = rowData
-            const displayName = normalizeString(skuName).includes(
-              normalizeString(name)
-            )
+            const { name, skuName, __group: isParent } = rowData
+            const displayName = isParent
+              ? name
+              : normalizeString(skuName).includes(normalizeString(name))
               ? skuName
               : `${name} - ${skuName}`
 
-            return <TruncatedText text={displayName} {...getStrike(rowData)} />
+            return (
+              <TruncatedText
+                label={displayName}
+                text={
+                  <CellWrapper isChildren={isParent}>{displayName}</CellWrapper>
+                }
+                {...getStrike(rowData)}
+              />
+            )
           },
         },
         additionalInfo: {
@@ -105,7 +154,17 @@ export function useTableSchema(
           cellRenderer({ rowData }) {
             const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
 
-            return <TruncatedText text={brandName} {...getStrike(rowData)} />
+            return (
+              <TruncatedText
+                label={brandName}
+                text={
+                  <CellWrapper isChildren={rowData.__group}>
+                    {brandName}
+                  </CellWrapper>
+                }
+                {...getStrike(rowData)}
+              />
+            )
           },
         },
         productCategories: {
@@ -122,7 +181,11 @@ export function useTableSchema(
             return (
               <TruncatedText
                 label={categories}
-                text={leadCategory}
+                text={
+                  <CellWrapper isChildren={rowData.__group}>
+                    {leadCategory}
+                  </CellWrapper>
+                }
                 {...getStrike(rowData)}
               />
             )
@@ -131,7 +194,7 @@ export function useTableSchema(
         seller: {
           width: 150,
           title: formatMessage(messages.seller),
-          cellRenderer({ rowData }) {
+          cellRenderer: makeSafeCell((rowData) => {
             const seller = orderForm.sellers?.find(
               (s) => rowData.seller === s?.id
             )
@@ -139,12 +202,12 @@ export function useTableSchema(
             const sellerName = seller?.name ?? rowData.seller ?? 'N/A'
 
             return <TruncatedText text={sellerName} {...getStrike(rowData)} />
-          },
+          }),
         },
         sellingPrice: {
           width: 150,
           title: formatMessage(messages.price),
-          cellRenderer({ rowData }) {
+          cellRenderer: makeSafeCell((rowData) => {
             return (
               <ManualPrice
                 rowData={rowData}
@@ -153,14 +216,14 @@ export function useTableSchema(
                 onUpdatePrice={handlesNewPrice}
               />
             )
-          },
+          }),
         },
         ...(hasMargin &&
           canSeeMargin && {
             listPrice: {
               width: 100,
               title: formatMessage(messages.margin),
-              cellRenderer({ rowData }) {
+              cellRenderer: makeSafeCell((rowData) => {
                 const sellingPrice = getSellingPrice(rowData, discount)
 
                 return (
@@ -174,21 +237,23 @@ export function useTableSchema(
                     {...getStrike(rowData)}
                   />
                 )
-              },
+              }),
             },
           }),
         quantity: {
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
           cellRenderer({ rowData }) {
-            return <QuantitySelector item={rowData} />
+            return (
+              <QuantitySelector item={rowData} disabled={rowData.__group} />
+            )
           },
         },
         ...(hasTax && {
           tax: {
             width: 100,
             title: formatMessage(messages.tax),
-            cellRenderer({ rowData }) {
+            cellRenderer: makeSafeCell((rowData) => {
               return rowData.tax ? (
                 <TruncatedText
                   text={
@@ -201,19 +266,22 @@ export function useTableSchema(
               ) : (
                 <>N/A</>
               )
-            },
+            }),
           },
         }),
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
           cellRenderer({ rowData }) {
-            const discountedPrice = getDiscountedPrice(rowData, discount)
+            const discountedPrice =
+              (rowData.__group
+                ? rowData.price ?? 0
+                : getDiscountedPrice(rowData, discount)) / 100
 
             return (
               discountedPrice && (
                 <TruncatedText
-                  text={<FormattedPrice value={discountedPrice / 100} />}
+                  text={<FormattedPrice value={discountedPrice} />}
                   {...getStrike(rowData)}
                 />
               )
@@ -225,38 +293,43 @@ export function useTableSchema(
           title: ' ',
           cellRenderer({ rowData }) {
             return (
-              <Tooltip label={formatMessage(messages.delete)}>
-                <div>
-                  <ButtonWithIcon
-                    size="small"
-                    icon={<IconDelete />}
-                    variation="danger-tertiary"
-                    onClick={() => {
-                      removeItem({
-                        id: rowData.id,
-                        seller: rowData.seller ?? '1',
-                      })
-                    }}
-                  />
-                </div>
-              </Tooltip>
+              !rowData.__group && (
+                <Tooltip label={formatMessage(messages.delete)}>
+                  <div>
+                    <ButtonWithIcon
+                      size="small"
+                      icon={<IconDelete />}
+                      variation="danger-tertiary"
+                      onClick={() => {
+                        removeItem({
+                          id: rowData.id,
+                          seller: rowData.seller ?? '1',
+                        })
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+              )
             )
           },
         },
       },
     }),
     [
-      orderForm,
+      isGrouping,
       formatMessage,
-      removeItem,
+      hasMargin,
+      canSeeMargin,
+      hasTax,
+      expandedProducts,
+      setExpandedProducts,
+      orderForm.sellers,
       isEditing,
       discount,
+      handlesNewPrice,
       getSellingPrice,
       getDiscountedPrice,
-      handlesNewPrice,
-      canSeeMargin,
-      hasMargin,
-      hasTax,
+      removeItem,
     ]
   )
 }
