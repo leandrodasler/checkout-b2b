@@ -7,6 +7,7 @@ import 'vtex.country-codes/locales'
 import { useCssHandles } from 'vtex.css-handles'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import {
+  Box,
   Button,
   Layout,
   PageBlock,
@@ -291,8 +292,10 @@ function CheckoutB2B() {
         <PageBlock>
           {!loading && (
             <div className="mb4">
-              <ContactInfos />
-              <Totalizer items={totalizers} />
+              <Box title={formatMessage(messages.totalizerBoxTitle)}>
+                <ContactInfos />
+                <Totalizer items={totalizers} />
+              </Box>
             </div>
           )}
 

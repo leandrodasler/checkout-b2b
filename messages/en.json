@@ -28,6 +28,7 @@
   "store/checkout.b2b.savedCarts.save-cart.current": "Save cart in the same transaction",
   "store/checkout.b2b.savedCarts.save-cart.new": "Save cart in a new transaction",
 
+  "store/checkout.b2b.totalizer.boxTitle": "Order Header",
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",
   "store/checkout.b2b.totalizer.editAddress": "Edit",
