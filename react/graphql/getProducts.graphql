@@ -13,6 +13,7 @@ query getProductss($query: String) {
       name
       sellers {
         sellerId
+        sellerDefault
         commertialOffer {
           Price
         }

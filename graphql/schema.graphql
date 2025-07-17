@@ -1,3 +1,7 @@
+scalar CostCenter
+scalar InvoiceData
+scalar CostCenterDeliveryOptions
+
 type SavedCart {
   id: ID!
   createdIn: String!
@@ -25,6 +29,13 @@ type Query {
   getAppSettings: AppSettings!
 }
 
+type B2BOrder {
+  costId: String!
+  costCenterName: String!
+  orderGroup: String!
+  value: Float!
+}
+
 type Mutation {
   saveCart(
     id: ID
@@ -34,4 +45,12 @@ type Mutation {
   ): SavedCart!
 
   deleteCart(id: ID): ID
+
+  placeOrder(
+    poNumber: String
+    invoiceData: InvoiceData
+    selectedCostCenters: [CostCenter!]!
+    defaultCostCenter: CostCenter!
+    deliveryOptionsByCostCenter: CostCenterDeliveryOptions!
+  ): [B2BOrder!]!
 }

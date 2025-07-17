@@ -1,6 +1,7 @@
 import type { ServiceContext } from '@vtex/api'
 import { ForbiddenError } from '@vtex/api'
 import { SavedCart } from 'ssesandbox04.checkout-b2b'
+import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
 import {
@@ -89,4 +90,26 @@ export async function deleteSavedCart(
     dataEntity: SAVED_CART_ENTITY,
     id,
   })
+}
+
+export function getFirstInstallmentByPaymentSystem(
+  installmentOptions: PaymentData['installmentOptions'],
+  paymentSystem?: string | null
+) {
+  const installmentOption = installmentOptions.find(
+    (option) => option.paymentSystem === paymentSystem
+  )
+
+  return installmentOption?.installments[0]
+}
+
+const CHECKOUT_COOKIE = 'checkout.vtex.com'
+const OWNERSHIP_COOKIE = 'CheckoutOrderFormOwnership'
+
+export function checkoutCookieFormat(orderFormId: string) {
+  return `${CHECKOUT_COOKIE}=__ofid=${orderFormId};`
+}
+
+export function ownershipCookieFormat(ownerId: string) {
+  return `${OWNERSHIP_COOKIE}=${ownerId};`
 }

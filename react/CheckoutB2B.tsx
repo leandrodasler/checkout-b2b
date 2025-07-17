@@ -23,6 +23,7 @@ import {
   useCheckoutB2BContext,
 } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
+import { MultipleOrdersModal } from './components/MultipleOrdersModal'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import {
@@ -272,6 +273,7 @@ function CheckoutB2B() {
 
   return (
     <div className={handles.container}>
+      <MultipleOrdersModal />
       <Layout
         fullWidth
         pageHeader={
@@ -361,6 +363,16 @@ function CheckoutB2B() {
                 toolbar={toolbar}
               />
             </div>
+            {!loading && !!filteredItems.length && (
+              <div className="mt4 c-muted-2">
+                {formatMessage(messages.itemCount, {
+                  count: filteredItems.reduce(
+                    (acc, item) => acc + item.quantity,
+                    0
+                  ),
+                })}
+              </div>
+            )}
           </div>
         </PageBlock>
         {isEditing && (

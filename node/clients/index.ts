@@ -2,9 +2,15 @@ import type { Cached, ClientsConfig } from '@vtex/api'
 import { IOClients, LRUCache } from '@vtex/api'
 import { Checkout } from '@vtex/clients'
 
+import { CheckoutExtension } from './CheckoutExtension'
+
 export class Clients extends IOClients {
   public get checkout() {
     return this.getOrSet('checkout', Checkout)
+  }
+
+  public get checkoutExtension() {
+    return this.getOrSet('checkoutExtension', CheckoutExtension)
   }
 }
 

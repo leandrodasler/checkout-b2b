@@ -1,5 +1,8 @@
 import type { Query as CheckoutB2BQuery } from 'ssesandbox04.checkout-b2b'
-import type { Query } from 'vtex.b2b-organizations-graphql'
+import type {
+  Address as OrganizationAddress,
+  Query,
+} from 'vtex.b2b-organizations-graphql'
 import type {
   Address,
   Maybe,
@@ -51,6 +54,7 @@ export type CompleteOrderFormData = ApiResponse &
       customerClass?: string | null
     }
     items: CustomItem[]
+    poNumber?: string
   }
 
 export type PaymentAddress = {
@@ -111,12 +115,23 @@ export type SessionOrganizationData = {
 
 export type GetOrganizationQuery = Pick<
   Query,
-  'getOrganizationByIdStorefront' | 'getUsers' | 'getCostCenterByIdStorefront'
+  | 'getOrganizationByIdStorefront'
+  | 'getCostCenterByIdStorefront'
+  | 'getUsers'
+  | 'getActiveOrganizationsByEmail'
+  | 'getCostCentersByOrganizationId'
 >
 
 export type CustomOrganization = GetOrganizationQuery['getOrganizationByIdStorefront'] & {
   users: GetOrganizationQuery['getUsers']
   costCenter: GetOrganizationQuery['getCostCenterByIdStorefront']
+  userCostCenters?: Array<
+    NonNullable<
+      GetOrganizationQuery['getActiveOrganizationsByEmail']
+    >[number] & {
+      address?: OrganizationAddress | null
+    }
+  >
   role: string
   roleName: string
 }
@@ -138,3 +153,8 @@ export type ModalProps = {
 export type GetSavedCartsQuery = Pick<CheckoutB2BQuery, 'getSavedCarts'>
 
 export type Tax = { idCalculatorConfiguration: string; name: string }
+
+export type OrderGroup = {
+  costCenter: string
+  orderGroup: string
+}

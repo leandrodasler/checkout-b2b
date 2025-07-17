@@ -26,14 +26,13 @@
   flex-wrap: wrap;
 }
 
-.container
-  .table
-  :global(.flex.items-center.w-100.h-100.ph4.bb.b--muted-4.truncate) {
+.table :global(.flex.items-center.w-100.h-100.ph4.bb.b--muted-4.truncate) {
   cursor: auto;
 }
 
 .container :global(.vtex-dropdown__help-text) {
   margin-top: var(--small-gap);
+  text-align: center;
 }
 
 .container :local([data-testid='totalizer-value']),
@@ -72,8 +71,8 @@
 
 .container .shippingEstimates {
   padding: 0;
-  list-style-position: inside;
-  margin: 0 0 0 calc(var(--base-font-size) / 2);
+  list-style: none;
+  margin: 0;
 }
 
 .container :global(.vtex-input-prefix__group),
@@ -95,4 +94,11 @@
 
 .containerToggle > :local(div) {
   flex: auto;
+}
+
+.container .itemContent {
+  margin-left: -0.75rem;
+  margin-right: -0.75rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }

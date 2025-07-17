@@ -1,7 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  order: { id: 'store/checkout.b2b.order' },
+  itemCount: { id: 'store/checkout.b2b.itemCount' },
   cancel: { id: 'store/checkout.b2b.cancel' },
+  showMore: { id: 'store/checkout.b2b.show-more' },
+  showLess: { id: 'store/checkout.b2b.show-less' },
   confirm: { id: 'store/checkout.b2b.confirm' },
   delete: { id: 'store/checkout.b2b.delete' },
   creditAvailable: { id: 'store/checkout.b2b.creditAvailable' },
@@ -13,9 +17,6 @@ export const messages = defineMessages({
   shippingOption: { id: 'store/checkout.b2b.totalizer.shippingOption' },
   shippingOptionEmpty: {
     id: 'store/checkout.b2b.totalizer.shippingOption.empty',
-  },
-  shippingOptionPackages: {
-    id: 'store/checkout.b2b.totalizer.shippingOption.packages',
   },
   emptyAddress: { id: 'store/checkout.b2b.totalizer.emptyAddress' },
   editAddress: { id: 'store/checkout.b2b.totalizer.editAddress' },
@@ -121,5 +122,26 @@ export const messages = defineMessages({
   },
   searchEmptyCart: {
     id: 'store/checkout.b2b.search.products.EmptyCart',
+  },
+  costCentersLabel: {
+    id: 'store/checkout.b2b.cost-centers.label',
+  },
+  costCenterSingleLabel: {
+    id: 'store/checkout.b2b.cost-centers.single.label',
+  },
+  costCentersNotEmptyError: {
+    id: 'store/checkout.b2b.cost-centers.not-empty.error',
+  },
+  userCostCenterDefaultInfo: {
+    id: 'store/checkout.b2b.cost-centers.user-cost-center.default.info',
+  },
+  multipleOrdersInfo: {
+    id: 'store/checkout.b2b.cost-centers.multiple-orders.info',
+  },
+  multipleOrdersTitle: {
+    id: 'store/checkout.b2b.cost-centers.multiple-orders.title',
+  },
+  multipleOrdersLink: {
+    id: 'store/checkout.b2b.cost-centers.multiple-orders.order.link',
   },
 })

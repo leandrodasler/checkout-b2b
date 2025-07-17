@@ -80,4 +80,40 @@ query getOrganization($organizationId: ID, $costCenterId: ID) {
       name
     }
   }
+
+  getActiveOrganizationsByEmail
+    @context(provider: "vtex.b2b-organizations-graphql") {
+    organizationName
+    costCenterName
+    orgId
+    costId
+    role {
+      id
+      name
+      slug
+    }
+  }
+
+  getCostCentersByOrganizationId(id: $organizationId, pageSize: 100)
+    @context(provider: "vtex.b2b-organizations-graphql") {
+    data {
+      id
+      addresses {
+        addressId
+        addressType
+        addressQuery
+        postalCode
+        country
+        receiverName
+        city
+        state
+        street
+        number
+        complement
+        neighborhood
+        geoCoordinates
+        reference
+      }
+    }
+  }
 }

@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { useMutation, useQuery } from 'react-apollo'
+import { ExecutionResult, useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type {
   Mutation,
   MutationSaveCartArgs,
   SavedCart,
 } from 'ssesandbox04.checkout-b2b'
-import { Item } from 'vtex.checkout-graphql'
+import { CustomData, Item } from 'vtex.checkout-graphql'
 import type {
   SelectDeliveryOptionMutation,
   SelectDeliveryOptionMutationVariables,
@@ -19,7 +19,11 @@ import {
 } from 'vtex.checkout-resources'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
-import type { LogisticsInfo } from 'vtex.store-graphql'
+import type {
+  LogisticsInfo,
+  Mutation as MutationCheckout,
+  MutationSetOrderFormCustomDataArgs,
+} from 'vtex.store-graphql'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -31,6 +35,7 @@ import {
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import DELETE_SAVED_CART from '../graphql/deleteCart.graphql'
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
+import SET_ORDER_FORM_CUSTOM_DATA from '../graphql/setOrderFormCustomData.graphql'
 import { useAddItems, useClearCart, useUpdatePayment } from '../hooks'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
 import { useToast } from '../hooks/useToast'
@@ -54,6 +59,11 @@ type SavedCartRow = SavedCart &
     action: unknown
     loading: boolean
   }>
+
+type MutationSetOrderFormCustomData = Pick<
+  MutationCheckout,
+  'setOrderFormCustomData'
+>
 
 function getEmptySimpleCart(parentCartId: string): SavedCartRow {
   return {
@@ -189,6 +199,8 @@ export function SavedCartsTable() {
       setOrderForm({
         ...orderForm,
         ...updatedOrderForm,
+        customData: selectedCartData.customData,
+        paymentData: selectedCartData.paymentData,
       } as CompleteOrderForm)
     },
     onError({ message }) {
@@ -197,6 +209,11 @@ export function SavedCartsTable() {
   })
 
   const { updatePayment, loading: loadingUpdatePayment } = useUpdatePayment()
+
+  const [setOrderFormCustomData] = useMutation<
+    MutationSetOrderFormCustomData,
+    MutationSetOrderFormCustomDataArgs
+  >(SET_ORDER_FORM_CUSTOM_DATA)
 
   const loadingApplySavedCart = useMemo(
     () =>
@@ -240,6 +257,7 @@ export function SavedCartsTable() {
       marketingData,
       paymentData,
       shippingData,
+      customData,
     } = JSON.parse(cart.data ?? '{}')
 
     const { utmipage, ...newMarketingData } = marketingData ?? {}
@@ -318,6 +336,32 @@ export function SavedCartsTable() {
                 deliveryOptionId: selectedDeliveryOption,
               },
             })
+          }
+
+          if (customData?.customApps?.length) {
+            const { customApps } = customData as {
+              customApps: NonNullable<CustomData>['customApps']
+            }
+
+            const setCustomDataPromises: Array<
+              Promise<ExecutionResult<MutationSetOrderFormCustomData>>
+            > = []
+
+            customApps.forEach((app) => {
+              Object.entries(app.fields).forEach(([field, value]) => {
+                setCustomDataPromises.push(
+                  setOrderFormCustomData({
+                    variables: {
+                      appId: app.id,
+                      field,
+                      value: value as string,
+                    },
+                  })
+                )
+              })
+            })
+
+            await Promise.all(setCustomDataPromises)
           }
 
           setPending(false)

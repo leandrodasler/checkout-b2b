@@ -9,8 +9,14 @@ export function useToolbar() {
   const { formatMessage } = useIntl()
   const { loading: loadingOrganization } = useOrganization()
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
-  const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
-  const { placeOrder, isLoading, isSuccess } = usePlaceOrder()
+  const {
+    pending,
+    loadingGetShipping,
+    searchQuery,
+    setSearchQuery,
+  } = useCheckoutB2BContext()
+
+  const { placeOrder, isLoading } = usePlaceOrder()
 
   if (loadingOrganization || loadingOrderForm) return null
 
@@ -54,7 +60,8 @@ export function useToolbar() {
       onSubmit: handleSubmit,
     },
     newLine: {
-      disabled: isLoading || isSuccess || pending || !orderForm.items.length,
+      disabled:
+        isLoading || pending || loadingGetShipping || !orderForm.items.length,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,
