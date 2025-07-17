@@ -210,7 +210,7 @@ export function ShippingOption({ costCenter, address }: Props) {
                   key={index}
                   className={`flex flex-column flex-wrap ${
                     hasMultipleCostCenters && index < array.length - 1
-                      ? 'mb2 pb2 bb b--muted-3'
+                      ? 'mb2 pb2'
                       : ''
                   } ${
                     !hasMultipleCostCenters && index % 2 === 0 ? 'mr3' : ''
@@ -237,7 +237,11 @@ export function ShippingOption({ costCenter, address }: Props) {
                       isSmall={hasMultipleCostCenters}
                     />
                   ) : (
-                    <Sla sla={options[0]} price={singlePrice} />
+                    <Sla
+                      sla={options[0]}
+                      price={singlePrice}
+                      isSmall={!hasMultipleCostCenters}
+                    />
                   )}
                 </li>
               )

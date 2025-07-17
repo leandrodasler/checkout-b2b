@@ -123,7 +123,7 @@ export function useTotalizers() {
           {t.id === 'Shipping' && loadingGetShipping ? (
             <TotalizerSpinner />
           ) : t.id === 'Shipping' && hasMultipleCostCenters ? (
-            <div className="flex flex-wrap flex-column w-100">
+            <div className="flex flex-wrap flex-column w-100 t-small">
               <table cellSpacing={1} cellPadding={4} style={{ border: 'none' }}>
                 <tbody>
                   {costCenterDeliveries.map(
@@ -209,7 +209,7 @@ export function useTotalizers() {
         loadingGetShipping ? (
           <TotalizerSpinner />
         ) : (
-          <div className="flex flex-wrap flex-column w-100">
+          <div className="flex flex-wrap flex-column w-100 t-small">
             <table cellSpacing={1} cellPadding={4} style={{ border: 'none' }}>
               <tbody>
                 {costCenterDeliveries.map(

@@ -6,14 +6,19 @@ type Props = {
   sla?: ShippingSla | null
   highlightName?: boolean
   price?: string
+  isSmall?: boolean
 }
 
-export function Sla({ sla, highlightName, price }: Props) {
+export function Sla({ sla, highlightName, price, isSmall }: Props) {
   if (!sla) return null
 
   return (
     <div className="flex items-center">
-      <span>
+      <span
+        className={`${!highlightName ? 'c-muted-1' : ''} ${
+          isSmall ? 't-small' : ''
+        }`}
+      >
         {highlightName ? (
           <span className="b c-muted-1">{sla.name}</span>
         ) : (
@@ -21,7 +26,7 @@ export function Sla({ sla, highlightName, price }: Props) {
         )}
         {!!price && ` - ${price}`}
         <br />
-        <TranslateEstimate shippingEstimate={sla.shippingEstimate} />{' '}
+        <TranslateEstimate shippingEstimate={sla.shippingEstimate} />
       </span>
     </div>
   )

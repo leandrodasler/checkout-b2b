@@ -21,7 +21,7 @@ export function SlaDropdown(props: Props) {
   const { formatMessage } = useIntl()
 
   return (
-    <div className="w-100">
+    <div className={isSmall ? 'w-90' : 'w-100'}>
       <Dropdown
         size="small"
         placeholder={formatMessage(messages.shippingOption)}
