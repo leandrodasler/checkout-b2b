@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
-import { Input } from 'vtex.styleguide'
+import { useRuntime } from 'vtex.render-runtime'
+import { InputCurrency } from 'vtex.styleguide'
 
 interface ManualPriceProps {
   rowData: Item
@@ -16,51 +17,50 @@ export default function ManualPrice({
   sliderValue,
   onUpdatePrice,
 }: ManualPriceProps) {
-  const [customPrice, setCustomPrice] = useState<string>(
-    String((rowData.sellingPrice ?? 0) / 100)
+  const {
+    culture: { locale, currency },
+  } = useRuntime()
+
+  const [customPrice, setCustomPrice] = useState<number>(
+    (rowData.sellingPrice ?? 0) / 100
   )
 
   const discountedPrice = (rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)
 
   useEffect(() => {
-    const numericPrice = parseFloat(customPrice.replace(',', '.'))
-
-    if (numericPrice) {
-      onUpdatePrice(rowData.id, numericPrice * 100 || 0)
-    }
+    onUpdatePrice(rowData.id, Math.round(customPrice * 100))
   }, [customPrice, onUpdatePrice, rowData.id])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomPrice(e.target.value)
-  }
+  const handleInputCurrencyChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = Number(e.target.value)
 
-  const handleInputBlur = () => {
-    const newValue = parseFloat(customPrice.replace(',', '.'))
-
-    if (newValue) {
-      setCustomPrice(newValue.toFixed(2))
+    if (!Number.isNaN(value)) {
+      setCustomPrice(value)
     }
   }
 
   if (isEditing && sliderValue === 0) {
     return (
-      <div style={{ minWidth: 110 }}>
-        <Input
+      <div style={{ minWidth: 110, transform: 'scale(0.85)' }}>
+        <InputCurrency
           size="small"
+          placeholder="Type a monetary value"
+          locale={locale}
+          currencyCode={currency}
           value={customPrice}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          placeholder="Enter price"
+          onChange={handleInputCurrencyChange}
         />
       </div>
     )
   }
 
   return (
-    <FormattedPrice
-      value={
-        sliderValue > 0 ? discountedPrice / 100 : parseFloat(customPrice) || 0
-      }
-    />
+    <>
+      <FormattedPrice
+        value={sliderValue > 0 ? discountedPrice / 100 : customPrice || 0}
+      />
+    </>
   )
 }
