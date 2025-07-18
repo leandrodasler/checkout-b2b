@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 import { QueryClientProvider } from '@tanstack/react-query'
+import { Item } from '@vtex/order-items/types/typings'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
@@ -17,7 +20,6 @@ import {
   Toggle,
   Totalizer,
 } from 'vtex.styleguide'
-import { Item } from '@vtex/order-items/types/typings'
 
 import {
   CheckoutB2BProvider,
@@ -38,7 +40,7 @@ import {
 } from './hooks'
 import { queryClient } from './services'
 import './styles.css'
-import { CompleteOrderForm } from './typings'
+import { CompleteOrderForm, CustomItem, NormalizedCustomItem } from './typings'
 import { messages, SEARCH_TYPE, welcome } from './utils'
 
 function CheckoutB2B() {
@@ -67,6 +69,8 @@ function CheckoutB2B() {
   } = useCheckoutB2BContext()
 
   const [expandedProducts, setExpandedProducts] = useState<string[]>([])
+
+  console.log('expandedProducts:', expandedProducts)
 
   const [isGrouping, setIsGrouping] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -119,9 +123,13 @@ function CheckoutB2B() {
         groupedByProductId.set(key, [])
       }
 
+      const customItem = item as CustomItem
+
       groupedByProductId.get(key)?.push({
         ...item,
+
         tax: (item as Item & { tax?: number }).tax ?? undefined,
+        components: customItem.components ?? undefined,
       })
     }
 
@@ -156,10 +164,27 @@ function CheckoutB2B() {
 
       if (expandedProducts.includes(key)) {
         for (const item of groupItems) {
-          result.push({
+          const enrichedItem = {
             ...item,
             tax: (item as Item & { tax?: number }).tax ?? undefined,
-          })
+            components: (item as CustomItem).components ?? undefined,
+          }
+
+          result.push(enrichedItem)
+          if (enrichedItem.components && enrichedItem.components.length > 0) {
+            enrichedItem.components.forEach((component) => {
+              const normalizedComponent: NormalizedCustomItem = {
+                ...component,
+                id: `${enrichedItem.id}`,
+                __component: true,
+                parentItemId: enrichedItem.id,
+                tax: component.tax ?? undefined,
+                components: component.components ?? undefined,
+              }
+
+              result.push(normalizedComponent)
+            })
+          }
         }
       }
     }

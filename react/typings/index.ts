@@ -37,7 +37,17 @@ export type ApiResponse = {
   error?: { message?: string }
 }
 
-export type CustomItem = OrderFormType['items'][number] & { tax?: number }
+export type CustomItem = OrderFormType['items'][number] & {
+  tax: number | undefined
+  components?: CustomItem[]
+  __component: true
+  parentItemId: string
+}
+
+export type NormalizedCustomItem = Omit<CustomItem, 'tax' | 'components'> & {
+  tax: number | undefined
+  components: CustomItem[] | undefined
+}
 
 export type CompleteOrderFormData = ApiResponse &
   Pick<OrderFormStore, 'sellers'> & {

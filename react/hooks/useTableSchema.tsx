@@ -6,14 +6,14 @@ import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
 
 import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { CellWrapper } from '../components/CellWrapper'
+import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
 import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
-import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
-import { CellWrapper } from '../components/CellWrapper'
 
 type SchemaRowData = CustomItem & { __group?: boolean }
 
@@ -105,6 +105,17 @@ export function useTableSchema({
             title: ' ',
             width: 10,
             cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+              // eslint-disable-next-line no-console
+              console.log('[Expand Cell] rowData:', {
+                id: rowData.id,
+                productId: rowData.productId,
+                __group: true,
+                name: rowData.name,
+                Components: rowData.components,
+              })
+              // eslint-disable-next-line no-console
+              console.log('[Expand Cell] expandedProducts:', expandedProducts)
+
               return (
                 <ChildrenProductsColumn
                   isParent={rowData.__group}
@@ -271,6 +282,7 @@ export function useTableSchema({
             }),
           },
         }),
+
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
