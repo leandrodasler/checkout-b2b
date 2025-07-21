@@ -4,7 +4,13 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { ShippingSla } from 'vtex.store-graphql'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
-import { useFormatPrice, useOrderFormCustom, useTaxes, useTotalMargin } from '.'
+import {
+  useFormatPrice,
+  useOrderFormCustom,
+  usePermissions,
+  useTaxes,
+  useTotalMargin,
+} from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
@@ -22,6 +28,7 @@ export function useTotalizers() {
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
   const { orderForm } = useOrderFormCustom()
+  const { isSalesUser } = usePermissions()
 
   const { totalizers = [], items } = orderForm
 
@@ -98,7 +105,13 @@ export function useTotalizers() {
   ).sort(([cc1], [cc2]) => cc1.localeCompare(cc2))
 
   const shippingTotalizer = totalizers.find((t) => t.id === 'Shipping')
-  const totalizersExceptShipping = totalizers.filter((t) => t.id !== 'Shipping')
+  const canSeeDiscount = isSalesUser || (!isSalesUser && totalDiscount > 0)
+  const filteredTotalizers = totalizers.filter((t) => {
+    if (t.id === 'Shipping') return false
+    if (t.id === 'Discounts') return canSeeDiscount
+
+    return true
+  })
 
   return [
     {
@@ -109,7 +122,7 @@ export function useTotalizers() {
       label: formatMessage(messages.PONumber),
       value: <PONumber />,
     },
-    ...(totalDiscount
+    ...(totalDiscount && canSeeDiscount
       ? [
           {
             label:
@@ -120,7 +133,7 @@ export function useTotalizers() {
           },
         ]
       : []),
-    ...totalizersExceptShipping.map((t) => ({
+    ...filteredTotalizers.map((t) => ({
       label:
         t.id === 'Tax'
           ? formatMessage(messages.tax)
@@ -129,10 +142,15 @@ export function useTotalizers() {
           : t.name,
       value: (
         <div className="flex flex-wrap">
-          <TruncatedText
-            text={<FormattedPrice value={t.value / 100} />}
-            strike={t.id === 'Items' && totalItems !== t.value}
-          />
+          {t.id === 'Items' && canSeeDiscount && totalItems !== t.value && (
+            <TruncatedText
+              text={<FormattedPrice value={t.value / 100} />}
+              strike
+            />
+          )}
+          {(t.id !== 'Items' || totalItems === t.value) && (
+            <TruncatedText text={<FormattedPrice value={t.value / 100} />} />
+          )}
           {t.id === 'Tax' && taxes?.length && (
             <div className="flex flex-wrap flex-column w-100 t-mini">
               {taxes.map((tax) => (
@@ -156,10 +174,18 @@ export function useTotalizers() {
             </div>
           )}
           {t.id === 'Items' && totalItems !== t.value && (
-            <div className="w-100">
+            <div className="flex flex-wrap w-100">
               <TruncatedText
                 text={<FormattedPrice value={totalItems / 100} />}
               />
+
+              {!canSeeDiscount && totalDiscount < 0 && (
+                <Tooltip label={formatMessage(messages.quotationTotalItems)}>
+                  <span className="ml2">
+                    <IconHelp />
+                  </span>
+                </Tooltip>
+              )}
             </div>
           )}
           {t.id === 'Discounts' && hasQuotationDiscount && (

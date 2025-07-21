@@ -35,6 +35,9 @@ export const messages = defineMessages({
   totalMargin: { id: 'store/checkout.b2b.totalizer.totalMargin' },
   totalDiscount: { id: 'store/checkout.b2b.totalizer.totalDiscount' },
   quotationSurplus: { id: 'store/checkout.b2b.totalizer.quotationSurplus' },
+  quotationTotalItems: {
+    id: 'store/checkout.b2b.totalizer.quotationTotalItems',
+  },
   surplus: { id: 'store/checkout.b2b.totalizer.surplus' },
   totalSurplus: { id: 'store/checkout.b2b.totalizer.totalSurplus' },
   tax: { id: 'store/checkout.b2b.totalizer.tax' },
