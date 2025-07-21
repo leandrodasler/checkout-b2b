@@ -1,12 +1,16 @@
 📢 Use this project, [contribute](https://github.com/cubos-vtex/checkout-b2b) to it or open issues to help evolve it using [repository issues](https://github.com/cubos-vtex/checkout-b2b/issues).
 
+![Checkout B2B](../public/metadata/icon.png)
+
 # Checkout B2B
 
 [![Publish and Deploy App](https://github.com/cubos-vtex/checkout-b2b/actions/workflows/publish-and-deploy.yml/badge.svg)](https://github.com/cubos-vtex/checkout-b2b/actions/workflows/publish-and-deploy.yml)
 
 <!-- DOCS-IGNORE:start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
