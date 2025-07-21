@@ -79,6 +79,7 @@
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error updating prices:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Prices updated successfully",
   "store/checkout.b2b.manualPrice.discount-exceeded": "The discount exceeded the allowed limit",
+  "store/checkout.b2b.manualPrice.input.placeholder": "Type a monetary value",
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
   "store/checkout.b2b.search.products.error": "Error loading products. Please try again later.",

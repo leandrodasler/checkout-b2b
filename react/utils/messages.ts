@@ -105,6 +105,9 @@ export const messages = defineMessages({
   manualPriceDiscountExceeded: {
     id: 'store/checkout.b2b.manualPrice.discount-exceeded',
   },
+  manualPricePlaceholder: {
+    id: 'store/checkout.b2b.manualPrice.input.placeholder',
+  },
   createdIn: { id: 'store/checkout.b2b.column.createdIn' },
   items: { id: 'store/checkout.b2b.column.item' },
 
