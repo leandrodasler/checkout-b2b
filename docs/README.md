@@ -1,7 +1,5 @@
 📢 Use this project, [contribute](https://github.com/cubos-vtex/checkout-b2b) to it or open issues to help evolve it using [repository issues](https://github.com/cubos-vtex/checkout-b2b/issues).
 
-![Checkout B2B](../public/metadata/icon.png)
-
 # Checkout B2B
 
 [![Publish and Deploy App](https://github.com/cubos-vtex/checkout-b2b/actions/workflows/publish-and-deploy.yml/badge.svg)](https://github.com/cubos-vtex/checkout-b2b/actions/workflows/publish-and-deploy.yml)
@@ -13,6 +11,8 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
+
+![Checkout B2B](../public/metadata/icon.png)
 
 The **Checkout B2B** app is a custom checkout solution designed for B2B stores on the VTEX platform. It offers functionalities specifically for business buyers, such as bulk ordering, organization and buyer information, and custom payment methods tailored to B2B needs.
 
