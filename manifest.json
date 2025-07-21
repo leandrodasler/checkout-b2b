@@ -127,6 +127,12 @@
     },
     {
       "name": "read-workspace-apps"
+    },
+    {
+      "name": "SaveOrderFormConfiguration"
+    },
+    {
+      "name": "AcessaTodosCarrinhos"
     }
   ],
   "billingOptions": {

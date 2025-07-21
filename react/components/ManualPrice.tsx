@@ -26,11 +26,15 @@ export default function ManualPrice({
     culture: { locale, currency },
   } = useRuntime()
 
-  const [customPrice, setCustomPrice] = useState<number>(
-    (rowData.sellingPrice ?? 0) / 100
-  )
-
+  const initialPrice = (rowData.sellingPrice ?? 0) / 100
+  const [customPrice, setCustomPrice] = useState<number>(initialPrice)
   const discountedPrice = (rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)
+
+  useEffect(() => {
+    if (!isEditing || sliderValue === 0) {
+      setCustomPrice(initialPrice)
+    }
+  }, [initialPrice, isEditing, sliderValue])
 
   useEffect(() => {
     onUpdatePrice(rowData.id, Math.round(customPrice * 100))
@@ -62,10 +66,8 @@ export default function ManualPrice({
   }
 
   return (
-    <>
-      <FormattedPrice
-        value={sliderValue > 0 ? discountedPrice / 100 : customPrice || 0}
-      />
-    </>
+    <FormattedPrice
+      value={sliderValue > 0 ? discountedPrice / 100 : customPrice || 0}
+    />
   )
 }

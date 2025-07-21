@@ -1,6 +1,7 @@
 scalar CostCenter
 scalar InvoiceData
 scalar CostCenterDeliveryOptions
+scalar UpdatedOrderForm
 
 type SavedCart {
   id: ID!
@@ -36,6 +37,11 @@ type B2BOrder {
   value: Float!
 }
 
+input ItemsUpdatePriceInput {
+  index: Int!
+  price: Int!
+}
+
 type Mutation {
   saveCart(
     id: ID
@@ -53,4 +59,6 @@ type Mutation {
     defaultCostCenter: CostCenter!
     deliveryOptionsByCostCenter: CostCenterDeliveryOptions!
   ): [B2BOrder!]!
+
+  updatePrices(items: [ItemsUpdatePriceInput]!): UpdatedOrderForm!
 }

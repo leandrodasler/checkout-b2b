@@ -42,6 +42,8 @@ export function usePlaceOrder() {
         return
       }
 
+      clearCart()
+
       if (data.placeOrder.length === 1) {
         const [singleOrder] = data.placeOrder
         const orderPlacedUrl = getOrderPlacedUrl(singleOrder.orderGroup)
@@ -50,8 +52,6 @@ export function usePlaceOrder() {
       } else {
         setOrderGroups(data.placeOrder)
       }
-
-      clearCart()
     },
     onError(e) {
       showToast({

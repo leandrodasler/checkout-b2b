@@ -92,7 +92,12 @@
   z-index: 2147483648 !important;
 }
 
-.containerToggle > :local(div) {
+.container .containerToggle,
+.container .groupToggles {
+  gap: 0.5rem;
+}
+
+.container .containerToggle > :local(div:first-child) {
   flex: auto;
 }
 

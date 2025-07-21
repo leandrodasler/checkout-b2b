@@ -34,6 +34,12 @@ export const messages = defineMessages({
   quotationDiscount: { id: 'store/checkout.b2b.totalizer.quotationDiscount' },
   totalMargin: { id: 'store/checkout.b2b.totalizer.totalMargin' },
   totalDiscount: { id: 'store/checkout.b2b.totalizer.totalDiscount' },
+  quotationSurplus: { id: 'store/checkout.b2b.totalizer.quotationSurplus' },
+  quotationTotalItems: {
+    id: 'store/checkout.b2b.totalizer.quotationTotalItems',
+  },
+  surplus: { id: 'store/checkout.b2b.totalizer.surplus' },
+  totalSurplus: { id: 'store/checkout.b2b.totalizer.totalSurplus' },
   tax: { id: 'store/checkout.b2b.totalizer.tax' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
@@ -98,6 +104,9 @@ export const messages = defineMessages({
   manualPriceError: { id: 'store/checkout.b2b.manualPrice.placeOrder.error' },
   manualPriceSuccessMessage: {
     id: 'store/checkout.b2b.manualPrice.placeOrder.success',
+  },
+  manualPriceDiscountExceeded: {
+    id: 'store/checkout.b2b.manualPrice.discount-exceeded',
   },
   manualPricePlaceholder: {
     id: 'store/checkout.b2b.manualPrice.input.placeholder',
