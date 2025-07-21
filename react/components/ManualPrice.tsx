@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
 import { InputCurrency } from 'vtex.styleguide'
+
+import { messages } from '../utils'
 
 interface ManualPriceProps {
   rowData: Item
@@ -17,6 +20,8 @@ export default function ManualPrice({
   sliderValue,
   onUpdatePrice,
 }: ManualPriceProps) {
+  const { formatMessage } = useIntl()
+
   const {
     culture: { locale, currency },
   } = useRuntime()
@@ -46,7 +51,7 @@ export default function ManualPrice({
       <div style={{ minWidth: 110, transform: 'scale(0.85)' }}>
         <InputCurrency
           size="small"
-          placeholder="Type a monetary value"
+          placeholder={formatMessage(messages.manualPricePlaceholder)}
           locale={locale}
           currencyCode={currency}
           value={customPrice}
