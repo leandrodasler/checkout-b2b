@@ -75,6 +75,7 @@
   "store/checkout.b2b.manualPrice.placeOrder": "Todos los precios se actualizaron con éxito",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error al actualizar los precios:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Precios actualizados con éxito",
+  "store/checkout.b2b.manualPrice.input.placeholder": "Escriba un valor monetario",
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",
   "store/checkout.b2b.search.products.error": "Error al cargar los productos. Inténtelo de nuevo más tarde.",
