@@ -16,11 +16,15 @@ export default function ManualPrice({
   sliderValue,
   onUpdatePrice,
 }: ManualPriceProps) {
-  const [customPrice, setCustomPrice] = useState<string>(
-    String((rowData.sellingPrice ?? 0) / 100)
-  )
-
+  const initialPrice = String((rowData.sellingPrice ?? 0) / 100)
+  const [customPrice, setCustomPrice] = useState<string>(initialPrice)
   const discountedPrice = (rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)
+
+  useEffect(() => {
+    if (!isEditing) {
+      setCustomPrice(initialPrice)
+    }
+  }, [initialPrice, isEditing])
 
   useEffect(() => {
     const numericPrice = parseFloat(customPrice.replace(',', '.'))

@@ -69,12 +69,13 @@
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
   "store/checkout.b2b.button.placeOrder.error": "Erro ao processar pedido",
   "store/checkout.b2b.button.saveManualPrice": "Aplicar Preços",
-  "store/checkout.b2b.button.editManualPrice": "Editar todos",
+  "store/checkout.b2b.button.editManualPrice": "Editar preços",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Parar edição",
   "store/checkout.b2b.manualPrice.placeOrder": "Todos os preços foram atualizados com sucesso",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Erro ao atualizar os preços:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Preço atualizado",
+  "store/checkout.b2b.manualPrice.discount-exceeded": "O desconto ultrapassou o limite permitido",
 
   "store/checkout.b2b.search.placeholder": "Pesquisar por nome do SKU ou EAN",
   "store/checkout.b2b.search.products.error": "Erro ao carregar os produtos. Tente novamente mais tarde.",

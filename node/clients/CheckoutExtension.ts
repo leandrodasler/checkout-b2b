@@ -37,8 +37,15 @@ export class CheckoutExtension extends JanusClient {
 
   private post<T = void>(url: string, body: unknown, options?: RequestConfig) {
     return this.http.post<T>(url, body, {
-      ...options,
       headers: this.getCommonHeaders(),
+      ...options,
+    })
+  }
+
+  private put<T = void>(url: string, body: unknown, options?: RequestConfig) {
+    return this.http.put<T>(url, body, {
+      headers: this.getCommonHeaders(),
+      ...options,
     })
   }
 
@@ -90,6 +97,20 @@ export class CheckoutExtension extends JanusClient {
     })
   }
 
+  public async updatePrice(itemIndex: number, price: number) {
+    return this.put<OrderForm>(
+      this.routes.updatePrice(itemIndex),
+      { price },
+      {
+        metric: 'checkoutExtension-updatePrice',
+        headers: {
+          ...this.getCommonHeaders(),
+          VtexIdclientAutCookie: this.context.authToken,
+        },
+      }
+    )
+  }
+
   private get routes() {
     const base = `/api/checkout/pub/orderForm/${this.orderFormId}`
     const baseAttachments = `${base}/attachments`
@@ -103,6 +124,7 @@ export class CheckoutExtension extends JanusClient {
         `/api/payments/pub/transactions/${transactionId}/payments?orderId=${orderGroup}`,
       gatewayCallback: (orderGroup: string) =>
         `/api/checkout/pub/gatewayCallback/${orderGroup}`,
+      updatePrice: (itemIndex: number) => `${base}/items/${itemIndex}/price`,
     }
   }
 }

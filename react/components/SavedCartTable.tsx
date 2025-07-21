@@ -4,19 +4,15 @@ import { useIntl } from 'react-intl'
 import type {
   Mutation,
   MutationSaveCartArgs,
+  MutationUpdatePricesArgs,
   SavedCart,
 } from 'ssesandbox04.checkout-b2b'
 import { CustomData, Item } from 'vtex.checkout-graphql'
 import type {
   SelectDeliveryOptionMutation,
   SelectDeliveryOptionMutationVariables,
-  SetManualPriceMutation,
-  SetManualPriceMutationVariables,
 } from 'vtex.checkout-resources'
-import {
-  MutationSelectDeliveryOption,
-  MutationSetManualPrice,
-} from 'vtex.checkout-resources'
+import { MutationSelectDeliveryOption } from 'vtex.checkout-resources'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
 import type {
@@ -36,6 +32,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import DELETE_SAVED_CART from '../graphql/deleteCart.graphql'
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
 import SET_ORDER_FORM_CUSTOM_DATA from '../graphql/setOrderFormCustomData.graphql'
+import MUTATION_UPDATE_PRICES from '../graphql/updatePrices.graphql'
 import { useAddItems, useClearCart, useUpdatePayment } from '../hooks'
 import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
 import { useToast } from '../hooks/useToast'
@@ -46,9 +43,9 @@ import type {
 } from '../typings'
 import { messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
+import { CellWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
 import { TruncatedText } from './TruncatedText'
-import { CellWrapper } from './CellWrapper'
 
 type SavedCartRow = SavedCart &
   Partial<{
@@ -64,6 +61,8 @@ type MutationSetOrderFormCustomData = Pick<
   MutationCheckout,
   'setOrderFormCustomData'
 >
+
+type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
 
 function getEmptySimpleCart(parentCartId: string): SavedCartRow {
   return {
@@ -174,19 +173,19 @@ export function SavedCartsTable() {
   const [
     setManualPriceMutation,
     { loading: loadingSetManualPrice },
-  ] = useMutation<SetManualPriceMutation, SetManualPriceMutationVariables>(
-    MutationSetManualPrice,
+  ] = useMutation<MutationUpdatePrices, MutationUpdatePricesArgs>(
+    MUTATION_UPDATE_PRICES,
     {
-      onError({ message }) {
-        showToast({ message })
-      },
-      onCompleted({ setManualPrice }) {
+      onCompleted: ({ updatePrices }) => {
         setOrderForm({
           ...orderForm,
-          ...setManualPrice,
+          ...updatePrices,
           customData: selectedCartData.customData,
           paymentData: selectedCartData.paymentData,
         } as CompleteOrderForm)
+      },
+      onError({ message }) {
+        showToast({ message })
       },
     }
   )
@@ -295,21 +294,6 @@ export function SavedCartsTable() {
             },
           })
 
-          let index = 0
-
-          for await (const item of items) {
-            if (item.manualPrice) {
-              await setManualPriceMutation({
-                variables: {
-                  manualPriceInput: {
-                    itemIndex: index++,
-                    price: item.manualPrice,
-                  },
-                },
-              })
-            }
-          }
-
           if (payments?.[0]) {
             await updatePayment({
               variables: {
@@ -362,6 +346,25 @@ export function SavedCartsTable() {
             })
 
             await Promise.all(setCustomDataPromises)
+          }
+
+          const manualPriceItems = items
+            ?.map((item: Item, index: number) => {
+              if (item.manualPrice) {
+                return {
+                  index,
+                  price: item.manualPrice ?? item.sellingPrice ?? 0,
+                }
+              }
+
+              return null
+            })
+            .filter(Boolean)
+
+          if (manualPriceItems?.length) {
+            await setManualPriceMutation({
+              variables: { items: manualPriceItems },
+            })
           }
 
           setPending(false)

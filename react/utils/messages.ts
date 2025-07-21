@@ -99,6 +99,9 @@ export const messages = defineMessages({
   manualPriceSuccessMessage: {
     id: 'store/checkout.b2b.manualPrice.placeOrder.success',
   },
+  manualPriceDiscountExceeded: {
+    id: 'store/checkout.b2b.manualPrice.discount-exceeded',
+  },
   createdIn: { id: 'store/checkout.b2b.column.createdIn' },
   items: { id: 'store/checkout.b2b.column.item' },
 

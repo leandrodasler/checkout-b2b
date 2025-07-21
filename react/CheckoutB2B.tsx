@@ -2,7 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { MutationSetManualPrice } from 'vtex.checkout-resources'
+import { Mutation, MutationUpdatePricesArgs } from 'ssesandbox04.checkout-b2b'
 import 'vtex.country-codes/locales'
 import { useCssHandles } from 'vtex.css-handles'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
@@ -27,6 +27,7 @@ import { ContactInfos } from './components/ContactInfos'
 import { MultipleOrdersModal } from './components/MultipleOrdersModal'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
+import MUTATION_UPDATE_PRICES from './graphql/updatePrices.graphql'
 import {
   useClearCart,
   useGroupedProducts,
@@ -43,8 +44,16 @@ import './styles.css'
 import { CompleteOrderForm } from './typings'
 import { messages, SEARCH_TYPE, welcome } from './utils'
 
+type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
+
 function CheckoutB2B() {
-  const handles = useCssHandles(['container', 'table', 'containerToggle'])
+  const handles = useCssHandles([
+    'container',
+    'table',
+    'containerToggle',
+    'groupToggles',
+  ])
+
   const { loading: organizationLoading } = useOrganization()
   const {
     loading: orderFormLoading,
@@ -134,65 +143,68 @@ function CheckoutB2B() {
     onUpdatePrice: updatePrice,
   })
 
-  const [setManualPrice, { loading: saving }] = useMutation(
-    MutationSetManualPrice,
-    {
-      onCompleted: ({ updateOrderFormPayment }) => {
-        setOrderForm({
-          ...orderForm,
-          ...updateOrderFormPayment,
-        } as CompleteOrderForm)
-      },
-      onError: (error) => {
-        console.error('Erro na mutação:', error)
-        showToast?.({ message: error.message })
-      },
-    }
-  )
+  const [updateItemsPrice, { loading: saving }] = useMutation<
+    MutationUpdatePrices,
+    MutationUpdatePricesArgs
+  >(MUTATION_UPDATE_PRICES, {
+    onCompleted: ({ updatePrices }) => {
+      setOrderForm({
+        ...orderForm,
+        ...updatePrices,
+        customData: orderForm.customData,
+      } as CompleteOrderForm)
 
-  const getUpdatedPrices = useCallback(() => {
-    return filteredItems.map((item, index) => ({
-      orderFormId: orderForm.id,
-      itemIndex: index,
-      price: prices[item.id] ?? item.manualPrice ?? item.sellingPrice,
-    }))
-  }, [filteredItems, prices, orderForm.id])
-
-  const handleSavePrices = async () => {
-    if (percentualDiscount > maximumDiscount) {
-      showToast?.({ message: 'Desconto acima do limite' })
-
-      return
-    }
-
-    const updatedPrices = getUpdatedPrices()
-
-    try {
-      for await (const item of updatedPrices) {
-        await setManualPrice({
-          variables: {
-            orderFormId: item.orderFormId,
-            manualPriceInput: {
-              itemIndex: item.itemIndex,
-              price: Math.round(item.price),
-            },
-          },
-        })
-      }
+      setDiscountApplied(0)
+      setIsEditing(false)
 
       showToast?.({
         message: formatMessage(messages.manualPriceSuccess),
       })
-    } catch (error) {
-      console.error('Erro ao salvar os preços:', error)
+    },
+    onError: (error) => {
+      console.error('Error when saving prices:', error)
       showToast?.({
         message: formatMessage(messages.manualPriceError),
       })
+    },
+  })
+
+  const getUpdatedPrices = useCallback(() => {
+    return filteredItems
+      .map((item, index) => ({
+        index,
+        price: Math.round(
+          prices[item.id] ?? item.manualPrice ?? item.sellingPrice
+        ),
+      }))
+      .filter(
+        (updatedPrice) =>
+          filteredItems[updatedPrice.index].sellingPrice !== updatedPrice.price
+      )
+  }, [filteredItems, prices])
+
+  const handleSavePrices = async () => {
+    if (percentualDiscount > maximumDiscount) {
+      showToast({
+        message: formatMessage(messages.manualPriceDiscountExceeded),
+      })
+
+      return
     }
+
+    updateItemsPrice({ variables: { items: getUpdatedPrices() } })
   }
 
   const toggleEditMode = () => {
     setIsEditing((prev) => !prev)
+
+    if (!isEditing) return
+
+    setDiscountApplied(0)
+    const oldPrices: Record<string, number> = {}
+
+    items.forEach((item) => (oldPrices[item.id] = item.sellingPrice ?? 0))
+    setPrices(oldPrices)
   }
 
   const toggleRef = useRef<HTMLDivElement>(null)
@@ -258,7 +270,7 @@ function CheckoutB2B() {
       inputWrapperElement.classList.remove('w-40')
       inputWrapperElement.classList.add('flex-auto')
       toggleRef.current.classList.remove('dn')
-      toggleRef.current.classList.add('flex', 'flex-wrap', 'items-center')
+      toggleRef.current.classList.add('flex', 'items-center')
     })
 
     if (tableRef.current) {
@@ -300,20 +312,10 @@ function CheckoutB2B() {
           )}
 
           <div className={handles.table}>
-            <div className="dn w-100 w-60-m" ref={toggleRef}>
-              <Toggle
-                label={formatMessage(messages.searchProductsToggle)}
-                checked={searchStore}
-                onChange={handleToggleSearchStore}
-              />
-            </div>
-
             <div
-              className={`${handles.containerToggle} dn flex-wrap items-center w-100 w-60-m`}
-              ref={autocompleteRef}
+              className={`${handles.groupToggles} dn w-100 w-60-m`}
+              ref={toggleRef}
             >
-              <ProductAutocomplete />
-
               <Toggle
                 label={formatMessage(messages.searchProductsToggle)}
                 checked={searchStore}
@@ -325,6 +327,27 @@ function CheckoutB2B() {
                 checked={isGrouping}
                 onChange={() => setIsGrouping((prev) => !prev)}
               />
+            </div>
+
+            <div
+              className={`${handles.containerToggle} dn flex-wrap items-center w-100 w-60-m`}
+              ref={autocompleteRef}
+            >
+              <ProductAutocomplete />
+
+              <div className={`${handles.groupToggles} flex items-center`}>
+                <Toggle
+                  label={formatMessage(messages.searchProductsToggle)}
+                  checked={searchStore}
+                  onChange={handleToggleSearchStore}
+                />
+
+                <Toggle
+                  label={formatMessage(messages.searchProductsGroupToggle)}
+                  checked={isGrouping}
+                  onChange={() => setIsGrouping((prev) => !prev)}
+                />
+              </div>
             </div>
 
             <div ref={tableRef}>
@@ -399,27 +422,31 @@ function CheckoutB2B() {
             formatValue={(value: number) => `${value}%`}
           />
         )}
-        <div className="flex flex-wrap">
-          {isSalesUser && (
-            <>
-              <Button
-                variation={isEditing ? 'danger' : 'primary'}
-                onClick={toggleEditMode}
-              >
-                {isEditing
-                  ? formatMessage(messages.manualPriceStopEdit)
-                  : formatMessage(messages.editManualPrice)}
-              </Button>
-              <Button
-                variation="primary"
-                onClick={handleSavePrices}
-                isLoading={saving}
-                disabled={!items.length || saving}
-              >
-                {formatMessage(messages.saveManualPrice)}
-              </Button>
-            </>
-          )}
+        <div className="flex justify-between mt4">
+          <div className="flex flex-wrap">
+            {!!items.length && isSalesUser && (
+              <>
+                <Button
+                  variation={isEditing ? 'danger' : 'primary'}
+                  onClick={toggleEditMode}
+                >
+                  {isEditing
+                    ? formatMessage(messages.cancel)
+                    : formatMessage(messages.editManualPrice)}
+                </Button>
+                {isEditing && (
+                  <Button
+                    variation="primary"
+                    onClick={handleSavePrices}
+                    isLoading={saving}
+                    disabled={saving}
+                  >
+                    {formatMessage(messages.saveManualPrice)}
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
           {!!items.length && !loading && (
             <Button
               variation="danger-tertiary"
