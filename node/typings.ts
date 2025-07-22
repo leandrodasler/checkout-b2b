@@ -58,4 +58,12 @@ declare global {
     address: Address
     addresses: Address[]
   }
+
+  type RepresentativeBalance = {
+    id: string
+    email: string
+    balance: number
+    createdIn: string
+    lastInteractionIn: string
+  }
 }

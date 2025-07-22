@@ -16,12 +16,21 @@ export const SAVED_CART_FIELDS = [
   'parentCartId',
   'childrenQuantity',
 ]
-export const SAVED_CART_SCHEMA_VERSION = 'v0.0.1'
+export const REPRESENTATIVE_BALANCE_ENTITY =
+  'checkout_b2b_representative_balance'
+export const REPRESENTATIVE_BALANCE_FIELDS = [
+  'id',
+  'createdIn',
+  'lastInteractionIn',
+  'email',
+  'balance',
+]
+export const SCHEMA_VERSION = 'v0.0.1'
 
 export const schemas = [
   {
     name: SAVED_CART_ENTITY,
-    version: SAVED_CART_SCHEMA_VERSION,
+    version: SCHEMA_VERSION,
     body: {
       properties: {
         title: { type: 'string' },
@@ -42,6 +51,19 @@ export const schemas = [
         'parentCartId',
         'childrenQuantity',
       ],
+      'v-immediate-indexing': true,
+      'v-cache': false,
+    },
+  },
+  {
+    name: REPRESENTATIVE_BALANCE_ENTITY,
+    version: SCHEMA_VERSION,
+    body: {
+      properties: {
+        email: { type: 'string' },
+        balance: { type: 'number' },
+      },
+      'v-indexed': ['email'],
       'v-immediate-indexing': true,
       'v-cache': false,
     },

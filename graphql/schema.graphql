@@ -24,12 +24,6 @@ type AppSettings {
   rolesAllowedToSeeMargin: [String]
 }
 
-type Query {
-  getCart(id: ID!): SavedCart
-  getSavedCarts(parentCartId: ID): [SavedCart!]!
-  getAppSettings: AppSettings!
-}
-
 type B2BOrder {
   costId: String!
   costCenterName: String!
@@ -40,6 +34,22 @@ type B2BOrder {
 input ItemsUpdatePriceInput {
   index: Int!
   price: Int!
+}
+
+type RepresentativeBalance {
+  id: ID!
+  email: String!
+  balance: Int!
+  createdIn: String!
+  lastInteractionIn: String!
+}
+
+type Query {
+  getCart(id: ID!): SavedCart
+  getSavedCarts(parentCartId: ID): [SavedCart!]!
+  getAppSettings: AppSettings!
+  getRepresentativeBalances: [RepresentativeBalance]!
+  getRepresentativeBalanceByEmail(email: String): RepresentativeBalance
 }
 
 type Mutation {
@@ -61,4 +71,9 @@ type Mutation {
   ): [B2BOrder!]!
 
   updatePrices(items: [ItemsUpdatePriceInput]!): UpdatedOrderForm!
+
+  saveRepresentativeBalance(
+    email: String
+    balance: Int!
+  ): RepresentativeBalance!
 }

@@ -7,7 +7,7 @@ import { Clients } from '../clients'
 import {
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
-  SAVED_CART_SCHEMA_VERSION,
+  SCHEMA_VERSION,
 } from './mdSchema'
 
 export * from './mdSchema'
@@ -59,7 +59,7 @@ export async function getAllSavedCarts({
 
   async function fetchCarts(page = 1) {
     const savedCarts = await masterdata.searchDocuments<SavedCart>({
-      schema: SAVED_CART_SCHEMA_VERSION,
+      schema: SCHEMA_VERSION,
       dataEntity: SAVED_CART_ENTITY,
       fields: SAVED_CART_FIELDS,
       pagination: {
@@ -112,4 +112,23 @@ export function checkoutCookieFormat(orderFormId: string) {
 
 export function ownershipCookieFormat(ownerId: string) {
   return `${OWNERSHIP_COOKIE}=${ownerId};`
+}
+
+export async function getRepresentativeEmail(
+  context: ServiceContext<Clients>,
+  email?: string
+) {
+  let inputEmail = email
+
+  if (!inputEmail) {
+    const { email: sessionEmail } = await getSessionData(context)
+
+    inputEmail = sessionEmail
+  }
+
+  if (!inputEmail) {
+    throw new ForbiddenError('not-authorized')
+  }
+
+  return inputEmail
 }
