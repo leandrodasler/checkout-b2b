@@ -15,7 +15,6 @@ import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 
-type SchemaRowData = CustomItem & { __group?: boolean }
 const { useOrderItems } = OrderItems
 
 function getStrike(item: CustomItem) {
@@ -118,7 +117,7 @@ export function useTableSchema({
         refId: {
           title: formatMessage(messages.refId),
           width: 120,
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             return (
               <TruncatedText
                 text={rowData.__group ? ' ' : rowData.refId}
@@ -134,9 +133,11 @@ export function useTableSchema({
             const { name, skuName, __group: isParent } = rowData
             const displayName = isParent
               ? name
-              : normalizeString(skuName).includes(normalizeString(name))
-              ? skuName
-              : `${name} - ${skuName}`
+              : skuName
+              ? normalizeString(skuName).includes(normalizeString(name))
+                ? skuName
+                : `${name} - ${skuName}`
+              : name
 
             return (
               <TruncatedText
@@ -152,7 +153,7 @@ export function useTableSchema({
         additionalInfo: {
           width: 120,
           title: formatMessage(messages.brand),
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
 
             return (
@@ -171,7 +172,7 @@ export function useTableSchema({
         productCategories: {
           width: 150,
           title: formatMessage(messages.category),
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             const categoriesArray = Object.values(
               rowData.productCategories as Record<string, string>
             )
@@ -293,7 +294,7 @@ export function useTableSchema({
         id: {
           width: 50,
           title: ' ',
-          cellRenderer({ rowData }: { rowData: SchemaRowData }) {
+          cellRenderer({ rowData }) {
             return (
               !rowData.__group && (
                 <Tooltip label={formatMessage(messages.delete)}>
