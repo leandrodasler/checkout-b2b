@@ -3,10 +3,11 @@ import { useIntl } from 'react-intl'
 import { Input } from 'vtex.styleguide'
 
 import { useOrderFormCustom } from '../hooks'
-import type { CompleteOrderForm } from '../typings'
+import { CompleteOrderForm } from '../typings'
 import {
   B2B_CHECKOUT_CUSTOM_APP_ID,
   B2B_CHECKOUT_CUSTOM_APP_MAJOR,
+  getCustomAppsExceptPoNumber,
   messages,
   PO_NUMBER_CUSTOM_FIELD,
 } from '../utils'
@@ -14,21 +15,24 @@ import {
 export function PONumber() {
   const { formatMessage } = useIntl()
   const { orderForm, setOrderForm } = useOrderFormCustom()
-
-  const poNumber =
-    orderForm.customData?.customApps?.find(
-      (app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID
-    )?.fields?.[PO_NUMBER_CUSTOM_FIELD] ?? ''
+  const { poNumber, paymentAddress, customData } = orderForm
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrderForm({
       ...orderForm,
-      paymentAddress: orderForm.paymentAddress,
+      paymentAddress,
+      poNumber: e.target.value,
       customData: !e.target.value
-        ? null
+        ? customData
+          ? {
+              ...customData,
+              customApps: getCustomAppsExceptPoNumber(customData),
+            }
+          : null
         : {
-            ...orderForm.customData,
+            ...customData,
             customApps: [
+              ...getCustomAppsExceptPoNumber(customData),
               {
                 id: B2B_CHECKOUT_CUSTOM_APP_ID,
                 major: B2B_CHECKOUT_CUSTOM_APP_MAJOR,

@@ -4,6 +4,7 @@ import { useRuntime } from 'vtex.render-runtime'
 
 import { apiRequest } from '../services'
 import type { CompleteOrderForm, CompleteOrderFormData } from '../typings'
+import { getOrderFormPoNumber } from '../utils'
 
 const { useOrderForm } = OrderForm
 
@@ -68,6 +69,7 @@ export function useOrderFormCustom() {
       })),
       sellers: data?.sellers,
       paymentAddress,
+      poNumber: getOrderFormPoNumber(orderForm.customData),
     },
     setOrderForm,
   }

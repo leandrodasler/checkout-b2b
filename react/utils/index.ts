@@ -1,6 +1,7 @@
-import { Address, Item, PaymentData } from 'vtex.checkout-graphql'
+import { Address, CustomData, Item, PaymentData } from 'vtex.checkout-graphql'
+import { DeliveryIds, ShippingData, ShippingSla } from 'vtex.store-graphql'
 
-import { PaymentAddressType } from '../typings'
+import { CustomOrganization, PaymentAddressType } from '../typings'
 
 export * from './messages'
 
@@ -12,6 +13,7 @@ export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CUSTOMER_CREDIT_ID = '64'
 export const SEARCH_TYPE = { CART: 0, STORE: 1 }
+export const MAX_SALES_USERS_TO_SHOW = 3
 
 export function removeAccents(str?: string | null) {
   return (
@@ -92,7 +94,7 @@ export const buildBillingAddress = (
 export function transformImageUrl(
   url: string,
   width: number,
-  height: string | number = 'auto'
+  height: 'auto' | number = 'auto'
 ) {
   const idMatch = url.match(/ids\/(\d+)\/.*?(\.\w+)(?:\?.*)?$/)
 
@@ -125,3 +127,108 @@ export const ERROR_TO_RETRY_PATTERNS = [
   '502',
   '503',
 ]
+
+export function compareCostCenters<
+  T extends NonNullable<CustomOrganization['userCostCenters']>[number]
+>(a: T, b: T) {
+  return a.costCenterName?.localeCompare(b.costCenterName ?? '') ?? 0
+}
+
+export function getOrderPlacedUrl(orderGroup: string) {
+  return `/checkout/orderPlaced?og=${orderGroup}`
+}
+
+export function getOrderFormPoNumber(customData?: CustomData | null): string {
+  return (
+    customData?.customApps?.find((app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID)
+      ?.fields?.[PO_NUMBER_CUSTOM_FIELD] ?? ''
+  )
+}
+
+export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
+  return (
+    customData?.customApps?.filter(
+      (customApp) => customApp.id !== B2B_CHECKOUT_CUSTOM_APP_ID
+    ) ?? []
+  )
+}
+
+export function groupShippingOptionsBySeller(
+  shippingData?: ShippingData | null
+) {
+  const sellerItemIndexMap: Record<string, number[]> = {}
+
+  shippingData?.items?.forEach((item) => {
+    if (!item?.seller) return
+
+    if (!sellerItemIndexMap[item.seller]) {
+      sellerItemIndexMap[item.seller] = []
+    }
+
+    if (item.requestIndex !== undefined && item.requestIndex !== null) {
+      sellerItemIndexMap[item.seller].push(item.requestIndex)
+    }
+  })
+
+  const sellerSlasMap: Record<string, ShippingSla[]> = {}
+
+  Object.entries(sellerItemIndexMap).forEach(([seller, itemIndexes]) => {
+    const slasBySeller = shippingData?.logisticsInfo
+      ?.filter((logisticInfo) =>
+        itemIndexes.includes(Number(logisticInfo?.itemIndex))
+      )
+      .map((logisticInfo) => logisticInfo?.slas ?? [])
+
+    let commonSlaIds =
+      slasBySeller && slasBySeller.length > 0
+        ? slasBySeller[0].map((sla) => sla?.id)
+        : []
+
+    for (let i = 1; i < (slasBySeller?.length ?? 0); i++) {
+      const currentIds = slasBySeller?.[i].map((sla) => sla?.id)
+
+      commonSlaIds = commonSlaIds.filter((id) => currentIds?.includes(id))
+    }
+
+    const slaMap: Record<string, ShippingSla> = {}
+
+    commonSlaIds.forEach((slaId) => {
+      if (!slaId) return
+
+      const mergedSla: ShippingSla = {
+        id: slaId,
+        name: '',
+        shippingEstimate: '',
+        price: 0,
+        deliveryIds: [],
+        __typename: 'ShippingSLA',
+      }
+
+      slasBySeller?.forEach((slaList) => {
+        const sla = slaList.find((s) => s?.id === slaId)
+
+        if (!sla) return
+
+        mergedSla.name = sla.name
+        mergedSla.shippingEstimate = sla.shippingEstimate
+        mergedSla.price = (mergedSla.price ?? 0) + (sla.price ?? 0)
+
+        sla.deliveryIds?.forEach((delivery, index) => {
+          if (!mergedSla.deliveryIds?.[index]) {
+            ;(mergedSla.deliveryIds as DeliveryIds[])[index] = { ...delivery }
+          } else {
+            ;(mergedSla.deliveryIds as DeliveryIds[])[index].quantity =
+              ((mergedSla.deliveryIds as DeliveryIds[])[index].quantity ?? 0) +
+              (delivery?.quantity ?? 0)
+          }
+        })
+      })
+
+      slaMap[slaId] = mergedSla
+    })
+
+    sellerSlasMap[seller] = Object.values(slaMap)
+  })
+
+  return sellerSlasMap
+}

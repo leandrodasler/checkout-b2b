@@ -1,10 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import type { Address as OrganizationAddress } from 'vtex.b2b-organizations-graphql'
 import type { Address as AddressType } from 'vtex.checkout-graphql'
 
 import { messages } from '../utils'
 
-type Props = { address?: AddressType | null }
+type Props = { address?: AddressType | OrganizationAddress | null }
 
 export function Address({ address }: Props) {
   const { formatMessage } = useIntl()

@@ -6,9 +6,13 @@
 
 <!-- DOCS-IGNORE:start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
+
+![Checkout B2B](../public/metadata/icon.png)
 
 The **Checkout B2B** app is a custom checkout solution designed for B2B stores on the VTEX platform. It offers functionalities specifically for business buyers, such as bulk ordering, organization and buyer information, and custom payment methods tailored to B2B needs.
 

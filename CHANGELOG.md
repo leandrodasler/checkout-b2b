@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.42] - 2025-07-21
+
+## [1.0.41] - 2025-07-21
+
+## [1.0.40] - 2025-07-17
+
+## [1.0.39] - 2025-07-17
+
+## [1.0.38] - 2025-07-17
+
+- Group skus by product
+- Allow multiple cost center orders if user has multiple cost centers
+
 ## [1.0.37] - 2025-06-16
 
 ## [1.0.36] - 2025-06-02

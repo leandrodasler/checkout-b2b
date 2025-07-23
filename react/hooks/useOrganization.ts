@@ -53,6 +53,16 @@ export function useOrganization() {
       costCenter: data?.getCostCenterByIdStorefront,
       role: permissionsData?.checkUserPermission?.role?.id ?? '',
       roleName: permissionsData?.checkUserPermission?.role?.name ?? '',
+      userCostCenters: data?.getActiveOrganizationsByEmail?.map(
+        (userCostCenter) => {
+          return {
+            ...userCostCenter,
+            address: data.getCostCentersByOrganizationId?.data?.find(
+              (c) => c?.id === userCostCenter?.costId
+            )?.addresses?.[0],
+          }
+        }
+      ),
     }
   }, [data, permissionsData])
 

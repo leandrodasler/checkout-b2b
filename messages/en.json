@@ -1,7 +1,11 @@
 {
+  "store/checkout.b2b.order": "Order",
+  "store/checkout.b2b.itemCount": "{count, plural, one {1 item} other {{count} items}}",
   "store/checkout.b2b.confirm": "Confirm",
   "store/checkout.b2b.delete": "Delete",
   "store/checkout.b2b.cancel": "Cancel",
+  "store/checkout.b2b.show-more": "Show more",
+  "store/checkout.b2b.show-less": "Show less",
   "store/checkout.b2b.creditAvailable": "Credit available",
   "store/checkout.b2b.noCreditAvailable": "No credit available",
 
@@ -24,12 +28,12 @@
   "store/checkout.b2b.savedCarts.save-cart.current": "Save cart in the same transaction",
   "store/checkout.b2b.savedCarts.save-cart.new": "Save cart in a new transaction",
 
-  "store/checkout.b2b.totalizer.shippingAddress": "Shipping Address",
+  "store/checkout.b2b.totalizer.boxTitle": "Order Header",
+  "store/checkout.b2b.totalizer.shippingAddress": "Shipping",
   "store/checkout.b2b.totalizer.billingAddress": "Billing Address",
   "store/checkout.b2b.totalizer.editAddress": "Edit",
   "store/checkout.b2b.totalizer.shippingOption": "Shipping Option",
   "store/checkout.b2b.totalizer.shippingOption.empty": "No shipping options available",
-  "store/checkout.b2b.totalizer.shippingOption.packages": "{packages} packages",
   "store/checkout.b2b.totalizer.emptyAddress": "Address not provided",
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Payment Method",
@@ -39,10 +43,14 @@
   "store/checkout.b2b.totalizer.companyName": "Organization",
   "store/checkout.b2b.totalizer.buyerName": "Buyer",
   "store/checkout.b2b.totalizer.quotationDiscount": "This discount is based on a quotation. Any discounts expected due to the payment method are not cumulative.",
+  "store/checkout.b2b.totalizer.quotationSurplus": "This surplus is based on a quotation. Any discounts expected due to the payment method will not be considered.",
+  "store/checkout.b2b.totalizer.quotationTotalItems": "This value is based on a quotation. Any discounts expected due to the payment method will not be considered.",
   "store/checkout.b2b.totalizer.salesRep": "Sales rep.:",
   "store/checkout.b2b.totalizer.salesAdm": "Sales adm.:",
   "store/checkout.b2b.totalizer.totalMargin": "Total Margin",
   "store/checkout.b2b.totalizer.totalDiscount": "Total Discount (%)",
+  "store/checkout.b2b.totalizer.surplus": "Surplus (%)",
+  "store/checkout.b2b.totalizer.totalSurplus": "Total Surplus",
   "store/checkout.b2b.totalizer.tax": "Taxes",
 
   "store/checkout.b2b.column.name": "Name",
@@ -65,12 +73,14 @@
   "store/checkout.b2b.button.placeOrder": "Place Order",
   "store/checkout.b2b.button.placeOrder.error": "Error processing order",
   "store/checkout.b2b.button.saveManualPrice": "Apply Prices",
-  "store/checkout.b2b.button.editManualPrice": "Edit all",
+  "store/checkout.b2b.button.editManualPrice": "Edit prices",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Stop edit",
   "store/checkout.b2b.manualPrice.placeOrder": "All prices were successfully updated",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error updating prices:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Prices updated successfully",
+  "store/checkout.b2b.manualPrice.discount-exceeded": "The discount exceeded the allowed limit",
+  "store/checkout.b2b.manualPrice.input.placeholder": "Type a monetary value",
 
   "store/checkout.b2b.search.placeholder": "Search by SKU name or EAN",
   "store/checkout.b2b.search.products.error": "Error loading products. Please try again later.",
@@ -82,5 +92,13 @@
   "store/checkout.b2b.search.products.EmptyCart": "Cannot search in the cart because it is empty",
 
   "store/checkout.b2b.empty.cart": "Cart is empty.",
-  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "The quantity has been adjusted to the minimum allowed for this item: "
+  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "The quantity has been adjusted to the minimum allowed for this item: ",
+
+  "store/checkout.b2b.cost-centers.label": "Cost Centers",
+  "store/checkout.b2b.cost-centers.single.label": "Cost Center",
+  "store/checkout.b2b.cost-centers.not-empty.error": "At least one cost center must be selected",
+  "store/checkout.b2b.cost-centers.user-cost-center.default.info": "The user cost center is pre-selected by default",
+  "store/checkout.b2b.cost-centers.multiple-orders.info": "Upon completing the purchase, a separate order will be created for each selected cost center.",
+  "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} orders placed successfully",
+  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab"
 }

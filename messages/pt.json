@@ -1,7 +1,11 @@
 {
+  "store/checkout.b2b.order": "Pedido",
+  "store/checkout.b2b.itemCount": "{count, plural, one {1 item} other {{count} itens}}",
   "store/checkout.b2b.confirm": "Confirmar",
   "store/checkout.b2b.delete": "Excluir",
   "store/checkout.b2b.cancel": "Cancelar",
+  "store/checkout.b2b.show-more": "Mostrar mais",
+  "store/checkout.b2b.show-less": "Mostrar menos",
   "store/checkout.b2b.creditAvailable": "Crédito disponível",
   "store/checkout.b2b.noCreditAvailable": "Sem crédito disponível",
 
@@ -18,18 +22,18 @@
   "store/checkout.b2b.savedCarts.save-cart.success": "O carrinho foi salvo com sucesso",
   "store/checkout.b2b.savedCarts.save-cart.default.title": "Carrinho {date}",
   "store/checkout.b2b.savedCarts.use-cart.label": "Utilizar um carrinho salvo",
-  "store/checkout.b2b.savedCarts.use-cart.empty": "Não há carrinhos salvos para a sua organização e centro de custos.",
+  "store/checkout.b2b.savedCarts.use-cart.empty": "Não há carrinhos salvos para a sua organização e centro de custo.",
   "store/checkout.b2b.savedCarts.use-cart.select.label": "Utilizar este carrinho",
   "store/checkout.b2b.savedCarts.use-cart.inUse.label": "Carrinho em uso neste momento",
   "store/checkout.b2b.savedCarts.save-cart.current": "Salvar carrinho na mesma negociação",
   "store/checkout.b2b.savedCarts.save-cart.new": "Salvar carrinho em nova negociação",
 
-  "store/checkout.b2b.totalizer.shippingAddress": "Endereço de Entrega",
+  "store/checkout.b2b.totalizer.boxTitle": "Cabeçalho do Pedido",
+  "store/checkout.b2b.totalizer.shippingAddress": "Entrega",
   "store/checkout.b2b.totalizer.billingAddress": "Endereço de Cobrança",
   "store/checkout.b2b.totalizer.editAddress": "Editar",
   "store/checkout.b2b.totalizer.shippingOption": "Opção de Entrega",
   "store/checkout.b2b.totalizer.shippingOption.empty": "Nenhuma opção de entrega disponível",
-  "store/checkout.b2b.totalizer.shippingOption.packages": "{packages} pacotes",
   "store/checkout.b2b.totalizer.emptyAddress": "Endereço não informado",
   "store/checkout.b2b.totalizer.total": "Total",
   "store/checkout.b2b.totalizer.paymentMethods": "Forma de Pagamento",
@@ -39,10 +43,14 @@
   "store/checkout.b2b.totalizer.companyName": "Organização",
   "store/checkout.b2b.totalizer.buyerName": "Comprador",
   "store/checkout.b2b.totalizer.quotationDiscount": "Valor do desconto originado por uma cotação. Eventuais descontos esperados pela forma de pagamento não são cumulativos.",
+  "store/checkout.b2b.totalizer.quotationSurplus": "Valor do superávit originado por uma cotação. Eventuais descontos esperados pela forma de pagamento não serão considerados.",
+  "store/checkout.b2b.totalizer.quotationTotalItems": "Valor originado por uma cotação. Eventuais descontos esperados pela forma de pagamento não serão considerados.",
   "store/checkout.b2b.totalizer.salesRep": "Rep. de vendas:",
   "store/checkout.b2b.totalizer.salesAdm": "Adm. de vendas:",
   "store/checkout.b2b.totalizer.totalMargin": "Margem Total",
-  "store/checkout.b2b.totalizer.totalDiscount": "Desconto total (%)",
+  "store/checkout.b2b.totalizer.totalDiscount": "Desconto Total (%)",
+  "store/checkout.b2b.totalizer.surplus": "Superávit (%)",
+  "store/checkout.b2b.totalizer.totalSurplus": "Total do Superávit",
   "store/checkout.b2b.totalizer.tax": "Impostos",
 
   "store/checkout.b2b.column.name": "Nome",
@@ -65,12 +73,14 @@
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
   "store/checkout.b2b.button.placeOrder.error": "Erro ao processar pedido",
   "store/checkout.b2b.button.saveManualPrice": "Aplicar Preços",
-  "store/checkout.b2b.button.editManualPrice": "Editar todos",
+  "store/checkout.b2b.button.editManualPrice": "Editar preços",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Parar edição",
   "store/checkout.b2b.manualPrice.placeOrder": "Todos os preços foram atualizados com sucesso",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Erro ao atualizar os preços:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Preço atualizado",
+  "store/checkout.b2b.manualPrice.discount-exceeded": "O desconto ultrapassou o limite permitido",
+  "store/checkout.b2b.manualPrice.input.placeholder": "Digite um valor monetário",
 
   "store/checkout.b2b.search.placeholder": "Pesquisar por nome do SKU ou EAN",
   "store/checkout.b2b.search.products.error": "Erro ao carregar os produtos. Tente novamente mais tarde.",
@@ -82,5 +92,13 @@
   "store/checkout.b2b.search.products.EmptyCart": "Não é possível buscar no carrinho porque ele está vazio",
 
   "store/checkout.b2b.empty.cart": "O carrinho está vazio.",
-  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "A quantidade foi ajustada para o valor mínimo permitido para este item: "
+  "store/checkout.b2b.quantitySelector.changedMinimumQuantity": "A quantidade foi ajustada para o valor mínimo permitido para este item: ",
+
+  "store/checkout.b2b.cost-centers.label": "Centros de Custo",
+  "store/checkout.b2b.cost-centers.single.label": "Centro de Custo",
+  "store/checkout.b2b.cost-centers.not-empty.error": "Pelo menos um centro de custo deve ser selecionado",
+  "store/checkout.b2b.cost-centers.user-cost-center.default.info": "O centro de custo do usuário é pré-selecionado por padrão",
+  "store/checkout.b2b.cost-centers.multiple-orders.info": "Ao finalizar a compra, será criado um pedido distinto para cada centro de custo selecionado.",
+  "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} pedidos realizados com sucesso",
+  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Abrir confirmação do pedido em outra aba"
 }
