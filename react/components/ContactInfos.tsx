@@ -19,6 +19,7 @@ import {
 } from '../hooks'
 import { compareCostCenters, MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
+import { RepresentativeBalanceData } from './RepresentativeBalanceData'
 import { ShippingAddress } from './ShippingAddress'
 import { ShowMoreButton } from './ShowMoreButton'
 
@@ -283,6 +284,9 @@ export function ContactInfos() {
             <span className="t-mini">{phone}</span>
           </>
         )}
+        <div className="mt4">
+          <RepresentativeBalanceData />
+        </div>
       </>
     ),
   })
