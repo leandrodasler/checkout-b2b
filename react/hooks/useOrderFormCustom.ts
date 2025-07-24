@@ -64,6 +64,8 @@ export function useOrderFormCustom() {
       items: orderForm.items.map((item) => ({
         ...item,
         tax: data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
+        components: data?.items.find((i) => i.uniqueId === item.uniqueId)
+          ?.components,
       })),
       sellers: data?.sellers,
       paymentAddress,
