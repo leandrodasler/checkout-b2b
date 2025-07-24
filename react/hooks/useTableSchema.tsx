@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
@@ -47,6 +47,13 @@ export function useTableSchema({
     setSubtotal,
     setListedPrice,
   } = useCheckoutB2BContext()
+
+  const prevHasMarginRef = useRef(hasMargin)
+
+  useEffect(() => {
+    if (!hasMargin) return
+    prevHasMarginRef.current = hasMargin
+  }, [hasMargin])
 
   const [updatedPrices, setUpdatedPrices] = useState<Record<string, number>>({})
 
@@ -220,7 +227,7 @@ export function useTableSchema({
             )
           }),
         },
-        ...(hasMargin &&
+        ...((hasMargin || prevHasMarginRef) &&
           canSeeMargin && {
             listPrice: {
               width: 100,
@@ -246,8 +253,18 @@ export function useTableSchema({
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
           cellRenderer({ rowData }) {
+            const parentItem = orderForm.items.find(
+              (i) => i.id === rowData.parentItemId
+            )
+
             return (
-              <QuantitySelector item={rowData} disabled={rowData.__group} />
+              <QuantitySelector
+                item={{
+                  ...rowData,
+                  quantity: rowData.quantity * (parentItem?.quantity ?? 1),
+                }}
+                disabled={(rowData.__group ?? false) || rowData.__component}
+              />
             )
           },
         },
@@ -327,6 +344,7 @@ export function useTableSchema({
       expandedProducts,
       setExpandedProducts,
       orderForm.sellers,
+      orderForm.items,
       isEditing,
       discount,
       handlesNewPrice,
