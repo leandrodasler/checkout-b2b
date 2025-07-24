@@ -41,7 +41,7 @@ import {
 } from './hooks'
 import { queryClient } from './services'
 import './styles.css'
-import { CompleteOrderForm } from './typings'
+import { CompleteOrderForm, CustomItem } from './typings'
 import { messages, SEARCH_TYPE, welcome } from './utils'
 
 type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
@@ -393,8 +393,7 @@ function CheckoutB2B() {
               <div className="mt4 c-muted-2">
                 {formatMessage(messages.itemCount, {
                   count: filteredItems.reduce(
-                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                    (acc, item) => acc + item.quantity,
+                    (acc: number, item: CustomItem) => acc + item.quantity,
                     0
                   ),
                 })}
