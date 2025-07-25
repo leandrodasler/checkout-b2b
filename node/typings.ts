@@ -66,4 +66,15 @@ declare global {
     createdIn: string
     lastInteractionIn: string
   }
+
+  type AppSettings = {
+    salesRepresentative: number
+    salesManager: number
+    salesAdmin: number
+    rolesAllowedToSeeMargin: string[]
+    representativeBalance?: {
+      enabled: boolean
+      openingBalance?: number
+    }
+  }
 }

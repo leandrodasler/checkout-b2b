@@ -2,13 +2,14 @@ import { ServiceContext } from '@vtex/api'
 
 import { Clients } from '../../clients'
 import { APP_ID } from '../../utils'
+import { getAppSettings } from '../queries/getAppSettings'
 
 export const saveRepresentativeBalanceSettings = async (
   _: unknown,
   { enabled, openingBalance }: { enabled: boolean; openingBalance: number },
   context: ServiceContext<Clients>
 ) => {
-  const settings = await context.clients.apps.getAppSettings(APP_ID)
+  const settings = await getAppSettings(null, null, context)
 
   const updatedRepresentativeBalance = {
     ...settings.representativeBalance,
