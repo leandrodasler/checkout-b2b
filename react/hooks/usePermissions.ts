@@ -11,7 +11,7 @@ interface AppSettings {
   salesRepresentative: number
   salesManager: number
   salesAdmin: number
-  rolesAllowedToSeeMargin?: string[]
+  rolesAllowedToSeeMargin: string[]
   representativeBalance: {
     enabled: boolean
   }
@@ -55,7 +55,7 @@ export function usePermissions() {
   }, [appSettings, role])
 
   const canSeeMargin = useMemo(
-    () => appSettings?.rolesAllowedToSeeMargin?.includes(role) ?? false,
+    () => appSettings?.rolesAllowedToSeeMargin.includes(role) ?? false,
     [appSettings, role]
   )
 

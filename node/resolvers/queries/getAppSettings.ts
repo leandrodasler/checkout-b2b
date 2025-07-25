@@ -24,13 +24,13 @@ export const getAppSettings = async (
     : DEFAULT_ROLES_ALLOWED_TO_SEE_MARGIN
 
   const representativeBalance = {
+    ...settings.representativeBalance,
     enabled: settings.representativeBalance?.enabled ?? false,
-    openingBalance: settings.representativeBalance?.enabled ?? 0,
   }
 
   return {
     ...settings,
     rolesAllowedToSeeMargin,
     representativeBalance,
-  }
+  } as AppSettings
 }
