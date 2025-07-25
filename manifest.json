@@ -140,7 +140,7 @@
     "availableCountries": ["*"]
   },
   "settingsSchema": {
-    "title": "Configurações de Checkout B2B",
+    "title": "Checkout B2B Settings",
     "type": "object",
     "properties": {
       "salesRepresentative": {
@@ -197,6 +197,23 @@
           "customer-buyer": {
             "type": "boolean",
             "title": "Customer Buyer"
+          }
+        }
+      },
+      "representativeBalance": {
+        "title": "Representative Balance Settings",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enable Representative Balance",
+            "description": "Enable the Representative Balance feature in the store",
+            "default": false
+          },
+          "openingBalance": {
+            "type": "number",
+            "title": "Opening Balance",
+            "description": "The monetary value of the representative opening balance"
           }
         }
       }

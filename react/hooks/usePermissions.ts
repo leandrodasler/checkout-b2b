@@ -12,6 +12,9 @@ interface AppSettings {
   salesManager: number
   salesAdmin: number
   rolesAllowedToSeeMargin?: string[]
+  representativeBalance: {
+    enabled: boolean
+  }
 }
 
 export function usePermissions() {
@@ -19,7 +22,7 @@ export function usePermissions() {
     ssr: false,
   })
 
-  const appSettings = data?.getAppSettings as AppSettings
+  const appSettings = data?.getAppSettings as AppSettings | undefined
 
   const { organization } = useOrganization()
   const { role } = organization
@@ -56,5 +59,13 @@ export function usePermissions() {
     [appSettings, role]
   )
 
-  return { isSalesUser, maximumDiscount, canSeeMargin }
+  const representativeBalanceEnabled =
+    appSettings?.representativeBalance.enabled ?? false
+
+  return {
+    isSalesUser,
+    maximumDiscount,
+    canSeeMargin,
+    representativeBalanceEnabled,
+  }
 }
