@@ -10,6 +10,7 @@ import {
   SCHEMA_VERSION,
 } from './mdSchema'
 
+export * from './constants'
 export * from './mdSchema'
 
 export async function getSessionData(context: ServiceContext<Clients>) {

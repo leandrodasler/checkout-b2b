@@ -1,0 +1,12 @@
+query saveRepresentativeBalanceSettings(
+  $enabled: Boolean!
+  $openingBalance: Float!
+) {
+  saveRepresentativeBalanceSettings(
+    enabled: $enabled
+    openingBalance: $openingBalance
+  ) @context(provider: "ssesandbox04.checkout-b2b") {
+    enabled
+    openingBalance
+  }
+}
