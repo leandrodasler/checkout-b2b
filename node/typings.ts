@@ -3,7 +3,14 @@ import { OrderForm as OrderFormType } from '@vtex/clients'
 import { Address, PaymentData } from 'vtex.checkout-graphql'
 
 declare global {
-  type OrderForm = OrderFormType & { paymentData: PaymentData }
+  type OrderForm = Omit<OrderFormType, 'items'> & {
+    paymentData: PaymentData
+    items: Array<
+      OrderFormType['items'][number] & {
+        manualPrice?: number
+      }
+    >
+  }
 
   type TransactionBody = {
     referenceId: string

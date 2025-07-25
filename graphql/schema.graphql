@@ -85,6 +85,7 @@ type Mutation {
   saveRepresentativeBalance(
     email: String
     balance: Float!
+    orderGroup: String!
   ): RepresentativeBalance!
 
   saveRepresentativeBalanceSettings(
