@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { OrderItems } from 'vtex.order-items'
@@ -6,14 +6,14 @@ import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
 
 import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { CellWrapper } from '../components/CellWrapper'
+import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
 import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
-import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
-import { CellWrapper } from '../components/CellWrapper'
 
 const { useOrderItems } = OrderItems
 
@@ -47,6 +47,13 @@ export function useTableSchema({
     setSubtotal,
     setListedPrice,
   } = useCheckoutB2BContext()
+
+  const prevHasMarginRef = useRef(hasMargin)
+
+  useEffect(() => {
+    if (!hasMargin) return
+    prevHasMarginRef.current = hasMargin
+  }, [hasMargin])
 
   const [updatedPrices, setUpdatedPrices] = useState<Record<string, number>>({})
 
@@ -133,9 +140,11 @@ export function useTableSchema({
             const { name, skuName, __group: isParent } = rowData
             const displayName = isParent
               ? name
-              : normalizeString(skuName).includes(normalizeString(name))
-              ? skuName
-              : `${name} - ${skuName}`
+              : skuName
+              ? normalizeString(skuName).includes(normalizeString(name))
+                ? skuName
+                : `${name} - ${skuName}`
+              : name
 
             return (
               <TruncatedText
@@ -218,7 +227,7 @@ export function useTableSchema({
             )
           }),
         },
-        ...(hasMargin &&
+        ...((hasMargin || prevHasMarginRef) &&
           canSeeMargin && {
             listPrice: {
               width: 100,
@@ -244,8 +253,18 @@ export function useTableSchema({
           width: 110,
           title: <div className="tc">{formatMessage(messages.quantity)}</div>,
           cellRenderer({ rowData }) {
+            const parentItem = orderForm.items.find(
+              (i) => i.id === rowData.parentItemId
+            )
+
             return (
-              <QuantitySelector item={rowData} disabled={rowData.__group} />
+              <QuantitySelector
+                item={{
+                  ...rowData,
+                  quantity: rowData.quantity * (parentItem?.quantity ?? 1),
+                }}
+                disabled={(rowData.__group ?? false) || rowData.__component}
+              />
             )
           },
         },
@@ -269,6 +288,7 @@ export function useTableSchema({
             }),
           },
         }),
+
         priceDefinition: {
           width: 120,
           title: formatMessage(messages.totalPrice),
@@ -324,6 +344,7 @@ export function useTableSchema({
       expandedProducts,
       setExpandedProducts,
       orderForm.sellers,
+      orderForm.items,
       isEditing,
       discount,
       handlesNewPrice,

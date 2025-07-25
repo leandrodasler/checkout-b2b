@@ -17,6 +17,7 @@ function normalizeTax(item: CustomItem): CustomItem {
   return {
     ...item,
     tax: item.tax ?? undefined,
+    components: item.components ?? undefined,
   }
 }
 
@@ -72,7 +73,26 @@ export function useGroupedProducts({
       result.push(groupedItem)
 
       if (expandedProducts.includes(productId)) {
-        result.push(...groupItems)
+        for (const item of groupItems) {
+          const enrichedItem = normalizeTax(item)
+
+          result.push(enrichedItem)
+
+          if (enrichedItem.components && enrichedItem.components.length > 0) {
+            for (const component of enrichedItem.components) {
+              const normalizedComponent: CustomItem = {
+                ...component,
+                id: `${enrichedItem.id}`,
+                __component: true,
+                parentItemId: enrichedItem.id,
+                tax: component.tax ?? undefined,
+                components: component.components ?? undefined,
+              }
+
+              result.push(normalizedComponent)
+            }
+          }
+        }
       }
     }
 

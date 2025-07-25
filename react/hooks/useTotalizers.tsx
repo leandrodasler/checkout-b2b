@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { ShippingSla } from 'vtex.store-graphql'
@@ -41,6 +41,12 @@ export function useTotalizers() {
   )
 
   const { totalMargin } = useTotalMargin()
+  const prevMarginRef = useRef(totalMargin)
+
+  useEffect(() => {
+    if (!totalMargin) return
+    prevMarginRef.current = totalMargin
+  }, [totalMargin])
 
   const { data: taxes } = useTaxes()
 
@@ -97,8 +103,8 @@ export function useTotalizers() {
 
   const totalDiscount = Math.round(percentualDiscount + discountApplied)
 
-  const hasMultipleCostCenters =
-    (Object.keys(deliveryOptionsByCostCenter).length ?? 0) > 1
+  const costCenterCount = Object.keys(deliveryOptionsByCostCenter).length ?? 0
+  const hasMultipleCostCenters = costCenterCount > 1
 
   const costCenterDeliveries = Object.entries(
     deliveryOptionsByCostCenter
@@ -204,12 +210,14 @@ export function useTotalizers() {
         </div>
       ),
     })),
-    ...(totalMargin
+    ...(totalMargin || prevMarginRef.current
       ? [
           {
             label: formatMessage(messages.totalMargin),
             value: (
-              <TruncatedText text={<FormattedPrice value={totalMargin} />} />
+              <TruncatedText
+                text={<FormattedPrice value={prevMarginRef.current} />}
+              />
             ),
           },
         ]
@@ -219,7 +227,9 @@ export function useTotalizers() {
           {
             label: shippingTotalizer.name,
             value: loadingGetShipping ? (
-              <TotalizerSpinner />
+              <TotalizerSpinner
+                size={costCenterCount === 1 ? 18 : costCenterCount * 24}
+              />
             ) : (
               <TotalizerTable multiple={hasMultipleCostCenters}>
                 {costCenterDeliveries.map(([costCenter, seller]) => {
@@ -243,24 +253,27 @@ export function useTotalizers() {
       : []),
     {
       label: formatMessage(messages.total),
-      value: loadingGetShipping ? (
-        <TotalizerSpinner />
-      ) : (
-        <TotalizerTable multiple={hasMultipleCostCenters}>
-          {costCenterDeliveries.map(([costCenter, seller]) => {
-            const costCenterShippingValue = getCostCenterDeliveryPrice(seller)
+      value:
+        loadingGetShipping && costCenterCount ? (
+          <TotalizerSpinner
+            size={costCenterCount === 1 ? 18 : costCenterCount * 24}
+          />
+        ) : (
+          <TotalizerTable multiple={hasMultipleCostCenters}>
+            {costCenterDeliveries.map(([costCenter, seller]) => {
+              const costCenterShippingValue = getCostCenterDeliveryPrice(seller)
 
-            return (
-              <tr key={costCenter}>
-                {hasMultipleCostCenters && <th align="left">{costCenter}</th>}
-                <td>
-                  {formatPrice((totalItems + costCenterShippingValue) / 100)}
-                </td>
-              </tr>
-            )
-          })}
-        </TotalizerTable>
-      ),
+              return (
+                <tr key={costCenter}>
+                  {hasMultipleCostCenters && <th align="left">{costCenter}</th>}
+                  <td>
+                    {formatPrice((totalItems + costCenterShippingValue) / 100)}
+                  </td>
+                </tr>
+              )
+            })}
+          </TotalizerTable>
+        ),
     },
   ]
 }

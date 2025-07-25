@@ -41,7 +41,11 @@ export type ApiResponse = {
 }
 
 export type CustomItem = OrderFormType['items'][number] & { tax?: number } & {
+  tax?: number
   __group?: boolean
+  components?: CustomItem[]
+  __component?: true
+  parentItemId?: string
 }
 
 export type CompleteOrderFormData = ApiResponse &
