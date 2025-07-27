@@ -65,11 +65,13 @@ export const saveRepresentativeBalance = async (
     schema: SCHEMA_VERSION,
   })
 
-  const updatedRepresentativeBalance = await masterdata.getDocument({
-    dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
-    fields: REPRESENTATIVE_BALANCE_FIELDS,
-    id: representativeBalanceId,
-  })
+  const updatedRepresentativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(
+    {
+      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+      fields: REPRESENTATIVE_BALANCE_FIELDS,
+      id: representativeBalanceId,
+    }
+  )
 
   return updatedRepresentativeBalance
 }

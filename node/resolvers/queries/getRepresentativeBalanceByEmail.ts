@@ -8,6 +8,7 @@ import {
   saveSchemas,
   SCHEMA_VERSION,
 } from '../../utils'
+import { getAppSettings } from './getAppSettings'
 
 export const getRepresentativeBalanceByEmail = async (
   _: unknown,
@@ -19,7 +20,7 @@ export const getRepresentativeBalanceByEmail = async (
   const inputEmail = await getRepresentativeEmail(context, email)
   const { masterdata } = context.clients
 
-  const [
+  let [
     representativeBalance,
   ] = await masterdata.searchDocuments<RepresentativeBalance | null>({
     dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
@@ -28,6 +29,29 @@ export const getRepresentativeBalanceByEmail = async (
     schema: SCHEMA_VERSION,
     where: `email=${inputEmail}`,
   })
+
+  if (!representativeBalance) {
+    const settings = await getAppSettings(null, null, context)
+    const openingBalance = settings.representativeBalance?.openingBalance ?? 0
+
+    const { DocumentId } = await masterdata.createDocument({
+      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+      fields: {
+        email: inputEmail,
+        balance: openingBalance,
+      },
+
+      schema: SCHEMA_VERSION,
+    })
+
+    representativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(
+      {
+        dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+        fields: REPRESENTATIVE_BALANCE_FIELDS,
+        id: DocumentId,
+      }
+    )
+  }
 
   return representativeBalance
 }
