@@ -3,8 +3,14 @@ import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
-import { IconArrowDown, IconArrowUp, InputCurrency } from 'vtex.styleguide'
+import {
+  IconArrowDown,
+  IconArrowUp,
+  InputCurrency,
+  Tooltip,
+} from 'vtex.styleguide'
 
+import { useFormatPrice } from '../hooks'
 import { messages } from '../utils'
 
 interface ManualPriceProps {
@@ -20,6 +26,7 @@ export default function ManualPrice({
   sliderValue,
   onUpdatePrice,
 }: ManualPriceProps) {
+  const formatPrice = useFormatPrice()
   const { formatMessage } = useIntl()
 
   const {
@@ -28,7 +35,8 @@ export default function ManualPrice({
 
   const originalPrice = (rowData.sellingPrice ?? 0) / 100
   const [customPrice, setCustomPrice] = useState<number>(originalPrice)
-  const discountedPrice = (rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)
+  const discountedPrice =
+    ((rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)) / 100
 
   useEffect(() => {
     if (!isEditing || sliderValue === 0) {
@@ -50,37 +58,50 @@ export default function ManualPrice({
     }
   }
 
+  const isEditingAvailable = isEditing && sliderValue === 0
+
   const showChangeIndicator = customPrice !== originalPrice && sliderValue === 0
   const priceIncreased = customPrice > originalPrice
 
+  const tooltipLabel = isEditingAvailable ? customPrice : discountedPrice
+
   // TODO: fix the logic to handle indicator properly
   return (
-    <div className="flex items-center bg-red">
-      {isEditing && sliderValue === 0 ? (
-        <div>
-          <InputCurrency
-            size="small"
-            placeholder={formatMessage(messages.manualPricePlaceholder)}
-            locale={locale}
-            currencyCode={currency}
-            value={customPrice}
-            onChange={handleInputCurrencyChange}
+    <Tooltip label={formatPrice(tooltipLabel)}>
+      <div className="flex items-center w-100">
+        {isEditingAvailable ? (
+          <div
+            style={{
+              transform: 'scale(0.8)',
+              transformOrigin: 'left',
+            }}
+          >
+            <div style={{ width: showChangeIndicator ? '120%' : '100%' }}>
+              <InputCurrency
+                size="small"
+                placeholder={formatMessage(messages.manualPricePlaceholder)}
+                locale={locale}
+                currencyCode={currency}
+                value={customPrice}
+                onChange={handleInputCurrencyChange}
+              />
+            </div>
+          </div>
+        ) : (
+          <FormattedPrice
+            value={sliderValue > 0 ? discountedPrice : customPrice || 0}
           />
-        </div>
-      ) : (
-        <FormattedPrice
-          value={sliderValue > 0 ? discountedPrice / 100 : customPrice || 0}
-        />
-      )}
-      {showChangeIndicator && (
-        <span className={`ml3 ${priceIncreased ? 'c-danger' : 'c-success'}`}>
-          {priceIncreased ? (
-            <IconArrowUp size={12} />
-          ) : (
-            <IconArrowDown size={12} />
-          )}
-        </span>
-      )}
-    </div>
+        )}
+        {showChangeIndicator && (
+          <span className={`ml3 ${priceIncreased ? 'c-danger' : 'c-success'}`}>
+            {priceIncreased ? (
+              <IconArrowUp size={12} />
+            ) : (
+              <IconArrowDown size={12} />
+            )}
+          </span>
+        )}
+      </div>
+    </Tooltip>
   )
 }
