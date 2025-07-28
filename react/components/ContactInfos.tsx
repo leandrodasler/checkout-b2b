@@ -14,6 +14,7 @@ import {
   useCostCenters,
   useOrderFormCustom,
   useOrganization,
+  usePermissions,
   useToast,
   useUpdateShippingAddress,
 } from '../hooks'
@@ -30,6 +31,8 @@ export function ContactInfos() {
   const {
     orderForm: { clientProfileData, shipping },
   } = useOrderFormCustom()
+
+  const { representativeBalanceEnabled } = usePermissions()
 
   const selectedAddressId = shipping.selectedAddress?.addressId
 
@@ -284,9 +287,11 @@ export function ContactInfos() {
             <span className="t-mini">{phone}</span>
           </>
         )}
-        <div className="mt4">
-          <RepresentativeBalanceData />
-        </div>
+        {representativeBalanceEnabled && (
+          <div className="mt4">
+            <RepresentativeBalanceData />
+          </div>
+        )}
       </>
     ),
   })
