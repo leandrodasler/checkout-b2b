@@ -3,6 +3,8 @@ import { Mutation, MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import { getFirstInstallmentByPaymentSystem, getSessionData } from '../../utils'
+import { getAppSettings } from '../queries/getAppSettings'
+import { saveRepresentativeBalance } from './saveRepresentativeBalance'
 
 const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
 const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
@@ -23,7 +25,7 @@ export async function placeOrder(
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
   const { checkout, checkoutExtension } = context.clients
-  const initialOrderForm = await checkout.orderForm(orderFormId)
+  const initialOrderForm = (await checkout.orderForm(orderFormId)) as OrderForm
   const {
     items,
     marketingData,
@@ -178,6 +180,30 @@ export async function placeOrder(
 
     await checkoutExtension.setPayments(orderGroup, paymentsBody)
     await checkoutExtension.gatewayCallback(orderGroup)
+
+    const settings = await getAppSettings(null, null, context)
+
+    if (settings.representativeBalance?.enabled) {
+      const hasManualPrice = initialOrderForm.items?.some(
+        (item) => item.manualPrice && item.manualPrice !== item.price
+      )
+
+      if (hasManualPrice) {
+        const discountTotalizer = initialOrderForm.totalizers?.find(
+          (t) => t.id === 'Discounts'
+        )
+
+        const balanceDiff = (discountTotalizer?.value ?? 0) / 100
+
+        if (balanceDiff) {
+          await saveRepresentativeBalance(
+            null,
+            { balance: balanceDiff, orderGroup },
+            context
+          )
+        }
+      }
+    }
 
     return {
       orderGroup,

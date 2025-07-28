@@ -215,9 +215,7 @@ export function useTotalizers() {
           {
             label: formatMessage(messages.totalMargin),
             value: (
-              <TruncatedText
-                text={<FormattedPrice value={prevMarginRef.current} />}
-              />
+              <TruncatedText text={<FormattedPrice value={totalMargin} />} />
             ),
           },
         ]

@@ -17,11 +17,17 @@ type SavedCart {
   childrenQuantity: Int
 }
 
+type RepresentativeBalanceSettings {
+  enabled: Boolean!
+  openingBalance: Float
+}
+
 type AppSettings {
   salesRepresentative: Int!
   salesManager: Int!
   salesAdmin: Int!
-  rolesAllowedToSeeMargin: [String]
+  rolesAllowedToSeeMargin: [String]!
+  representativeBalance: RepresentativeBalanceSettings!
 }
 
 type B2BOrder {
@@ -39,16 +45,20 @@ input ItemsUpdatePriceInput {
 type RepresentativeBalance {
   id: ID!
   email: String!
-  balance: Int!
+  balance: Float!
   createdIn: String!
   lastInteractionIn: String!
 }
 
 type Query {
   getCart(id: ID!): SavedCart
+
   getSavedCarts(parentCartId: ID): [SavedCart!]!
+
   getAppSettings: AppSettings!
+
   getRepresentativeBalances: [RepresentativeBalance]!
+
   getRepresentativeBalanceByEmail(email: String): RepresentativeBalance
 }
 
@@ -74,6 +84,12 @@ type Mutation {
 
   saveRepresentativeBalance(
     email: String
-    balance: Int!
+    balance: Float!
+    orderGroup: String!
   ): RepresentativeBalance!
+
+  saveRepresentativeBalanceSettings(
+    enabled: Boolean!
+    openingBalance: Float
+  ): RepresentativeBalanceSettings!
 }
