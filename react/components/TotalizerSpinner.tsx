@@ -1,10 +1,12 @@
 import React from 'react'
 import { Spinner } from 'vtex.styleguide'
 
-export function TotalizerSpinner() {
+type Props = { size?: number }
+
+export function TotalizerSpinner({ size = 32 }: Props) {
   return (
     <div className="flex justify-center w-100">
-      <Spinner size={32} />
+      <Spinner size={size} />
     </div>
   )
 }
