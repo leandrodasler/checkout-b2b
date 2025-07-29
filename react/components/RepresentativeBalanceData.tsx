@@ -1,5 +1,5 @@
 import React from 'react'
-import { Spinner } from 'vtex.styleguide'
+import { Spinner, Tooltip } from 'vtex.styleguide'
 
 import { useFormatPrice, useOrderFormCustom } from '../hooks'
 import { useFetchRepresentativeBalance } from '../hooks/useFetchRepresentativeBalance'
@@ -8,8 +8,12 @@ export function RepresentativeBalanceData() {
   const formatPrice = useFormatPrice()
 
   const {
-    orderForm: { clientProfileData },
+    orderForm: { clientProfileData, totalizers = [] },
   } = useOrderFormCustom()
+
+  const discounts =
+    (totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0) /
+    100
 
   const email = clientProfileData?.email
 
@@ -21,6 +25,9 @@ export function RepresentativeBalanceData() {
     email,
   })
 
+  const finalBalance =
+    parseFloat((representativeBalance?.balance ?? 0).toFixed(2)) + discounts
+
   // TODO : i18n to be implemented
 
   if (!email) return null
@@ -31,9 +38,17 @@ export function RepresentativeBalanceData() {
   return (
     <span>
       Saldo disponível:{' '}
-      <b className="c-action-primary">
-        {formatPrice(representativeBalance.balance)}
-      </b>
+      <Tooltip
+        label={
+          <span>
+            Saldo inicial: <b>{formatPrice(representativeBalance.balance)}</b>
+            <br />
+            Alterações aplicadas: <b>{formatPrice(discounts)}</b>
+          </span>
+        }
+      >
+        <b className="c-action-primary">{formatPrice(finalBalance)}</b>
+      </Tooltip>
     </span>
   )
 }

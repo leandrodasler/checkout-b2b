@@ -287,7 +287,8 @@ export function ContactInfos() {
             <span className="t-mini">{phone}</span>
           </>
         )}
-        {representativeBalanceEnabled && (
+        {/* TODO: remove the '!' to apply correct logic when representative balance is enabled implemented */}
+        {!representativeBalanceEnabled && (
           <div className="mt4">
             <RepresentativeBalanceData />
           </div>

@@ -35,8 +35,14 @@ export default function ManualPrice({
 
   const originalPrice = (rowData.sellingPrice ?? 0) / 100
   const [customPrice, setCustomPrice] = useState<number>(originalPrice)
+
+  const price = (rowData.price ?? 0) / 100
+  const manualPrice = (rowData.manualPrice ?? 0) / 100
   const discountedPrice =
     ((rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)) / 100
+
+  const priceDefinition =
+    (rowData.priceDefinition?.calculatedSellingPrice ?? 0) / 100
 
   useEffect(() => {
     if (!isEditing || sliderValue === 0) {
@@ -60,48 +66,55 @@ export default function ManualPrice({
 
   const isEditingAvailable = isEditing && sliderValue === 0
 
-  const showChangeIndicator = customPrice !== originalPrice && sliderValue === 0
-  const priceIncreased = customPrice > originalPrice
+  const showChangeIndicator =
+    (isEditingAvailable && customPrice !== originalPrice) ||
+    (manualPrice !== 0 && manualPrice !== price) ||
+    price !== priceDefinition
 
-  const tooltipLabel = isEditingAvailable ? customPrice : discountedPrice
+  const priceIncreased = customPrice > originalPrice || manualPrice > price
 
-  // TODO: fix the logic to handle indicator properly
+  const difference = manualPrice ? price - manualPrice : price - priceDefinition
+
+  const tooltipLabel = `${difference > 0 ? '-' : '+'}${formatPrice(
+    Math.abs(isEditingAvailable ? price - customPrice : difference)
+  )}`
+
   return (
-    <Tooltip label={formatPrice(tooltipLabel)}>
-      <div className="flex items-center w-100">
-        {isEditingAvailable ? (
-          <div
-            style={{
-              transform: 'scale(0.8)',
-              transformOrigin: 'left',
-            }}
-          >
-            <div style={{ width: showChangeIndicator ? '120%' : '100%' }}>
-              <InputCurrency
-                size="small"
-                placeholder={formatMessage(messages.manualPricePlaceholder)}
-                locale={locale}
-                currencyCode={currency}
-                value={customPrice}
-                onChange={handleInputCurrencyChange}
-              />
-            </div>
+    <div className="flex items-center w-100">
+      {isEditingAvailable ? (
+        <div
+          style={{
+            transform: 'scale(0.8)',
+            transformOrigin: 'left',
+          }}
+        >
+          <div style={{ width: showChangeIndicator ? '120%' : '100%' }}>
+            <InputCurrency
+              size="small"
+              placeholder={formatMessage(messages.manualPricePlaceholder)}
+              locale={locale}
+              currencyCode={currency}
+              value={customPrice}
+              onChange={handleInputCurrencyChange}
+            />
           </div>
-        ) : (
-          <FormattedPrice
-            value={sliderValue > 0 ? discountedPrice : customPrice || 0}
-          />
-        )}
-        {showChangeIndicator && (
-          <span className={`ml3 ${priceIncreased ? 'c-danger' : 'c-success'}`}>
+        </div>
+      ) : (
+        <FormattedPrice
+          value={sliderValue > 0 ? discountedPrice : customPrice || 0}
+        />
+      )}
+      {showChangeIndicator && (
+        <Tooltip label={tooltipLabel}>
+          <span className={`ml3 ${priceIncreased ? 'c-success' : 'c-danger'}`}>
             {priceIncreased ? (
               <IconArrowUp size={12} />
             ) : (
               <IconArrowDown size={12} />
             )}
           </span>
-        )}
-      </div>
-    </Tooltip>
+        </Tooltip>
+      )}
+    </div>
   )
 }
