@@ -51,7 +51,9 @@ export function RepresentativeBalanceData() {
           </span>
         }
       >
-        <b className="c-action-primary">{formatPrice(finalBalance)}</b>
+        <b className={finalBalance < 0 ? 'c-danger' : 'c-action-primary'}>
+          {formatPrice(finalBalance)}
+        </b>
       </Tooltip>
     </span>
   )

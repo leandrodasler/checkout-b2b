@@ -14,8 +14,7 @@ export const useFetchRepresentativeBalance = ({
   const { data, loading, error, refetch } = useQuery(
     GET_REPRESENTATIVE_BALANCE_BY_EMAIL,
     {
-      // TODO: Remove this hardcoded email when the user is logged in
-      variables: { email: 'tiago.freire+sales-representative@cubos.io' },
+      variables: { email },
       skip,
       ssr: false,
     }
