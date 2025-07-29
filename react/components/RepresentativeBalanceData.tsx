@@ -1,10 +1,13 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Spinner, Tooltip } from 'vtex.styleguide'
 
 import { useFormatPrice, useOrderFormCustom } from '../hooks'
 import { useFetchRepresentativeBalance } from '../hooks/useFetchRepresentativeBalance'
+import { messages } from '../utils'
 
 export function RepresentativeBalanceData() {
+  const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
 
   const {
@@ -25,25 +28,26 @@ export function RepresentativeBalanceData() {
     email,
   })
 
+  if (!email) return null
+  if (loading) return <Spinner size={16} />
+  if (error) return <span>{formatMessage(messages.balanceError)}</span>
+  if (!representativeBalance)
+    return <span>{formatMessage(messages.noBalance)}</span>
+
   const finalBalance =
     parseFloat((representativeBalance?.balance ?? 0).toFixed(2)) + discounts
 
-  // TODO : i18n to be implemented
-
-  if (!email) return null
-  if (loading) return <Spinner size={16} />
-  if (error) return <span>Erro ao carregar saldo</span>
-  if (!representativeBalance) return <span>Nenhum saldo encontrado</span>
-
   return (
     <span>
-      Saldo disponível:{' '}
+      {formatMessage(messages.availableBalance)}:{' '}
       <Tooltip
         label={
           <span>
-            Saldo inicial: <b>{formatPrice(representativeBalance.balance)}</b>
+            {formatMessage(messages.initialBalance)}:{' '}
+            <b>{formatPrice(representativeBalance.balance)}</b>
             <br />
-            Alterações aplicadas: <b>{formatPrice(discounts)}</b>
+            {formatMessage(messages.discountChanges)}:{' '}
+            <b>{formatPrice(discounts)}</b>
           </span>
         }
       >
