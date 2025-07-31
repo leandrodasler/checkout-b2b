@@ -14,6 +14,10 @@ export function RepresentativeBalanceData() {
     orderForm: { clientProfileData, totalizers = [] },
   } = useOrderFormCustom()
 
+  const discounts =
+    (totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0) /
+    100
+
   const email = clientProfileData?.email
 
   const {
@@ -24,19 +28,14 @@ export function RepresentativeBalanceData() {
     email,
   })
 
-  const discounts =
-    (totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0) /
-    100
-
-  const { balance } = representativeBalance
-
   if (!email) return null
   if (loading) return <Spinner size={16} />
   if (error) return <span>{formatMessage(messages.balanceError)}</span>
   if (!representativeBalance)
     return <span>{formatMessage(messages.noBalance)}</span>
 
-  const finalBalance = parseFloat(balance.toFixed(2)) + discounts
+  const finalBalance =
+    parseFloat((representativeBalance?.balance ?? 0).toFixed(2)) + discounts
 
   return (
     <span>
