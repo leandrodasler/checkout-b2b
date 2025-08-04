@@ -48,22 +48,23 @@ export function useManualPrice({
 
   const priceDiff = canEditPrice
     ? basePrice - inputPrice
+    : sliderValue > 0
+    ? basePrice - discountedPrice
     : savedManualPrice
     ? basePrice - savedManualPrice
     : basePrice - calculatedPrice
 
   const showChangeIndicator =
+    (sliderValue > 0 && discountedPrice !== originalPrice) ||
     (canEditPrice && inputPrice !== originalPrice) ||
     (savedManualPrice !== 0 && savedManualPrice !== basePrice) ||
     basePrice !== calculatedPrice
 
   const isPriceIncreased =
-    (canEditPrice && inputPrice > originalPrice) || savedManualPrice > basePrice
+    (canEditPrice && inputPrice > basePrice) || savedManualPrice > basePrice
 
-  const displayPrice = sliderValue > 0 ? discountedPrice : inputPrice || 0
 
   return {
-    displayPrice,
     inputPrice,
     handleInputChange,
     tooltipLabelValue: priceDiff,

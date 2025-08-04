@@ -33,8 +33,13 @@ export default function ManualPrice({
     culture: { locale, currency },
   } = useRuntime()
 
+
+  const discountedPrice =
+    ((rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)) / 100
+  const displayPrice = sliderValue > 0 ? discountedPrice : discountedPrice || 0
+
+
   const {
-    displayPrice,
     inputPrice,
     handleInputChange,
     tooltipLabelValue,
