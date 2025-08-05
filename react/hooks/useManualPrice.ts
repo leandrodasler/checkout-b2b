@@ -63,7 +63,6 @@ export function useManualPrice({
   const isPriceIncreased =
     (canEditPrice && inputPrice > basePrice) || savedManualPrice > basePrice
 
-
   return {
     inputPrice,
     handleInputChange,
