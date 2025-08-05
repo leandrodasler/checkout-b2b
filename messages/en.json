@@ -100,5 +100,11 @@
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "The user cost center is pre-selected by default",
   "store/checkout.b2b.cost-centers.multiple-orders.info": "Upon completing the purchase, a separate order will be created for each selected cost center.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} orders placed successfully",
-  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab"
+  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab",
+
+  "store/checkout.b2b.representative-balance.available-balance.label": "Available balance",
+  "store/checkout.b2b.representative-balance.initial-balance.label": "Initial balance",
+  "store/checkout.b2b.representative-balance.discount-changes.label": "Applied changes",
+  "store/checkout.b2b.representative-balance.no-balance.fallback": "No balance found",
+  "store/checkout.b2b.representative-balance.error-message.label": "Error loading balance"
 }
