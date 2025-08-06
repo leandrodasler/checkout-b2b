@@ -1,0 +1,9 @@
+mutation SaveRepresentativeBalance($balance: Int!) {
+  saveRepresentativeBalance(balance: $balance) {
+    id
+    email
+    balance
+    createdIn
+    lastInteractionIn
+  }
+}

@@ -82,6 +82,7 @@ declare global {
     representativeBalance?: {
       enabled: boolean
       openingBalance?: number
+      allowNegativeBalance?: boolean
     }
   }
 }

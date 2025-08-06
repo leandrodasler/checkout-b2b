@@ -1,0 +1,9 @@
+query GetRepresentativeBalances {
+  getRepresentativeBalances {
+    id
+    email
+    balance
+    createdIn
+    lastInteractionIn
+  }
+}

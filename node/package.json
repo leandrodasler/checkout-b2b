@@ -9,7 +9,7 @@
     "@types/jest": "^24.0.18",
     "@types/node": "^20.0.0",
     "@types/ramda": "types/npm-ramda#dist",
-    "@vtex/api": "6.49.6",
+    "@vtex/api": "6.48.0",
     "@vtex/test-tools": "^1.0.0",
     "@vtex/tsconfig": "^0.5.6",
     "ssesandbox04.checkout-b2b": "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.42/public/@types/ssesandbox04.checkout-b2b",
