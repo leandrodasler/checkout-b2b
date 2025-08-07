@@ -17,61 +17,82 @@ export const saveRepresentativeBalance = async (
     email,
     balance,
     orderGroup,
-  }: { email?: string; balance: number; orderGroup: string },
+    overwrite,
+  }: {
+    email?: string
+    balance: number
+    orderGroup: string
+    overwrite?: boolean
+  },
   context: ServiceContext<Clients>
 ) => {
-  await saveSchemas(context)
+  try {
+    await saveSchemas(context)
 
-  const inputEmail = await getRepresentativeEmail(context, email)
+    const inputEmail = await getRepresentativeEmail(context, email)
+    const { masterdata } = context.clients
 
-  const { masterdata } = context.clients
+    const representativeBalance = await getRepresentativeBalanceByEmail(
+      null,
+      { email: inputEmail },
+      context
+    )
 
-  const representativeBalance = await getRepresentativeBalanceByEmail(
-    null,
-    { email: inputEmail },
-    context
-  )
+    const oldBalance = representativeBalance?.balance ?? 0
+    const newBalance = overwrite ? balance : oldBalance + balance
+    let representativeBalanceId = representativeBalance?.id
 
-  const oldBalance = representativeBalance?.balance ?? 0
-  const newBalance = oldBalance + balance
-  let representativeBalanceId = representativeBalance?.id
+    // eslint-disable-next-line no-console
+    console.log('Inputs:', {
+      email: inputEmail,
+      balance,
+      orderGroup,
+      overwrite,
+    })
+    // eslint-disable-next-line no-console
+    console.log('Old balance:', oldBalance, 'New balance:', newBalance)
 
-  if (balance) {
-    const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
-      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+    // Use checagem correta para 0
+    if (typeof balance === 'number') {
+      const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
+        dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+        fields: {
+          email: inputEmail,
+          balance: newBalance,
+        },
+        schema: SCHEMA_VERSION,
+        id: representativeBalance?.id,
+      })
+
+      representativeBalanceId = DocumentId
+    }
+
+    if (!representativeBalanceId) {
+      throw new NotFoundError('representative-balance-not-found')
+    }
+
+    await masterdata.createDocument({
+      dataEntity: REPRESENTATIVE_BALANCE_TRANSACTION_ENTITY,
       fields: {
         email: inputEmail,
-        balance: newBalance,
+        oldBalance,
+        newBalance,
+        orderGroup,
       },
       schema: SCHEMA_VERSION,
-      id: representativeBalance?.id,
     })
 
-    representativeBalanceId = DocumentId
+    const updatedRepresentativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(
+      {
+        dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+        fields: REPRESENTATIVE_BALANCE_FIELDS,
+        id: representativeBalanceId,
+      }
+    )
+
+    return updatedRepresentativeBalance
+  } catch (error) {
+    console.error('Erro saveRepresentativeBalance:', error)
+    throw error
   }
-
-  if (!representativeBalanceId) {
-    throw new NotFoundError('representative-balance-not-found')
-  }
-
-  await masterdata.createDocument({
-    dataEntity: REPRESENTATIVE_BALANCE_TRANSACTION_ENTITY,
-    fields: {
-      email: inputEmail,
-      oldBalance,
-      newBalance,
-      orderGroup,
-    },
-    schema: SCHEMA_VERSION,
-  })
-
-  const updatedRepresentativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(
-    {
-      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
-      fields: REPRESENTATIVE_BALANCE_FIELDS,
-      id: representativeBalanceId,
-    }
-  )
-
-  return updatedRepresentativeBalance
 }

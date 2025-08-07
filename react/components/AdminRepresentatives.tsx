@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-apollo'
-import { Button, Input, Table } from 'vtex.styleguide'
+import { useMutation, useQuery } from 'react-apollo'
+import { useRuntime } from 'vtex.render-runtime'
+import { Button, InputCurrency, Table } from 'vtex.styleguide'
 
 import GET_REPRESENTATIVE_BALANCES from '../graphql/getRepresentativeBalances.graphql'
+import SAVE_REPRESENTATIVE_BALANCE from '../graphql/SaveRepresentativeBalance.graphql'
 
 type RepresentativeBalance = {
   id: string
@@ -13,7 +15,16 @@ type RepresentativeBalance = {
 }
 
 const RepresentativeBalancesTable = () => {
-  const { data, loading, error } = useQuery(GET_REPRESENTATIVE_BALANCES)
+  const { data, loading, error, refetch } = useQuery(
+    GET_REPRESENTATIVE_BALANCES
+  )
+
+  const {
+    culture: { currency },
+  } = useRuntime()
+
+  const [saveBalance] = useMutation(SAVE_REPRESENTATIVE_BALANCE)
+
   const [representatives, setRepresentatives] = useState<
     RepresentativeBalance[]
   >([])
@@ -24,19 +35,16 @@ const RepresentativeBalancesTable = () => {
   )
 
   useEffect(() => {
-    if (!data?.getRepresentativeBalances) {
-      return
-    }
+    if (!data?.getRepresentativeBalances) return
 
     setRepresentatives(data.getRepresentativeBalances)
 
-    // Inicializa saldos editáveis com valores atuais
-    const initialBalances: Record<string, number> = {}
+    const initial: Record<string, number> = {}
 
     data.getRepresentativeBalances.forEach((rep: RepresentativeBalance) => {
-      initialBalances[rep.id] = rep.balance
+      initial[rep.id] = rep.balance
     })
-    setEditedBalances(initialBalances)
+    setEditedBalances(initial)
   }, [data])
 
   const handleBalanceChange = (id: string, value: string) => {
@@ -48,18 +56,38 @@ const RepresentativeBalancesTable = () => {
     })
   }
 
-  const handleSave = () => {
-    // Aqui você pode fazer a mutation para salvar os saldos alterados
-    // eslint-disable-next-line no-console
-    console.log('Valores salvos:', editedBalances)
-    setIsEditing(false)
+  const handleSave = async () => {
+    const updates = representatives.map(async (rep) => {
+      const newBalance = editedBalances[rep.id]
+
+      if (rep.balance !== newBalance) {
+        try {
+          await saveBalance({
+            variables: {
+              email: rep.email,
+              balance: newBalance,
+              orderGroup: 'edição-tabela',
+              overwrite: true,
+            },
+          })
+        } catch (updateError) {
+          console.error(`Erro ao atualizar ${rep.email}:`, updateError)
+        }
+      }
+    })
+
+    try {
+      await Promise.all(updates)
+      setIsEditing(false)
+      refetch()
+    } catch (err) {
+      console.error('Erro ao salvar alterações:', err)
+    }
   }
 
   const schema = {
     properties: {
-      email: {
-        title: 'Email',
-      },
+      email: { title: 'Email' },
       balance: {
         title: 'Saldo (R$)',
         cellRenderer: function BalanceCellRenderer({
@@ -70,9 +98,10 @@ const RepresentativeBalancesTable = () => {
           rowData: RepresentativeBalance
         }) {
           return isEditing ? (
-            <Input
+            <InputCurrency
               size="small"
               value={editedBalances[rowData.id]?.toString() ?? ''}
+              currencyCode={currency}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleBalanceChange(rowData.id, e.target.value)
               }
@@ -94,7 +123,7 @@ const RepresentativeBalancesTable = () => {
       },
       lastInteractionIn: {
         title: 'Última interação',
-        cellRenderer: function LastInteractionInCellRenderer({
+        cellRenderer: function LastInteractionCellRenderer({
           cellData,
         }: {
           cellData: string
