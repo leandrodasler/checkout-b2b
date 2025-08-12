@@ -100,5 +100,7 @@
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "The user cost center is pre-selected by default",
   "store/checkout.b2b.cost-centers.multiple-orders.info": "Upon completing the purchase, a separate order will be created for each selected cost center.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} orders placed successfully",
-  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab"
+  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab",
+
+  "admin/representativebalances.title": "Saldos de Representantes"
 }

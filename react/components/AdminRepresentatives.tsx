@@ -47,8 +47,9 @@ const RepresentativeBalancesTable = () => {
     setEditedBalances(initial)
   }, [data])
 
-  const handleBalanceChange = (id: string, value: string) => {
-    const numericValue = parseFloat(value.replace(',', '.'))
+  const handleBalanceChange = (id: string, value: string | number) => {
+    const stringValue = String(value)
+    const numericValue = parseFloat(stringValue.replace(',', '.'))
 
     setEditedBalances({
       ...editedBalances,

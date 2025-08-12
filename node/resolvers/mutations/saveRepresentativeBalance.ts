@@ -42,17 +42,6 @@ export const saveRepresentativeBalance = async (
     const newBalance = overwrite ? balance : oldBalance + balance
     let representativeBalanceId = representativeBalance?.id
 
-    // eslint-disable-next-line no-console
-    console.log('Inputs:', {
-      email: inputEmail,
-      balance,
-      orderGroup,
-      overwrite,
-    })
-    // eslint-disable-next-line no-console
-    console.log('Old balance:', oldBalance, 'New balance:', newBalance)
-
-    // Use checagem correta para 0
     if (typeof balance === 'number') {
       const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
         dataEntity: REPRESENTATIVE_BALANCE_ENTITY,

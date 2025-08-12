@@ -14,6 +14,7 @@ interface AppSettings {
   rolesAllowedToSeeMargin: string[]
   representativeBalance: {
     enabled: boolean
+    allowNegativeBalance: boolean
   }
 }
 
@@ -62,10 +63,14 @@ export function usePermissions() {
   const representativeBalanceEnabled =
     appSettings?.representativeBalance.enabled ?? false
 
+  const allowNegativeBalance =
+    appSettings?.representativeBalance.allowNegativeBalance ?? false
+
   return {
     isSalesUser,
     maximumDiscount,
     canSeeMargin,
     representativeBalanceEnabled,
+    allowNegativeBalance,
   }
 }

@@ -100,5 +100,7 @@
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "El centro de costo del usuario está preseleccionado por defecto",
   "store/checkout.b2b.cost-centers.multiple-orders.info": "Al completar la compra, se creará un pedido separado para cada centro de costo seleccionado.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} pedidos realizados con éxito",
-  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Abrir la confirmación del pedido en otra pestaña"
+  "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Abrir la confirmación del pedido en otra pestaña",
+
+  "admin/representativebalances.title": "Saldos de Representantes"
 }

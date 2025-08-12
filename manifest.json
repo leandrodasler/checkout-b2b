@@ -215,6 +215,12 @@
             "type": "number",
             "title": "Opening Balance",
             "description": "The monetary value of the representative opening balance"
+          },
+          "allowNegativeBalance": {
+            "type": "boolean",
+            "title": "Allow Negative Representative Balance",
+            "description": "Enable this option to allow the representative's balance to go negative",
+            "default": false
           }
         }
       }

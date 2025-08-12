@@ -54,6 +54,10 @@ function CheckoutB2B() {
     'groupToggles',
   ])
 
+  const { allowNegativeBalance } = usePermissions()
+
+  // eslint-disable-next-line no-console
+  console.log('Pode saldo negativo?', allowNegativeBalance)
   const { loading: organizationLoading } = useOrganization()
   const {
     loading: orderFormLoading,

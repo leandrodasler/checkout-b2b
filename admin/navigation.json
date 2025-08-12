@@ -1,11 +1,11 @@
 {
   "section": "orders",
-  "titleId": "admin-RepresentativeBalances.navigation.label-group",
+  "titleId": "admin/app.title",
   "subSection": "RepresentativeBalances",
   "searchKeyWordsHelpers": "admin-RepresentativeBalances.navigation.search.kws",
   "subSectionItems": [
     {
-      "labelId": "admin-RepresentativeBalances.navigation.label-table",
+      "labelId": "admin/representativebalances.title",
       "path": "/admin/RepresentativeBalances",
       "searchKeyWordsHelpers": "admin-RepresentativeBalances.navigation.table.search.kws"
     }
