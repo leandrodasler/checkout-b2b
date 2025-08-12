@@ -393,7 +393,8 @@ function CheckoutB2B() {
               <div className="mt4 c-muted-2">
                 {formatMessage(messages.itemCount, {
                   count: filteredItems.reduce(
-                    (acc: number, item: CustomItem) => acc + item.quantity,
+                    (acc: number, item: CustomItem) =>
+                      acc + (isGrouping && !item.__group ? 0 : item.quantity),
                     0
                   ),
                 })}
