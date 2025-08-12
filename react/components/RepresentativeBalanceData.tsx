@@ -47,7 +47,10 @@ export function RepresentativeBalanceData() {
             <b>{formatPrice(representativeBalance.balance)}</b>
             <br />
             {formatMessage(messages.discountChanges)}:{' '}
-            <b>{formatPrice(discounts)}</b>
+            <b>
+              {discounts > 0 && '+'}
+              {formatPrice(discounts)}
+            </b>
           </span>
         }
       >

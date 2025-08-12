@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Item } from 'vtex.checkout-graphql'
 
+import { usePermissions } from './usePermissions'
+
 type UseManualPriceProps = {
   item: Item
   sliderValue: number
@@ -14,6 +16,7 @@ export function useManualPrice({
   isEditing,
   onUpdatePrice,
 }: UseManualPriceProps) {
+  const { representativeBalanceEnabled } = usePermissions()
   const originalPrice = (item.sellingPrice ?? 0) / 100
   const calculatedPrice =
     (item.priceDefinition?.calculatedSellingPrice ?? 0) / 100
@@ -54,11 +57,13 @@ export function useManualPrice({
     ? basePrice - savedManualPrice
     : basePrice - calculatedPrice
 
-  const showChangeIndicator =
+  const priceChanged =
     (sliderValue > 0 && discountedPrice !== originalPrice) ||
     (canEditPrice && inputPrice !== originalPrice) ||
     (savedManualPrice !== 0 && savedManualPrice !== basePrice) ||
     basePrice !== calculatedPrice
+
+  const showChangeIndicator = representativeBalanceEnabled && priceChanged
 
   const isPriceIncreased =
     (canEditPrice && inputPrice > basePrice) || savedManualPrice > basePrice
