@@ -4,6 +4,7 @@ import { useRuntime } from 'vtex.render-runtime'
 import { Button, InputCurrency, Table } from 'vtex.styleguide'
 
 import GET_REPRESENTATIVE_BALANCES from '../graphql/getRepresentativeBalances.graphql'
+import LIST_USERS from '../graphql/ListUsers.graphql'
 import SAVE_REPRESENTATIVE_BALANCE from '../graphql/SaveRepresentativeBalance.graphql'
 
 type RepresentativeBalance = {
@@ -15,9 +16,18 @@ type RepresentativeBalance = {
 }
 
 const RepresentativeBalancesTable = () => {
-  const { data, loading, error, refetch } = useQuery(
-    GET_REPRESENTATIVE_BALANCES
-  )
+  const {
+    data: balancesData,
+    loading: loadingBalances,
+    error: errorBalances,
+    refetch,
+  } = useQuery(GET_REPRESENTATIVE_BALANCES)
+
+  const {
+    data: usersData,
+    loading: loadingUsers,
+    error: errorUsers,
+  } = useQuery(LIST_USERS)
 
   const {
     culture: { currency },
@@ -35,21 +45,48 @@ const RepresentativeBalancesTable = () => {
   )
 
   useEffect(() => {
-    if (!data?.getRepresentativeBalances) return
+    if (!usersData?.listUsers) return
 
-    setRepresentatives(data.getRepresentativeBalances)
+    const uniqueEmails = Array.from<string>(
+      new Set(usersData.listUsers.map((u: { email: string }) => u.email))
+    ).sort((a, b) => a.localeCompare(b))
+
+    const balanceMap = new Map<string, RepresentativeBalance>()
+
+    balancesData?.getRepresentativeBalances?.forEach(
+      (rep: RepresentativeBalance) => {
+        balanceMap.set(rep.email, rep)
+      }
+    )
+
+    const mergedList: RepresentativeBalance[] = uniqueEmails.map(
+      (email: string, index: number) => {
+        const existing = balanceMap.get(email)
+
+        return (
+          existing ?? {
+            id: `new-${index}`,
+            email,
+            balance: 0,
+            createdIn: new Date().toISOString(),
+            lastInteractionIn: new Date().toISOString(),
+          }
+        )
+      }
+    )
+
+    setRepresentatives(mergedList)
 
     const initial: Record<string, number> = {}
 
-    data.getRepresentativeBalances.forEach((rep: RepresentativeBalance) => {
+    mergedList.forEach((rep) => {
       initial[rep.id] = rep.balance
     })
     setEditedBalances(initial)
-  }, [data])
+  }, [usersData, balancesData])
 
   const handleBalanceChange = (id: string, value: string | number) => {
-    const stringValue = String(value)
-    const numericValue = parseFloat(stringValue.replace(',', '.'))
+    const numericValue = parseFloat(String(value).replace(',', '.'))
 
     setEditedBalances({
       ...editedBalances,
@@ -91,52 +128,52 @@ const RepresentativeBalancesTable = () => {
       email: { title: 'Email' },
       balance: {
         title: 'Saldo (R$)',
-        cellRenderer: function BalanceCellRenderer({
-          cellData,
-          rowData,
-        }: {
-          cellData: number
-          rowData: RepresentativeBalance
-        }) {
-          return isEditing ? (
-            <InputCurrency
-              size="small"
-              value={editedBalances[rowData.id]?.toString() ?? ''}
-              currencyCode={currency}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBalanceChange(rowData.id, e.target.value)
-              }
-            />
-          ) : (
-            <span>{Number(cellData).toFixed(2)}</span>
-          )
-        },
+        cellRenderer: Object.assign(
+          ({
+            cellData,
+            rowData,
+          }: {
+            cellData: number
+            rowData: RepresentativeBalance
+          }) =>
+            isEditing ? (
+              <InputCurrency
+                size="small"
+                value={editedBalances[rowData.id]?.toString() ?? ''}
+                currencyCode={currency}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleBalanceChange(rowData.id, e.target.value)
+                }
+              />
+            ) : (
+              <span>{Number(cellData).toFixed(2)}</span>
+            ),
+          { displayName: 'BalanceCellRenderer' }
+        ),
       },
       createdIn: {
         title: 'Criado em',
-        cellRenderer: function CreatedInCellRenderer({
-          cellData,
-        }: {
-          cellData: string
-        }) {
-          return <span>{new Date(cellData).toLocaleDateString()}</span>
-        },
+        cellRenderer: Object.assign(
+          ({ cellData }: { cellData: string }) => (
+            <span>{new Date(cellData).toLocaleDateString()}</span>
+          ),
+          { displayName: 'CreatedInCellRenderer' }
+        ),
       },
       lastInteractionIn: {
         title: 'Última interação',
-        cellRenderer: function LastInteractionCellRenderer({
-          cellData,
-        }: {
-          cellData: string
-        }) {
-          return <span>{new Date(cellData).toLocaleDateString()}</span>
-        },
+        cellRenderer: Object.assign(
+          ({ cellData }: { cellData: string }) => (
+            <span>{new Date(cellData).toLocaleDateString()}</span>
+          ),
+          { displayName: 'LastInteractionInCellRenderer' }
+        ),
       },
     },
   }
 
-  if (loading) return <span>Carregando...</span>
-  if (error) return <span>Erro ao buscar dados</span>
+  if (loadingBalances || loadingUsers) return <span>Carregando...</span>
+  if (errorBalances || errorUsers) return <span>Erro ao buscar dados</span>
 
   return (
     <div className="w-100 pa4 flex flex-column">

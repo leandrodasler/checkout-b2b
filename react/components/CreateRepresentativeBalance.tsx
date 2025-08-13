@@ -1,8 +1,15 @@
 import React, { useState } from 'react'
-import { useMutation } from 'react-apollo'
+import { useMutation, useQuery } from 'react-apollo'
 import { useRuntime } from 'vtex.render-runtime'
-import { Button, Checkbox, Input, InputCurrency } from 'vtex.styleguide'
+import {
+  Button,
+  Checkbox,
+  Dropdown,
+  Input,
+  InputCurrency,
+} from 'vtex.styleguide'
 
+import listUsersQuery from '../graphql/ListUsers.graphql'
 import saveRepresentativeBalance from '../graphql/SaveRepresentativeBalance.graphql'
 
 const SaveBalanceTester = () => {
@@ -15,9 +22,19 @@ const SaveBalanceTester = () => {
     culture: { currency },
   } = useRuntime()
 
+  const { data, loading: loadingUsers } = useQuery(listUsersQuery)
+
   const [saveBalance, { loading, error }] = useMutation(
     saveRepresentativeBalance
   )
+
+  const representatives = React.useMemo(() => {
+    if (!data?.listUsers) return []
+    const emails = data.listUsers.map((u: { email: string }) => u.email)
+    const uniqueEmails = Array.from(new Set<string>(emails))
+
+    return uniqueEmails.sort((a: string, b: string) => a.localeCompare(b))
+  }, [data])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,16 +58,24 @@ const SaveBalanceTester = () => {
       <h3>Adicionar Saldo ao Representante</h3>
       <form onSubmit={handleSubmit}>
         <div className="mb5">
-          <Input
-            label="Email do Representante:"
-            type="email"
-            value={email}
-            onChange={(e: {
-              target: { value: React.SetStateAction<string> }
-            }) => setEmail(e.target.value)}
-            required
-          />
+          {loadingUsers ? (
+            <p>Carregando representantes...</p>
+          ) : (
+            <Dropdown
+              label="Email do Representante:"
+              options={representatives.map((rep) => ({
+                value: rep,
+                label: rep,
+              }))}
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+              required
+            />
+          )}
         </div>
+
         <div className="mb5">
           <InputCurrency
             value={balance}
@@ -66,9 +91,9 @@ const SaveBalanceTester = () => {
             label="Order Group:"
             type="text"
             value={orderGroup}
-            onChange={(e: {
-              target: { value: React.SetStateAction<string> }
-            }) => setOrderGroup(e.target.value)}
+            onChange={(e: { target: { value: string } }) =>
+              setOrderGroup(e.target.value)
+            }
             required
           />
         </div>

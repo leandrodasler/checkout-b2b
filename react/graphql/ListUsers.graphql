@@ -1,0 +1,6 @@
+query ListUsers {
+  listUsers(roleId: "sales-representative")
+    @context(provider: "vtex.storefront-permissions") {
+    email
+  }
+}
