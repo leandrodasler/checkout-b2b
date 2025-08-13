@@ -85,4 +85,12 @@ declare global {
       allowNegativeBalance?: boolean
     }
   }
+
+  type B2BUser = {
+    email: string
+    name: string
+    roleId: string
+    orgId: string
+    costId: string
+  }
 }

@@ -69,6 +69,10 @@ export const saveRepresentativeBalance = async (
         orderGroup,
       },
       schema: SCHEMA_VERSION,
+      ...(representativeBalanceId !== inputEmail && {
+        id: representativeBalanceId,
+      }),
+
     })
 
     const updatedRepresentativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(
