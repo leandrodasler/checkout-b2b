@@ -20,7 +20,7 @@ export async function placeOrder(
   }: MutationPlaceOrderArgs,
   context: ServiceContext<Clients>
 ) {
-  const { orderFormId, organizationId } = await getSessionData(context)
+  const { orderFormId, organizationId, roleId } = await getSessionData(context)
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
@@ -181,26 +181,28 @@ export async function placeOrder(
     await checkoutExtension.setPayments(orderGroup, paymentsBody)
     await checkoutExtension.gatewayCallback(orderGroup)
 
-    const settings = await getAppSettings(null, null, context)
+    if (roleId === 'sales-representative') {
+      const settings = await getAppSettings(null, null, context)
 
-    if (settings.representativeBalance?.enabled) {
-      const hasManualPrice = initialOrderForm.items?.some(
-        (item) => item.manualPrice && item.manualPrice !== item.price
-      )
-
-      if (hasManualPrice) {
-        const discountTotalizer = initialOrderForm.totalizers?.find(
-          (t) => t.id === 'Discounts'
+      if (settings.representativeBalance?.enabled) {
+        const hasManualPrice = initialOrderForm.items?.some(
+          (item) => item.manualPrice && item.manualPrice !== item.price
         )
 
-        const balanceDiff = (discountTotalizer?.value ?? 0) / 100
+        if (hasManualPrice) {
+          const discountTotalizer = initialOrderForm.totalizers?.find(
+            (t) => t.id === 'Discounts'
+          )
 
-        if (balanceDiff) {
-          await saveRepresentativeBalance(
-            null,
-            { balance: balanceDiff, orderGroup },
-            context
-          ).catch(() => null)
+          const balanceDiff = (discountTotalizer?.value ?? 0) / 100
+
+          if (balanceDiff) {
+            await saveRepresentativeBalance(
+              null,
+              { balance: balanceDiff, orderGroup },
+              context
+            ).catch(() => null)
+          }
         }
       }
     }

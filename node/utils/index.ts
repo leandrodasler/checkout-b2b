@@ -4,6 +4,7 @@ import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
+import { B2B_USERS_ENTITY, B2B_USERS_FIELDS } from './constants'
 import {
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
@@ -13,6 +14,10 @@ import {
 export * from './constants'
 export * from './mdSchema'
 
+function throwForbiddenError(): never {
+  throw new ForbiddenError('Not authenticated in storefront')
+}
+
 export async function getSessionData(context: ServiceContext<Clients>) {
   const { vtex, clients } = context
   const { sessionToken = '' } = vtex
@@ -20,28 +25,39 @@ export async function getSessionData(context: ServiceContext<Clients>) {
   const {
     sessionData: { namespaces },
   } = await clients.session.getSession(sessionToken, [
-    'profile.email',
+    'storefront-permissions.userId',
     'checkout.orderFormId',
-    'storefront-permissions.organization',
-    'storefront-permissions.costcenter',
   ])
 
-  const email: string | undefined = namespaces.profile?.email?.value
+  const userId: string | undefined =
+    namespaces['storefront-permissions']?.userId?.value
 
-  if (!email) {
-    throw new ForbiddenError('Not authenticated in storefront')
+  if (!userId) {
+    throwForbiddenError()
+  }
+
+  const user = await clients.masterdata.getDocument<B2BUser | null>({
+    dataEntity: B2B_USERS_ENTITY,
+    fields: B2B_USERS_FIELDS,
+    id: userId,
+  })
+
+  if (!user) {
+    throwForbiddenError()
   }
 
   const orderFormId: string | undefined =
     namespaces.checkout?.orderFormId?.value
 
-  const organizationId: string | undefined =
-    namespaces['storefront-permissions']?.organization?.value
+  const {
+    email,
+    name,
+    roleId,
+    costId: costCenterId,
+    orgId: organizationId,
+  } = user
 
-  const costCenterId: string | undefined =
-    namespaces['storefront-permissions']?.costcenter?.value
-
-  return { email, orderFormId, organizationId, costCenterId }
+  return { orderFormId, email, name, roleId, organizationId, costCenterId }
 }
 
 type GetAllSavedCartsArgs = {

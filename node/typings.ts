@@ -84,4 +84,12 @@ declare global {
       openingBalance?: number
     }
   }
+
+  type B2BUser = {
+    email: string
+    name: string
+    roleId: string
+    orgId: string
+    costId: string
+  }
 }
