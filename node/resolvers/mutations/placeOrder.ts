@@ -200,7 +200,7 @@ export async function placeOrder(
             null,
             { balance: balanceDiff, orderGroup },
             context
-          )
+          ).catch(() => null)
         }
       }
     }

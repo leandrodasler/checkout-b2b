@@ -2,21 +2,33 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Spinner, Tooltip } from 'vtex.styleguide'
 
-import { useFormatPrice, useOrderFormCustom } from '../hooks'
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { useFormatPrice, useOrderFormCustom, useOrganization } from '../hooks'
 import { useFetchRepresentativeBalance } from '../hooks/useFetchRepresentativeBalance'
 import { messages } from '../utils'
 
 export function RepresentativeBalanceData() {
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
+  const { organization } = useOrganization()
+  const { selectedCostCenters } = useCheckoutB2BContext()
+  const { role } = organization
 
   const {
-    orderForm: { clientProfileData, totalizers = [] },
+    orderForm: { items, clientProfileData, totalizers = [] },
   } = useOrderFormCustom()
 
-  const discounts =
-    (totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0) /
-    100
+  const hasManualPrice = items?.some(
+    (item) => item.manualPrice && item.manualPrice !== item.price
+  )
+
+  const selectedCostCentersCount = selectedCostCenters?.length ?? 1
+  const discountTotalizerValue =
+    totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0
+
+  const discounts = hasManualPrice
+    ? (selectedCostCentersCount * discountTotalizerValue) / 100
+    : 0
 
   const email = clientProfileData?.email
 
@@ -26,14 +38,13 @@ export function RepresentativeBalanceData() {
     error,
   } = useFetchRepresentativeBalance({
     email,
+    skip: !email || role !== 'sales-representative',
   })
 
   if (!email) return null
   if (loading) return <Spinner size={16} />
   if (error) return <span>{formatMessage(messages.balanceError)}</span>
-  if (!representativeBalance)
-    return <span>{formatMessage(messages.noBalance)}</span>
-
+  if (!representativeBalance) return null
   const finalBalance =
     parseFloat((representativeBalance?.balance ?? 0).toFixed(2)) + discounts
 
