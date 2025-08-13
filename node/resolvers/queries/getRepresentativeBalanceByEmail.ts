@@ -34,23 +34,13 @@ export const getRepresentativeBalanceByEmail = async (
     const settings = await getAppSettings(null, null, context)
     const openingBalance = settings.representativeBalance?.openingBalance ?? 0
 
-    const { DocumentId } = await masterdata.createDocument({
-      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
-      fields: {
-        email: inputEmail,
-        balance: openingBalance,
-      },
-
-      schema: SCHEMA_VERSION,
-    })
-
-    representativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(
-      {
-        dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
-        fields: REPRESENTATIVE_BALANCE_FIELDS,
-        id: DocumentId,
-      }
-    )
+    representativeBalance = {
+      balance: openingBalance,
+      email: inputEmail,
+      createdIn: new Date().toISOString(),
+      lastInteractionIn: new Date().toISOString(),
+      id: inputEmail,
+    }
   }
 
   return representativeBalance
