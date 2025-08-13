@@ -38,9 +38,7 @@ const RepresentativeBalancesTable = () => {
     refetch,
   } = useQuery(GET_REPRESENTATIVE_BALANCES)
 
-  const [saveBalance, { loading: saving }] = useMutation(
-    SAVE_REPRESENTATIVE_BALANCE
-  )
+  const [saveBalance] = useMutation(SAVE_REPRESENTATIVE_BALANCE)
 
   const { allowNegativeBalance } = usePermissions()
 
