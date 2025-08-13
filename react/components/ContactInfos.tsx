@@ -14,11 +14,13 @@ import {
   useCostCenters,
   useOrderFormCustom,
   useOrganization,
+  usePermissions,
   useToast,
   useUpdateShippingAddress,
 } from '../hooks'
 import { compareCostCenters, MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
+import { RepresentativeBalanceData } from './RepresentativeBalanceData'
 import { ShippingAddress } from './ShippingAddress'
 import { ShowMoreButton } from './ShowMoreButton'
 
@@ -29,6 +31,8 @@ export function ContactInfos() {
   const {
     orderForm: { clientProfileData, shipping },
   } = useOrderFormCustom()
+
+  const { representativeBalanceEnabled } = usePermissions()
 
   const selectedAddressId = shipping.selectedAddress?.addressId
 
@@ -282,6 +286,11 @@ export function ContactInfos() {
             <br />
             <span className="t-mini">{phone}</span>
           </>
+        )}
+        {representativeBalanceEnabled && (
+          <div className="mt4">
+            <RepresentativeBalanceData />
+          </div>
         )}
       </>
     ),

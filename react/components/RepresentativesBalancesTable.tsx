@@ -4,8 +4,8 @@ import { useRuntime } from 'vtex.render-runtime'
 import { Button, InputCurrency, Table } from 'vtex.styleguide'
 
 import GET_REPRESENTATIVE_BALANCES from '../graphql/getRepresentativeBalances.graphql'
-import LIST_USERS from '../graphql/ListUsers.graphql'
 import SAVE_REPRESENTATIVE_BALANCE from '../graphql/SaveRepresentativeBalance.graphql'
+import { usePermissions } from '../hooks/usePermissions'
 
 type RepresentativeBalance = {
   id: string
@@ -24,16 +24,11 @@ const RepresentativeBalancesTable = () => {
   } = useQuery(GET_REPRESENTATIVE_BALANCES)
 
   const {
-    data: usersData,
-    loading: loadingUsers,
-    error: errorUsers,
-  } = useQuery(LIST_USERS)
-
-  const {
     culture: { currency },
   } = useRuntime()
 
   const [saveBalance] = useMutation(SAVE_REPRESENTATIVE_BALANCE)
+  const { allowNegativeBalance } = usePermissions()
 
   const [representatives, setRepresentatives] = useState<
     RepresentativeBalance[]
@@ -44,46 +39,25 @@ const RepresentativeBalancesTable = () => {
     {}
   )
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
   useEffect(() => {
-    if (!usersData?.listUsers) return
+    if (!balancesData?.getRepresentativeBalances) return
 
-    const uniqueEmails = Array.from<string>(
-      new Set(usersData.listUsers.map((u: { email: string }) => u.email))
-    ).sort((a, b) => a.localeCompare(b))
+    const sortedList = [
+      ...balancesData.getRepresentativeBalances,
+    ].sort((a, b) => a.email.localeCompare(b.email))
 
-    const balanceMap = new Map<string, RepresentativeBalance>()
-
-    balancesData?.getRepresentativeBalances?.forEach(
-      (rep: RepresentativeBalance) => {
-        balanceMap.set(rep.email, rep)
-      }
-    )
-
-    const mergedList: RepresentativeBalance[] = uniqueEmails.map(
-      (email: string, index: number) => {
-        const existing = balanceMap.get(email)
-
-        return (
-          existing ?? {
-            id: `new-${index}`,
-            email,
-            balance: 0,
-            createdIn: new Date().toISOString(),
-            lastInteractionIn: new Date().toISOString(),
-          }
-        )
-      }
-    )
-
-    setRepresentatives(mergedList)
+    setRepresentatives(sortedList)
 
     const initial: Record<string, number> = {}
 
-    mergedList.forEach((rep) => {
+    sortedList.forEach((rep) => {
       initial[rep.id] = rep.balance
     })
+
     setEditedBalances(initial)
-  }, [usersData, balancesData])
+  }, [balancesData])
 
   const handleBalanceChange = (id: string, value: string | number) => {
     const numericValue = parseFloat(String(value).replace(',', '.'))
@@ -95,8 +69,16 @@ const RepresentativeBalancesTable = () => {
   }
 
   const handleSave = async () => {
+    setErrorMessage(null)
+
     const updates = representatives.map(async (rep) => {
       const newBalance = editedBalances[rep.id]
+
+      if (!allowNegativeBalance && newBalance < 0) {
+        setErrorMessage(`Saldo negativo não permitido para ${rep.email}.`)
+
+        return
+      }
 
       if (rep.balance !== newBalance) {
         try {
@@ -172,8 +154,8 @@ const RepresentativeBalancesTable = () => {
     },
   }
 
-  if (loadingBalances || loadingUsers) return <span>Carregando...</span>
-  if (errorBalances || errorUsers) return <span>Erro ao buscar dados</span>
+  if (loadingBalances) return <span>Carregando...</span>
+  if (errorBalances) return <span>Erro ao buscar dados</span>
 
   return (
     <div className="w-100 pa4 flex flex-column">
@@ -182,6 +164,12 @@ const RepresentativeBalancesTable = () => {
           {isEditing ? 'Cancelar edição' : 'Editar saldos'}
         </Button>
       </div>
+
+      {errorMessage && (
+        <div className="mb4" style={{ color: 'red' }}>
+          {errorMessage}
+        </div>
+      )}
 
       <Table
         fullWidth

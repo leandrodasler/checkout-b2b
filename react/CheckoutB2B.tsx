@@ -54,10 +54,6 @@ function CheckoutB2B() {
     'groupToggles',
   ])
 
-  const { allowNegativeBalance } = usePermissions()
-
-  // eslint-disable-next-line no-console
-  console.log('Pode saldo negativo?', allowNegativeBalance)
   const { loading: organizationLoading } = useOrganization()
   const {
     loading: orderFormLoading,
@@ -397,7 +393,8 @@ function CheckoutB2B() {
               <div className="mt4 c-muted-2">
                 {formatMessage(messages.itemCount, {
                   count: filteredItems.reduce(
-                    (acc: number, item: CustomItem) => acc + item.quantity,
+                    (acc: number, item: CustomItem) =>
+                      acc + (isGrouping && !item.__group ? 0 : item.quantity),
                     0
                   ),
                 })}

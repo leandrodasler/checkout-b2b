@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import type { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
-import { InputCurrency } from 'vtex.styleguide'
+import {
+  IconArrowDown,
+  IconArrowUp,
+  InputCurrency,
+  Tooltip,
+} from 'vtex.styleguide'
 
+import { useFormatPrice } from '../hooks'
+import { useManualPrice } from '../hooks/useManualPrice'
 import { messages } from '../utils'
 
 interface ManualPriceProps {
@@ -21,53 +28,71 @@ export default function ManualPrice({
   onUpdatePrice,
 }: ManualPriceProps) {
   const { formatMessage } = useIntl()
-
+  const formatPrice = useFormatPrice()
   const {
     culture: { locale, currency },
   } = useRuntime()
 
-  const initialPrice = (rowData.sellingPrice ?? 0) / 100
-  const [customPrice, setCustomPrice] = useState<number>(initialPrice)
-  const discountedPrice = (rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)
+  const discountedPrice =
+    ((rowData.sellingPrice ?? 0) * (1 - sliderValue / 100)) / 100
 
-  useEffect(() => {
-    if (!isEditing || sliderValue === 0) {
-      setCustomPrice(initialPrice)
-    }
-  }, [initialPrice, isEditing, sliderValue])
+  const displayPrice = sliderValue > 0 ? discountedPrice : discountedPrice || 0
 
-  useEffect(() => {
-    onUpdatePrice(rowData.id, Math.round(customPrice * 100))
-  }, [customPrice, onUpdatePrice, rowData.id])
+  const {
+    inputPrice,
+    handleInputChange,
+    tooltipLabelValue,
+    showChangeIndicator,
+    isPriceIncreased,
+    canEditPrice,
+  } = useManualPrice({
+    item: rowData,
+    sliderValue,
+    isEditing,
+    onUpdatePrice,
+  })
 
-  const handleInputCurrencyChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = Number(e.target.value)
-
-    if (!Number.isNaN(value)) {
-      setCustomPrice(value)
-    }
-  }
-
-  if (isEditing && sliderValue === 0) {
-    return (
-      <div style={{ minWidth: 110, transform: 'scale(0.85)' }}>
-        <InputCurrency
-          size="small"
-          placeholder={formatMessage(messages.manualPricePlaceholder)}
-          locale={locale}
-          currencyCode={currency}
-          value={customPrice}
-          onChange={handleInputCurrencyChange}
-        />
-      </div>
-    )
-  }
+  const tooltipLabel = `${tooltipLabelValue > 0 ? '-' : '+'}${formatPrice(
+    Math.abs(tooltipLabelValue)
+  )}`
 
   return (
-    <FormattedPrice
-      value={sliderValue > 0 ? discountedPrice / 100 : customPrice || 0}
-    />
+    <div className="flex items-center w-100">
+      {canEditPrice ? (
+        <div
+          style={{
+            transform: 'scale(0.8)',
+            transformOrigin: 'left',
+          }}
+        >
+          <div style={{ width: showChangeIndicator ? '120%' : '100%' }}>
+            <InputCurrency
+              size="small"
+              placeholder={formatMessage(messages.manualPricePlaceholder)}
+              locale={locale}
+              currencyCode={currency}
+              value={inputPrice}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+      ) : (
+        <FormattedPrice value={displayPrice} />
+      )}
+
+      {showChangeIndicator && (
+        <Tooltip label={tooltipLabel}>
+          <span
+            className={`ml3 ${isPriceIncreased ? 'c-success' : 'c-danger'}`}
+          >
+            {isPriceIncreased ? (
+              <IconArrowUp size={12} />
+            ) : (
+              <IconArrowDown size={12} />
+            )}
+          </span>
+        </Tooltip>
+      )}
+    </div>
   )
 }
