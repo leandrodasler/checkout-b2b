@@ -178,17 +178,6 @@ const RepresentativeBalancesTable = () => {
         { displayName: 'LastInteractionInCellRenderer' }
       ),
     },
-    actions: {
-      title: 'Ações',
-      cellRenderer: Object.assign(
-        () => (
-          <Button size="small" onClick={() => handleSave()} isLoading={saving}>
-            Salvar
-          </Button>
-        ),
-        { displayName: 'ActionsCellRenderer' }
-      ),
-    },
   }
 
   if (loadingUsers || loadingBalances) return <span>Carregando...</span>
