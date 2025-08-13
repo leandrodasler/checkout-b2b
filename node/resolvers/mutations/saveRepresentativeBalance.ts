@@ -44,7 +44,9 @@ export const saveRepresentativeBalance = async (
         balance: newBalance,
       },
       schema: SCHEMA_VERSION,
-      id: representativeBalance?.id,
+      ...(representativeBalanceId !== inputEmail && {
+        id: representativeBalanceId,
+      }),
     })
 
     representativeBalanceId = DocumentId
