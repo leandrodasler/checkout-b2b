@@ -174,4 +174,16 @@ export const messages = defineMessages({
   balanceError: {
     id: 'store/checkout.b2b.representative-balance.error-message.label',
   },
+  representativeBalance: {
+    id: 'admin/representativebalances.title',
+  },
+  saveBalancesButton: {
+    id: 'admin/representativebalances.button.save-balances',
+  },
+  editBalancesButton: {
+    id: 'admin/representativebalances.button.edit-balances',
+  },
+  cancelEditButton: {
+    id: 'admin/representativebalances.button.cancel-edit',
+  },
 })

@@ -108,5 +108,11 @@
   "store/checkout.b2b.representative-balance.no-balance.fallback": "No se encontró saldo",
   "store/checkout.b2b.representative-balance.error-message.label": "Error al cargar el saldo",
 
-  "admin/representativebalances.title": "Saldos de Representantes"
+  "admin/representativebalances.title": "Saldos de Representantes",
+  "admin/representativebalances.button.save-balances": "Guardar Saldos",
+  "admin/representativebalances.button.edit-balances": "Editar Saldos",
+  "admin/representativebalances.button.cancel-edit": "Cancelar Edición",
+  "admin/representativebalances.loading": "Cargando...",
+  "admin/representativebalances.error": "Error al obtener datos",
+  "admin/representativebalances.negative-balance": "Saldo negativo no permitido para"
 }
