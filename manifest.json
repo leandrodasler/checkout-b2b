@@ -6,6 +6,7 @@
   "description": "Checkout for B2B Stores",
   "builders": {
     "react": "3.x",
+    "admin": "0.x",
     "messages": "1.x",
     "docs": "0.x",
     "store": "0.x",
@@ -140,7 +141,7 @@
     "availableCountries": ["*"]
   },
   "settingsSchema": {
-    "title": "Configurações de Checkout B2B",
+    "title": "Checkout B2B Settings",
     "type": "object",
     "properties": {
       "salesRepresentative": {
@@ -197,6 +198,29 @@
           "customer-buyer": {
             "type": "boolean",
             "title": "Customer Buyer"
+          }
+        }
+      },
+      "representativeBalance": {
+        "title": "Representative Balance Settings",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enable Representative Balance",
+            "description": "Enable the Representative Balance feature in the store",
+            "default": false
+          },
+          "openingBalance": {
+            "type": "number",
+            "title": "Opening Balance",
+            "description": "The monetary value of the representative opening balance"
+          },
+          "allowNegativeBalance": {
+            "type": "boolean",
+            "title": "Allow Negative Representative Balance",
+            "description": "Enable this option to allow the representative's balance to go negative",
+            "default": false
           }
         }
       }

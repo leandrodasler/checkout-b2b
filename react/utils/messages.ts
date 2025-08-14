@@ -159,4 +159,43 @@ export const messages = defineMessages({
   multipleOrdersLink: {
     id: 'store/checkout.b2b.cost-centers.multiple-orders.order.link',
   },
+  availableBalance: {
+    id: 'store/checkout.b2b.representative-balance.available-balance.label',
+  },
+  initialBalance: {
+    id: 'store/checkout.b2b.representative-balance.initial-balance.label',
+  },
+  discountChanges: {
+    id: 'store/checkout.b2b.representative-balance.discount-changes.label',
+  },
+  noBalance: {
+    id: 'store/checkout.b2b.representative-balance.no-balance.fallback',
+  },
+  balanceError: {
+    id: 'store/checkout.b2b.representative-balance.error-message.label',
+  },
+  representativeBalance: {
+    id: 'admin/representativebalances.title',
+  },
+  saveBalancesButton: {
+    id: 'admin/representativebalances.button.save-balances',
+  },
+  editBalancesButton: {
+    id: 'admin/representativebalances.button.edit-balances',
+  },
+  cancelEditButton: {
+    id: 'admin/representativebalances.button.cancel-edit',
+  },
+  representativeBalanceError: { id: 'admin/representativebalances.error' },
+  representativeBalanceNegativeError: {
+    id: 'admin/representativebalances.negative-balance',
+  },
+  representativeBalanceEmail: { id: 'admin/representativebalances.email' },
+  representativeBalanceValue: { id: 'admin/representativebalances.balance' },
+  representativeBalanceCreatedIn: {
+    id: 'admin/representativebalances.createdIn',
+  },
+  representativeBalanceLastInteractionIn: {
+    id: 'admin/representativebalances.lastInteractionIn',
+  },
 })

@@ -4,13 +4,19 @@ import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
+import { B2B_USERS_ENTITY, B2B_USERS_FIELDS } from './constants'
 import {
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
-  SAVED_CART_SCHEMA_VERSION,
+  SCHEMA_VERSION,
 } from './mdSchema'
 
+export * from './constants'
 export * from './mdSchema'
+
+function throwForbiddenError(): never {
+  throw new ForbiddenError('Not authenticated in storefront')
+}
 
 export async function getSessionData(context: ServiceContext<Clients>) {
   const { vtex, clients } = context
@@ -19,28 +25,39 @@ export async function getSessionData(context: ServiceContext<Clients>) {
   const {
     sessionData: { namespaces },
   } = await clients.session.getSession(sessionToken, [
-    'profile.email',
+    'storefront-permissions.userId',
     'checkout.orderFormId',
-    'storefront-permissions.organization',
-    'storefront-permissions.costcenter',
   ])
 
-  const email: string | undefined = namespaces.profile?.email?.value
+  const userId: string | undefined =
+    namespaces['storefront-permissions']?.userId?.value
 
-  if (!email) {
-    throw new ForbiddenError('Not authenticated in storefront')
+  if (!userId) {
+    throwForbiddenError()
+  }
+
+  const user = await clients.masterdata.getDocument<B2BUser | null>({
+    dataEntity: B2B_USERS_ENTITY,
+    fields: B2B_USERS_FIELDS,
+    id: userId,
+  })
+
+  if (!user) {
+    throwForbiddenError()
   }
 
   const orderFormId: string | undefined =
     namespaces.checkout?.orderFormId?.value
 
-  const organizationId: string | undefined =
-    namespaces['storefront-permissions']?.organization?.value
+  const {
+    email,
+    name,
+    roleId,
+    costId: costCenterId,
+    orgId: organizationId,
+  } = user
 
-  const costCenterId: string | undefined =
-    namespaces['storefront-permissions']?.costcenter?.value
-
-  return { email, orderFormId, organizationId, costCenterId }
+  return { orderFormId, email, name, roleId, organizationId, costCenterId }
 }
 
 type GetAllSavedCartsArgs = {
@@ -59,7 +76,7 @@ export async function getAllSavedCarts({
 
   async function fetchCarts(page = 1) {
     const savedCarts = await masterdata.searchDocuments<SavedCart>({
-      schema: SAVED_CART_SCHEMA_VERSION,
+      schema: SCHEMA_VERSION,
       dataEntity: SAVED_CART_ENTITY,
       fields: SAVED_CART_FIELDS,
       pagination: {
@@ -112,4 +129,23 @@ export function checkoutCookieFormat(orderFormId: string) {
 
 export function ownershipCookieFormat(ownerId: string) {
   return `${OWNERSHIP_COOKIE}=${ownerId};`
+}
+
+export async function getRepresentativeEmail(
+  context: ServiceContext<Clients>,
+  email?: string
+) {
+  let inputEmail = email
+
+  if (!inputEmail) {
+    const { email: sessionEmail } = await getSessionData(context)
+
+    inputEmail = sessionEmail
+  }
+
+  if (!inputEmail) {
+    throw new ForbiddenError('not-authorized')
+  }
+
+  return inputEmail
 }

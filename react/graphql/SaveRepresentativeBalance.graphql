@@ -1,0 +1,19 @@
+mutation SaveRepresentativeBalance(
+  $email: String!
+  $balance: Float!
+  $orderGroup: String!
+  $overwrite: Boolean
+) {
+  saveRepresentativeBalance(
+    email: $email
+    balance: $balance
+    orderGroup: $orderGroup
+    overwrite: $overwrite
+  ) {
+    id
+    email
+    balance
+    createdIn
+    lastInteractionIn
+  }
+}

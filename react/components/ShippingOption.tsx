@@ -156,7 +156,7 @@ export function ShippingOption({ costCenter, address }: Props) {
     }
   }, [loading, setLoadingGetShipping])
 
-  if (loading) {
+  if (loading && !shippingData?.shipping) {
     return <TotalizerSpinner />
   }
 

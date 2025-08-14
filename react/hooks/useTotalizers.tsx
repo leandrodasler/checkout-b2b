@@ -215,9 +215,7 @@ export function useTotalizers() {
           {
             label: formatMessage(messages.totalMargin),
             value: (
-              <TruncatedText
-                text={<FormattedPrice value={prevMarginRef.current} />}
-              />
+              <TruncatedText text={<FormattedPrice value={totalMargin} />} />
             ),
           },
         ]
@@ -228,7 +226,7 @@ export function useTotalizers() {
             label: shippingTotalizer.name,
             value: loadingGetShipping ? (
               <TotalizerSpinner
-                size={costCenterCount === 1 ? 18 : costCenterCount * 24}
+                size={costCenterCount === 1 ? 18 : costCenterCount * 25}
               />
             ) : (
               <TotalizerTable multiple={hasMultipleCostCenters}>
@@ -256,7 +254,7 @@ export function useTotalizers() {
       value:
         loadingGetShipping && costCenterCount ? (
           <TotalizerSpinner
-            size={costCenterCount === 1 ? 18 : costCenterCount * 24}
+            size={costCenterCount === 1 ? 18 : costCenterCount * 25}
           />
         ) : (
           <TotalizerTable multiple={hasMultipleCostCenters}>

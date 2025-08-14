@@ -1,0 +1,6 @@
+{
+  "admin.app.RepresentativeBalances": {
+    "component": "AdminRepresentativeBalances",
+    "path": "/admin/app/RepresentativeBalances"
+  }
+}

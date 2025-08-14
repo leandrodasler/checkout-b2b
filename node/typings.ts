@@ -3,7 +3,14 @@ import { OrderForm as OrderFormType } from '@vtex/clients'
 import { Address, PaymentData } from 'vtex.checkout-graphql'
 
 declare global {
-  type OrderForm = OrderFormType & { paymentData: PaymentData }
+  type OrderForm = Omit<OrderFormType, 'items'> & {
+    paymentData: PaymentData
+    items: Array<
+      OrderFormType['items'][number] & {
+        manualPrice?: number
+      }
+    >
+  }
 
   type TransactionBody = {
     referenceId: string
@@ -57,5 +64,33 @@ declare global {
     costCenterName: string
     address: Address
     addresses: Address[]
+  }
+
+  type RepresentativeBalance = {
+    id: string
+    email: string
+    balance: number
+    createdIn: string
+    lastInteractionIn: string
+  }
+
+  type AppSettings = {
+    salesRepresentative: number
+    salesManager: number
+    salesAdmin: number
+    rolesAllowedToSeeMargin: string[]
+    representativeBalance?: {
+      enabled: boolean
+      openingBalance?: number
+      allowNegativeBalance?: boolean
+    }
+  }
+
+  type B2BUser = {
+    email: string
+    name: string
+    roleId: string
+    orgId: string
+    costId: string
   }
 }

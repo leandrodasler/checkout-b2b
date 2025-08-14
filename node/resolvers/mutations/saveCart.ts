@@ -6,8 +6,8 @@ import {
   getSessionData,
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
-  SAVED_CART_SCHEMA_VERSION,
   saveSchemas,
+  SCHEMA_VERSION,
 } from '../../utils'
 
 export const saveCart = async (
@@ -53,7 +53,7 @@ export const saveCart = async (
 
   const { DocumentId } = await clients.masterdata.createOrUpdateEntireDocument({
     ...(id && { id }),
-    schema: SAVED_CART_SCHEMA_VERSION,
+    schema: SCHEMA_VERSION,
     dataEntity: SAVED_CART_ENTITY,
     fields: {
       title: newTitle,
@@ -76,7 +76,7 @@ export const saveCart = async (
     await clients.masterdata.updatePartialDocument({
       dataEntity: SAVED_CART_ENTITY,
       id: parentSavedCart.id,
-      schema: SAVED_CART_SCHEMA_VERSION,
+      schema: SCHEMA_VERSION,
       fields: { childrenQuantity: (parentSavedCart.childrenQuantity ?? 0) + 1 },
     })
   }

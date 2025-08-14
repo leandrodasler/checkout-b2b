@@ -26,6 +26,7 @@ export function usePlaceOrder() {
     MutationPlaceOrder,
     MutationPlaceOrderArgs
   >(MUTATION_PLACE_ORDER, {
+    refetchQueries: ['GetRepresentativeBalanceByEmail'],
     variables: {
       poNumber,
       invoiceData: { address: paymentAddress ?? shipping.selectedAddress },
