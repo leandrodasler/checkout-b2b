@@ -17,13 +17,18 @@ export const saveRepresentativeBalance = async (
     email,
     balance,
     orderGroup,
-  }: { email?: string; balance: number; orderGroup: string },
+    overwrite,
+  }: {
+    email?: string
+    balance: number
+    orderGroup: string
+    overwrite?: boolean
+  },
   context: ServiceContext<Clients>
 ) => {
   await saveSchemas(context)
 
   const inputEmail = await getRepresentativeEmail(context, email)
-
   const { masterdata } = context.clients
 
   const representativeBalance = await getRepresentativeBalanceByEmail(
@@ -33,24 +38,22 @@ export const saveRepresentativeBalance = async (
   )
 
   const oldBalance = representativeBalance?.balance ?? 0
-  const newBalance = oldBalance + balance
+  const newBalance = overwrite ? balance : oldBalance + balance
   let representativeBalanceId = representativeBalance?.id
 
-  if (balance) {
-    const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
-      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
-      fields: {
-        email: inputEmail,
-        balance: newBalance,
-      },
-      schema: SCHEMA_VERSION,
-      ...(representativeBalanceId !== inputEmail && {
-        id: representativeBalanceId,
-      }),
-    })
+  const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
+    dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+    fields: {
+      email: inputEmail,
+      balance: newBalance,
+    },
+    schema: SCHEMA_VERSION,
+    ...(representativeBalanceId !== inputEmail && {
+      id: representativeBalanceId,
+    }),
+  })
 
-    representativeBalanceId = DocumentId
-  }
+  representativeBalanceId = DocumentId
 
   if (!representativeBalanceId) {
     throw new NotFoundError('representative-balance-not-found')

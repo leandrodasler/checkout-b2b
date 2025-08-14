@@ -6,6 +6,7 @@
   "description": "Checkout for B2B Stores",
   "builders": {
     "react": "3.x",
+    "admin": "0.x",
     "messages": "1.x",
     "docs": "0.x",
     "store": "0.x",
@@ -214,6 +215,12 @@
             "type": "number",
             "title": "Opening Balance",
             "description": "The monetary value of the representative opening balance"
+          },
+          "allowNegativeBalance": {
+            "type": "boolean",
+            "title": "Allow Negative Representative Balance",
+            "description": "Enable this option to allow the representative's balance to go negative",
+            "default": false
           }
         }
       }

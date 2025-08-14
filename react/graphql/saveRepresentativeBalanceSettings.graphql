@@ -1,12 +1,15 @@
-query saveRepresentativeBalanceSettings(
+mutation saveRepresentativeBalanceSettings(
   $enabled: Boolean!
   $openingBalance: Float!
+  $allowNegativeBalance: Boolean!
 ) {
   saveRepresentativeBalanceSettings(
     enabled: $enabled
     openingBalance: $openingBalance
+    allowNegativeBalance: $allowNegativeBalance
   ) @context(provider: "ssesandbox04.checkout-b2b") {
     enabled
     openingBalance
+    allowNegativeBalance
   }
 }

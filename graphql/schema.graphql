@@ -20,6 +20,7 @@ type SavedCart {
 type RepresentativeBalanceSettings {
   enabled: Boolean!
   openingBalance: Float
+  allowNegativeBalance: Boolean!
 }
 
 type AppSettings {
@@ -86,6 +87,7 @@ type Mutation {
     email: String
     balance: Float!
     orderGroup: String!
+    overwrite: Boolean
   ): RepresentativeBalance!
 
   saveRepresentativeBalanceSettings(

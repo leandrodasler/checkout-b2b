@@ -106,5 +106,16 @@
   "store/checkout.b2b.representative-balance.initial-balance.label": "Saldo inicial",
   "store/checkout.b2b.representative-balance.discount-changes.label": "Cambios aplicados",
   "store/checkout.b2b.representative-balance.no-balance.fallback": "No se encontró saldo",
-  "store/checkout.b2b.representative-balance.error-message.label": "Error al cargar el saldo"
+  "store/checkout.b2b.representative-balance.error-message.label": "Error al cargar el saldo",
+
+  "admin/representativebalances.title": "Saldos de Representantes",
+  "admin/representativebalances.button.save-balances": "Guardar Saldos",
+  "admin/representativebalances.button.edit-balances": "Editar Saldos",
+  "admin/representativebalances.button.cancel-edit": "Cancelar Edición",
+  "admin/representativebalances.error": "Error al obtener datos",
+  "admin/representativebalances.negative-balance": "Saldo negativo no permitido para: {emails}",
+  "admin/representativebalances.email": "E-mail",
+  "admin/representativebalances.balance": "Saldo ({currency})",
+  "admin/representativebalances.createdIn": "Creado en",
+  "admin/representativebalances.lastInteractionIn": "Última interacción"
 }

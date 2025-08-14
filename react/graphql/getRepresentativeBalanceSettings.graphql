@@ -3,6 +3,7 @@ query getRepresentativeBalanceSettings {
     representativeBalance {
       enabled
       openingBalance
+      allowNegativeBalance
     }
   }
 }

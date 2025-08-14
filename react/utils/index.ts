@@ -232,3 +232,16 @@ export function groupShippingOptionsBySeller(
 
   return sellerSlasMap
 }
+
+export function getCurrencySymbol(currencyCode: string) {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currencyCode,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })
+
+  const formattedValue = formatter.format(0)
+
+  return formattedValue.replace(/0/g, '').trim()
+}

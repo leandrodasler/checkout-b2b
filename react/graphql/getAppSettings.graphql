@@ -6,6 +6,8 @@ query getSettings {
     rolesAllowedToSeeMargin
     representativeBalance {
       enabled
+      openingBalance
+      allowNegativeBalance
     }
   }
 }
