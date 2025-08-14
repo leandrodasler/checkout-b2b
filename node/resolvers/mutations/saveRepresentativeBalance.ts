@@ -41,19 +41,19 @@ export const saveRepresentativeBalance = async (
   const newBalance = overwrite ? balance : oldBalance + balance
   let representativeBalanceId = representativeBalance?.id
 
-  if (typeof balance === 'number') {
-    const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
-      dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
-      fields: {
-        email: inputEmail,
-        balance: newBalance,
-      },
-      schema: SCHEMA_VERSION,
-      id: representativeBalance?.id,
-    })
+  const { DocumentId } = await masterdata.createOrUpdateEntireDocument({
+    dataEntity: REPRESENTATIVE_BALANCE_ENTITY,
+    fields: {
+      email: inputEmail,
+      balance: newBalance,
+    },
+    schema: SCHEMA_VERSION,
+    ...(representativeBalanceId !== inputEmail && {
+      id: representativeBalanceId,
+    }),
+  })
 
-    representativeBalanceId = DocumentId
-  }
+  representativeBalanceId = DocumentId
 
   if (!representativeBalanceId) {
     throw new NotFoundError('representative-balance-not-found')
@@ -68,9 +68,6 @@ export const saveRepresentativeBalance = async (
       orderGroup,
     },
     schema: SCHEMA_VERSION,
-    ...(representativeBalanceId !== inputEmail && {
-      id: representativeBalanceId,
-    }),
   })
 
   const updatedRepresentativeBalance = await masterdata.getDocument<RepresentativeBalance | null>(

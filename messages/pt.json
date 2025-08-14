@@ -112,7 +112,10 @@
   "admin/representativebalances.button.save-balances": "Salvar Saldos",
   "admin/representativebalances.button.edit-balances": "Editar Saldos",
   "admin/representativebalances.button.cancel-edit": "Cancelar Edição",
-  "admin/representativebalances.loading": "Carregando...",
   "admin/representativebalances.error": "Erro ao buscar dados",
-  "admin/representativebalances.negative-balance": "Saldo negativo não permitido para"
+  "admin/representativebalances.negative-balance": "Saldo negativo não permitido para: {emails}",
+  "admin/representativebalances.email": "E-mail",
+  "admin/representativebalances.balance": "Saldo ({currency})",
+  "admin/representativebalances.createdIn": "Criado em",
+  "admin/representativebalances.lastInteractionIn": "Última interação"
 }

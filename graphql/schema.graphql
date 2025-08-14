@@ -20,6 +20,7 @@ type SavedCart {
 type RepresentativeBalanceSettings {
   enabled: Boolean!
   openingBalance: Float
+  allowNegativeBalance: Boolean!
 }
 
 type AppSettings {

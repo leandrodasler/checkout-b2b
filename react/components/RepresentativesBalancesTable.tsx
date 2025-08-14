@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { useRuntime } from 'vtex.render-runtime'
-import { Button, InputCurrency, Table } from 'vtex.styleguide'
+import { Button, InputCurrency, Spinner, Table } from 'vtex.styleguide'
 
 import GET_REPRESENTATIVE_BALANCES from '../graphql/getRepresentativeBalances.graphql'
 import LIST_USERS from '../graphql/ListUsers.graphql'
 import SAVE_REPRESENTATIVE_BALANCE from '../graphql/SaveRepresentativeBalance.graphql'
+import { useFormatPrice } from '../hooks'
 import { usePermissions } from '../hooks/usePermissions'
-import { messages } from '../utils'
+import { getCurrencySymbol, messages } from '../utils'
 
 type RepresentativeBalance = {
   id: string
@@ -20,11 +21,14 @@ type RepresentativeBalance = {
 
 const RepresentativeBalancesTable = () => {
   const { formatMessage } = useIntl()
+  const formatPrice = useFormatPrice()
   const {
     culture: { currency },
   } = useRuntime()
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const currencySymbol = getCurrencySymbol(currency)
+
+  const [errorMessage, setErrorMessage] = useState<React.ReactNode | null>(null)
   const {
     data: usersData,
     loading: loadingUsers,
@@ -40,7 +44,7 @@ const RepresentativeBalancesTable = () => {
 
   const [saveBalance] = useMutation(SAVE_REPRESENTATIVE_BALANCE)
 
-  const { allowNegativeBalance } = usePermissions()
+  const { allowNegativeBalance, openingBalance } = usePermissions()
 
   const [representatives, setRepresentatives] = useState<
     RepresentativeBalance[]
@@ -77,7 +81,7 @@ const RepresentativeBalancesTable = () => {
           existing ?? {
             id: `new-${index}`,
             email: user.email,
-            balance: 0,
+            balance: openingBalance,
             createdIn: new Date().toISOString(),
             lastInteractionIn: new Date().toISOString(),
           }
@@ -93,7 +97,7 @@ const RepresentativeBalancesTable = () => {
       initialBalances[rep.id] = rep.balance
     })
     setEditedBalances(initialBalances)
-  }, [usersData, balancesData])
+  }, [usersData, balancesData, openingBalance])
 
   const handleBalanceChange = (id: string, value: string | number) => {
     const numericValue = parseFloat(String(value).replace(',', '.'))
@@ -106,10 +110,20 @@ const RepresentativeBalancesTable = () => {
 
     const negativeErrors = representatives
       .filter((rep) => !allowNegativeBalance && editedBalances[rep.id] < 0)
-      .map((rep) => `Saldo negativo não permitido para ${rep.email}.`)
+      .map((rep) => rep.email)
 
     if (negativeErrors.length) {
-      setErrorMessage(negativeErrors.join(' '))
+      setErrorMessage(
+        formatMessage(messages.representativeBalanceNegativeError, {
+          emails: (
+            <ul key="negativeBalanceEmailsError">
+              {negativeErrors.map((email) => (
+                <li key={email}>{email}</li>
+              ))}
+            </ul>
+          ),
+        })
+      )
 
       return
     }
@@ -121,7 +135,7 @@ const RepresentativeBalancesTable = () => {
           variables: {
             email: rep.email,
             balance: editedBalances[rep.id],
-            orderGroup: 'edição-tabela',
+            orderGroup: 'admin',
             overwrite: true,
           },
         })
@@ -132,15 +146,17 @@ const RepresentativeBalancesTable = () => {
       setIsEditing(false)
       refetch()
     } catch (err) {
-      console.error('Erro ao salvar alterações:', err)
-      setErrorMessage('Erro ao salvar alterações. Tente novamente.')
+      setErrorMessage(err.message)
     }
   }
 
   const columns = {
-    email: { title: 'Email' },
+    email: { title: formatMessage(messages.representativeBalanceEmail) },
     balance: {
-      title: 'Saldo (R$)',
+      width: 180,
+      title: formatMessage(messages.representativeBalanceValue, {
+        currency: currencySymbol,
+      }),
       cellRenderer: Object.assign(
         ({ rowData }: { rowData: RepresentativeBalance }) =>
           isEditing ? (
@@ -153,13 +169,16 @@ const RepresentativeBalancesTable = () => {
               }
             />
           ) : (
-            <span>{Number(rowData.balance).toFixed(2)}</span>
+            <span>
+              {formatPrice(rowData.balance).replace(currencySymbol, '')}
+            </span>
           ),
         { displayName: 'BalanceCellRenderer' }
       ),
     },
     createdIn: {
-      title: 'Criado em',
+      width: 180,
+      title: formatMessage(messages.representativeBalanceCreatedIn),
       cellRenderer: Object.assign(
         ({ cellData }: { cellData: string }) => (
           <span>{new Date(cellData).toLocaleDateString()}</span>
@@ -168,7 +187,8 @@ const RepresentativeBalancesTable = () => {
       ),
     },
     lastInteractionIn: {
-      title: 'Última interação',
+      width: 180,
+      title: formatMessage(messages.representativeBalanceLastInteractionIn),
       cellRenderer: Object.assign(
         ({ cellData }: { cellData: string }) => (
           <span>{new Date(cellData).toLocaleDateString()}</span>
@@ -178,31 +198,43 @@ const RepresentativeBalancesTable = () => {
     },
   }
 
-  if (loadingUsers || loadingBalances) return <span>Carregando...</span>
-  if (errorUsers || errorBalances) return <span>Erro ao buscar dados</span>
+  if (loadingUsers || loadingBalances) return <Spinner />
+  if (errorUsers || errorBalances)
+    return <span>{formatMessage(messages.representativeBalanceError)}</span>
 
   return (
     <div className="w-100 pa4 flex flex-column">
-      <div className="mb4">
-        <Button variation="primary" onClick={() => setIsEditing(!isEditing)}>
+      <div className="flex mb4">
+        <Button
+          variation={isEditing ? 'secondary' : 'primary'}
+          onClick={() => {
+            setIsEditing((prev) => !prev)
+            setErrorMessage(null)
+          }}
+        >
           {isEditing
             ? formatMessage(messages.cancelEditButton)
             : formatMessage(messages.editBalancesButton)}
         </Button>
+        {isEditing && (
+          <div className="ml4">
+            <Button variation="success" onClick={handleSave}>
+              {formatMessage(messages.saveBalancesButton)}
+            </Button>
+          </div>
+        )}
       </div>
       {errorMessage && (
         <div className="mb4">
           <span className="c-danger">{errorMessage}</span>
         </div>
       )}
-      <Table items={representatives} schema={{ properties: columns }} />
-      {isEditing && (
-        <div className="mt4">
-          <Button variation="success" onClick={handleSave}>
-            {formatMessage(messages.saveBalancesButton)}
-          </Button>
-        </div>
-      )}
+      <Table
+        onRowClick={() => {}}
+        fullWidth
+        items={representatives.sort((a, b) => a.email.localeCompare(b.email))}
+        schema={{ properties: columns }}
+      />
     </div>
   )
 }

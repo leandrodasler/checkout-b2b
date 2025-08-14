@@ -7,9 +7,10 @@ import RepresentativeBalancesTable from './components/RepresentativesBalancesTab
 const AdminRepresentativeBalances: FC = () => {
   return (
     <Layout
+      fullWidth
       pageHeader={
         <PageHeader
-          title={<FormattedMessage id="Tabela de Saldos por Representante" />}
+          title={<FormattedMessage id="admin/representativebalances.title" />}
         />
       }
     >

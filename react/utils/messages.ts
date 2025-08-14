@@ -186,4 +186,16 @@ export const messages = defineMessages({
   cancelEditButton: {
     id: 'admin/representativebalances.button.cancel-edit',
   },
+  representativeBalanceError: { id: 'admin/representativebalances.error' },
+  representativeBalanceNegativeError: {
+    id: 'admin/representativebalances.negative-balance',
+  },
+  representativeBalanceEmail: { id: 'admin/representativebalances.email' },
+  representativeBalanceValue: { id: 'admin/representativebalances.balance' },
+  representativeBalanceCreatedIn: {
+    id: 'admin/representativebalances.createdIn',
+  },
+  representativeBalanceLastInteractionIn: {
+    id: 'admin/representativebalances.lastInteractionIn',
+  },
 })
