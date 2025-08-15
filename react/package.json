@@ -31,7 +31,8 @@
     "vtex.checkout-resources": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-resources@0.50.0/public/@types/vtex.checkout-resources",
     "vtex.country-codes": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.country-codes@2.0.1/public/_types/react",
     "vtex.css-handles": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles",
-    "vtex.flex-layout": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.4/public/@types/vtex.flex-layout",
+    "vtex.file-manager-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager-graphql@0.7.4/public/@types/vtex.file-manager-graphql",
+    "vtex.flex-layout": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout",
     "vtex.formatted-price": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price",
     "vtex.order-items": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-items@0.14.0/public/@types/vtex.order-items",
     "vtex.order-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-manager@0.12.0/public/@types/vtex.order-manager",
@@ -41,7 +42,7 @@
     "vtex.session-client": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.session-client@1.0.4/public/@types/vtex.session-client",
     "vtex.shipping-estimate-translator": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.shipping-estimate-translator@2.3.0/public/@types/vtex.shipping-estimate-translator",
     "vtex.store": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.142.0/public/@types/vtex.store",
-    "vtex.store-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.173.1/public/@types/vtex.store-graphql",
+    "vtex.store-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.173.2/public/@types/vtex.store-graphql",
     "vtex.storefront-permissions": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions@1.45.3/public/@types/vtex.storefront-permissions",
     "vtex.storefront-permissions-ui": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui",
     "vtex.styleguide": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide"

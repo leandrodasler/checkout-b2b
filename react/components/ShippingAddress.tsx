@@ -99,7 +99,7 @@ export function ShippingAddress() {
   const costCenterName = selectedCostCenters?.[0]?.costCenterName
 
   return (
-    <div className="flex flex-column flex-wrap">
+    <div className="flex flex-column">
       <Address address={shippingAddress} />
       {!!items.length && costCenterName && (
         <div className="mt3">

@@ -280,12 +280,9 @@ export function ContactInfos() {
           </span>
           <Tag size="small">{roleName}</Tag>
         </div>
-        <span className="t-mini">{email}</span>
+        <div className="t-mini mt3">{email}</div>
         {phone && phone !== '+10000000000' && (
-          <>
-            <br />
-            <span className="t-mini">{phone}</span>
-          </>
+          <div className="t-mini mt1">{phone}</div>
         )}
         {representativeBalanceEnabled && (
           <div className="mt4">

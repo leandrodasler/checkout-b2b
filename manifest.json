@@ -34,7 +34,8 @@
     "vtex.address-form": "4.x",
     "vtex.country-codes": "2.x",
     "vtex.session-client": "1.x",
-    "vtex.apps-graphql": "3.x"
+    "vtex.apps-graphql": "3.x",
+    "vtex.file-manager-graphql": "0.x"
   },
   "registries": ["smartcheckout"],
   "policies": [
@@ -75,6 +76,13 @@
       "attrs": {
         "host": "portal.vtexcommercestable.com.br",
         "path": "/api/profile-system/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/*"
       }
     },
     {

@@ -27,6 +27,7 @@ import { ContactInfos } from './components/ContactInfos'
 import { MultipleOrdersModal } from './components/MultipleOrdersModal'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
+import { ShareCartPDF } from './components/ShareCartPDF'
 import MUTATION_UPDATE_PRICES from './graphql/updatePrices.graphql'
 import {
   useClearCart,
@@ -284,6 +285,8 @@ function CheckoutB2B() {
     return () => observer.disconnect()
   }, [])
 
+  const pdfElementRef = useRef<HTMLDivElement>(null)
+
   return (
     <div className={handles.container}>
       <MultipleOrdersModal />
@@ -301,41 +304,22 @@ function CheckoutB2B() {
           </PageHeader>
         }
       >
-        <PageBlock>
-          {!loading && (
-            <div className="mb4">
-              <Box title={formatMessage(messages.totalizerBoxTitle)}>
-                <ContactInfos />
-                <Totalizer items={totalizers} />
-              </Box>
-            </div>
-          )}
+        <div ref={pdfElementRef}>
+          <PageBlock>
+            {!loading && (
+              <div className="mb4">
+                <Box title={formatMessage(messages.totalizerBoxTitle)}>
+                  <ContactInfos />
+                  <Totalizer items={totalizers} />
+                </Box>
+              </div>
+            )}
 
-          <div className={handles.table}>
-            <div
-              className={`${handles.groupToggles} dn w-100 w-60-m`}
-              ref={toggleRef}
-            >
-              <Toggle
-                label={formatMessage(messages.searchProductsToggle)}
-                checked={searchStore}
-                onChange={handleToggleSearchStore}
-              />
-
-              <Toggle
-                label={formatMessage(messages.searchProductsGroupToggle)}
-                checked={isGrouping}
-                onChange={() => setIsGrouping((prev) => !prev)}
-              />
-            </div>
-
-            <div
-              className={`${handles.containerToggle} dn flex-wrap items-center w-100 w-60-m`}
-              ref={autocompleteRef}
-            >
-              <ProductAutocomplete />
-
-              <div className={`${handles.groupToggles} flex items-center`}>
+            <div className={handles.table}>
+              <div
+                className={`${handles.groupToggles} dn w-100 w-60-m`}
+                ref={toggleRef}
+              >
                 <Toggle
                   label={formatMessage(messages.searchProductsToggle)}
                   checked={searchStore}
@@ -348,60 +332,83 @@ function CheckoutB2B() {
                   onChange={() => setIsGrouping((prev) => !prev)}
                 />
               </div>
-            </div>
 
-            <div ref={tableRef}>
-              <Table
-                updateTableKey={`table-${
-                  'tax' in schema.properties ? 'with-tax' : 'no-tax'
-                }${
-                  'listPrice' in schema.properties ? 'with-margin' : 'no-margin'
-                }${isGrouping ? 'grouping-products' : 'ungrouped-products'}`}
-                onRowClick={() => {}}
-                loading={loading}
-                fullWidth
-                schema={schema}
-                items={filteredItems}
-                density="high"
-                emptyStateLabel={
-                  searchQuery && !searchStore ? (
-                    <div className="flex flex-column">
-                      {formatMessage(messages.searchProductsEmpty, {
-                        term: searchQuery,
-                        type: SEARCH_TYPE.CART,
-                      })}
-                      <div className="mt4">
-                        <Button
-                          size="small"
-                          variation="secondary"
-                          onClick={() =>
-                            handleToggleSearchStore(undefined, true)
-                          }
-                        >
-                          {formatMessage(messages.searchProductsToggle)}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    formatMessage(messages.emptyCart)
-                  )
-                }
-                toolbar={toolbar}
-              />
-            </div>
-            {!loading && !!filteredItems.length && (
-              <div className="mt4 c-muted-2">
-                {formatMessage(messages.itemCount, {
-                  count: filteredItems.reduce(
-                    (acc: number, item: CustomItem) =>
-                      acc + (isGrouping && !item.__group ? 0 : item.quantity),
-                    0
-                  ),
-                })}
+              <div
+                className={`${handles.containerToggle} dn flex-wrap items-center w-100 w-60-m`}
+                ref={autocompleteRef}
+              >
+                <ProductAutocomplete />
+
+                <div className={`${handles.groupToggles} flex items-center`}>
+                  <Toggle
+                    label={formatMessage(messages.searchProductsToggle)}
+                    checked={searchStore}
+                    onChange={handleToggleSearchStore}
+                  />
+
+                  <Toggle
+                    label={formatMessage(messages.searchProductsGroupToggle)}
+                    checked={isGrouping}
+                    onChange={() => setIsGrouping((prev) => !prev)}
+                  />
+                </div>
               </div>
-            )}
-          </div>
-        </PageBlock>
+
+              <div ref={tableRef}>
+                <Table
+                  updateTableKey={`table-${
+                    'tax' in schema.properties ? 'with-tax' : 'no-tax'
+                  }${
+                    'listPrice' in schema.properties
+                      ? 'with-margin'
+                      : 'no-margin'
+                  }${isGrouping ? 'grouping-products' : 'ungrouped-products'}`}
+                  onRowClick={() => {}}
+                  loading={loading}
+                  fullWidth
+                  schema={schema}
+                  items={filteredItems}
+                  density="high"
+                  emptyStateLabel={
+                    searchQuery && !searchStore ? (
+                      <div className="flex flex-column">
+                        {formatMessage(messages.searchProductsEmpty, {
+                          term: searchQuery,
+                          type: SEARCH_TYPE.CART,
+                        })}
+                        <div className="mt4">
+                          <Button
+                            size="small"
+                            variation="secondary"
+                            onClick={() =>
+                              handleToggleSearchStore(undefined, true)
+                            }
+                          >
+                            {formatMessage(messages.searchProductsToggle)}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      formatMessage(messages.emptyCart)
+                    )
+                  }
+                  toolbar={toolbar}
+                />
+              </div>
+              {!loading && !!filteredItems.length && (
+                <div className="mt4 c-muted-2">
+                  {formatMessage(messages.itemCount, {
+                    count: filteredItems.reduce(
+                      (acc: number, item: CustomItem) =>
+                        acc + (isGrouping && !item.__group ? 0 : item.quantity),
+                      0
+                    ),
+                  })}
+                </div>
+              )}
+            </div>
+          </PageBlock>
+        </div>
         {isEditing && (
           <Slider
             onChange={(values: number[]) => {
@@ -449,13 +456,16 @@ function CheckoutB2B() {
             )}
           </div>
           {!!items.length && !loading && (
-            <Button
-              variation="danger-tertiary"
-              onClick={clearCart}
-              isLoading={clearCartLoading}
-            >
-              {formatMessage(messages.clearCart)}
-            </Button>
+            <div className="flex flex-wrap">
+              <ShareCartPDF mainRef={pdfElementRef} />
+              <Button
+                variation="danger-tertiary"
+                onClick={clearCart}
+                isLoading={clearCartLoading}
+              >
+                {formatMessage(messages.clearCart)}
+              </Button>
+            </div>
           )}
         </div>
       </Layout>
