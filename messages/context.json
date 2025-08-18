@@ -120,7 +120,7 @@
   "admin/representativebalances.lastInteractionIn": "Last interaction",
 
   "store/checkout.b2b.share-cart.button": "Share PDF",
-  "store/checkout.b2b.share-cart.subject": "The store cart of {storeName} has been shared with you",
+  "store/checkout.b2b.share-cart.subject": "A store cart of {storeName} has been shared with you",
   "store/checkout.b2b.share-cart.title": "Click the link below to open the cart in PDF format",
   "store/checkout.b2b.share-cart.link": "Open",
   "store/checkout.b2b.share-cart.sentBy": "Sent by",
