@@ -126,10 +126,14 @@
   "store/checkout.b2b.share-cart.sentBy": "Enviado por",
   "store/checkout.b2b.share-cart.user": "Usuário",
   "store/checkout.b2b.share-cart.role": "Função",
-  "store/checkout.b2b.share-cart.regards": "Atenciosamente",
+  "store/checkout.b2b.share-cart.regards": "Atenciosamente,",
   "store/checkout.b2b.share-cart.success": "Carrinho compartilhado com sucesso",
   "store/checkout.b2b.share-cart.modalTitle": "Enviar o carrinho no formato PDF",
   "store/checkout.b2b.share-cart.label": "Enviar",
   "store/checkout.b2b.share-cart.email": "E-mail",
-  "store/checkout.b2b.share-cart.email.placeholder": "Insira um e-mail para enviar o carrinho no formato PDF"
+  "store/checkout.b2b.share-cart.email.placeholder": "Insira um e-mail para enviar o carrinho no formato PDF",
+  "store/checkout.b2b.share-cart.email-origin.user": "Selecione um usuário",
+  "store/checkout.b2b.share-cart.email-origin.user.placeholder": "Selecione um usuário do mesmo centro de custo",
+  "store/checkout.b2b.share-cart.email-origin.input": "Insira um e-mail",
+  "store/checkout.b2b.share-cart.invalid.email": "E-mail inválido"
 }

@@ -213,4 +213,16 @@ export const messages = defineMessages({
   shareCartEmailPlaceholder: {
     id: 'store/checkout.b2b.share-cart.email.placeholder',
   },
+  shareCartEmailOriginUser: {
+    id: 'store/checkout.b2b.share-cart.email-origin.user',
+  },
+  shareCartEmailOriginUserPlaceholder: {
+    id: 'store/checkout.b2b.share-cart.email-origin.user.placeholder',
+  },
+  shareCartEmailOriginInput: {
+    id: 'store/checkout.b2b.share-cart.email-origin.input',
+  },
+  shareCartInvalidEmail: {
+    id: 'store/checkout.b2b.share-cart.invalid.email',
+  },
 })

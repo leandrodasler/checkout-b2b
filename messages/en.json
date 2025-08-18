@@ -126,10 +126,14 @@
   "store/checkout.b2b.share-cart.sentBy": "Sent by",
   "store/checkout.b2b.share-cart.user": "User",
   "store/checkout.b2b.share-cart.role": "Role",
-  "store/checkout.b2b.share-cart.regards": "Regards",
+  "store/checkout.b2b.share-cart.regards": "Regards,",
   "store/checkout.b2b.share-cart.success": "Cart shared successfully",
   "store/checkout.b2b.share-cart.modalTitle": "Send the cart in PDF format",
   "store/checkout.b2b.share-cart.label": "Send",
   "store/checkout.b2b.share-cart.email": "E-mail",
-  "store/checkout.b2b.share-cart.email.placeholder": "Enter an email to send the cart in PDF format"
+  "store/checkout.b2b.share-cart.email.placeholder": "Enter an email to send the cart in PDF format",
+  "store/checkout.b2b.share-cart.email-origin.user": "Select a user",
+  "store/checkout.b2b.share-cart.email-origin.user.placeholder": "Select a user from the same cost center",
+  "store/checkout.b2b.share-cart.email-origin.input": "Enter an email",
+  "store/checkout.b2b.share-cart.invalid.email": "Invalid email address"
 }

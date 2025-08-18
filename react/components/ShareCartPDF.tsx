@@ -12,6 +12,7 @@ import {
   IconExternalLink,
   Input,
   Modal,
+  SelectableCard,
 } from 'vtex.styleguide'
 
 import MUTATION_SHARE_CART from '../graphql/shareCart.graphql'
@@ -29,14 +30,17 @@ type Props = {
   mainRef: React.RefObject<HTMLDivElement>
 }
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
 export function ShareCartPDF({ mainRef }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const handles = useCssHandles(['container'])
   const { orderForm } = useOrderFormCustom()
   const { organization } = useOrganization()
-  const [email, setEmail] = useState('')
-  const [organizationUser, setOrganizationUser] = useState<string>()
+  const [emailOrigin, setEmailOrigin] = useState<'user' | 'input'>('user')
+  const [user, setUser] = useState<string>()
+  const [inputEmail, setInputEmail] = useState('')
   const inputRef = useRef<HTMLInputElement>()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -44,6 +48,9 @@ export function ShareCartPDF({ mainRef }: Props) {
   const storeSettings = getSettings('vtex.store')
   const { clientProfileData } = orderForm
   const { costCenter, tradeName, name, roleName, users } = organization
+  const isInputEmail = !users?.length || emailOrigin === 'input'
+  const costCenterUserEmail = users?.find((u) => u?.id === user)?.email
+  const email = isInputEmail ? inputEmail : costCenterUserEmail
 
   const organizationName = useMemo(() => (tradeName ?? '') || name, [
     name,
@@ -94,13 +101,20 @@ export function ShareCartPDF({ mainRef }: Props) {
 
   const handleClose = () => {
     setOpen(false)
-    setEmail('')
-    setOrganizationUser(undefined)
+    setEmailOrigin('user')
+    setInputEmail('')
+    setUser(undefined)
     setLoading(false)
   }
 
   const handleSharePDF = async () => {
-    if (!mainRef.current) return
+    if (!mainRef.current || !email) return
+
+    if (!EMAIL_REGEX.test(email)) {
+      showToast({ message: formatMessage(messages.shareCartInvalidEmail) })
+
+      return
+    }
 
     setLoading(true)
 
@@ -151,10 +165,10 @@ export function ShareCartPDF({ mainRef }: Props) {
     })
   }
 
-  const getUserLabel = (user?: B2BUser | null) => {
-    return !user?.name || user?.name === 'null null'
-      ? user?.email ?? ''
-      : `${user?.name} <${user?.email}>`
+  const getUserLabel = (b2bUser?: B2BUser | null) => {
+    return !b2bUser?.name || b2bUser?.name === 'null null'
+      ? b2bUser?.email ?? ''
+      : `${b2bUser?.name} <${b2bUser?.email}>`
   }
 
   return (
@@ -178,6 +192,7 @@ export function ShareCartPDF({ mainRef }: Props) {
               variation="primary"
               onClick={handleSharePDF}
               isLoading={loading}
+              disabled={!email}
             >
               {formatMessage(messages.shareCartLabel)}
             </Button>
@@ -191,35 +206,72 @@ export function ShareCartPDF({ mainRef }: Props) {
               handleSharePDF()
             }}
           >
-            {!!users?.length && (
+            <div className="flex pv4">
+              {!!users?.length && (
+                <SelectableCard
+                  hasGroupRigth
+                  noPadding
+                  selected={emailOrigin === 'user'}
+                  onClick={() => setEmailOrigin('user')}
+                >
+                  <div className="ph5 pv3">
+                    <div className="tc">
+                      {formatMessage(messages.shareCartEmailOriginUser)}
+                    </div>
+                  </div>
+                </SelectableCard>
+              )}
+              <div className="ml4">
+                <SelectableCard
+                  hasGroupLeft
+                  noPadding
+                  selected={isInputEmail}
+                  onClick={() => {
+                    setEmailOrigin('input')
+                    window.setTimeout(() => inputRef.current?.focus())
+                  }}
+                >
+                  <div className="ph5 pv3">
+                    <div className="tc">
+                      {formatMessage(messages.shareCartEmailOriginInput)}
+                    </div>
+                  </div>
+                </SelectableCard>
+              </div>
+            </div>
+            {!!users?.length && emailOrigin === 'user' && (
               <Dropdown
+                label={formatMessage(messages.shareCartUser)}
+                size="small"
+                placeholder={formatMessage(
+                  messages.shareCartEmailOriginUserPlaceholder
+                )}
                 options={users
                   .sort((a, b) =>
                     getUserLabel(a).localeCompare(getUserLabel(b))
                   )
-                  .map((user) => ({
-                    label: getUserLabel(user),
-                    value: user?.id ?? '',
+                  .map((b2bUser) => ({
+                    label: getUserLabel(b2bUser),
+                    value: b2bUser?.id ?? '',
                   }))}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  setOrganizationUser(e.target.value)
-                  setEmail(
-                    users.find((u) => u?.id === e.target.value)?.email ?? ''
-                  )
-                }}
-                value={organizationUser}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setUser(e.target.value)
+                }
+                value={user}
               />
             )}
-            <Input
-              ref={inputRef}
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
-              size="small"
-              label={formatMessage(messages.shareCartEmail)}
-              placeholder={formatMessage(messages.shareCartEmailPlaceholder)}
-            />
+            {isInputEmail && (
+              <Input
+                ref={inputRef}
+                size="small"
+                value={inputEmail}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setInputEmail(e.target.value)
+                }
+                label={formatMessage(messages.shareCartEmail)}
+                placeholder={formatMessage(messages.shareCartEmailPlaceholder)}
+              />
+            )}
           </form>
         </div>
       </Modal>
