@@ -161,7 +161,7 @@
     "availableCountries": ["*"]
   },
   "settingsSchema": {
-    "title": "Checkout B2B Settings",
+    "title": "Settings for Checkout B2B App",
     "type": "object",
     "properties": {
       "salesRepresentative": {
@@ -239,7 +239,7 @@
           "allowNegativeBalance": {
             "type": "boolean",
             "title": "Allow Negative Representative Balance",
-            "description": "Enable this option to allow the representative's balance to go negative",
+            "description": "Enable this option to allow the representative balances to go negative",
             "default": false
           }
         }
