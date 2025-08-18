@@ -13,6 +13,12 @@ import type { OrderForm as OrderFormStore } from 'vtex.store-graphql'
 type ShowToastArgs = {
   message: string
   horizontalPosition?: 'left' | 'right'
+  action?: {
+    label: string
+  } & (
+    | { onClick: () => void; href?: never; target?: never }
+    | { href: string; onClick?: never; target?: string }
+  )
 }
 
 export type WithToast<T = unknown> = T & {

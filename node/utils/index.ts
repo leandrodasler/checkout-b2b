@@ -13,6 +13,7 @@ import {
 
 export * from './constants'
 export * from './mdSchema'
+export * from './readFile'
 
 function throwForbiddenError(): never {
   throw new ForbiddenError('Not authenticated in storefront')

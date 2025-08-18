@@ -142,6 +142,18 @@
     },
     {
       "name": "AcessaTodosCarrinhos"
+    },
+    {
+      "name": "Get_User_By_Identifier"
+    },
+    {
+      "name": "template-criar"
+    },
+    {
+      "name": "template-editar"
+    },
+    {
+      "name": "send-message"
     }
   ],
   "billingOptions": {

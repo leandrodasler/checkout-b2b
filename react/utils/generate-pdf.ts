@@ -70,12 +70,16 @@ function cloneWithInlineStyles(sourceEl: HTMLElement) {
       dest.value = src.value
     }
 
+    if (src instanceof HTMLButtonElement && dest instanceof HTMLButtonElement) {
+      dest.style.display = 'none'
+    }
+
     if (src instanceof HTMLSelectElement && dest instanceof HTMLSelectElement) {
       dest.value = src.value
     }
 
-    if (isRoot) {
-      ;(dest as HTMLElement).style.backgroundColor = 'white'
+    if (isRoot && dest instanceof HTMLElement) {
+      dest.style.backgroundColor = 'white'
     }
 
     const srcChildren = Array.from(src.children)

@@ -117,5 +117,19 @@
   "admin/representativebalances.email": "E-mail",
   "admin/representativebalances.balance": "Saldo ({currency})",
   "admin/representativebalances.createdIn": "Criado em",
-  "admin/representativebalances.lastInteractionIn": "Última interação"
+  "admin/representativebalances.lastInteractionIn": "Última interação",
+
+  "store/checkout.b2b.share-cart.button": "Compartilhar PDF",
+  "store/checkout.b2b.share-cart.subject": "Um carrinho da loja {storeName} foi compartilhado com você",
+  "store/checkout.b2b.share-cart.title": "Clique no link abaixo para abrir o carrinho no formato PDF",
+  "store/checkout.b2b.share-cart.link": "Abrir",
+  "store/checkout.b2b.share-cart.sentBy": "Enviado por",
+  "store/checkout.b2b.share-cart.user": "Usuário",
+  "store/checkout.b2b.share-cart.role": "Função",
+  "store/checkout.b2b.share-cart.regards": "Atenciosamente",
+  "store/checkout.b2b.share-cart.success": "Carrinho compartilhado com sucesso",
+  "store/checkout.b2b.share-cart.modalTitle": "Enviar o carrinho no formato PDF",
+  "store/checkout.b2b.share-cart.label": "Enviar",
+  "store/checkout.b2b.share-cart.email": "E-mail",
+  "store/checkout.b2b.share-cart.email.placeholder": "Insira um e-mail para enviar o carrinho no formato PDF"
 }

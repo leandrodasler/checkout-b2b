@@ -9,6 +9,8 @@ import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import {
   Box,
   Button,
+  ButtonWithIcon,
+  IconDelete,
   Layout,
   PageBlock,
   PageHeader,
@@ -458,13 +460,14 @@ function CheckoutB2B() {
           {!!items.length && !loading && (
             <div className="flex flex-wrap">
               <ShareCartPDF mainRef={pdfElementRef} />
-              <Button
+              <ButtonWithIcon
+                icon={<IconDelete />}
                 variation="danger-tertiary"
                 onClick={clearCart}
                 isLoading={clearCartLoading}
               >
                 {formatMessage(messages.clearCart)}
-              </Button>
+              </ButtonWithIcon>
             </div>
           )}
         </div>

@@ -1,34 +1,101 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from 'react-apollo'
+import { useIntl } from 'react-intl'
+import { Mutation, MutationShareCartArgs } from 'ssesandbox04.checkout-b2b'
+import { B2BUser } from 'vtex.b2b-organizations-graphql'
 import { useCssHandles } from 'vtex.css-handles'
-import { Button, Input, Modal } from 'vtex.styleguide'
+import { useRuntime } from 'vtex.render-runtime'
+import {
+  Button,
+  ButtonWithIcon,
+  Dropdown,
+  IconExternalLink,
+  Input,
+  Modal,
+} from 'vtex.styleguide'
 
-import UPLOAD_FILE from '../graphql/uploadFile.graphql'
-import { useOrderFormCustom } from '../hooks'
-import { elementToPdfBlob } from '../utils'
+import MUTATION_SHARE_CART from '../graphql/shareCart.graphql'
+import MUTATION_UPLOAD_FILE from '../graphql/uploadFile.graphql'
+import { useOrderFormCustom, useOrganization, useToast } from '../hooks'
+import { elementToPdfBlob, messages } from '../utils'
 
 type MutationUploadFile = {
   uploadFile: { fileUrl: string }
 }
+
+type MutationShareCart = Pick<Mutation, 'shareCart'>
 
 type Props = {
   mainRef: React.RefObject<HTMLDivElement>
 }
 
 export function ShareCartPDF({ mainRef }: Props) {
+  const showToast = useToast()
+  const { formatMessage } = useIntl()
   const handles = useCssHandles(['container'])
   const { orderForm } = useOrderFormCustom()
+  const { organization } = useOrganization()
   const [email, setEmail] = useState('')
+  const [organizationUser, setOrganizationUser] = useState<string>()
   const inputRef = useRef<HTMLInputElement>()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [urlFile, setUrlFile] = useState<string>()
-  const [uploadFile] = useMutation<MutationUploadFile>(UPLOAD_FILE)
+  const { getSettings } = useRuntime()
+  const storeSettings = getSettings('vtex.store')
+  const { clientProfileData } = orderForm
+  const { costCenter, tradeName, name, roleName, users } = organization
+
+  const organizationName = useMemo(() => (tradeName ?? '') || name, [
+    name,
+    tradeName,
+  ])
+
+  const costCenterName = costCenter?.name
+
+  const [uploadFile] = useMutation<MutationUploadFile>(MUTATION_UPLOAD_FILE, {
+    onError({ message }) {
+      showToast({ message })
+    },
+  })
+
+  const [shareCart] = useMutation<MutationShareCart, MutationShareCartArgs>(
+    MUTATION_SHARE_CART,
+    {
+      onError({ message }) {
+        showToast({ message })
+      },
+    }
+  )
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
+  if (!clientProfileData) return null
+
+  const { firstName, lastName, email: userEmail } = clientProfileData
+
+  if (!firstName || !userEmail || !organizationName || !costCenterName)
+    return null
+
+  const handleOpen = () => {
+    setOpen(true)
+
+    mainRef.current?.querySelectorAll('[data-pdf-click]').forEach((element) => {
+      if (
+        element instanceof HTMLElement &&
+        element.hasAttribute('data-pdf-click') &&
+        element.querySelector('button')
+      ) {
+        element.querySelector('button')?.click()
+      }
+    })
+  }
 
   const handleClose = () => {
     setOpen(false)
     setEmail('')
-    setUrlFile(undefined)
+    setOrganizationUser(undefined)
     setLoading(false)
   }
 
@@ -45,25 +112,66 @@ export function ShareCartPDF({ mainRef }: Props) {
 
     const { data } = await uploadFile({ variables: { file } })
 
-    setUrlFile(data?.uploadFile.fileUrl)
-    setLoading(false)
+    const fileUrl = data?.uploadFile.fileUrl
+
+    if (!fileUrl) return
+
+    await shareCart({
+      variables: {
+        email,
+        subject: formatMessage(messages.shareCartSubject, {
+          storeName: storeSettings.storeName,
+        }),
+        title: formatMessage(messages.shareCartTitle),
+        linkLabel: formatMessage(messages.shareCartLink),
+        linkHref: fileUrl,
+        sentByLabel: formatMessage(messages.shareCartSentBy),
+        userLabel: formatMessage(messages.shareCartUser),
+        sentByName: `${firstName}${lastName ? ` ${lastName}` : ''}`,
+        sentByEmail: userEmail,
+        roleLabel: formatMessage(messages.shareCartRole),
+        sentByRole: roleName,
+        organizationLabel: formatMessage(messages.companyName),
+        sentByOrganization: organizationName,
+        costCenterLabel: formatMessage(messages.costCenterSingleLabel),
+        sentByCostCenter: costCenterName,
+        footerLine1: formatMessage(messages.shareCartRegards),
+        footerLine2: storeSettings.storeName,
+      },
+    })
+
+    handleClose()
+    showToast({
+      message: formatMessage(messages.shareCartSuccess),
+      action: {
+        label: formatMessage(messages.shareCartLink),
+        href: fileUrl,
+        target: '__blank',
+      },
+    })
   }
 
-  useEffect(() => {
-    if (open) inputRef.current?.focus()
-  }, [open])
+  const getUserLabel = (user?: B2BUser | null) => {
+    return !user?.name || user?.name === 'null null'
+      ? user?.email ?? ''
+      : `${user?.name} <${user?.email}>`
+  }
 
   return (
     <>
-      <Button variation="tertiary" onClick={() => setOpen(true)}>
-        Compartilhar PDF
-      </Button>
+      <ButtonWithIcon
+        icon={<IconExternalLink />}
+        variation="tertiary"
+        onClick={handleOpen}
+      >
+        {formatMessage(messages.shareCartButton)}
+      </ButtonWithIcon>
       <Modal
         isOpen={open}
         container={document.querySelector(`.${handles.container}`)}
         onClose={handleClose}
         size="small"
-        title="Enviar carrinho no formato PDF"
+        title={formatMessage(messages.shareCartModalTitle)}
         bottomBar={
           <div className="flex justify-end">
             <Button
@@ -71,7 +179,7 @@ export function ShareCartPDF({ mainRef }: Props) {
               onClick={handleSharePDF}
               isLoading={loading}
             >
-              Enviar
+              {formatMessage(messages.shareCartLabel)}
             </Button>
           </div>
         }
@@ -83,6 +191,25 @@ export function ShareCartPDF({ mainRef }: Props) {
               handleSharePDF()
             }}
           >
+            {!!users?.length && (
+              <Dropdown
+                options={users
+                  .sort((a, b) =>
+                    getUserLabel(a).localeCompare(getUserLabel(b))
+                  )
+                  .map((user) => ({
+                    label: getUserLabel(user),
+                    value: user?.id ?? '',
+                  }))}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setOrganizationUser(e.target.value)
+                  setEmail(
+                    users.find((u) => u?.id === e.target.value)?.email ?? ''
+                  )
+                }}
+                value={organizationUser}
+              />
+            )}
             <Input
               ref={inputRef}
               value={email}
@@ -90,15 +217,10 @@ export function ShareCartPDF({ mainRef }: Props) {
                 setEmail(e.target.value)
               }
               size="small"
-              label="E-mail"
-              placeholder="Insira um e-mail para enviar o carrinho no formato PDF"
+              label={formatMessage(messages.shareCartEmail)}
+              placeholder={formatMessage(messages.shareCartEmailPlaceholder)}
             />
           </form>
-          {urlFile && (
-            <a href={urlFile} target="_blank" rel="noopener noreferrer">
-              Baixar PDF
-            </a>
-          )}
         </div>
       </Modal>
     </>

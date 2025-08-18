@@ -117,5 +117,19 @@
   "admin/representativebalances.email": "E-mail",
   "admin/representativebalances.balance": "Balance ({currency})",
   "admin/representativebalances.createdIn": "Created in",
-  "admin/representativebalances.lastInteractionIn": "Last interaction"
+  "admin/representativebalances.lastInteractionIn": "Last interaction",
+
+  "store/checkout.b2b.share-cart.button": "Share PDF",
+  "store/checkout.b2b.share-cart.subject": "The store cart of {storeName} has been shared with you",
+  "store/checkout.b2b.share-cart.title": "Click the link below to open the cart in PDF format",
+  "store/checkout.b2b.share-cart.link": "Open",
+  "store/checkout.b2b.share-cart.sentBy": "Sent by",
+  "store/checkout.b2b.share-cart.user": "User",
+  "store/checkout.b2b.share-cart.role": "Role",
+  "store/checkout.b2b.share-cart.regards": "Regards",
+  "store/checkout.b2b.share-cart.success": "Cart shared successfully",
+  "store/checkout.b2b.share-cart.modalTitle": "Send the cart in PDF format",
+  "store/checkout.b2b.share-cart.label": "Send",
+  "store/checkout.b2b.share-cart.email": "E-mail",
+  "store/checkout.b2b.share-cart.email.placeholder": "Enter an email to send the cart in PDF format"
 }

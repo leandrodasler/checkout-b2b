@@ -2,7 +2,5 @@ mutation uploadFile($file: Upload!, $bucket: String) {
   uploadFile(file: $file, bucket: $bucket)
     @context(provider: "vtex.file-manager-graphql") {
     fileUrl
-    mimetype
-    encoding
   }
 }

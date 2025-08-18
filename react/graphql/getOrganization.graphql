@@ -70,6 +70,7 @@ query getOrganization($organizationId: ID, $costCenterId: ID) {
 
   getUsers(organizationId: $organizationId, costCenterId: $costCenterId)
     @context(provider: "vtex.b2b-organizations-graphql") {
+    id
     organizationName
     costCenterName
     roleId

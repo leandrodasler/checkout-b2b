@@ -198,4 +198,19 @@ export const messages = defineMessages({
   representativeBalanceLastInteractionIn: {
     id: 'admin/representativebalances.lastInteractionIn',
   },
+  shareCartButton: { id: 'store/checkout.b2b.share-cart.button' },
+  shareCartSubject: { id: 'store/checkout.b2b.share-cart.subject' },
+  shareCartTitle: { id: 'store/checkout.b2b.share-cart.title' },
+  shareCartLink: { id: 'store/checkout.b2b.share-cart.link' },
+  shareCartSentBy: { id: 'store/checkout.b2b.share-cart.sentBy' },
+  shareCartUser: { id: 'store/checkout.b2b.share-cart.user' },
+  shareCartRole: { id: 'store/checkout.b2b.share-cart.role' },
+  shareCartRegards: { id: 'store/checkout.b2b.share-cart.regards' },
+  shareCartSuccess: { id: 'store/checkout.b2b.share-cart.success' },
+  shareCartModalTitle: { id: 'store/checkout.b2b.share-cart.modalTitle' },
+  shareCartLabel: { id: 'store/checkout.b2b.share-cart.label' },
+  shareCartEmail: { id: 'store/checkout.b2b.share-cart.email' },
+  shareCartEmailPlaceholder: {
+    id: 'store/checkout.b2b.share-cart.email.placeholder',
+  },
 })

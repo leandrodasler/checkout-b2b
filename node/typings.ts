@@ -93,4 +93,68 @@ declare global {
     orgId: string
     costId: string
   }
+
+  type MailData = {
+    templateName: string
+    jsonData: MailJsonData
+  }
+
+  type MailJsonData = {
+    message: {
+      to: string
+      subject: string
+    }
+    data: {
+      title: string
+      linkLabel: string
+      linkHref: string
+      sentByLabel: string
+      userLabel: string
+      sentByName: string
+      sentByEmail: string
+      roleLabel: string
+      sentByRole: string
+      organizationLabel: string
+      sentByOrganization: string
+      costCenterLabel: string
+      sentByCostCenter: string
+      footerLine1: string
+      footerLine2: string
+    }
+  }
+
+  type MailTemplate = {
+    AccountId?: string
+    AccountName?: string
+    ApplicationId?: string
+    Description?: string
+    FriendlyName: string
+    IsDefaultTemplate: boolean
+    IsPersisted: boolean
+    IsRemoved: boolean
+    Name: string
+    Type: string
+    Templates: {
+      email: {
+        To: string
+        CC?: string
+        BCC?: string
+        Subject: string
+        Message: string
+        Type: string
+        ProviderId: string
+        ProviderName?: string
+        IsActive: boolean
+        withError: boolean
+      }
+      sms: {
+        Type: string
+        ProviderId?: string
+        ProviderName?: string
+        IsActive: boolean
+        withError: boolean
+        Parameters: string[]
+      }
+    }
+  }
 }
