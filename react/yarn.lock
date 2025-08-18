@@ -5426,10 +5426,6 @@ verror@1.10.0:
   version "0.7.4"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager-graphql@0.7.4/public/@types/vtex.file-manager-graphql#1b1f02834ab85d553bf98450dbd9b293a044abe1"
 
-"vtex.file-manager@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.12.2/public/_types/react":
-  version "0.0.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.12.2/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
-
 "vtex.flex-layout@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout":
   version "0.21.5"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout#732a9584402f5a97308c079beffa41d839b4c06a"

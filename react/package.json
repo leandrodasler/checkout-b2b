@@ -31,7 +31,6 @@
     "vtex.checkout-resources": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-resources@0.50.0/public/@types/vtex.checkout-resources",
     "vtex.country-codes": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.country-codes@2.0.1/public/_types/react",
     "vtex.css-handles": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.css-handles@0.4.4/public/@types/vtex.css-handles",
-    "vtex.file-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.12.2/public/_types/react",
     "vtex.file-manager-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager-graphql@0.7.4/public/@types/vtex.file-manager-graphql",
     "vtex.flex-layout": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout",
     "vtex.formatted-price": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price",
