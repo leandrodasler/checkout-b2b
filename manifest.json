@@ -35,6 +35,7 @@
     "vtex.country-codes": "2.x",
     "vtex.session-client": "1.x",
     "vtex.apps-graphql": "3.x",
+    "vtex.file-manager": "0.x",
     "vtex.file-manager-graphql": "0.x"
   },
   "registries": ["smartcheckout"],
@@ -154,6 +155,9 @@
     },
     {
       "name": "send-message"
+    },
+    {
+      "name": "vtex.file-manager:saveFileAsync"
     }
   ],
   "billingOptions": {

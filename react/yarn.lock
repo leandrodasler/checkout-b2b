@@ -4990,9 +4990,9 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.45/public/@types/ssesandbox04.checkout-b2b":
-  version "1.0.45"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.45/public/@types/ssesandbox04.checkout-b2b#ba7b309ad0648b0116094c66383031abf98b0daf"
+"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.46/public/@types/ssesandbox04.checkout-b2b":
+  version "1.0.46"
+  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.46/public/@types/ssesandbox04.checkout-b2b#19eb40b93f15b7b059138ea3c431b7d329611ede"
 
 sshpk@^1.7.0:
   version "1.17.0"
@@ -5425,6 +5425,10 @@ verror@1.10.0:
 "vtex.file-manager-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager-graphql@0.7.4/public/@types/vtex.file-manager-graphql":
   version "0.7.4"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager-graphql@0.7.4/public/@types/vtex.file-manager-graphql#1b1f02834ab85d553bf98450dbd9b293a044abe1"
+
+"vtex.file-manager@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.12.2/public/_types/react":
+  version "0.0.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.file-manager@0.12.2/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
 
 "vtex.flex-layout@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout":
   version "0.21.5"
