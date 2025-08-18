@@ -1,7 +1,7 @@
 {
   "vendor": "ssesandbox04",
   "name": "checkout-b2b",
-  "version": "1.0.49",
+  "version": "1.0.50",
   "title": "Checkout B2B",
   "description": "Checkout for B2B Stores",
   "builders": {
