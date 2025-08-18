@@ -89,11 +89,7 @@ export function ShareCartPDF({ mainRef }: Props) {
     setOpen(true)
 
     mainRef.current?.querySelectorAll('[data-pdf-click]').forEach((element) => {
-      if (
-        element instanceof HTMLElement &&
-        element.hasAttribute('data-pdf-click') &&
-        element.querySelector('button')
-      ) {
+      if (element instanceof HTMLElement && element.querySelector('button')) {
         element.querySelector('button')?.click()
       }
     })

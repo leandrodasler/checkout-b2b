@@ -1,19 +1,20 @@
+const SCALE = 2
+const JPEG_QUALITY = 0.92
+
 export async function elementToPdfBlob(element: HTMLElement): Promise<Blob> {
-  const scale = 2
-  const jpegQuality = 0.92
   const { cloned, width, height } = cloneWithInlineStyles(element)
   const svg = makeForeignObjectSVG(cloned, width, height)
   const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
   const img = await loadImage(dataUrl)
   const canvas = document.createElement('canvas')
 
-  canvas.width = Math.max(1, Math.floor(width * scale))
-  canvas.height = Math.max(1, Math.floor(height * scale))
+  canvas.width = Math.max(1, Math.floor(width * SCALE))
+  canvas.height = Math.max(1, Math.floor(height * SCALE))
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
 
   ctx.imageSmoothingEnabled = true
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-  const jpegDataUrl = canvas.toDataURL('image/jpeg', jpegQuality)
+  const jpegDataUrl = canvas.toDataURL('image/jpeg', JPEG_QUALITY)
   const jpegBytes = dataURLToUint8Array(jpegDataUrl)
   const pdfBytes = buildSingleImagePdf({
     img: jpegBytes,
