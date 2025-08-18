@@ -15,7 +15,7 @@ export function ShowMoreButton({ isExpanded, onClick }: Props) {
   const showMoreLabel = formatMessage(messages.showMore)
 
   return (
-    <span className="ml2">
+    <span className="ml2" data-pdf-click={!isExpanded || undefined}>
       <ButtonPlain size="small" onClick={onClick}>
         <span className="t-mini">
           {isExpanded ? showLessLabel : showMoreLabel}

@@ -3,6 +3,7 @@ import { DeliveryIds, ShippingData, ShippingSla } from 'vtex.store-graphql'
 
 import { CustomOrganization, PaymentAddressType } from '../typings'
 
+export * from './generate-pdf'
 export * from './messages'
 
 export const SESSION_NAMESPACE = 'storefront-permissions'

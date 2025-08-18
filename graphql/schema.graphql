@@ -94,4 +94,24 @@ type Mutation {
     enabled: Boolean!
     openingBalance: Float
   ): RepresentativeBalanceSettings!
+
+  shareCart(
+    email: String!
+    subject: String!
+    title: String!
+    linkLabel: String!
+    linkHref: String!
+    sentByLabel: String!
+    userLabel: String!
+    sentByName: String!
+    sentByEmail: String!
+    roleLabel: String!
+    sentByRole: String!
+    organizationLabel: String!
+    sentByOrganization: String!
+    costCenterLabel: String!
+    sentByCostCenter: String!
+    footerLine1: String!
+    footerLine2: String!
+  ): String!
 }
