@@ -9,6 +9,7 @@ import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
 import { getRepresentativeBalanceByEmail } from './queries/getRepresentativeBalanceByEmail'
 import { getRepresentativeBalances } from './queries/getRepresentativeBalances'
+import { getRepresentativeBalanceTransactions } from './queries/getRepresentativeBalanceTransactions'
 import { getSavedCarts } from './queries/getSavedCarts'
 
 export default {
@@ -19,6 +20,7 @@ export default {
       getAppSettings,
       getRepresentativeBalances,
       getRepresentativeBalanceByEmail,
+      getRepresentativeBalanceTransactions,
     },
     Mutation: {
       saveCart,

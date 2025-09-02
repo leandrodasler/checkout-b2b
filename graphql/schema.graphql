@@ -51,6 +51,16 @@ type RepresentativeBalance {
   lastInteractionIn: String!
 }
 
+type RepresentativeBalanceTransaction {
+  id: ID!
+  email: String!
+  oldBalance: Float!
+  newBalance: Float!
+  orderGroup: String!
+  createdIn: String!
+  lastInteractionIn: String!
+}
+
 type Query {
   getCart(id: ID!): SavedCart
 
@@ -61,6 +71,13 @@ type Query {
   getRepresentativeBalances: [RepresentativeBalance]!
 
   getRepresentativeBalanceByEmail(email: String): RepresentativeBalance
+
+  getRepresentativeBalanceTransactions(
+    email: String!
+    page: Int
+    pageSize: Int
+    sort: String
+  ): [RepresentativeBalanceTransaction]!
 }
 
 type Mutation {

@@ -66,13 +66,23 @@ declare global {
     addresses: Address[]
   }
 
-  type RepresentativeBalance = {
+  type MasterdataEntity<T> = {
     id: string
-    email: string
-    balance: number
     createdIn: string
     lastInteractionIn: string
-  }
+  } & T
+
+  type RepresentativeBalance = MasterdataEntity<{
+    email: string
+    balance: number
+  }>
+
+  type RepresentativeBalanceTransaction = MasterdataEntity<{
+    email: string
+    oldBalance: number
+    newBalance: number
+    orderGroup: string
+  }>
 
   type AppSettings = {
     salesRepresentative: number
