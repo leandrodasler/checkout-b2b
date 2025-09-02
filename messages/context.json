@@ -108,6 +108,7 @@
   "store/checkout.b2b.representative-balance.no-balance.fallback": "No balance found",
   "store/checkout.b2b.representative-balance.error-message.label": "Error loading balance",
 
+  "admin/checkout-b2b.title": "Checkout B2B",
   "admin/representativebalances.title": "Representative Balances",
   "admin/representativebalances.button.save-balances": "Save Balances",
   "admin/representativebalances.button.edit-balances": "Edit Balances",

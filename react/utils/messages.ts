@@ -174,6 +174,9 @@ export const messages = defineMessages({
   balanceError: {
     id: 'store/checkout.b2b.representative-balance.error-message.label',
   },
+  appTitle: {
+    id: 'admin/checkout-b2b.title',
+  },
   representativeBalance: {
     id: 'admin/representativebalances.title',
   },

@@ -1,13 +1,13 @@
 {
-  "section": "orders",
-  "titleId": "admin/app.title",
-  "subSection": "RepresentativeBalances",
-  "searchKeyWordsHelpers": "admin-RepresentativeBalances.navigation.search.kws",
+  "section": "apps",
+  "adminVersion": 4,
+  "path": "/admin/RepresentativeBalances",
+  "titleId": "admin/checkout-b2b.title",
+  "subSection": "checkout-b2b",
   "subSectionItems": [
     {
       "labelId": "admin/representativebalances.title",
-      "path": "/admin/RepresentativeBalances",
-      "searchKeyWordsHelpers": "admin-RepresentativeBalances.navigation.table.search.kws"
+      "path": "/admin/RepresentativeBalances"
     }
   ]
 }
