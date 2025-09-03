@@ -1,3 +1,4 @@
+import * as schemaDirectives from './directives'
 import { deleteCart } from './mutations/deleteCart'
 import { placeOrder } from './mutations/placeOrder'
 import { saveCart } from './mutations/saveCart'
@@ -32,4 +33,5 @@ export default {
       shareCart,
     },
   },
+  schemaDirectives,
 }

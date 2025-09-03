@@ -1,3 +1,5 @@
+directive @CheckSchemas on FIELD | FIELD_DEFINITION
+
 scalar CostCenter
 scalar InvoiceData
 scalar CostCenterDeliveryOptions
@@ -62,22 +64,23 @@ type RepresentativeBalanceTransaction {
 }
 
 type Query {
-  getCart(id: ID!): SavedCart
+  getCart(id: ID!): SavedCart @CheckSchemas
 
-  getSavedCarts(parentCartId: ID): [SavedCart!]!
+  getSavedCarts(parentCartId: ID): [SavedCart!]! @CheckSchemas
 
   getAppSettings: AppSettings!
 
-  getRepresentativeBalances: [RepresentativeBalance]!
+  getRepresentativeBalances: [RepresentativeBalance]! @CheckSchemas
 
   getRepresentativeBalanceByEmail(email: String): RepresentativeBalance
+    @CheckSchemas
 
   getRepresentativeBalanceTransactions(
     email: String!
     page: Int
     pageSize: Int
     sort: String
-  ): [RepresentativeBalanceTransaction]!
+  ): [RepresentativeBalanceTransaction]! @CheckSchemas
 }
 
 type Mutation {
@@ -86,9 +89,9 @@ type Mutation {
     title: String
     additionalData: String
     parentCartId: String
-  ): SavedCart!
+  ): SavedCart! @CheckSchemas
 
-  deleteCart(id: ID): ID
+  deleteCart(id: ID): ID @CheckSchemas
 
   placeOrder(
     poNumber: String
@@ -105,7 +108,7 @@ type Mutation {
     balance: Float!
     orderGroup: String!
     overwrite: Boolean
-  ): RepresentativeBalance!
+  ): RepresentativeBalance! @CheckSchemas
 
   saveRepresentativeBalanceSettings(
     enabled: Boolean!

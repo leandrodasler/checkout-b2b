@@ -2,14 +2,13 @@ import { ServiceContext } from '@vtex/api'
 import type { QueryGetSavedCartsArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
-import { getAllSavedCarts, getSessionData, saveSchemas } from '../../utils'
+import { getAllSavedCarts, getSessionData } from '../../utils'
 
 export const getSavedCarts = async (
   _: unknown,
   { parentCartId }: QueryGetSavedCartsArgs,
   context: ServiceContext<Clients>
 ) => {
-  await saveSchemas(context)
   const { organizationId, costCenterId } = await getSessionData(context)
 
   const where: string[] = []

@@ -6,7 +6,6 @@ import {
   REPRESENTATIVE_BALANCE_ENTITY,
   REPRESENTATIVE_BALANCE_FIELDS,
   REPRESENTATIVE_BALANCE_TRANSACTION_ENTITY,
-  saveSchemas,
   SCHEMA_VERSION,
 } from '../../utils'
 import { getRepresentativeBalanceByEmail } from '../queries/getRepresentativeBalanceByEmail'
@@ -26,8 +25,6 @@ export const saveRepresentativeBalance = async (
   },
   context: ServiceContext<Clients>
 ) => {
-  await saveSchemas(context)
-
   const inputEmail = await getRepresentativeEmail(context, email)
   const { masterdata } = context.clients
 

@@ -4,7 +4,6 @@ import { Clients } from '../../clients'
 import {
   REPRESENTATIVE_BALANCE_ENTITY,
   REPRESENTATIVE_BALANCE_FIELDS,
-  saveSchemas,
   SCHEMA_VERSION,
 } from '../../utils'
 
@@ -13,8 +12,6 @@ export const getRepresentativeBalances = async (
   __: unknown,
   context: ServiceContext<Clients>
 ) => {
-  await saveSchemas(context)
-
   const { masterdata } = context.clients
 
   return masterdata.searchDocuments<RepresentativeBalance>({

@@ -7,7 +7,6 @@ import {
   getAllSavedCarts,
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
-  saveSchemas,
   SCHEMA_VERSION,
 } from '../../utils'
 
@@ -16,7 +15,6 @@ export const deleteCart = async (
   { id }: MutationSaveCartArgs,
   context: ServiceContext<Clients>
 ) => {
-  await saveSchemas(context)
   const { masterdata } = context.clients
 
   if (id) {

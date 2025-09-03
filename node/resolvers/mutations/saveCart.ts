@@ -6,7 +6,6 @@ import {
   getSessionData,
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
-  saveSchemas,
   SCHEMA_VERSION,
 } from '../../utils'
 
@@ -15,7 +14,6 @@ export const saveCart = async (
   { id, title, additionalData, parentCartId }: MutationSaveCartArgs,
   context: ServiceContext<Clients>
 ) => {
-  await saveSchemas(context)
   const {
     email,
     orderFormId,
