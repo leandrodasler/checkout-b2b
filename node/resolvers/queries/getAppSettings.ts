@@ -26,6 +26,8 @@ export const getAppSettings = async (
   const representativeBalance = {
     ...settings.representativeBalance,
     enabled: settings.representativeBalance?.enabled ?? false,
+    allowNegativeBalance:
+      settings.representativeBalance?.allowNegativeBalance ?? false,
   }
 
   return {

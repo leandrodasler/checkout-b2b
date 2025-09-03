@@ -1,11 +1,16 @@
 import { ServiceContext } from '@vtex/api'
+import type { MutationSaveRepresentativeBalanceSettingsArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import { APP_ID } from '../../utils'
 
 export const saveRepresentativeBalanceSettings = async (
   _: unknown,
-  { enabled, openingBalance }: { enabled: boolean; openingBalance?: number },
+  {
+    enabled,
+    openingBalance,
+    allowNegativeBalance,
+  }: MutationSaveRepresentativeBalanceSettingsArgs,
   context: ServiceContext<Clients>
 ) => {
   const settings = await context.clients.apps.getAppSettings(APP_ID)
@@ -14,6 +19,7 @@ export const saveRepresentativeBalanceSettings = async (
     enabled,
     openingBalance:
       openingBalance ?? settings.representativeBalance?.openingBalance,
+    allowNegativeBalance,
   }
 
   const updatedSettings = {

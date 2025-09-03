@@ -22,10 +22,7 @@ type RepresentativeBalance = {
 const RepresentativeBalancesTable = () => {
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
-  const {
-    culture: { currency },
-  } = useRuntime()
-
+  const { currency, locale } = useRuntime().culture
   const currencySymbol = getCurrencySymbol(currency)
 
   const [errorMessage, setErrorMessage] = useState<React.ReactNode | null>(null)
@@ -42,9 +39,15 @@ const RepresentativeBalancesTable = () => {
     refetch,
   } = useQuery(GET_REPRESENTATIVE_BALANCES)
 
-  const [saveBalance] = useMutation(SAVE_REPRESENTATIVE_BALANCE)
+  const [saveBalance, { loading: loadingSave }] = useMutation(
+    SAVE_REPRESENTATIVE_BALANCE
+  )
 
-  const { allowNegativeBalance, openingBalance } = usePermissions()
+  const {
+    allowNegativeBalance,
+    openingBalance,
+    loading: loadingPermissions,
+  } = usePermissions()
 
   const [representatives, setRepresentatives] = useState<
     RepresentativeBalance[]
@@ -99,10 +102,10 @@ const RepresentativeBalancesTable = () => {
     setEditedBalances(initialBalances)
   }, [usersData, balancesData, openingBalance])
 
-  const handleBalanceChange = (id: string, value: string | number) => {
-    const numericValue = parseFloat(String(value).replace(',', '.'))
-
-    setEditedBalances({ ...editedBalances, [id]: numericValue })
+  const handleBalanceChange = (id: string) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setEditedBalances((prev) => ({ ...prev, [id]: +e.target.value }))
   }
 
   const handleSave = async () => {
@@ -161,17 +164,15 @@ const RepresentativeBalancesTable = () => {
         ({ rowData }: { rowData: RepresentativeBalance }) =>
           isEditing ? (
             <InputCurrency
+              disabled={loadingSave}
               size="small"
-              value={editedBalances[rowData.id]?.toString() ?? ''}
+              value={editedBalances[rowData.id]}
+              locale={locale}
               currencyCode={currency}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleBalanceChange(rowData.id, e.target.value)
-              }
+              onChange={handleBalanceChange(rowData.id)}
             />
           ) : (
-            <span>
-              {formatPrice(rowData.balance).replace(currencySymbol, '')}
-            </span>
+            <span>{formatPrice(rowData.balance)}</span>
           ),
         { displayName: 'BalanceCellRenderer' }
       ),
@@ -204,8 +205,10 @@ const RepresentativeBalancesTable = () => {
 
   return (
     <div className="w-100 pa4 flex flex-column">
-      <div className="flex mb4">
+      <div className="flex items-center mb4">
         <Button
+          disabled={loadingPermissions || loadingSave}
+          size="small"
           variation={isEditing ? 'secondary' : 'primary'}
           onClick={() => {
             setIsEditing((prev) => !prev)
@@ -218,7 +221,13 @@ const RepresentativeBalancesTable = () => {
         </Button>
         {isEditing && (
           <div className="ml4">
-            <Button variation="success" onClick={handleSave}>
+            <Button
+              disabled={loadingPermissions}
+              isLoading={loadingSave}
+              size="small"
+              variation="primary"
+              onClick={handleSave}
+            >
               {formatMessage(messages.saveBalancesButton)}
             </Button>
           </div>

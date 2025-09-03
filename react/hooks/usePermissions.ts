@@ -20,7 +20,8 @@ interface AppSettings {
 }
 
 export function usePermissions() {
-  const { data } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, {
+  const { data, loading } = useQuery<AppSettingsQuery>(GET_APP_SETTINGS, {
+    notifyOnNetworkStatusChange: true,
     ssr: false,
   })
 
@@ -70,6 +71,7 @@ export function usePermissions() {
   const openingBalance = appSettings?.representativeBalance.openingBalance ?? 0
 
   return {
+    loading,
     isSalesUser,
     maximumDiscount,
     canSeeMargin,

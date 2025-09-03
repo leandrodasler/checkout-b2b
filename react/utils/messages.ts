@@ -201,6 +201,24 @@ export const messages = defineMessages({
   representativeBalanceLastInteractionIn: {
     id: 'admin/representativebalances.lastInteractionIn',
   },
+  representativeBalanceSettingsError: {
+    id: 'admin/representativebalances.settings.error',
+  },
+  representativeBalanceSettingsSuccess: {
+    id: 'admin/representativebalances.settings.success',
+  },
+  representativeBalanceSettingsEnabled: {
+    id: 'admin/representativebalances.settings.enabled',
+  },
+  representativeBalanceSettingsAllowNegative: {
+    id: 'admin/representativebalances.settings.allowNegative',
+  },
+  representativeBalanceSettingsOpeningBalance: {
+    id: 'admin/representativebalances.settings.openingBalance',
+  },
+  representativeBalanceSettingsSave: {
+    id: 'admin/representativebalances.settings.save',
+  },
   shareCartButton: { id: 'store/checkout.b2b.share-cart.button' },
   shareCartSubject: { id: 'store/checkout.b2b.share-cart.subject' },
   shareCartTitle: { id: 'store/checkout.b2b.share-cart.title' },

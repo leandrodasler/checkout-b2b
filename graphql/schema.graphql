@@ -113,6 +113,7 @@ type Mutation {
   saveRepresentativeBalanceSettings(
     enabled: Boolean!
     openingBalance: Float
+    allowNegativeBalance: Boolean!
   ): RepresentativeBalanceSettings!
 
   shareCart(

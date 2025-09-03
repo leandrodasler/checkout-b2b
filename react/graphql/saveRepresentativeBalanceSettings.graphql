@@ -1,6 +1,6 @@
 mutation saveRepresentativeBalanceSettings(
   $enabled: Boolean!
-  $openingBalance: Float!
+  $openingBalance: Float
   $allowNegativeBalance: Boolean!
 ) {
   saveRepresentativeBalanceSettings(

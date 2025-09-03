@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Layout, PageBlock, PageHeader } from 'vtex.styleguide'
 
+import { RepresentativeBalanceSettings } from './components/RepresentativeBalanceSettings'
 import RepresentativeBalancesTable from './components/RepresentativesBalancesTable'
 
 const AdminRepresentativeBalances: FC = () => {
@@ -16,9 +17,7 @@ const AdminRepresentativeBalances: FC = () => {
                 <FormattedMessage id="admin/checkout-b2b.title" /> |{' '}
                 <FormattedMessage id="admin/representativebalances.title" />
               </span>
-              <span className="c-muted-2 t-body">
-                v{process.env.VTEX_APP_VERSION}
-              </span>
+              <RepresentativeBalanceSettings />
             </span>
           }
         />

@@ -119,6 +119,12 @@
   "admin/representativebalances.balance": "Balance ({currency})",
   "admin/representativebalances.createdIn": "Created in",
   "admin/representativebalances.lastInteractionIn": "Last interaction",
+  "admin/representativebalances.settings.error": "Error saving representative balance settings",
+  "admin/representativebalances.settings.success": "Representative balance settings saved successfully",
+  "admin/representativebalances.settings.enabled": "Representative balances enabled",
+  "admin/representativebalances.settings.allowNegative": "Allow negative balances",
+  "admin/representativebalances.settings.openingBalance": "Opening balance",
+  "admin/representativebalances.settings.save": "Save settings",
 
   "store/checkout.b2b.share-cart.button": "Share PDF",
   "store/checkout.b2b.share-cart.subject": "A store cart of {storeName} has been shared with you",

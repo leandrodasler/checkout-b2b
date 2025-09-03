@@ -119,6 +119,12 @@
   "admin/representativebalances.balance": "Saldo ({currency})",
   "admin/representativebalances.createdIn": "Criado em",
   "admin/representativebalances.lastInteractionIn": "Última interação",
+  "admin/representativebalances.settings.error": "Erro ao salvar as configurações do saldo do representante",
+  "admin/representativebalances.settings.success": "Configurações do saldo do representante salvas com sucesso",
+  "admin/representativebalances.settings.enabled": "Saldos de representantes habilitados",
+  "admin/representativebalances.settings.allowNegative": "Permitir saldos negativos",
+  "admin/representativebalances.settings.openingBalance": "Saldo inicial",
+  "admin/representativebalances.settings.save": "Salvar configurações",
 
   "store/checkout.b2b.share-cart.button": "Compartilhar PDF",
   "store/checkout.b2b.share-cart.subject": "Um carrinho da loja {storeName} foi compartilhado com você",
