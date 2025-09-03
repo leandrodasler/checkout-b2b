@@ -17,6 +17,7 @@ type RepresentativeBalance = {
   balance: number
   createdIn: string
   lastInteractionIn: string
+  __typename?: 'RepresentativeBalance'
 }
 
 const RepresentativeBalancesTable = () => {
@@ -181,8 +182,12 @@ const RepresentativeBalancesTable = () => {
       width: 180,
       title: formatMessage(messages.representativeBalanceCreatedIn),
       cellRenderer: Object.assign(
-        ({ cellData }: { cellData: string }) => (
-          <span>{new Date(cellData).toLocaleDateString()}</span>
+        ({ rowData }: { rowData: RepresentativeBalance }) => (
+          <span>
+            {rowData.__typename
+              ? new Date(rowData.createdIn).toLocaleDateString()
+              : '---'}
+          </span>
         ),
         { displayName: 'CreatedInCellRenderer' }
       ),
@@ -191,8 +196,12 @@ const RepresentativeBalancesTable = () => {
       width: 180,
       title: formatMessage(messages.representativeBalanceLastInteractionIn),
       cellRenderer: Object.assign(
-        ({ cellData }: { cellData: string }) => (
-          <span>{new Date(cellData).toLocaleDateString()}</span>
+        ({ rowData }: { rowData: RepresentativeBalance }) => (
+          <span>
+            {rowData.__typename
+              ? new Date(rowData.lastInteractionIn).toLocaleDateString()
+              : '---'}
+          </span>
         ),
         { displayName: 'LastInteractionInCellRenderer' }
       ),

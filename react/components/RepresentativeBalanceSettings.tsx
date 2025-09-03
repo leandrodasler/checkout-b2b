@@ -97,7 +97,7 @@ function RepresentativeBalanceSettingsContent({
 
   return (
     <form
-      className="flex items-center b--solid bw1 b--muted-3 br3 pa4 t-body"
+      className="flex items-center b--solid ba b--muted-4 br3 pa4 t-small bg-white"
       onSubmit={handleSaveSettings}
     >
       <div className="flex flex-column justify-center">
