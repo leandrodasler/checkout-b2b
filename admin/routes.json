@@ -1,6 +1,6 @@
 {
   "admin.app.RepresentativeBalances": {
     "component": "AdminRepresentativeBalances",
-    "path": "/admin/app/RepresentativeBalances"
+    "path": "/admin/app/checkout-b2b/representative-balances"
   }
 }

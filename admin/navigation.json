@@ -1,13 +1,13 @@
 {
   "section": "apps",
   "adminVersion": 4,
-  "path": "/admin/RepresentativeBalances",
+  "path": "/admin/checkout-b2b/representative-balances",
   "titleId": "admin/checkout-b2b.title",
   "subSection": "checkout-b2b",
   "subSectionItems": [
     {
       "labelId": "admin/representativebalances.title",
-      "path": "/admin/RepresentativeBalances"
+      "path": "/admin/checkout-b2b/representative-balances"
     }
   ]
 }

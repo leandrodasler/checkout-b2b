@@ -10,7 +10,17 @@ const AdminRepresentativeBalances: FC = () => {
       fullWidth
       pageHeader={
         <PageHeader
-          title={<FormattedMessage id="admin/representativebalances.title" />}
+          title={
+            <span className="flex justify-between">
+              <span>
+                <FormattedMessage id="admin/checkout-b2b.title" /> |{' '}
+                <FormattedMessage id="admin/representativebalances.title" />
+              </span>
+              <span className="c-muted-2 t-body">
+                v{process.env.VTEX_APP_VERSION}
+              </span>
+            </span>
+          }
         />
       }
     >
