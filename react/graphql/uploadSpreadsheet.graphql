@@ -1,0 +1,8 @@
+mutation uploadSpreadsheet($file: Upload!, $bucket: String) {
+  uploadSpreadsheet(file: $file, bucket: $bucket)
+    @context(provider: "ssesandbox04.file-manager") {
+    fileUrl
+    mimetype
+    encoding
+  }
+}

@@ -30,6 +30,7 @@ import { MultipleOrdersModal } from './components/MultipleOrdersModal'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import { ShareCartPDF } from './components/ShareCartPDF'
+import { UploadSpreadsheetButton } from './components/SpreadsheetUploader'
 import MUTATION_UPDATE_PRICES from './graphql/updatePrices.graphql'
 import {
   useClearCart,
@@ -468,6 +469,7 @@ function CheckoutB2B() {
               >
                 {formatMessage(messages.clearCart)}
               </ButtonWithIcon>
+              <UploadSpreadsheetButton />
             </div>
           )}
         </div>
