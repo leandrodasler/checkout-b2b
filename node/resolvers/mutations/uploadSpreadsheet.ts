@@ -6,7 +6,7 @@ type FileUpload = Promise<{
   filename: string
   mimetype: string
   encoding: string
-  createReadStream: () => ReadableStream
+  createReadStream: () => NodeJS.ReadableStream
 }>
 
 export const uploadSpreadsheet = async (
@@ -14,13 +14,15 @@ export const uploadSpreadsheet = async (
   { file }: { file: FileUpload },
   _ctx: ServiceContext<Clients>
 ) => {
-  const loadFile = await (file as FileUpload)
-  const { filename, mimetype, encoding } = loadFile
+  const loadedFile = await file
+  const { filename, mimetype, encoding } = loadedFile
 
   // eslint-disable-next-line no-console
-  console.log(
-    `Uploading file: ${filename}, Type: ${mimetype}, Encoding: ${encoding}`
-  )
+  console.log('📂 Arquivo recebido:', {
+    filename,
+    mimetype,
+    encoding,
+  })
 
   return {
     filename,

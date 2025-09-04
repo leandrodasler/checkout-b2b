@@ -6,6 +6,7 @@ import { saveRepresentativeBalance } from './mutations/saveRepresentativeBalance
 import { saveRepresentativeBalanceSettings } from './mutations/saveRepresentativeBalanceSettings'
 import { shareCart } from './mutations/shareCart'
 import { updatePrices } from './mutations/updatePrices'
+import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
 import { getRepresentativeBalanceByEmail } from './queries/getRepresentativeBalanceByEmail'
@@ -31,6 +32,7 @@ export default {
       saveRepresentativeBalance,
       saveRepresentativeBalanceSettings,
       shareCart,
+      uploadSpreadsheet,
     },
   },
   schemaDirectives,

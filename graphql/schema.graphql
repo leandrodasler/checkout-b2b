@@ -5,6 +5,12 @@ scalar InvoiceData
 scalar CostCenterDeliveryOptions
 scalar UpdatedOrderForm
 
+type UploadedFile {
+  filename: String!
+  mimetype: String!
+  encoding: String!
+}
+
 type SavedCart {
   id: ID!
   createdIn: String!
@@ -84,6 +90,8 @@ type Query {
 }
 
 type Mutation {
+  uploadSpreadsheet(file: Upload!): UploadedFile!
+
   saveCart(
     id: ID
     title: String
