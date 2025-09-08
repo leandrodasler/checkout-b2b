@@ -24,7 +24,7 @@ export const getRepresentativeBalanceTransactions = async (
     dataEntity: REPRESENTATIVE_BALANCE_TRANSACTION_ENTITY,
     fields: REPRESENTATIVE_BALANCE_TRANSACTION_FIELDS,
     schema: SCHEMA_VERSION,
-    where: `email=${email}`,
+    where: `email="${email}"`,
     pagination: { page: page ?? 1, pageSize: pageSize ?? 15 },
     sort: sort ?? 'createdIn asc',
   })
