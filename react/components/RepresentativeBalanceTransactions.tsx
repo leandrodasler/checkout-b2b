@@ -34,7 +34,7 @@ const RepresentativeBalanceTransactions = ({
 
   const columns = {
     transaction: {
-      width: 120,
+      width: 150,
       title: formatMessage(messages.representativeBalanceTransactionTransaction),
       cellRenderer: ({ rowData }: { rowData: Transaction }) => (
         <Tooltip label={formatPrice(rowData.newBalance - rowData.oldBalance)}>
@@ -43,7 +43,7 @@ const RepresentativeBalanceTransactions = ({
       ),
     },
     oldBalance: {
-      width: 140,
+      width: 160,
       title: formatMessage(messages.representativeBalanceTransactionOldBalance),
       cellRenderer: ({ cellData }: { cellData: number }) => (
         <Tooltip label={formatPrice(cellData)}>
@@ -52,7 +52,7 @@ const RepresentativeBalanceTransactions = ({
       ),
     },
     newBalance: {
-      width: 140,
+      width: 160,
       title: formatMessage(messages.representativeBalanceTransactionNewBalance),
       cellRenderer: ({ cellData }: { cellData: number }) => (
         <Tooltip label={formatPrice(cellData)}>
@@ -61,7 +61,7 @@ const RepresentativeBalanceTransactions = ({
       ),
     },
     createdIn: {
-      width: 180,
+      width: 220,
       title: formatMessage(messages.representativeBalanceTransactionCreatedIn),
       cellRenderer: ({ cellData }: { cellData: string }) => {
         const formatted = new Date(cellData).toLocaleString()
@@ -73,7 +73,7 @@ const RepresentativeBalanceTransactions = ({
       },
     },
     lastInteractionIn: {
-      width: 180,
+      width: 220,
       title: formatMessage(
         messages.representativeBalanceTransactionLastInteraction
       ),
@@ -87,7 +87,6 @@ const RepresentativeBalanceTransactions = ({
       },
     },
     orderGroup: {
-      width: 150,
       title: formatMessage(messages.representativeBalanceTransactionOrderGroup),
       cellRenderer: ({ cellData }: { cellData: string }) => (
         <Tooltip label={formatMessage(messages.multipleOrdersLink)}>
@@ -144,14 +143,15 @@ const RepresentativeBalanceTransactions = ({
             </div>
           </div>
 
-          <div className="w-100 flex flex-column">
+          <div className="w-100">
             <Table
               fullWidth
               items={transactions}
               schema={{ properties: columns }}
-              density="low"
-            />
-            <div className="flex flex-row justify-between mt4">
+            />           
+          </div>
+
+           <div className="flex flex-row justify-between mt4">
               <Button
                 disabled={page <= 1}
                 isLoading={isLoadingTransactions}
@@ -171,7 +171,6 @@ const RepresentativeBalanceTransactions = ({
                 {formatMessage(messages.representativeBalanceTransactionPageNext)}
               </Button>
             </div>
-          </div>
         </div>
       ) : (
         <span className="c-danger">
