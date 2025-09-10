@@ -13,9 +13,9 @@ import { isWithoutStock, messages } from '../utils'
 const { useOrderItems } = OrderItems
 const DELAY = 500
 
-type Props = { item: Item; disabled?: boolean }
+type Props = { item: Item; disabled?: boolean; itemIndex: number }
 
-export function QuantitySelector({ item, disabled }: Props) {
+export function QuantitySelector({ item, disabled, itemIndex }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
@@ -40,13 +40,13 @@ export function QuantitySelector({ item, disabled }: Props) {
 
       timeout.current = window.setTimeout(() => {
         updateQuantity({
-          id: item.id,
+          index: itemIndex,
           seller: item.seller ?? '1',
           quantity: value,
         }).then(handleFinish, handleFinish)
       }, DELAY)
     },
-    [handleFinish, item.id, item.seller, setPending, updateQuantity]
+    [handleFinish, item.seller, itemIndex, setPending, updateQuantity]
   )
 
   useQuery(GET_PRODUCTS, {
@@ -73,7 +73,7 @@ export function QuantitySelector({ item, disabled }: Props) {
           }`,
         })
         updateQuantity({
-          id: item.id,
+          index: itemIndex,
           seller: item.seller ?? '1',
           quantity: minQuantityValue,
         })

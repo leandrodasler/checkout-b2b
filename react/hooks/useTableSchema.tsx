@@ -257,12 +257,17 @@ export function useTableSchema({
               (i) => i.id === rowData.parentItemId
             )
 
+            const itemIndex = orderForm.items.findIndex(
+              (i) => i.uniqueId === rowData.uniqueId
+            )
+
             return (
               <QuantitySelector
                 item={{
                   ...rowData,
                   quantity: rowData.quantity * (parentItem?.quantity ?? 1),
                 }}
+                itemIndex={itemIndex}
                 disabled={(rowData.__group ?? false) || rowData.__component}
               />
             )
