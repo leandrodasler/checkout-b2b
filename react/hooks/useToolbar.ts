@@ -1,8 +1,8 @@
 import { useIntl } from 'react-intl'
-import type { Item } from 'vtex.checkout-graphql'
 
 import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { CustomItem } from '../typings'
 import { messages, removeAccents } from '../utils'
 
 export function useToolbar() {
@@ -20,7 +20,7 @@ export function useToolbar() {
 
   if (loadingOrganization || loadingOrderForm) return null
 
-  const handleFilterItems = (items: Item[]) => {
+  const handleFilterItems = (items: CustomItem[]) => {
     return searchQuery
       ? items.filter(({ name, skuName, refId }) =>
           removeAccents(searchQuery)

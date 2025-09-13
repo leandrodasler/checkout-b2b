@@ -12,6 +12,10 @@ declare global {
     >
   }
 
+  type AddItemsBody = Array<{ seller: string; id: number; quantity: number }>
+
+  type UpdateItemsQuantityBody = Array<{ index: number; quantity: number }>
+
   type TransactionBody = {
     referenceId: string
     savePersonalData: boolean

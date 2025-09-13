@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
-import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
 
-import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
+import {
+  useOrderFormCustom,
+  usePermissions,
+  useTotalMargin,
+  useUpdateItemsQuantity,
+} from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CellWrapper } from '../components/CellWrapper'
 import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
@@ -14,8 +18,6 @@ import { QuantitySelector } from '../components/QuantitySelector'
 import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
-
-const { useOrderItems } = OrderItems
 
 function getStrike(item: CustomItem) {
   return { strike: isWithoutStock(item) }
@@ -39,7 +41,7 @@ export function useTableSchema({
   const { hasMargin } = useTotalMargin()
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
-  const { removeItem } = useOrderItems()
+  const [updateQuantity, { loading: removeLoading }] = useUpdateItemsQuantity()
   const { canSeeMargin } = usePermissions()
   const {
     getSellingPrice,
@@ -157,6 +159,25 @@ export function useTableSchema({
             )
           },
         },
+        costCenter: {
+          width: 140,
+          title: formatMessage(messages.costCenterSingleLabel),
+          cellRenderer({ rowData }) {
+            return (
+              <div
+                className="pa1 br1"
+                style={{
+                  backgroundColor: rowData.costCenter?.color ?? 'transparent',
+                }}
+              >
+                <TruncatedText
+                  text={rowData.costCenter?.costCenterName}
+                  {...getStrike(rowData)}
+                />
+              </div>
+            )
+          },
+        },
         additionalInfo: {
           width: 120,
           title: formatMessage(messages.brand),
@@ -257,17 +278,12 @@ export function useTableSchema({
               (i) => i.id === rowData.parentItemId
             )
 
-            const itemIndex = orderForm.items.findIndex(
-              (i) => i.uniqueId === rowData.uniqueId
-            )
-
             return (
               <QuantitySelector
                 item={{
                   ...rowData,
                   quantity: rowData.quantity * (parentItem?.quantity ?? 1),
                 }}
-                itemIndex={itemIndex}
                 disabled={(rowData.__group ?? false) || rowData.__component}
               />
             )
@@ -322,13 +338,17 @@ export function useTableSchema({
                 <Tooltip label={formatMessage(messages.delete)}>
                   <div>
                     <ButtonWithIcon
+                      isLoading={removeLoading}
                       size="small"
                       icon={<IconDelete />}
                       variation="danger-tertiary"
                       onClick={() => {
-                        removeItem({
-                          id: rowData.id,
-                          seller: rowData.seller ?? '1',
+                        updateQuantity({
+                          variables: {
+                            orderItems: [
+                              { index: rowData.itemIndex, quantity: 0 },
+                            ],
+                          },
                         })
                       }}
                     />
@@ -355,7 +375,8 @@ export function useTableSchema({
       handlesNewPrice,
       getSellingPrice,
       getDiscountedPrice,
-      removeItem,
+      removeLoading,
+      updateQuantity,
     ]
   )
 }

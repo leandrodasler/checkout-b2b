@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
 import { NumericStepper } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import { useOrderFormCustom, useToast } from '../hooks'
+import { CustomItem } from '../typings'
 import { isWithoutStock, messages } from '../utils'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
 
-type Props = { item: Item; disabled?: boolean; itemIndex: number }
+type Props = { item: CustomItem; disabled?: boolean }
 
-export function QuantitySelector({ item, disabled, itemIndex }: Props) {
+export function QuantitySelector({ item, disabled }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
@@ -40,13 +40,13 @@ export function QuantitySelector({ item, disabled, itemIndex }: Props) {
 
       timeout.current = window.setTimeout(() => {
         updateQuantity({
-          index: itemIndex,
+          index: item.itemIndex,
           seller: item.seller ?? '1',
           quantity: value,
         }).then(handleFinish, handleFinish)
       }, DELAY)
     },
-    [handleFinish, item.seller, itemIndex, setPending, updateQuantity]
+    [handleFinish, item.itemIndex, item.seller, setPending, updateQuantity]
   )
 
   useQuery(GET_PRODUCTS, {
@@ -73,7 +73,7 @@ export function QuantitySelector({ item, disabled, itemIndex }: Props) {
           }`,
         })
         updateQuantity({
-          index: itemIndex,
+          index: item.itemIndex,
           seller: item.seller ?? '1',
           quantity: minQuantityValue,
         })

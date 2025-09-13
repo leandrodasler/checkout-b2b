@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { OrderItems } from 'vtex.order-items'
 import {
   AutocompleteInput,
   ButtonWithIcon,
@@ -18,7 +17,12 @@ import {
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
-import { useDebounce, useOrderFormCustom, useToast } from '../hooks'
+import {
+  useDebounce,
+  useOrderFormCustom,
+  useToast,
+  useUpdateItemsQuantity,
+} from '../hooks'
 import { useAddItems } from '../hooks/useAddItems'
 import {
   ERROR_TO_RETRY_PATTERNS,
@@ -27,8 +31,6 @@ import {
   transformImageUrl,
 } from '../utils'
 import { messages } from '../utils/messages'
-
-const { useOrderItems } = OrderItems
 
 interface CommertialOffer {
   Price: number
@@ -162,7 +164,7 @@ const ProductAutocomplete = () => {
     (newItems, retryCount = 0) => {
       addItemsMutation({
         variables: {
-          items: newItems.map((item) => ({
+          orderItems: newItems.map((item) => ({
             id: Number(item.itemId),
             quantity: 1,
             seller:
@@ -305,8 +307,9 @@ const ProductAutocomplete = () => {
 }
 
 function CustomOption(props: CustomOptionProps) {
+  const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
-  const { removeItem } = useOrderItems()
+  const [updateQuantity, { loading: removeLoading }] = useUpdateItemsQuantity()
   const {
     searchTerm,
     value,
@@ -338,7 +341,7 @@ function CustomOption(props: CustomOptionProps) {
       ? 'bg-muted-4'
       : value.type === 'product'
       ? 'bg-muted-5'
-      : loading
+      : loading || removeLoading
       ? 'bg-washed-blue'
       : 'bg-base'
   }${inserted ? ' strike' : ''}`
@@ -366,16 +369,19 @@ function CustomOption(props: CustomOptionProps) {
         }
 
         try {
-          removeItem({
-            id: item.itemId,
-            seller: sellerId,
+          updateQuantity({
+            variables: {
+              orderItems: orderForm.items
+                .filter((i) => i.id === item.itemId)
+                .map(({ itemIndex }) => ({ index: itemIndex, quantity: 0 })),
+            },
           })
         } catch (error) {
           console.error(`Failed to remove item ${item.itemId}:`, error)
         }
       })
     },
-    [removeItem, value.item, value.type]
+    [orderForm.items, updateQuantity, value.item, value.type]
   )
 
   const mainElement = (
@@ -394,12 +400,12 @@ function CustomOption(props: CustomOptionProps) {
       onMouseEnter={() => setHighlightOption(true)}
       onMouseLeave={() => setHighlightOption(false)}
       onClick={(e) => {
-        if (inserted || loading) return
+        if (inserted || loading || removeLoading) return
         handleAddItem(value.item)
         e.currentTarget.focus()
       }}
       onKeyDown={(e) => {
-        if (inserted || loading) return
+        if (inserted || loading || removeLoading) return
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           handleAddItem(value.item)
@@ -422,6 +428,7 @@ function CustomOption(props: CustomOptionProps) {
           {loading && !inserted && <Spinner size={16} />}
           {inserted && (
             <ButtonWithIcon
+              isLoading={removeLoading}
               size="small"
               icon={<IconDelete />}
               variation="danger-tertiary"

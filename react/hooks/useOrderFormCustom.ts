@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { OrderForm } from 'vtex.order-manager'
 import { useRuntime } from 'vtex.render-runtime'
 
+import { useCostCenters } from '.'
 import { apiRequest } from '../services'
 import type { CompleteOrderForm, CompleteOrderFormData } from '../typings'
 import { getOrderFormPoNumber } from '../utils'
@@ -16,7 +17,7 @@ export type UseOrderFormReturn = {
 
 export function useOrderFormCustom() {
   const { query } = useRuntime()
-
+  const availableCostCenters = useCostCenters()
   const orderFormId = query?.orderFormId ?? ''
 
   const { data, isLoading } = useQuery<CompleteOrderFormData, Error>({
@@ -55,14 +56,23 @@ export function useOrderFormCustom() {
       : invoiceAddress ?? shippingAddress,
   } = orderForm
 
+  const shippingData = orderForm.shippingData ?? data?.shippingData
+
   return {
     loading: loading || isLoading,
     orderForm: {
       ...data,
       ...orderForm,
       clientProfileData: data?.clientProfileData,
-      items: orderForm.items.map((item) => ({
+      items: orderForm.items.map((item, index) => ({
         ...item,
+        itemIndex: index,
+        costCenter: availableCostCenters?.find(
+          (costCenter) =>
+            costCenter.address?.addressId ===
+            shippingData?.logisticsInfo.find((l) => l.itemIndex === index)
+              ?.addressId
+        ),
         tax: data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
         components: data?.items.find((i) => i.uniqueId === item.uniqueId)
           ?.components,

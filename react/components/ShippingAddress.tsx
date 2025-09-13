@@ -26,12 +26,21 @@ export function ShippingAddress() {
   const { organization } = useOrganization()
   const { orderForm } = useOrderFormCustom()
   const { shipping, items } = orderForm
-  const [updateShippingAddress, { loading }] = useUpdateShippingAddress()
   const shippingAddress = shipping?.selectedAddress
   const [costCenterAddress] = organization.costCenter?.addresses ?? []
 
+  const [
+    updateShippingAddress,
+    { loading: loadingUpdateAddress },
+  ] = useUpdateShippingAddress()
+
   useEffect(() => {
-    if (shippingAddress || !costCenterAddress) return
+    if (
+      !costCenterAddress ||
+      (shippingAddress &&
+        shippingAddress.addressId === costCenterAddress?.addressId)
+    )
+      return
 
     setPending(true)
 
@@ -53,7 +62,7 @@ export function ShippingAddress() {
     }).finally(() => setPending(false))
   }, [costCenterAddress, setPending, shippingAddress, updateShippingAddress])
 
-  if (loading || loadingShippingAddress) {
+  if (loadingUpdateAddress || loadingShippingAddress) {
     return <TotalizerSpinner />
   }
 

@@ -65,7 +65,7 @@ export async function placeOrder(
     }),
   ]
 
-  await Promise.all(orderFormResetPromises)
+  await Promise.all(orderFormResetPromises).catch(() => {})
 
   if (!orders.length && lastError) {
     throw lastError

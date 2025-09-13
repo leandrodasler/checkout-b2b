@@ -88,25 +88,6 @@ export function ShippingOption({ costCenter, address }: Props) {
   const packages = Object.keys(shippingOptionsBySeller).length
 
   useEffect(() => {
-    Object.entries(shippingOptionsBySeller).forEach(([seller, slas]) => {
-      if (!deliveryOptionsByCostCenter[costCenter]?.[seller]) {
-        setDeliveryOptionsByCostCenter((prev) => ({
-          ...prev,
-          [costCenter]: {
-            ...prev[costCenter],
-            [seller]: slas[0],
-          },
-        }))
-      }
-    })
-  }, [
-    costCenter,
-    deliveryOptionsByCostCenter,
-    setDeliveryOptionsByCostCenter,
-    shippingOptionsBySeller,
-  ])
-
-  useEffect(() => {
     const sellersInShippingOptions = Object.keys(shippingOptionsBySeller ?? {})
     const invalidShippingOptionSellers = Object.values(
       deliveryOptionsByCostCenter

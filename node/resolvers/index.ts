@@ -1,10 +1,13 @@
 import * as schemaDirectives from './directives'
+import { addAddressToCart } from './mutations/addAddressToCart'
+import { addItemsToCart } from './mutations/addItemsToCart'
 import { deleteCart } from './mutations/deleteCart'
 import { placeOrder } from './mutations/placeOrder'
 import { saveCart } from './mutations/saveCart'
 import { saveRepresentativeBalance } from './mutations/saveRepresentativeBalance'
 import { saveRepresentativeBalanceSettings } from './mutations/saveRepresentativeBalanceSettings'
 import { shareCart } from './mutations/shareCart'
+import { updateItemsQuantity } from './mutations/updateItemsQuantity'
 import { updatePrices } from './mutations/updatePrices'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
@@ -31,6 +34,9 @@ export default {
       saveRepresentativeBalance,
       saveRepresentativeBalanceSettings,
       shareCart,
+      addItemsToCart,
+      updateItemsQuantity,
+      addAddressToCart,
     },
   },
   schemaDirectives,

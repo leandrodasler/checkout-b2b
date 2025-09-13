@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
+import type {
+  Mutation,
+  MutationAddAddressToCartArgs,
+} from 'ssesandbox04.checkout-b2b'
 import { AddressType } from 'vtex.checkout-graphql'
 import type {
   UpdateOrderFormProfileMutation,
@@ -10,6 +14,7 @@ import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
 import { Checkbox, IconInfo, Tag, Tooltip, Totalizer } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import ADD_ADDRESS_TO_CART_MUTATION from '../graphql/addAddressToCart.graphql'
 import {
   useCostCenters,
   useOrderFormCustom,
@@ -18,60 +23,60 @@ import {
   useToast,
   useUpdateShippingAddress,
 } from '../hooks'
-import { compareCostCenters, MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
+import { MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
 import { RepresentativeBalanceData } from './RepresentativeBalanceData'
 import { ShippingAddress } from './ShippingAddress'
 import { ShowMoreButton } from './ShowMoreButton'
+
+type AddAddressMutation = Pick<Mutation, 'addAddressToCart'>
 
 export function ContactInfos() {
   const { formatMessage } = useIntl()
   const showToast = useToast()
   const { organization } = useOrganization()
   const {
-    orderForm: { clientProfileData, shipping },
+    setOrderForm,
+    orderForm,
+    orderForm: { clientProfileData, shippingData },
   } = useOrderFormCustom()
 
   const { representativeBalanceEnabled } = usePermissions()
-
-  const selectedAddressId = shipping.selectedAddress?.addressId
-
-  const {
-    selectedCostCenters,
-    setSelectedCostCenters,
-    setPending,
-    setLoadingShippingAddress,
-    setDeliveryOptionsByCostCenter,
-  } = useCheckoutB2BContext()
-
+  const selectedAddressId = shippingData.address?.addressId
+  const { selectedAddresses } = shippingData
+  const { setPending, setLoadingShippingAddress } = useCheckoutB2BContext()
   const { costCenter, users, tradeName, name, roleName } = organization
   const currentCostCenterId = costCenter?.id
-  const costCenters = useCostCenters()
+  const availableCostCenters = useCostCenters()
   const [updateShippingAddress] = useUpdateShippingAddress()
+  const [showMoreSalesAdmin, setShowMoreSalesAdmin] = useState(false)
 
   const [
     showMoreSalesRepresentative,
     setShowMoreSalesRepresentative,
   ] = useState(false)
 
-  const [showMoreSalesAdmin, setShowMoreSalesAdmin] = useState(false)
+  const [addAddress, { loading }] = useMutation<
+    AddAddressMutation,
+    MutationAddAddressToCartArgs
+  >(ADD_ADDRESS_TO_CART_MUTATION, {
+    onError(error) {
+      showToast({ message: error.message })
+    },
+    onCompleted(data) {
+      setOrderForm({
+        ...orderForm,
+        ...data.addAddressToCart,
+        paymentAddress: orderForm.paymentAddress,
+        customData: orderForm.customData,
+      })
+    },
+  })
 
   useEffect(() => {
-    if (!currentCostCenterId) return
+    if (selectedAddresses.length !== 1) return
 
-    const currentCostCenter = costCenters?.find(
-      (c) => c?.costId === currentCostCenterId
-    )
-
-    if (!currentCostCenter) return
-
-    setSelectedCostCenters([currentCostCenter])
-  }, [costCenters, currentCostCenterId, setSelectedCostCenters])
-
-  useEffect(() => {
-    if (selectedCostCenters?.length !== 1) return
-
-    const costCenterAddress = selectedCostCenters?.[0]?.address
+    const [costCenterAddress] = selectedAddresses
 
     if (!costCenterAddress || costCenterAddress.addressId === selectedAddressId)
       return
@@ -100,7 +105,7 @@ export function ContactInfos() {
     })
   }, [
     selectedAddressId,
-    selectedCostCenters,
+    selectedAddresses,
     setLoadingShippingAddress,
     setPending,
     updateShippingAddress,
@@ -109,53 +114,16 @@ export function ContactInfos() {
   const handleCheckCostCenter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target
 
-    if (checked) {
-      const selectedCostCenter = costCenters?.find((c) => c?.costId === value)
+    if (!checked) return
 
-      if (!selectedCostCenter) return
+    const selectedCostCenter = availableCostCenters?.find(
+      (c) => c?.costId === value
+    )
 
-      setSelectedCostCenters((prev) =>
-        [...(prev ?? []), selectedCostCenter].sort(compareCostCenters)
-      )
-    } else {
-      setSelectedCostCenters((prev) => {
-        if (!prev) return
-
-        const newSelectedCostCenters = prev.filter((c) => c.costId !== value)
-
-        if (newSelectedCostCenters.length === 0) {
-          showToast({
-            message: formatMessage(messages.costCentersNotEmptyError),
-          })
-
-          return prev
-        }
-
-        return newSelectedCostCenters.sort(compareCostCenters)
-      })
-
-      const costCenterName = costCenters?.find((c) => c.costId === value)
-        ?.costCenterName
-
-      if (costCenterName) {
-        setDeliveryOptionsByCostCenter((prev) => {
-          const filtered = Object.entries(prev).reduce(
-            (acc, [costCenterFromMap, sellerSla]) => {
-              if (costCenterFromMap !== costCenterName) {
-                acc[costCenterFromMap] = sellerSla
-              }
-
-              return acc
-            },
-            {} as typeof prev
-          )
-
-          return {
-            ...filtered,
-          }
-        })
-      }
-    }
+    setPending(true)
+    addAddress({
+      variables: { address: selectedCostCenter?.address },
+    }).then(() => setPending(false))
   }
 
   const costCenterPhone = costCenter?.phoneNumber ?? ''
@@ -293,15 +261,19 @@ export function ContactInfos() {
     ),
   })
 
-  if (costCenters && costCenters.length > 1) {
+  if (availableCostCenters && availableCostCenters.length > 1) {
     contactFields.push({
       label: formatMessage(messages.costCentersLabel),
       value: (
         <>
-          {costCenters.map((userCostCenter) => {
-            if (!userCostCenter?.costId) return null
+          {availableCostCenters.map((availableCostCenter) => {
+            if (!availableCostCenter?.costId) return null
 
-            const { costId, costCenterName } = userCostCenter
+            const { costId, costCenterName } = availableCostCenter
+            const isCurrentCostCenter = costId === currentCostCenterId
+            const hasCostCenter = selectedAddresses?.some(
+              (a) => a?.addressId === availableCostCenter.address?.addressId
+            )
 
             return (
               <div className="mv3 t-mini flex items-center" key={costId}>
@@ -309,9 +281,11 @@ export function ContactInfos() {
                   id={`cost-center-${costId}`}
                   label={costCenterName}
                   value={costId}
-                  checked={selectedCostCenters?.some(
-                    (c) => c.costId === costId
-                  )}
+                  disabled={loading}
+                  checked={
+                    (!orderForm.items.length && isCurrentCostCenter) ||
+                    (orderForm.items.length && hasCostCenter)
+                  }
                   onChange={handleCheckCostCenter}
                 />
                 {costId === currentCostCenterId && (

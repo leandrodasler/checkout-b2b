@@ -45,7 +45,7 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm, CustomItem } from './typings'
-import { messages, SEARCH_TYPE, welcome } from './utils'
+import { compareCostCenters, messages, SEARCH_TYPE, welcome } from './utils'
 
 type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
 
@@ -369,7 +369,9 @@ function CheckoutB2B() {
                   loading={loading}
                   fullWidth
                   schema={schema}
-                  items={filteredItems}
+                  items={filteredItems.sort((a, b) =>
+                    compareCostCenters(a.costCenter, b.costCenter)
+                  )}
                   density="high"
                   emptyStateLabel={
                     searchQuery && !searchStore ? (

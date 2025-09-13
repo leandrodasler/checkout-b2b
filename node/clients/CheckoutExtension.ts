@@ -7,6 +7,8 @@ import {
 
 import { checkoutCookieFormat, ownershipCookieFormat } from '../utils'
 
+const CHECKOUT_API_BASE_PATH = '/api/checkout/pub'
+
 export class CheckoutExtension extends JanusClient {
   private orderFormId?: string
 
@@ -22,7 +24,7 @@ export class CheckoutExtension extends JanusClient {
     })
   }
 
-  private getCommonHeaders() {
+  private getRequestConfig(options?: RequestConfig) {
     const { orderFormId, ownerId } = (this
       .context as unknown) as CustomIOContext
 
@@ -30,23 +32,25 @@ export class CheckoutExtension extends JanusClient {
     const ownershipCookie = ownerId ? ownershipCookieFormat(ownerId) : ''
 
     return {
-      ...this.options?.headers,
-      Cookie: `${checkoutCookie}${ownershipCookie}vtex_segment=${this.context.segmentToken};vtex_session=${this.context.sessionToken};`,
+      ...options,
+      headers: {
+        ...this.options?.headers,
+        Cookie: `${checkoutCookie}${ownershipCookie}vtex_segment=${this.context.segmentToken};vtex_session=${this.context.sessionToken};`,
+        ...options?.headers,
+      },
     }
   }
 
   private post<T = void>(url: string, body: unknown, options?: RequestConfig) {
-    return this.http.post<T>(url, body, {
-      headers: this.getCommonHeaders(),
-      ...options,
-    })
+    return this.http.post<T>(url, body, this.getRequestConfig(options))
   }
 
   private put<T = void>(url: string, body: unknown, options?: RequestConfig) {
-    return this.http.put<T>(url, body, {
-      headers: this.getCommonHeaders(),
-      ...options,
-    })
+    return this.http.put<T>(url, body, this.getRequestConfig(options))
+  }
+
+  private patch<T = void>(url: string, body: unknown, options?: RequestConfig) {
+    return this.http.patch<T>(url, body, this.getRequestConfig(options))
   }
 
   public setOrderFormId(orderFormId: string) {
@@ -75,9 +79,7 @@ export class CheckoutExtension extends JanusClient {
     return this.post<TransactionResponse>(
       this.routes.startTransaction,
       transactionData,
-      {
-        metric: 'checkoutExtension-startTransaction',
-      }
+      { metric: 'checkoutExtension-startTransaction' }
     )
   }
 
@@ -85,9 +87,7 @@ export class CheckoutExtension extends JanusClient {
     return this.post(
       this.routes.payments(payment.transaction?.id, orderGroup),
       [payment],
-      {
-        metric: 'checkoutExtension-setPayments',
-      }
+      { metric: 'checkoutExtension-setPayments' }
     )
   }
 
@@ -104,27 +104,54 @@ export class CheckoutExtension extends JanusClient {
       {
         metric: 'checkoutExtension-updatePrice',
         headers: {
-          ...this.getCommonHeaders(),
           VtexIdclientAutCookie: this.context.authToken,
         },
       }
     )
   }
 
+  public addItemsToCart(orderItems: AddItemsBody) {
+    return this.post<OrderForm>(
+      this.routes.items,
+      { orderItems },
+      { metric: 'checkoutExtension-addItemsToCart' }
+    )
+  }
+
+  public updateItemsQuantity(orderItems: UpdateItemsQuantityBody) {
+    return this.patch<OrderForm>(
+      this.routes.items,
+      { orderItems },
+      { metric: 'checkoutExtension-updateItemQuantity' }
+    )
+  }
+
+  public splitItem(uniqueId: string, quantities: number[]) {
+    return this.post<OrderForm>(
+      this.routes.splitItems(uniqueId),
+      quantities.map((quantity) => ({ quantity })),
+      { metric: 'checkoutExtension-splitItem' }
+    )
+  }
+
   private get routes() {
-    const base = `/api/checkout/pub/orderForm/${this.orderFormId}`
-    const baseAttachments = `${base}/attachments`
+    const orderFormBasePath = `${CHECKOUT_API_BASE_PATH}/orderForm/${this.orderFormId}`
+    const attachmentsBasePath = `${orderFormBasePath}/attachments`
 
     return {
-      invoiceData: `${baseAttachments}/invoiceData`,
-      shippingData: `${baseAttachments}/shippingData`,
-      marketingData: `${baseAttachments}/marketingData`,
-      startTransaction: `${base}/transaction`,
+      invoiceData: `${attachmentsBasePath}/invoiceData`,
+      shippingData: `${attachmentsBasePath}/shippingData`,
+      marketingData: `${attachmentsBasePath}/marketingData`,
+      startTransaction: `${orderFormBasePath}/transaction`,
       payments: (transactionId?: string, orderGroup?: string) =>
         `/api/payments/pub/transactions/${transactionId}/payments?orderId=${orderGroup}`,
       gatewayCallback: (orderGroup: string) =>
-        `/api/checkout/pub/gatewayCallback/${orderGroup}`,
-      updatePrice: (itemIndex: number) => `${base}/items/${itemIndex}/price`,
+        `${CHECKOUT_API_BASE_PATH}/gatewayCallback/${orderGroup}`,
+      items: `${orderFormBasePath}/items`,
+      updatePrice: (itemIndex: number) =>
+        `${this.routes.items}/${itemIndex}/price`,
+      splitItems: (itemUniqueId: string) =>
+        `${this.routes.items}/${itemUniqueId}/split`,
     }
   }
 }

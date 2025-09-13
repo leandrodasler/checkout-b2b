@@ -131,8 +131,8 @@ export const ERROR_TO_RETRY_PATTERNS = [
 
 export function compareCostCenters<
   T extends NonNullable<CustomOrganization['userCostCenters']>[number]
->(a: T, b: T) {
-  return a.costCenterName?.localeCompare(b.costCenterName ?? '') ?? 0
+>(a?: T | null, b?: T | null) {
+  return a?.costCenterName?.localeCompare(b?.costCenterName ?? '') ?? 0
 }
 
 export function getOrderPlacedUrl(orderGroup: string) {
