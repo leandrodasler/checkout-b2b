@@ -85,6 +85,20 @@ export function QuantitySelector({ item, disabled }: Props) {
     setNewQuantity(item.quantity < minQuantity ? minQuantity : item.quantity)
   }, [item.quantity, minQuantity])
 
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const input = ref.current?.querySelector('input')
+
+    if (!input) return
+
+    if (disabled) {
+      input.setAttribute('disabled', 'true')
+    } else {
+      input.removeAttribute('disabled')
+    }
+  }, [disabled])
+
   if (isWithoutStock(item)) {
     return (
       <div className="w-100 tc c-danger">
@@ -94,12 +108,14 @@ export function QuantitySelector({ item, disabled }: Props) {
   }
 
   return (
-    <NumericStepper
-      size="small"
-      value={newQuantity}
-      minValue={minQuantity}
-      onChange={handleQuantityChange}
-      readOnly={disabled}
-    />
+    <div ref={ref}>
+      <NumericStepper
+        size="small"
+        value={newQuantity}
+        minValue={minQuantity}
+        onChange={handleQuantityChange}
+        readOnly={disabled}
+      />
+    </div>
   )
 }

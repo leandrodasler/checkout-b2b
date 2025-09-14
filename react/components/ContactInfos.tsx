@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type {
@@ -11,7 +11,14 @@ import type {
   UpdateOrderFormProfileMutationVariables,
 } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
-import { Checkbox, IconInfo, Tag, Tooltip, Totalizer } from 'vtex.styleguide'
+import {
+  Checkbox,
+  IconInfo,
+  Spinner,
+  Tag,
+  Tooltip,
+  Totalizer,
+} from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import ADD_ADDRESS_TO_CART_MUTATION from '../graphql/addAddressToCart.graphql'
@@ -50,6 +57,7 @@ export function ContactInfos() {
   const availableCostCenters = useCostCenters()
   const [updateShippingAddress] = useUpdateShippingAddress()
   const [showMoreSalesAdmin, setShowMoreSalesAdmin] = useState(false)
+  const lastCostCenterUpdateIndexRef = useRef<string | null>(null)
 
   const [
     showMoreSalesRepresentative,
@@ -121,6 +129,7 @@ export function ContactInfos() {
     )
 
     setPending(true)
+    lastCostCenterUpdateIndexRef.current = value
     addAddress({
       variables: { address: selectedCostCenter?.address },
     }).then(() => setPending(false))
@@ -297,12 +306,12 @@ export function ContactInfos() {
                     </div>
                   </Tooltip>
                 )}
+                {loading && lastCostCenterUpdateIndexRef.current === costId && (
+                  <Spinner size={12} />
+                )}
               </div>
             )
           })}
-          <span className="t-mini">
-            {formatMessage(messages.multipleOrdersInfo)}
-          </span>
         </>
       ),
     })
