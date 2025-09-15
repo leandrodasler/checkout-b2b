@@ -20,4 +20,3 @@ export * from './useToolbar'
 export * from './useTotalizers'
 export * from './useUpdatePayment'
 export * from './useUpdateShippingAddress'
-

@@ -223,19 +223,45 @@ export const messages = defineMessages({
   representativeBalanceTransactions: {
     id: 'admin/representativebalances.transactions.title',
   },
-  representativeBalanceTransactionTitle: { id: 'admin/representativebalances.transactions.title' },
-  representativeBalanceTransactionEmail: { id: 'admin/representativebalances.transactions.email' },
-  representativeBalanceTransactionCurrentBalance: { id: 'admin/representativebalances.transactions.current-balance' },
-  representativeBalanceTransactionTransaction: { id: 'admin/representativebalances.transactions.transaction' },
-  representativeBalanceTransactionOldBalance: { id: 'admin/representativebalances.transactions.old-balance' },
-  representativeBalanceTransactionNewBalance: { id: 'admin/representativebalances.transactions.new-balance' },
-  representativeBalanceTransactionCreatedIn: { id: 'admin/representativebalances.transactions.created-in' },
-  representativeBalanceTransactionLastInteraction: { id: 'admin/representativebalances.transactions.last-interaction' },
-  representativeBalanceTransactionOrderGroup: { id: 'admin/representativebalances.transactions.order-group' },
-  representativeBalanceTransactionBackToRepresentative: { id: 'admin/representativebalances.transactions.back-to-representative' },
-  representativeBalanceTransactionPageBack: { id: 'admin/representativebalances.transactions.page-back' },
-  representativeBalanceTransactionPageNext: { id: 'admin/representativebalances.transactions.page-next' },
-  representativeBalanceTransactionNoTransactionsFound: { id: 'admin/representativebalances.transactions.no-transactions-found' },
+  representativeBalanceTransactionTitle: {
+    id: 'admin/representativebalances.transactions.title',
+  },
+  representativeBalanceTransactionEmail: {
+    id: 'admin/representativebalances.transactions.email',
+  },
+  representativeBalanceTransactionCurrentBalance: {
+    id: 'admin/representativebalances.transactions.current-balance',
+  },
+  representativeBalanceTransactionTransaction: {
+    id: 'admin/representativebalances.transactions.transaction',
+  },
+  representativeBalanceTransactionOldBalance: {
+    id: 'admin/representativebalances.transactions.old-balance',
+  },
+  representativeBalanceTransactionNewBalance: {
+    id: 'admin/representativebalances.transactions.new-balance',
+  },
+  representativeBalanceTransactionCreatedIn: {
+    id: 'admin/representativebalances.transactions.created-in',
+  },
+  representativeBalanceTransactionLastInteraction: {
+    id: 'admin/representativebalances.transactions.last-interaction',
+  },
+  representativeBalanceTransactionOrderGroup: {
+    id: 'admin/representativebalances.transactions.order-group',
+  },
+  representativeBalanceTransactionBackToRepresentative: {
+    id: 'admin/representativebalances.transactions.back-to-representative',
+  },
+  representativeBalanceTransactionPageBack: {
+    id: 'admin/representativebalances.transactions.page-back',
+  },
+  representativeBalanceTransactionPageNext: {
+    id: 'admin/representativebalances.transactions.page-next',
+  },
+  representativeBalanceTransactionNoTransactionsFound: {
+    id: 'admin/representativebalances.transactions.no-transactions-found',
+  },
 
   shareCartButton: { id: 'store/checkout.b2b.share-cart.button' },
   shareCartSubject: { id: 'store/checkout.b2b.share-cart.subject' },
