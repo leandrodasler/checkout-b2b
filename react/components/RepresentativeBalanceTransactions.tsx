@@ -5,7 +5,7 @@ import { Button, Link, Spinner, Table, Tooltip } from 'vtex.styleguide'
 import {
   useFetchRepresentativeBalance,
   useFetchRepresentativeBalanceTransactions,
-  useFormatPrice
+  useFormatPrice,
 } from '../hooks'
 import { getOrderPlacedUrl, messages } from '../utils'
 
@@ -30,40 +30,55 @@ const RepresentativeBalanceTransactions = ({
   const formatPrice = useFormatPrice()
 
   const [page, setPage] = useState<number>(1)
-  const { transactions, loading: isLoadingTransactions, error } =
-    useFetchRepresentativeBalanceTransactions({ email, page })
-  const { representativeBalance, loading: isLoadingBalance } =
-    useFetchRepresentativeBalance({ email })
+  const {
+    transactions,
+    loading: isLoadingTransactions,
+    error,
+  } = useFetchRepresentativeBalanceTransactions({ email, page })
+
+  const {
+    representativeBalance,
+    loading: isLoadingBalance,
+  } = useFetchRepresentativeBalance({ email })
 
   const columns = {
     transaction: {
-      title: formatMessage(messages.representativeBalanceTransactionTransaction),
+      title: formatMessage(
+        messages.representativeBalanceTransactionTransaction
+      ),
       cellRenderer: function renderCell({ rowData }: { rowData: Transaction }) {
-        <Tooltip label={formatPrice(rowData.newBalance - rowData.oldBalance)}>
-          <span>{formatPrice(rowData.newBalance - rowData.oldBalance)}</span>
-        </Tooltip>
+        return (
+          <Tooltip label={formatPrice(rowData.newBalance - rowData.oldBalance)}>
+            <span>{formatPrice(rowData.newBalance - rowData.oldBalance)}</span>
+          </Tooltip>
+        )
       },
     },
     oldBalance: {
       title: formatMessage(messages.representativeBalanceTransactionOldBalance),
       cellRenderer: function renderCell({ cellData }: { cellData: number }) {
-        <Tooltip label={formatPrice(cellData)}>
-          <span>{formatPrice(cellData)}</span>
-        </Tooltip>
+        return (
+          <Tooltip label={formatPrice(cellData)}>
+            <span>{formatPrice(cellData)}</span>
+          </Tooltip>
+        )
       },
     },
     newBalance: {
       title: formatMessage(messages.representativeBalanceTransactionNewBalance),
       cellRenderer: function renderCell({ cellData }: { cellData: number }) {
-        <Tooltip label={formatPrice(cellData)}>
-          <span>{formatPrice(cellData)}</span>
-        </Tooltip>
+        return (
+          <Tooltip label={formatPrice(cellData)}>
+            <span>{formatPrice(cellData)}</span>
+          </Tooltip>
+        )
       },
     },
     createdIn: {
       title: formatMessage(messages.representativeBalanceTransactionCreatedIn),
       cellRenderer: function renderCell({ cellData }: { cellData: string }) {
         const formatted = new Date(cellData).toLocaleString()
+
         return (
           <Tooltip label={formatted}>
             <span>{formatted}</span>
@@ -77,6 +92,7 @@ const RepresentativeBalanceTransactions = ({
       ),
       cellRenderer: function renderCell({ cellData }: { cellData: string }) {
         const formatted = new Date(cellData).toLocaleString()
+
         return (
           <Tooltip label={formatted}>
             <span>{formatted}</span>
@@ -87,14 +103,19 @@ const RepresentativeBalanceTransactions = ({
     orderGroup: {
       title: formatMessage(messages.representativeBalanceTransactionOrderGroup),
       cellRenderer: function renderCell({ cellData }: { cellData: string }) {
-        <Tooltip label={`#${cellData}`}>
-          <div>
-            {cellData === 'admin' ? <span>{cellData}</span>
-              : <Link href={getOrderPlacedUrl(cellData)} target="_blank">
-                <span className="c-action-primary">#{cellData}</span>
-              </Link>}
-          </div>
-        </Tooltip>
+        return (
+          <Tooltip label={`#${cellData}`}>
+            <div>
+              {cellData === 'admin' ? (
+                <span>{cellData}</span>
+              ) : (
+                <Link href={getOrderPlacedUrl(cellData)} target="_blank">
+                  <span className="c-action-primary">#{cellData}</span>
+                </Link>
+              )}
+            </div>
+          </Tooltip>
+        )
       },
     },
   }
@@ -125,7 +146,9 @@ const RepresentativeBalanceTransactions = ({
             <div className="flex flex-row justify-between">
               <p>
                 <strong>
-                  {formatMessage(messages.representativeBalanceTransactionEmail)}
+                  {formatMessage(
+                    messages.representativeBalanceTransactionEmail
+                  )}
                   :
                 </strong>{' '}
                 {email}
@@ -156,7 +179,7 @@ const RepresentativeBalanceTransactions = ({
               isLoading={isLoadingTransactions}
               size="small"
               variation="primary"
-              onClick={() => setPage((page) => page - 1)}
+              onClick={() => setPage((prev) => prev - 1)}
             >
               {formatMessage(messages.representativeBalanceTransactionPageBack)}
             </Button>
@@ -165,7 +188,7 @@ const RepresentativeBalanceTransactions = ({
               isLoading={isLoadingTransactions}
               size="small"
               variation="primary"
-              onClick={() => setPage((page) => page + 1)}
+              onClick={() => setPage((prev) => prev + 1)}
             >
               {formatMessage(messages.representativeBalanceTransactionPageNext)}
             </Button>
@@ -173,7 +196,10 @@ const RepresentativeBalanceTransactions = ({
         </div>
       ) : (
         <span className="c-danger">
-          {formatMessage(messages.representativeBalanceTransactionNoTransactionsFound, { email })}
+          {formatMessage(
+            messages.representativeBalanceTransactionNoTransactionsFound,
+            { email }
+          )}
         </span>
       )}
     </div>
