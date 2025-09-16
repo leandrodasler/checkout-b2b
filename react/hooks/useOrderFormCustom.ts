@@ -5,7 +5,7 @@ import { useRuntime } from 'vtex.render-runtime'
 import { useCostCenters } from '.'
 import { apiRequest } from '../services'
 import type { CompleteOrderForm, CompleteOrderFormData } from '../typings'
-import { getOrderFormPoNumber } from '../utils'
+import { getOrderFormPoNumber, isSameAddress } from '../utils'
 
 const { useOrderForm } = OrderForm
 
@@ -67,11 +67,16 @@ export function useOrderFormCustom() {
       items: orderForm.items.map((item, index) => ({
         ...item,
         itemIndex: index,
-        costCenter: availableCostCenters?.find(
-          (costCenter) =>
-            costCenter.address?.addressId ===
-            shippingData?.logisticsInfo.find((l) => l.itemIndex === index)
-              ?.addressId
+        costCenter: availableCostCenters?.find((costCenter) =>
+          isSameAddress(
+            costCenter.address,
+            shippingData?.selectedAddresses.find(
+              (a) =>
+                a?.addressId ===
+                shippingData?.logisticsInfo.find((l) => l.itemIndex === index)
+                  ?.addressId
+            )
+          )
         ),
         tax: data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
         components: data?.items.find((i) => i.uniqueId === item.uniqueId)

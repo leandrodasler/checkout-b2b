@@ -246,3 +246,25 @@ export function getCurrencySymbol(currencyCode: string) {
 
   return formattedValue.replace(/0/g, '').trim()
 }
+
+export function isSameAddress<
+  T extends
+    | (Omit<Address, 'addressType'> & { addressType?: string | null })
+    | null
+    | undefined
+>(a: T, b: T) {
+  return (
+    (a?.addressType ?? '') === (b?.addressType ?? '') &&
+    (a?.city ?? '') === (b?.city ?? '') &&
+    (a?.complement ?? '') === (b?.complement ?? '') &&
+    (a?.country ?? '') === (b?.country ?? '') &&
+    (a?.geoCoordinates ?? []).join() === (b?.geoCoordinates ?? []).join() &&
+    (a?.neighborhood ?? '') === (b?.neighborhood ?? '') &&
+    (a?.number ?? '') === (b?.number ?? '') &&
+    (a?.postalCode ?? '') === (b?.postalCode ?? '') &&
+    (a?.receiverName ?? '') === (b?.receiverName ?? '') &&
+    (a?.reference ?? '') === (b?.reference ?? '') &&
+    (a?.state ?? '') === (b?.state ?? '') &&
+    (a?.street ?? '') === (b?.street ?? '')
+  )
+}

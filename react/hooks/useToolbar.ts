@@ -9,12 +9,7 @@ export function useToolbar() {
   const { formatMessage } = useIntl()
   const { loading: loadingOrganization } = useOrganization()
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
-  const {
-    pending,
-    loadingGetShipping,
-    searchQuery,
-    setSearchQuery,
-  } = useCheckoutB2BContext()
+  const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
 
   const { placeOrder, isLoading } = usePlaceOrder()
 
@@ -60,8 +55,7 @@ export function useToolbar() {
       onSubmit: handleSubmit,
     },
     newLine: {
-      disabled:
-        isLoading || pending || loadingGetShipping || !orderForm.items.length,
+      disabled: isLoading || pending || !orderForm.items.length,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,

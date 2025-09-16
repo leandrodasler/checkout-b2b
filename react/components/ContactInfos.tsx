@@ -1,139 +1,35 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type {
-  Mutation,
-  MutationAddAddressToCartArgs,
-} from 'ssesandbox04.checkout-b2b'
-import { AddressType } from 'vtex.checkout-graphql'
 import type {
   UpdateOrderFormProfileMutation,
   UpdateOrderFormProfileMutationVariables,
 } from 'vtex.checkout-resources'
 import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
-import {
-  Checkbox,
-  IconInfo,
-  Spinner,
-  Tag,
-  Tooltip,
-  Totalizer,
-} from 'vtex.styleguide'
+import { Tag, Totalizer } from 'vtex.styleguide'
 
-import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import ADD_ADDRESS_TO_CART_MUTATION from '../graphql/addAddressToCart.graphql'
-import {
-  useCostCenters,
-  useOrderFormCustom,
-  useOrganization,
-  usePermissions,
-  useToast,
-  useUpdateShippingAddress,
-} from '../hooks'
+import { useOrderFormCustom, useOrganization, usePermissions } from '../hooks'
 import { MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
+import { CostCentersShipping } from './CostCentersShipping'
 import { RepresentativeBalanceData } from './RepresentativeBalanceData'
-import { ShippingAddress } from './ShippingAddress'
 import { ShowMoreButton } from './ShowMoreButton'
-
-type AddAddressMutation = Pick<Mutation, 'addAddressToCart'>
 
 export function ContactInfos() {
   const { formatMessage } = useIntl()
-  const showToast = useToast()
   const { organization } = useOrganization()
   const {
-    setOrderForm,
-    orderForm,
-    orderForm: { clientProfileData, shippingData },
+    orderForm: { clientProfileData },
   } = useOrderFormCustom()
 
   const { representativeBalanceEnabled } = usePermissions()
-  const selectedAddressId = shippingData.address?.addressId
-  const { selectedAddresses } = shippingData
-  const { setPending, setLoadingShippingAddress } = useCheckoutB2BContext()
   const { costCenter, users, tradeName, name, roleName } = organization
-  const currentCostCenterId = costCenter?.id
-  const availableCostCenters = useCostCenters()
-  const [updateShippingAddress] = useUpdateShippingAddress()
   const [showMoreSalesAdmin, setShowMoreSalesAdmin] = useState(false)
-  const lastCostCenterUpdateIndexRef = useRef<string | null>(null)
 
   const [
     showMoreSalesRepresentative,
     setShowMoreSalesRepresentative,
   ] = useState(false)
-
-  const [addAddress, { loading }] = useMutation<
-    AddAddressMutation,
-    MutationAddAddressToCartArgs
-  >(ADD_ADDRESS_TO_CART_MUTATION, {
-    onError(error) {
-      showToast({ message: error.message })
-    },
-    onCompleted(data) {
-      setOrderForm({
-        ...orderForm,
-        ...data.addAddressToCart,
-        paymentAddress: orderForm.paymentAddress,
-        customData: orderForm.customData,
-      })
-    },
-  })
-
-  useEffect(() => {
-    if (selectedAddresses.length !== 1) return
-
-    const [costCenterAddress] = selectedAddresses
-
-    if (!costCenterAddress || costCenterAddress.addressId === selectedAddressId)
-      return
-
-    setPending(true)
-    setLoadingShippingAddress(true)
-
-    updateShippingAddress({
-      variables: {
-        address: {
-          ...costCenterAddress,
-          city: costCenterAddress.city ?? '',
-          complement: costCenterAddress.complement ?? '',
-          country: costCenterAddress.country ?? '',
-          neighborhood: costCenterAddress.neighborhood ?? '',
-          number: costCenterAddress.number ?? '',
-          postalCode: costCenterAddress.postalCode ?? '',
-          state: costCenterAddress.state ?? '',
-          street: costCenterAddress.street ?? '',
-          addressType: costCenterAddress.addressType as AddressType,
-        },
-      },
-    }).finally(() => {
-      setPending(false)
-      setLoadingShippingAddress(false)
-    })
-  }, [
-    selectedAddressId,
-    selectedAddresses,
-    setLoadingShippingAddress,
-    setPending,
-    updateShippingAddress,
-  ])
-
-  const handleCheckCostCenter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target
-
-    if (!checked) return
-
-    const selectedCostCenter = availableCostCenters?.find(
-      (c) => c?.costId === value
-    )
-
-    setPending(true)
-    lastCostCenterUpdateIndexRef.current = value
-    addAddress({
-      variables: { address: selectedCostCenter?.address },
-    }).then(() => setPending(false))
-  }
 
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
@@ -270,56 +166,11 @@ export function ContactInfos() {
     ),
   })
 
-  if (availableCostCenters && availableCostCenters.length > 1) {
-    contactFields.push({
-      label: formatMessage(messages.costCentersLabel),
-      value: (
-        <>
-          {availableCostCenters.map((availableCostCenter) => {
-            if (!availableCostCenter?.costId) return null
-
-            const { costId, costCenterName } = availableCostCenter
-            const isCurrentCostCenter = costId === currentCostCenterId
-            const hasCostCenter = selectedAddresses?.some(
-              (a) => a?.addressId === availableCostCenter.address?.addressId
-            )
-
-            return (
-              <div className="mv3 t-mini flex items-center" key={costId}>
-                <Checkbox
-                  id={`cost-center-${costId}`}
-                  label={costCenterName}
-                  value={costId}
-                  disabled={loading}
-                  checked={
-                    (!orderForm.items.length && isCurrentCostCenter) ||
-                    (orderForm.items.length && hasCostCenter)
-                  }
-                  onChange={handleCheckCostCenter}
-                />
-                {costId === currentCostCenterId && (
-                  <Tooltip
-                    label={formatMessage(messages.userCostCenterDefaultInfo)}
-                  >
-                    <div className="flex items-center ml1">
-                      <IconInfo />
-                    </div>
-                  </Tooltip>
-                )}
-                {loading && lastCostCenterUpdateIndexRef.current === costId && (
-                  <Spinner size={12} />
-                )}
-              </div>
-            )
-          })}
-        </>
-      ),
-    })
-  }
-
   contactFields.push({
-    label: formatMessage(messages.shippingAddress),
-    value: <ShippingAddress />,
+    label: `${formatMessage(messages.costCentersLabel)} / ${formatMessage(
+      messages.shippingAddress
+    )}`,
+    value: <CostCentersShipping />,
   })
 
   contactFields.push({

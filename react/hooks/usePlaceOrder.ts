@@ -16,11 +16,7 @@ export function usePlaceOrder() {
   const { orderForm } = useOrderFormCustom()
   const { organization } = useOrganization()
   const { poNumber, paymentAddress, shipping } = orderForm
-  const {
-    selectedCostCenters = [],
-    setOrderGroups,
-    deliveryOptionsByCostCenter,
-  } = useCheckoutB2BContext()
+  const { setOrderGroups } = useCheckoutB2BContext()
 
   const [placeOrder, { loading }] = useGraphQLMutation<
     MutationPlaceOrder,
@@ -30,9 +26,9 @@ export function usePlaceOrder() {
     variables: {
       poNumber,
       invoiceData: { address: paymentAddress ?? shipping.selectedAddress },
-      selectedCostCenters,
+      selectedCostCenters: [],
       defaultCostCenter: organization.costCenter,
-      deliveryOptionsByCostCenter,
+      deliveryOptionsByCostCenter: [],
     },
     onCompleted(data) {
       if (!data.placeOrder.length) {

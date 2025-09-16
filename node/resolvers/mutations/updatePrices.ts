@@ -2,7 +2,7 @@ import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
 import { MutationUpdatePricesArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
-import { getSessionData } from '../../utils'
+import { getSessionData, handleCheckoutApiError } from '../../utils'
 
 export async function updatePrices(
   _: unknown,
@@ -20,15 +20,14 @@ export async function updatePrices(
   }
 
   checkoutExtension.setOrderFormId(orderFormId)
-  let updatedOrderForm: OrderForm | null = null
+  let updatedOrderForm: OrderForm | null | void = null
 
   for await (const item of items) {
     if (!item) continue
 
-    updatedOrderForm = await checkoutExtension.updatePrice(
-      item.index,
-      item.price
-    )
+    updatedOrderForm = await checkoutExtension
+      .updatePrice(item.index, item.price)
+      .catch(handleCheckoutApiError)
   }
 
   if (!updatedOrderForm) {

@@ -13,9 +13,10 @@ type Props = {
   toastError?: boolean
 }
 
-export function useAddItems({ completeData, toastError = true }: Props) {
+export function useAddItems(props?: Props) {
   const showToast = useToast()
   const { orderForm, setOrderForm } = useOrderFormCustom()
+  const toastError = props?.toastError ?? true
 
   return useMutation<AddToCartMutation, MutationAddItemsToCartArgs>(
     MUTATION_ADD_TO_CART,
@@ -29,7 +30,7 @@ export function useAddItems({ completeData, toastError = true }: Props) {
         setOrderForm({
           ...orderForm,
           ...addItemsToCart,
-          ...completeData,
+          ...props?.completeData,
         } as CompleteOrderForm)
       },
     }

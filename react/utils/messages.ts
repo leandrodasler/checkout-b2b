@@ -150,6 +150,9 @@ export const messages = defineMessages({
   userCostCenterDefaultInfo: {
     id: 'store/checkout.b2b.cost-centers.user-cost-center.default.info',
   },
+  costCenterRemoveConfirmation: {
+    id: 'store/checkout.b2b.cost-centers.remove.confirmation',
+  },
   multipleOrdersTitle: {
     id: 'store/checkout.b2b.cost-centers.multiple-orders.title',
   },

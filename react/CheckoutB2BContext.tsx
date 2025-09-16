@@ -8,11 +8,10 @@ import type {
 } from 'ssesandbox04.checkout-b2b'
 import type { Item } from 'vtex.checkout-graphql'
 import { useRuntime } from 'vtex.render-runtime'
-import { ShippingSla } from 'vtex.store-graphql'
 import { withToast } from 'vtex.styleguide'
 
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
-import type { CustomOrganization, WithToast } from './typings'
+import type { WithToast } from './typings'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
 
@@ -40,20 +39,8 @@ type CheckoutB2BContextData = {
   setSearchQuery: Dispatch<SetStateAction<string>>
   searchStore: boolean
   setSearchStore: Dispatch<SetStateAction<boolean>>
-  selectedCostCenters: CustomOrganization['userCostCenters']
-  setSelectedCostCenters: Dispatch<
-    SetStateAction<CustomOrganization['userCostCenters']>
-  >
-  loadingShippingAddress: boolean
-  setLoadingShippingAddress: Dispatch<SetStateAction<boolean>>
   orderGroups?: Mutation['placeOrder']
   setOrderGroups: Dispatch<SetStateAction<Mutation['placeOrder'] | undefined>>
-  deliveryOptionsByCostCenter: Record<string, Record<string, ShippingSla>>
-  setDeliveryOptionsByCostCenter: Dispatch<
-    SetStateAction<Record<string, Record<string, ShippingSla>>>
-  >
-  loadingGetShipping: boolean
-  setLoadingGetShipping: Dispatch<SetStateAction<boolean>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -71,21 +58,12 @@ function CheckoutB2BProviderWrapper({
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchStore, setSearchStore] = useState(true)
-  const [loadingShippingAddress, setLoadingShippingAddress] = useState(false)
-  const [loadingGetShipping, setLoadingGetShipping] = useState(false)
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
   const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
-  const [selectedCostCenters, setSelectedCostCenters] = useState<
-    CustomOrganization['userCostCenters']
-  >([])
 
   const [orderGroups, setOrderGroups] = useState<Mutation['placeOrder']>()
-  const [
-    deliveryOptionsByCostCenter,
-    setDeliveryOptionsByCostCenter,
-  ] = useState<Record<string, Record<string, ShippingSla>>>({})
 
   const savedCartId = query?.savedCart
 
@@ -147,16 +125,8 @@ function CheckoutB2BProviderWrapper({
     setSearchQuery,
     searchStore,
     setSearchStore,
-    selectedCostCenters,
-    setSelectedCostCenters,
-    loadingShippingAddress,
-    setLoadingShippingAddress,
     orderGroups,
     setOrderGroups,
-    deliveryOptionsByCostCenter,
-    setDeliveryOptionsByCostCenter,
-    loadingGetShipping,
-    setLoadingGetShipping,
   }
 
   return (

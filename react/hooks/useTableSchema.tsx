@@ -128,17 +128,38 @@ export function useTableSchema({
           },
         },
       }),
+      ...((orderForm.shippingData?.selectedAddresses.length ?? 0) > 1 && {
+        costCenter: {
+          width: 120,
+          title: formatMessage(messages.costCenterSingleLabel),
+          cellRenderer: makeSafeCell((rowData) => {
+            return (
+              <div
+                className="pa1 br1 w-100 tc b"
+                style={{
+                  backgroundColor: rowData.costCenter?.color ?? 'transparent',
+                }}
+              >
+                <TruncatedText
+                  text={rowData.costCenter?.costCenterName}
+                  {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+                />
+              </div>
+            )
+          }),
+        },
+      }),
       refId: {
         title: formatMessage(messages.refId),
         width: 120,
-        cellRenderer({ rowData }) {
+        cellRenderer: makeSafeCell((rowData) => {
           return (
             <TruncatedText
               text={rowData.__group ? ' ' : rowData.refId}
               {...getStrike(rowData, isRemoving(rowData.itemIndex))}
             />
           )
-        },
+        }),
       },
       skuName: {
         minWidth: 250,
@@ -163,25 +184,6 @@ export function useTableSchema({
             />
           )
         },
-      },
-      costCenter: {
-        width: 140,
-        title: formatMessage(messages.costCenterSingleLabel),
-        cellRenderer: makeSafeCell((rowData) => {
-          return (
-            <div
-              className="pa1 br1"
-              style={{
-                backgroundColor: rowData.costCenter?.color ?? 'transparent',
-              }}
-            >
-              <TruncatedText
-                text={rowData.costCenter?.costCenterName}
-                {...getStrike(rowData, isRemoving(rowData.itemIndex))}
-              />
-            </div>
-          )
-        }),
       },
       additionalInfo: {
         width: 120,
@@ -357,11 +359,8 @@ export function useTableSchema({
               <Tooltip label={formatMessage(messages.delete)}>
                 <div>
                   <ButtonWithIcon
-                    isLoading={
-                      removeLoading &&
-                      lastDeletedIndexRef.current === rowData.itemIndex
-                    }
-                    disabled={isRemoving(rowData.itemIndex)}
+                    isLoading={isRemoving(rowData.itemIndex)}
+                    disabled={removeLoading}
                     size="small"
                     icon={<IconDelete />}
                     variation="danger-tertiary"

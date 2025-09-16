@@ -1,7 +1,7 @@
 import { NotFoundError, ServiceContext } from '@vtex/api'
 
 import { Clients } from '../../clients'
-import { getSessionData } from '../../utils'
+import { getSessionData, handleCheckoutApiError } from '../../utils'
 
 export async function addItemsToCart(
   _: unknown,
@@ -18,5 +18,7 @@ export async function addItemsToCart(
 
   checkoutExtension.setOrderFormId(orderFormId)
 
-  return checkoutExtension.addItemsToCart(orderItems)
+  return checkoutExtension
+    .addItemsToCart(orderItems)
+    .catch(handleCheckoutApiError)
 }

@@ -361,6 +361,10 @@ function CheckoutB2B() {
                   updateTableKey={`table-${
                     'tax' in schema.properties ? 'with-tax' : 'no-tax'
                   }${
+                    'costCenter' in schema.properties
+                      ? 'with-costCenter'
+                      : 'no-costCenter'
+                  }${
                     'listPrice' in schema.properties
                       ? 'with-margin'
                       : 'no-margin'

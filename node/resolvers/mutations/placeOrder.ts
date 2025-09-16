@@ -2,7 +2,11 @@ import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
 import { Mutation, MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
-import { getFirstInstallmentByPaymentSystem, getSessionData } from '../../utils'
+import {
+  getFirstInstallmentByPaymentSystem,
+  getSessionData,
+  handleCheckoutApiError,
+} from '../../utils'
 import { getAppSettings } from '../queries/getAppSettings'
 import { saveRepresentativeBalance } from './saveRepresentativeBalance'
 
@@ -39,9 +43,9 @@ export async function placeOrder(
 
   for await (const costCenter of selectedCostCenters) {
     try {
-      const order = await process(costCenter)
-
-      orders.push(order)
+      await process(costCenter)
+        .then((order) => orders.push(order))
+        .catch(handleCheckoutApiError)
     } catch (e) {
       lastError = e
     }

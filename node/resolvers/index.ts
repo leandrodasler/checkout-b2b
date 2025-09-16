@@ -9,6 +9,7 @@ import { saveRepresentativeBalanceSettings } from './mutations/saveRepresentativ
 import { shareCart } from './mutations/shareCart'
 import { updateItemsQuantity } from './mutations/updateItemsQuantity'
 import { updatePrices } from './mutations/updatePrices'
+import { updateShippingOption } from './mutations/updateShippingOption'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
 import { getRepresentativeBalanceByEmail } from './queries/getRepresentativeBalanceByEmail'
@@ -37,6 +38,7 @@ export default {
       addItemsToCart,
       updateItemsQuantity,
       addAddressToCart,
+      updateShippingOption,
     },
   },
   schemaDirectives,
