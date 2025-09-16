@@ -30,7 +30,6 @@ export async function addAddressToCart(
     .filter((l) => l.addressId === firstSelectedAddress.addressId)
     .map((l) => ({ ...originalItems[l.itemIndex], itemIndex: l.itemIndex }))
 
-  // pegando os itens ligados ao primeiro endereço e duplicando a quantidade
   await checkoutExtension
     .updateItemsQuantity(
       itemsFromFirstSelectedAddress.map((item) => ({
