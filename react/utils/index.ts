@@ -1,7 +1,11 @@
 import { Address, CustomData, Item, PaymentData } from 'vtex.checkout-graphql'
-import { DeliveryIds, ShippingData, ShippingSla } from 'vtex.store-graphql'
+import { DeliveryIds, ShippingSla } from 'vtex.store-graphql'
 
-import { CustomOrganization, PaymentAddressType } from '../typings'
+import {
+  CompleteOrderForm,
+  CustomOrganization,
+  PaymentAddressType,
+} from '../typings'
 
 export * from './generate-pdf'
 export * from './messages'
@@ -155,83 +159,60 @@ export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
 }
 
 export function groupShippingOptionsBySeller(
-  shippingData?: ShippingData | null
+  logisticsInfoFromAddress: CompleteOrderForm['shippingData']['logisticsInfo'],
+  items: CompleteOrderForm['items']
 ) {
-  const sellerItemIndexMap: Record<string, number[]> = {}
+  return logisticsInfoFromAddress.reduce<
+    Record<string, { selectedSla: ShippingSla; slas: ShippingSla[] }>
+  >((acc, l) => {
+    const item = items.find((i) => i.itemIndex === l.itemIndex)
 
-  shippingData?.items?.forEach((item) => {
-    if (!item?.seller) return
+    if (!item) return acc
 
-    if (!sellerItemIndexMap[item.seller]) {
-      sellerItemIndexMap[item.seller] = []
-    }
+    const seller = item.seller ?? '1'
+    const selectedSla = l.slas?.find((sla) => sla?.id === l.selectedSla)
 
-    if (item.requestIndex !== undefined && item.requestIndex !== null) {
-      sellerItemIndexMap[item.seller].push(item.requestIndex)
-    }
-  })
+    acc[seller] = acc[seller] ?? { selectedSla, slas: [] }
 
-  const sellerSlasMap: Record<string, ShippingSla[]> = {}
+    l.slas?.forEach((sla) => {
+      if (!sla) return
 
-  Object.entries(sellerItemIndexMap).forEach(([seller, itemIndexes]) => {
-    const slasBySeller = shippingData?.logisticsInfo
-      ?.filter((logisticInfo) =>
-        itemIndexes.includes(Number(logisticInfo?.itemIndex))
-      )
-      .map((logisticInfo) => logisticInfo?.slas ?? [])
+      const addedSlaIndex = acc[seller].slas.findIndex((s) => s.id === sla.id)
 
-    let commonSlaIds =
-      slasBySeller && slasBySeller.length > 0
-        ? slasBySeller[0].map((sla) => sla?.id)
-        : []
-
-    for (let i = 1; i < (slasBySeller?.length ?? 0); i++) {
-      const currentIds = slasBySeller?.[i].map((sla) => sla?.id)
-
-      commonSlaIds = commonSlaIds.filter((id) => currentIds?.includes(id))
-    }
-
-    const slaMap: Record<string, ShippingSla> = {}
-
-    commonSlaIds.forEach((slaId) => {
-      if (!slaId) return
-
-      const mergedSla: ShippingSla = {
-        id: slaId,
-        name: '',
-        shippingEstimate: '',
-        price: 0,
-        deliveryIds: [],
-        __typename: 'ShippingSLA',
-      }
-
-      slasBySeller?.forEach((slaList) => {
-        const sla = slaList.find((s) => s?.id === slaId)
-
-        if (!sla) return
-
-        mergedSla.name = sla.name
-        mergedSla.shippingEstimate = sla.shippingEstimate
-        mergedSla.price = (mergedSla.price ?? 0) + (sla.price ?? 0)
+      if (addedSlaIndex !== -1) {
+        const addedSla = acc[seller].slas[addedSlaIndex]
+        const mergedDeliveryIds: DeliveryIds[] = [
+          ...((addedSla.deliveryIds as DeliveryIds[]) ?? []),
+        ]
 
         sla.deliveryIds?.forEach((delivery, index) => {
-          if (!mergedSla.deliveryIds?.[index]) {
-            ;(mergedSla.deliveryIds as DeliveryIds[])[index] = { ...delivery }
+          if (!mergedDeliveryIds[index]) {
+            mergedDeliveryIds[index] = { ...delivery }
           } else {
-            ;(mergedSla.deliveryIds as DeliveryIds[])[index].quantity =
-              ((mergedSla.deliveryIds as DeliveryIds[])[index].quantity ?? 0) +
-              (delivery?.quantity ?? 0)
+            mergedDeliveryIds[index] = {
+              ...mergedDeliveryIds[index],
+              quantity:
+                (mergedDeliveryIds[index].quantity ?? 0) +
+                (delivery?.quantity ?? 0),
+            }
           }
         })
-      })
 
-      slaMap[slaId] = mergedSla
+        acc[seller].slas[addedSlaIndex] = {
+          ...addedSla,
+          price: (addedSla.price ?? 0) + (sla.price ?? 0),
+          deliveryIds: mergedDeliveryIds,
+        }
+      } else {
+        acc[seller].slas.push({
+          ...sla,
+          deliveryIds: sla.deliveryIds?.map((d) => ({ ...d })) ?? [],
+        })
+      }
     })
 
-    sellerSlasMap[seller] = Object.values(slaMap)
-  })
-
-  return sellerSlasMap
+    return acc
+  }, {})
 }
 
 export function getCurrencySymbol(currencyCode: string) {

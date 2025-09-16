@@ -7,12 +7,11 @@ import type {
 } from 'ssesandbox04.checkout-b2b'
 import { Address } from 'vtex.b2b-organizations-graphql'
 import { useCssHandles } from 'vtex.css-handles'
-import type { DeliveryIds, ShippingSla } from 'vtex.store-graphql'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import MUTATION_UPDATE_SHIPPING_OPTION from '../graphql/updateShippingOption.graphql'
 import { useFormatPrice, useOrderFormCustom, useToast } from '../hooks'
-import { isSameAddress, messages } from '../utils'
+import { groupShippingOptionsBySeller, isSameAddress, messages } from '../utils'
 import { Sla } from './Sla'
 import { SlaDropdown } from './SlaDrodown'
 
@@ -42,59 +41,7 @@ export function ShippingOption({ address }: Props) {
 
   const shippingOptionsBySeller = useMemo(
     () =>
-      logisticsInfoFromAddress.reduce<
-        Record<string, { selectedSla: ShippingSla; slas: ShippingSla[] }>
-      >((acc, l) => {
-        const item = orderForm.items.find((i) => i.itemIndex === l.itemIndex)
-
-        if (!item) return acc
-
-        const seller = item.seller ?? '1'
-        const selectedSla = l.slas?.find((sla) => sla?.id === l.selectedSla)
-
-        acc[seller] = acc[seller] ?? { selectedSla, slas: [] }
-
-        l.slas?.forEach((sla) => {
-          if (!sla) return
-
-          const addedSlaIndex = acc[seller].slas.findIndex(
-            (s) => s.id === sla.id
-          )
-
-          if (addedSlaIndex !== -1) {
-            const addedSla = acc[seller].slas[addedSlaIndex]
-            const mergedDeliveryIds: DeliveryIds[] = [
-              ...((addedSla.deliveryIds as DeliveryIds[]) ?? []),
-            ]
-
-            sla.deliveryIds?.forEach((delivery, index) => {
-              if (!mergedDeliveryIds[index]) {
-                mergedDeliveryIds[index] = { ...delivery }
-              } else {
-                mergedDeliveryIds[index] = {
-                  ...mergedDeliveryIds[index],
-                  quantity:
-                    (mergedDeliveryIds[index].quantity ?? 0) +
-                    (delivery?.quantity ?? 0),
-                }
-              }
-            })
-
-            acc[seller].slas[addedSlaIndex] = {
-              ...addedSla,
-              price: (addedSla.price ?? 0) + (sla.price ?? 0),
-              deliveryIds: mergedDeliveryIds,
-            }
-          } else {
-            acc[seller].slas.push({
-              ...sla,
-              deliveryIds: sla.deliveryIds?.map((d) => ({ ...d })) ?? [],
-            })
-          }
-        })
-
-        return acc
-      }, {}),
+      groupShippingOptionsBySeller(logisticsInfoFromAddress, orderForm.items),
     [logisticsInfoFromAddress, orderForm.items]
   )
 

@@ -86,7 +86,7 @@ export type OrderFormExtraFields = {
   poNumber?: string
 }
 
-export type CompleteOrderForm = OrderFormType &
+export type CompleteOrderForm = Omit<OrderFormType, 'items'> &
   CompleteOrderFormData &
   OrderFormExtraFields
 
