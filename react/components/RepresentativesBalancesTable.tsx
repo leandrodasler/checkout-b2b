@@ -248,7 +248,11 @@ const RepresentativeBalancesTable = () => {
         </div>
       )}
       <Table
-        onRowClick={() => {}}
+        onRowClick={({ rowData }: { rowData: RepresentativeBalance }) => {
+          window.location.assign(
+            `/admin/app/checkout-b2b/representative-balances/transactions/${rowData.email}`
+          )
+        }}
         fullWidth
         items={representatives.sort((a, b) => a.email.localeCompare(b.email))}
         schema={{ properties: columns }}
