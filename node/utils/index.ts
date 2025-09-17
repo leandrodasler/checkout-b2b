@@ -1,5 +1,5 @@
-import type { ServiceContext } from '@vtex/api'
-import { ForbiddenError } from '@vtex/api'
+import type { ErrorLike, ServiceContext } from '@vtex/api'
+import { ForbiddenError, ResolverError } from '@vtex/api'
 import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
@@ -149,4 +149,14 @@ export async function getRepresentativeEmail(
   }
 
   return inputEmail
+}
+
+export function handleCheckoutApiError(e: ErrorLike): never {
+  const { code, message } = e.response?.data?.error ?? {}
+
+  if (code && message) {
+    throw new ResolverError(`${code}: ${message}`)
+  }
+
+  throw e as Error
 }

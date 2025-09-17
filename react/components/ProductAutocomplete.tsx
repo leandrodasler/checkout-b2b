@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { OrderItems } from 'vtex.order-items'
 import {
   AutocompleteInput,
   ButtonWithIcon,
@@ -18,7 +17,12 @@ import {
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SEARCH_PRODUCTSS from '../graphql/getProducts.graphql'
-import { useDebounce, useOrderFormCustom, useToast } from '../hooks'
+import {
+  useDebounce,
+  useOrderFormCustom,
+  useToast,
+  useUpdateItemsQuantity,
+} from '../hooks'
 import { useAddItems } from '../hooks/useAddItems'
 import {
   ERROR_TO_RETRY_PATTERNS,
@@ -27,8 +31,6 @@ import {
   transformImageUrl,
 } from '../utils'
 import { messages } from '../utils/messages'
-
-const { useOrderItems } = OrderItems
 
 interface CommertialOffer {
   Price: number
@@ -110,17 +112,15 @@ const ProductAutocomplete = () => {
 
   const {
     data,
-    error: queryError,
     loading: queryLoading,
     networkStatus,
   } = useQuery<ProductsResponse>(SEARCH_PRODUCTSS, {
     variables: { query: searchQuery },
+    onError: showToast,
     skip: !searchStore || !searchQuery,
   })
 
-  const [addItemsMutation, { error: mutationError }] = useAddItems({
-    toastError: false,
-  })
+  const [addItemsMutation, { error: mutationError }] = useAddItems()
 
   const handleSearchChange = useCallback(
     (term: string) => {
@@ -162,7 +162,7 @@ const ProductAutocomplete = () => {
     (newItems, retryCount = 0) => {
       addItemsMutation({
         variables: {
-          items: newItems.map((item) => ({
+          orderItems: newItems.map((item) => ({
             id: Number(item.itemId),
             quantity: 1,
             seller:
@@ -172,15 +172,12 @@ const ProductAutocomplete = () => {
         },
       })
         .then((result) => {
-          if (!result) return
-
-          const retryError = result.errors?.find(shouldRetryOnError)
+          setItemsQueue([])
+          const retryError = result?.errors?.find(shouldRetryOnError)
 
           if (retryError) {
             throw retryError
           }
-
-          setItemsQueue([])
         })
         .catch((e) => {
           if (retryCount < MAX_ADD_TO_CART_RETRIES && shouldRetryOnError(e)) {
@@ -208,11 +205,7 @@ const ProductAutocomplete = () => {
       const items = Array.isArray(item) ? item : [item]
       const validItems = items.filter((i) => i?.sellers && i.sellers.length > 0)
 
-      if (validItems.length === 0) {
-        console.error('Nenhum seller disponível para os itens:', items)
-
-        return
-      }
+      if (validItems.length === 0) return
 
       const newItems = [
         ...itemsQueue,
@@ -243,7 +236,8 @@ const ProductAutocomplete = () => {
           : orderFormHasItem(props.value.item)
 
       const loading =
-        props.value.type === 'product'
+        !mutationError &&
+        (props.value.type === 'product'
           ? props.value.item
               .filter((item) => !orderFormHasItem(item))
               .every((i) =>
@@ -253,7 +247,7 @@ const ProductAutocomplete = () => {
               (itemQueue) =>
                 props.value.type === 'sku' &&
                 props.value.item.itemId === itemQueue.itemId
-            )
+            ))
 
       return (
         <CustomOption
@@ -281,14 +275,6 @@ const ProductAutocomplete = () => {
     className: 't-body w-100 ph5 b--none outline-0',
   }
 
-  if (queryError) {
-    console.error('Erro na query:', queryError)
-  }
-
-  if (mutationError) {
-    console.error('Erro na mutation:', mutationError)
-  }
-
   useEffect(() => {
     if (searchStore) {
       setInputFocus()
@@ -305,8 +291,9 @@ const ProductAutocomplete = () => {
 }
 
 function CustomOption(props: CustomOptionProps) {
+  const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
-  const { removeItem } = useOrderItems()
+  const [updateQuantity, { loading: removeLoading }] = useUpdateItemsQuantity()
   const {
     searchTerm,
     value,
@@ -338,7 +325,7 @@ function CustomOption(props: CustomOptionProps) {
       ? 'bg-muted-4'
       : value.type === 'product'
       ? 'bg-muted-5'
-      : loading
+      : loading || removeLoading
       ? 'bg-washed-blue'
       : 'bg-base'
   }${inserted ? ' strike' : ''}`
@@ -359,23 +346,18 @@ function CustomOption(props: CustomOptionProps) {
       itemsToRemove.forEach((item) => {
         const sellerId = item.sellers.find((s) => s.sellerDefault)?.sellerId
 
-        if (!sellerId) {
-          console.error(`No seller found for item ${item.itemId}`)
+        if (!sellerId) return
 
-          return
-        }
-
-        try {
-          removeItem({
-            id: item.itemId,
-            seller: sellerId,
-          })
-        } catch (error) {
-          console.error(`Failed to remove item ${item.itemId}:`, error)
-        }
+        updateQuantity({
+          variables: {
+            orderItems: orderForm.items
+              .filter((i) => i.id === item.itemId)
+              .map(({ itemIndex }) => ({ index: itemIndex, quantity: 0 })),
+          },
+        })
       })
     },
-    [removeItem, value.item, value.type]
+    [orderForm.items, updateQuantity, value.item, value.type]
   )
 
   const mainElement = (
@@ -394,12 +376,12 @@ function CustomOption(props: CustomOptionProps) {
       onMouseEnter={() => setHighlightOption(true)}
       onMouseLeave={() => setHighlightOption(false)}
       onClick={(e) => {
-        if (inserted || loading) return
+        if (inserted || loading || removeLoading) return
         handleAddItem(value.item)
         e.currentTarget.focus()
       }}
       onKeyDown={(e) => {
-        if (inserted || loading) return
+        if (inserted || loading || removeLoading) return
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           handleAddItem(value.item)
@@ -422,6 +404,7 @@ function CustomOption(props: CustomOptionProps) {
           {loading && !inserted && <Spinner size={16} />}
           {inserted && (
             <ButtonWithIcon
+              isLoading={removeLoading}
               size="small"
               icon={<IconDelete />}
               variation="danger-tertiary"

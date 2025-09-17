@@ -26,7 +26,6 @@ import {
   useCheckoutB2BContext,
 } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
-import { MultipleOrdersModal } from './components/MultipleOrdersModal'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import { ShareCartPDF } from './components/ShareCartPDF'
@@ -291,7 +290,6 @@ function CheckoutB2B() {
 
   return (
     <div className={handles.container}>
-      <MultipleOrdersModal />
       <Layout
         fullWidth
         pageHeader={
@@ -360,6 +358,10 @@ function CheckoutB2B() {
                 <Table
                   updateTableKey={`table-${
                     'tax' in schema.properties ? 'with-tax' : 'no-tax'
+                  }${
+                    'costCenter' in schema.properties
+                      ? 'with-costCenter'
+                      : 'no-costCenter'
                   }${
                     'listPrice' in schema.properties
                       ? 'with-margin'

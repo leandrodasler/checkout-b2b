@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
-import { OrderItems } from 'vtex.order-items'
 import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
 
-import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
+import {
+  useOrderFormCustom,
+  usePermissions,
+  useTotalMargin,
+  useUpdateItemsQuantity,
+} from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CellWrapper } from '../components/CellWrapper'
 import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
@@ -15,10 +19,8 @@ import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
 
-const { useOrderItems } = OrderItems
-
-function getStrike(item: CustomItem) {
-  return { strike: isWithoutStock(item) }
+function getStrike(item: CustomItem, isRemoving?: boolean) {
+  return { strike: isWithoutStock(item) || isRemoving }
 }
 
 export function useTableSchema({
@@ -39,8 +41,9 @@ export function useTableSchema({
   const { hasMargin } = useTotalMargin()
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
-  const { removeItem } = useOrderItems()
+  const [updateQuantity, { loading: removeLoading }] = useUpdateItemsQuantity()
   const { canSeeMargin } = usePermissions()
+  const lastDeletedIndexRef = useRef<number | null>(null)
   const {
     getSellingPrice,
     getDiscountedPrice,
@@ -49,6 +52,11 @@ export function useTableSchema({
   } = useCheckoutB2BContext()
 
   const prevHasMarginRef = useRef(hasMargin)
+
+  const isRemoving = useCallback(
+    (index: number) => removeLoading && lastDeletedIndexRef.current === index,
+    [removeLoading]
+  )
 
   useEffect(() => {
     if (!hasMargin) return
@@ -102,255 +110,278 @@ export function useTableSchema({
     return data?.__group ? '--' : render(rowData)
   }
 
-  return useMemo(
-    () => ({
-      properties: {
-        ...(isGrouping && {
-          expand: {
-            title: ' ',
-            width: 10,
-            cellRenderer({ rowData }: { rowData: CustomItem }) {
-              return (
-                <ChildrenProductsColumn
-                  isParent={rowData.__group}
-                  productId={rowData.productId ?? ''}
-                  expandedProducts={expandedProducts}
-                  setExpandedProducts={setExpandedProducts}
-                />
-              )
-            },
+  return {
+    properties: {
+      ...(isGrouping && {
+        expand: {
+          title: ' ',
+          width: 10,
+          cellRenderer({ rowData }: { rowData: CustomItem }) {
+            return (
+              <ChildrenProductsColumn
+                isParent={rowData.__group}
+                productId={rowData.productId ?? ''}
+                expandedProducts={expandedProducts}
+                setExpandedProducts={setExpandedProducts}
+              />
+            )
           },
-        }),
-        refId: {
-          title: formatMessage(messages.refId),
+        },
+      }),
+      ...((orderForm.shippingData?.selectedAddresses.length ?? 0) > 1 && {
+        costCenter: {
           width: 120,
-          cellRenderer({ rowData }) {
-            return (
-              <TruncatedText
-                text={rowData.__group ? ' ' : rowData.refId}
-                {...getStrike(rowData)}
-              />
-            )
-          },
-        },
-        skuName: {
-          minWidth: 250,
-          title: formatMessage(messages.name),
-          cellRenderer({ rowData }) {
-            const { name, skuName, __group: isParent } = rowData
-            const displayName = isParent
-              ? name
-              : skuName
-              ? normalizeString(skuName).includes(normalizeString(name))
-                ? skuName
-                : `${name} - ${skuName}`
-              : name
-
-            return (
-              <TruncatedText
-                label={displayName}
-                text={
-                  <CellWrapper isChildren={isParent}>{displayName}</CellWrapper>
-                }
-                {...getStrike(rowData)}
-              />
-            )
-          },
-        },
-        additionalInfo: {
-          width: 120,
-          title: formatMessage(messages.brand),
-          cellRenderer({ rowData }) {
-            const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
-
-            return (
-              <TruncatedText
-                label={brandName}
-                text={
-                  <CellWrapper isChildren={rowData.__group}>
-                    {brandName}
-                  </CellWrapper>
-                }
-                {...getStrike(rowData)}
-              />
-            )
-          },
-        },
-        productCategories: {
-          width: 150,
-          title: formatMessage(messages.category),
-          cellRenderer({ rowData }) {
-            const categoriesArray = Object.values(
-              rowData.productCategories as Record<string, string>
-            )
-
-            const categories = categoriesArray.join(' / ')
-            const leadCategory = categoriesArray[categoriesArray.length - 1]
-
-            return (
-              <TruncatedText
-                label={categories}
-                text={
-                  <CellWrapper isChildren={rowData.__group}>
-                    {leadCategory}
-                  </CellWrapper>
-                }
-                {...getStrike(rowData)}
-              />
-            )
-          },
-        },
-        seller: {
-          width: 150,
-          title: formatMessage(messages.seller),
-          cellRenderer: makeSafeCell((rowData) => {
-            const seller = orderForm.sellers?.find(
-              (s) => rowData.seller === s?.id
-            )
-
-            const sellerName = seller?.name ?? rowData.seller ?? 'N/A'
-
-            return <TruncatedText text={sellerName} {...getStrike(rowData)} />
-          }),
-        },
-        sellingPrice: {
-          width: 150,
-          title: formatMessage(messages.price),
+          title: formatMessage(messages.costCenterSingleLabel),
           cellRenderer: makeSafeCell((rowData) => {
             return (
-              <ManualPrice
-                rowData={rowData}
-                isEditing={isEditing}
-                sliderValue={discount}
-                onUpdatePrice={handlesNewPrice}
-              />
-            )
-          }),
-        },
-        ...((hasMargin || prevHasMarginRef) &&
-          canSeeMargin && {
-            listPrice: {
-              width: 100,
-              title: formatMessage(messages.margin),
-              cellRenderer: makeSafeCell((rowData) => {
-                const sellingPrice = getSellingPrice(rowData, discount)
-
-                return (
-                  <TruncatedText
-                    text={
-                      <MarginProductPrice
-                        itemId={rowData.id}
-                        sellingPrice={sellingPrice}
-                      />
-                    }
-                    {...getStrike(rowData)}
-                  />
-                )
-              }),
-            },
-          }),
-        quantity: {
-          width: 110,
-          title: <div className="tc">{formatMessage(messages.quantity)}</div>,
-          cellRenderer({ rowData }) {
-            const parentItem = orderForm.items.find(
-              (i) => i.id === rowData.parentItemId
-            )
-
-            return (
-              <QuantitySelector
-                item={{
-                  ...rowData,
-                  quantity: rowData.quantity * (parentItem?.quantity ?? 1),
+              <div
+                className="pa1 br1 w-100 tc b"
+                style={{
+                  backgroundColor: rowData.costCenter?.color ?? 'transparent',
                 }}
-                disabled={(rowData.__group ?? false) || rowData.__component}
-              />
+              >
+                <TruncatedText
+                  text={rowData.costCenter?.costCenterName}
+                  {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+                />
+              </div>
             )
-          },
+          }),
         },
-        ...(hasTax && {
-          tax: {
+      }),
+      refId: {
+        title: formatMessage(messages.refId),
+        width: 120,
+        cellRenderer: makeSafeCell((rowData) => {
+          return (
+            <TruncatedText
+              text={rowData.__group ? ' ' : rowData.refId}
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        }),
+      },
+      skuName: {
+        minWidth: 250,
+        title: formatMessage(messages.name),
+        cellRenderer({ rowData }) {
+          const { name, skuName, __group: isParent } = rowData
+          const displayName = isParent
+            ? name
+            : skuName
+            ? normalizeString(skuName).includes(normalizeString(name))
+              ? skuName
+              : `${name} - ${skuName}`
+            : name
+
+          return (
+            <TruncatedText
+              label={displayName}
+              text={
+                <CellWrapper isChildren={isParent}>{displayName}</CellWrapper>
+              }
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        },
+      },
+      additionalInfo: {
+        width: 120,
+        title: formatMessage(messages.brand),
+        cellRenderer({ rowData }) {
+          const brandName = rowData.additionalInfo?.brandName ?? 'N/A'
+
+          return (
+            <TruncatedText
+              label={brandName}
+              text={
+                <CellWrapper isChildren={rowData.__group}>
+                  {brandName}
+                </CellWrapper>
+              }
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        },
+      },
+      productCategories: {
+        width: 150,
+        title: formatMessage(messages.category),
+        cellRenderer({ rowData }) {
+          const categoriesArray = Object.values(
+            rowData.productCategories as Record<string, string>
+          )
+
+          const categories = categoriesArray.join(' / ')
+          const leadCategory = categoriesArray[categoriesArray.length - 1]
+
+          return (
+            <TruncatedText
+              label={categories}
+              text={
+                <CellWrapper isChildren={rowData.__group}>
+                  {leadCategory}
+                </CellWrapper>
+              }
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        },
+      },
+      seller: {
+        width: 150,
+        title: formatMessage(messages.seller),
+        cellRenderer: makeSafeCell((rowData) => {
+          const seller = orderForm.sellers?.find(
+            (s) => rowData.seller === s?.id
+          )
+
+          const sellerName = seller?.name ?? rowData.seller ?? 'N/A'
+
+          return (
+            <TruncatedText
+              text={sellerName}
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        }),
+      },
+      sellingPrice: {
+        width: 150,
+        title: formatMessage(messages.price),
+        cellRenderer: makeSafeCell((rowData) => {
+          return (
+            <TruncatedText
+              text={
+                <ManualPrice
+                  rowData={rowData}
+                  isEditing={isEditing}
+                  sliderValue={discount}
+                  onUpdatePrice={handlesNewPrice}
+                />
+              }
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        }),
+      },
+      ...((hasMargin || prevHasMarginRef) &&
+        canSeeMargin && {
+          listPrice: {
             width: 100,
-            title: formatMessage(messages.tax),
+            title: formatMessage(messages.margin),
             cellRenderer: makeSafeCell((rowData) => {
-              return rowData.tax ? (
+              const sellingPrice = getSellingPrice(rowData, discount)
+
+              return (
                 <TruncatedText
                   text={
-                    <FormattedPrice
-                      value={(rowData.tax * rowData.quantity) / 100}
+                    <MarginProductPrice
+                      itemId={rowData.id}
+                      sellingPrice={sellingPrice}
                     />
                   }
-                  {...getStrike(rowData)}
+                  {...getStrike(rowData, isRemoving(rowData.itemIndex))}
                 />
-              ) : (
-                <>N/A</>
               )
             }),
           },
         }),
+      quantity: {
+        width: 110,
+        title: <div className="tc">{formatMessage(messages.quantity)}</div>,
+        cellRenderer({ rowData }) {
+          const parentItem = orderForm.items.find(
+            (i) => i.id === rowData.parentItemId
+          )
 
-        priceDefinition: {
-          width: 120,
-          title: formatMessage(messages.totalPrice),
-          cellRenderer({ rowData }) {
-            const discountedPrice =
-              (rowData.__group
-                ? rowData.price ?? 0
-                : getDiscountedPrice(rowData, discount)) / 100
-
-            return (
-              discountedPrice && (
-                <TruncatedText
-                  text={<FormattedPrice value={discountedPrice} />}
-                  {...getStrike(rowData)}
-                />
-              )
-            )
-          },
-        },
-        id: {
-          width: 50,
-          title: ' ',
-          cellRenderer({ rowData }) {
-            return (
-              !rowData.__group && (
-                <Tooltip label={formatMessage(messages.delete)}>
-                  <div>
-                    <ButtonWithIcon
-                      size="small"
-                      icon={<IconDelete />}
-                      variation="danger-tertiary"
-                      onClick={() => {
-                        removeItem({
-                          id: rowData.id,
-                          seller: rowData.seller ?? '1',
-                        })
-                      }}
-                    />
-                  </div>
-                </Tooltip>
-              )
-            )
-          },
+          return (
+            <QuantitySelector
+              item={{
+                ...rowData,
+                quantity: rowData.quantity * (parentItem?.quantity ?? 1),
+              }}
+              disabled={
+                (rowData.__group ?? false) ||
+                (rowData.__component ?? false) ||
+                isRemoving(rowData.itemIndex)
+              }
+            />
+          )
         },
       },
-    }),
-    [
-      isGrouping,
-      formatMessage,
-      hasMargin,
-      canSeeMargin,
-      hasTax,
-      expandedProducts,
-      setExpandedProducts,
-      orderForm.sellers,
-      orderForm.items,
-      isEditing,
-      discount,
-      handlesNewPrice,
-      getSellingPrice,
-      getDiscountedPrice,
-      removeItem,
-    ]
-  )
+      ...(hasTax && {
+        tax: {
+          width: 100,
+          title: formatMessage(messages.tax),
+          cellRenderer: makeSafeCell((rowData) => {
+            return rowData.tax ? (
+              <TruncatedText
+                text={
+                  <FormattedPrice
+                    value={(rowData.tax * rowData.quantity) / 100}
+                  />
+                }
+                {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+              />
+            ) : (
+              <>N/A</>
+            )
+          }),
+        },
+      }),
+
+      priceDefinition: {
+        width: 120,
+        title: formatMessage(messages.totalPrice),
+        cellRenderer({ rowData }) {
+          const discountedPrice =
+            (rowData.__group
+              ? rowData.price ?? 0
+              : getDiscountedPrice(rowData, discount)) / 100
+
+          return (
+            discountedPrice && (
+              <TruncatedText
+                text={<FormattedPrice value={discountedPrice} />}
+                {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+              />
+            )
+          )
+        },
+      },
+      id: {
+        width: 50,
+        title: ' ',
+        cellRenderer({ rowData }) {
+          return (
+            !rowData.__group && (
+              <Tooltip label={formatMessage(messages.delete)}>
+                <div>
+                  <ButtonWithIcon
+                    isLoading={isRemoving(rowData.itemIndex)}
+                    disabled={removeLoading}
+                    size="small"
+                    icon={<IconDelete />}
+                    variation="danger-tertiary"
+                    onClick={() => {
+                      lastDeletedIndexRef.current = rowData.itemIndex
+
+                      updateQuantity({
+                        variables: {
+                          orderItems: [
+                            { index: rowData.itemIndex, quantity: 0 },
+                          ],
+                        },
+                      })
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            )
+          )
+        },
+      },
+    },
+  }
 }

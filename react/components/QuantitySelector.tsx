@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type { Item } from 'vtex.checkout-graphql'
 import { OrderItems } from 'vtex.order-items'
 import { NumericStepper } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import { useOrderFormCustom, useToast } from '../hooks'
+import { CustomItem } from '../typings'
 import { isWithoutStock, messages } from '../utils'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
 
-type Props = { item: Item; disabled?: boolean }
+type Props = { item: CustomItem; disabled?: boolean }
 
 export function QuantitySelector({ item, disabled }: Props) {
   const showToast = useToast()
@@ -40,13 +40,13 @@ export function QuantitySelector({ item, disabled }: Props) {
 
       timeout.current = window.setTimeout(() => {
         updateQuantity({
-          id: item.id,
+          index: item.itemIndex,
           seller: item.seller ?? '1',
           quantity: value,
         }).then(handleFinish, handleFinish)
       }, DELAY)
     },
-    [handleFinish, item.id, item.seller, setPending, updateQuantity]
+    [handleFinish, item.itemIndex, item.seller, setPending, updateQuantity]
   )
 
   useQuery(GET_PRODUCTS, {
@@ -73,7 +73,7 @@ export function QuantitySelector({ item, disabled }: Props) {
           }`,
         })
         updateQuantity({
-          id: item.id,
+          index: item.itemIndex,
           seller: item.seller ?? '1',
           quantity: minQuantityValue,
         })
@@ -85,6 +85,20 @@ export function QuantitySelector({ item, disabled }: Props) {
     setNewQuantity(item.quantity < minQuantity ? minQuantity : item.quantity)
   }, [item.quantity, minQuantity])
 
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const input = ref.current?.querySelector('input')
+
+    if (!input) return
+
+    if (disabled) {
+      input.setAttribute('disabled', 'true')
+    } else {
+      input.removeAttribute('disabled')
+    }
+  }, [disabled])
+
   if (isWithoutStock(item)) {
     return (
       <div className="w-100 tc c-danger">
@@ -94,12 +108,14 @@ export function QuantitySelector({ item, disabled }: Props) {
   }
 
   return (
-    <NumericStepper
-      size="small"
-      value={newQuantity}
-      minValue={minQuantity}
-      onChange={handleQuantityChange}
-      readOnly={disabled}
-    />
+    <div ref={ref}>
+      <NumericStepper
+        size="small"
+        value={newQuantity}
+        minValue={minQuantity}
+        onChange={handleQuantityChange}
+        readOnly={disabled}
+      />
+    </div>
   )
 }

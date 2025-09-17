@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
-import { ShippingSla } from 'vtex.store-graphql'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
 import {
@@ -14,23 +13,16 @@ import {
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { PaymentData } from '../components/PaymentData'
 import { PONumber } from '../components/PONumber'
-import { TotalizerSpinner } from '../components/TotalizerSpinner'
 import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
 export function useTotalizers() {
-  const {
-    discountApplied,
-    deliveryOptionsByCostCenter,
-    loadingGetShipping,
-  } = useCheckoutB2BContext()
-
+  const { discountApplied } = useCheckoutB2BContext()
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
   const { orderForm } = useOrderFormCustom()
   const { isSalesUser } = usePermissions()
-
-  const { totalizers = [], items } = orderForm
+  const { totalizers = [], items, value: total } = orderForm
 
   const hasQuotationDiscount = useMemo(
     () =>
@@ -74,19 +66,6 @@ export function useTotalizers() {
     })
   }
 
-  const getCostCenterDeliveryPrice = useCallback(
-    (sellerSla: Record<string, ShippingSla>) => {
-      return (
-        Object.entries(sellerSla)
-          .map(([seller, sla]) =>
-            orderForm.sellers?.some((s) => s?.id === seller) ? sla.price : 0
-          )
-          .reduce((acc, value) => (acc ?? 0) + (value ?? 0), 0) ?? 0
-      )
-    },
-    [orderForm.sellers]
-  )
-
   if (!totalizers.length || !items?.length) return []
 
   const totalItemsWithoutDiscount =
@@ -102,13 +81,6 @@ export function useTotalizers() {
   )
 
   const totalDiscount = Math.round(percentualDiscount + discountApplied)
-
-  const costCenterCount = Object.keys(deliveryOptionsByCostCenter).length ?? 0
-  const hasMultipleCostCenters = costCenterCount > 1
-
-  const costCenterDeliveries = Object.entries(
-    deliveryOptionsByCostCenter
-  ).sort(([cc1], [cc2]) => cc1.localeCompare(cc2))
 
   const shippingTotalizer = totalizers.find((t) => t.id === 'Shipping')
   const canSeeDiscount = isSalesUser || (!isSalesUser && totalDiscount > 0)
@@ -224,70 +196,13 @@ export function useTotalizers() {
       ? [
           {
             label: shippingTotalizer.name,
-            value: loadingGetShipping ? (
-              <TotalizerSpinner
-                size={costCenterCount === 1 ? 18 : costCenterCount * 25}
-              />
-            ) : (
-              <TotalizerTable multiple={hasMultipleCostCenters}>
-                {costCenterDeliveries.map(([costCenter, seller]) => {
-                  const costCenterShippingValue = getCostCenterDeliveryPrice(
-                    seller
-                  )
-
-                  return (
-                    <tr key={costCenter}>
-                      {hasMultipleCostCenters && (
-                        <th align="left">{costCenter}</th>
-                      )}
-                      <td>{formatPrice(costCenterShippingValue / 100)}</td>
-                    </tr>
-                  )
-                })}
-              </TotalizerTable>
-            ),
+            value: formatPrice(shippingTotalizer.value / 100),
           },
         ]
       : []),
     {
       label: formatMessage(messages.total),
-      value:
-        loadingGetShipping && costCenterCount ? (
-          <TotalizerSpinner
-            size={costCenterCount === 1 ? 18 : costCenterCount * 25}
-          />
-        ) : (
-          <TotalizerTable multiple={hasMultipleCostCenters}>
-            {costCenterDeliveries.map(([costCenter, seller]) => {
-              const costCenterShippingValue = getCostCenterDeliveryPrice(seller)
-
-              return (
-                <tr key={costCenter}>
-                  {hasMultipleCostCenters && <th align="left">{costCenter}</th>}
-                  <td>
-                    {formatPrice((totalItems + costCenterShippingValue) / 100)}
-                  </td>
-                </tr>
-              )
-            })}
-          </TotalizerTable>
-        ),
+      value: formatPrice(total / 100),
     },
   ]
-}
-
-type TotalizerTableProps = React.PropsWithChildren<{
-  multiple: boolean
-}>
-
-function TotalizerTable({ children, multiple }: TotalizerTableProps) {
-  return (
-    <table
-      cellSpacing={multiple ? 1 : 0}
-      cellPadding={multiple ? 4 : 0}
-      className={`b--none ${multiple ? 't-small' : ''}`}
-    >
-      <tbody>{children}</tbody>
-    </table>
-  )
 }

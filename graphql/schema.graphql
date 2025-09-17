@@ -4,6 +4,7 @@ scalar CostCenter
 scalar InvoiceData
 scalar CostCenterDeliveryOptions
 scalar UpdatedOrderForm
+scalar Address
 
 type SavedCart {
   id: ID!
@@ -63,6 +64,17 @@ type RepresentativeBalanceTransaction {
   lastInteractionIn: String!
 }
 
+input AddItemsToCartInput {
+  seller: String!
+  id: Int!
+  quantity: Int!
+}
+
+input UpdateItemsQuantityInput {
+  index: Int!
+  quantity: Int!
+}
+
 type Query {
   getCart(id: ID!): SavedCart @CheckSchemas
 
@@ -93,13 +105,7 @@ type Mutation {
 
   deleteCart(id: ID): ID @CheckSchemas
 
-  placeOrder(
-    poNumber: String
-    invoiceData: InvoiceData
-    selectedCostCenters: [CostCenter!]!
-    defaultCostCenter: CostCenter!
-    deliveryOptionsByCostCenter: CostCenterDeliveryOptions!
-  ): [B2BOrder!]!
+  placeOrder(poNumber: String, invoiceData: InvoiceData): String
 
   updatePrices(items: [ItemsUpdatePriceInput]!): UpdatedOrderForm!
 
@@ -135,4 +141,17 @@ type Mutation {
     footerLine1: String!
     footerLine2: String!
   ): String!
+
+  addItemsToCart(orderItems: [AddItemsToCartInput!]!): UpdatedOrderForm!
+
+  updateItemsQuantity(
+    orderItems: [UpdateItemsQuantityInput!]!
+  ): UpdatedOrderForm!
+
+  addAddressToCart(address: Address!): UpdatedOrderForm!
+
+  updateShippingOption(
+    addressId: String!
+    selectedSla: String!
+  ): UpdatedOrderForm!
 }

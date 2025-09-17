@@ -98,7 +98,7 @@
   "store/checkout.b2b.cost-centers.single.label": "Centro de Custo",
   "store/checkout.b2b.cost-centers.not-empty.error": "Pelo menos um centro de custo deve ser selecionado",
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "O centro de custo do usuário é pré-selecionado por padrão",
-  "store/checkout.b2b.cost-centers.multiple-orders.info": "Ao finalizar a compra, será criado um pedido distinto para cada centro de custo selecionado.",
+  "store/checkout.b2b.cost-centers.remove.confirmation": "Ao remover um centro de custo do pedido, os seus itens também serão removidos.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} pedidos realizados com sucesso",
   "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Abrir confirmação do pedido em outra aba",
 
