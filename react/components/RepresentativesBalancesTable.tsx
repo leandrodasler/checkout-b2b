@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { useRuntime } from 'vtex.render-runtime'
@@ -60,8 +60,8 @@ const RepresentativeBalancesTable = () => {
 
   const [isEditing, setIsEditing] = useState(false)
 
-  useEffect(() => {
-    if (!usersData?.listUsers) return
+  const initialBalances = useMemo(() => {
+    if (!usersData?.listUsers) return {}
 
     const balanceMap = new Map<string, RepresentativeBalance>()
 
@@ -95,13 +95,22 @@ const RepresentativeBalancesTable = () => {
 
     setRepresentatives(mergedList)
 
-    const initialBalances: Record<string, number> = {}
+    const initialBalancesData: Record<string, number> = {}
 
     mergedList.forEach((rep) => {
-      initialBalances[rep.id] = rep.balance
+      initialBalancesData[rep.id] = rep.balance
     })
+
+    return initialBalancesData
+  }, [
+    balancesData?.getRepresentativeBalances,
+    openingBalance,
+    usersData?.listUsers,
+  ])
+
+  useEffect(() => {
     setEditedBalances(initialBalances)
-  }, [usersData, balancesData, openingBalance])
+  }, [initialBalances])
 
   const handleBalanceChange = (id: string) => (
     e: React.ChangeEvent<HTMLInputElement>
@@ -164,14 +173,20 @@ const RepresentativeBalancesTable = () => {
       cellRenderer: Object.assign(
         ({ rowData }: { rowData: RepresentativeBalance }) =>
           isEditing ? (
-            <InputCurrency
-              disabled={loadingSave}
-              size="small"
-              value={editedBalances[rowData.id]}
-              locale={locale}
-              currencyCode={currency}
-              onChange={handleBalanceChange(rowData.id)}
-            />
+            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+            <div
+              onKeyUp={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <InputCurrency
+                disabled={loadingSave}
+                size="small"
+                value={editedBalances[rowData.id]}
+                locale={locale}
+                currencyCode={currency}
+                onChange={handleBalanceChange(rowData.id)}
+              />
+            </div>
           ) : (
             <span>{formatPrice(rowData.balance)}</span>
           ),
@@ -221,6 +236,7 @@ const RepresentativeBalancesTable = () => {
           variation={isEditing ? 'secondary' : 'primary'}
           onClick={() => {
             setIsEditing((prev) => !prev)
+            setEditedBalances(initialBalances)
             setErrorMessage(null)
           }}
         >
