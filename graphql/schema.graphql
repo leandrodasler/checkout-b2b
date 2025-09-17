@@ -105,13 +105,7 @@ type Mutation {
 
   deleteCart(id: ID): ID @CheckSchemas
 
-  placeOrder(
-    poNumber: String
-    invoiceData: InvoiceData
-    selectedCostCenters: [CostCenter!]!
-    defaultCostCenter: CostCenter!
-    deliveryOptionsByCostCenter: CostCenterDeliveryOptions!
-  ): [B2BOrder!]!
+  placeOrder(poNumber: String, invoiceData: InvoiceData): String
 
   updatePrices(items: [ItemsUpdatePriceInput]!): UpdatedOrderForm!
 

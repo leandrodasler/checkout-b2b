@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
-  Mutation,
   Query,
   QueryGetCartArgs,
   SavedCart,
@@ -39,8 +38,6 @@ type CheckoutB2BContextData = {
   setSearchQuery: Dispatch<SetStateAction<string>>
   searchStore: boolean
   setSearchStore: Dispatch<SetStateAction<boolean>>
-  orderGroups?: Mutation['placeOrder']
-  setOrderGroups: Dispatch<SetStateAction<Mutation['placeOrder'] | undefined>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -62,8 +59,6 @@ function CheckoutB2BProviderWrapper({
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
   const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
-
-  const [orderGroups, setOrderGroups] = useState<Mutation['placeOrder']>()
 
   const savedCartId = query?.savedCart
 
@@ -125,8 +120,6 @@ function CheckoutB2BProviderWrapper({
     setSearchQuery,
     searchStore,
     setSearchStore,
-    orderGroups,
-    setOrderGroups,
   }
 
   return (

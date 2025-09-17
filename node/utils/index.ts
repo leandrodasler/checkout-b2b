@@ -151,7 +151,7 @@ export async function getRepresentativeEmail(
   return inputEmail
 }
 
-export function handleCheckoutApiError(e: ErrorLike) {
+export function handleCheckoutApiError(e: ErrorLike): never {
   const { code, message } = e.response?.data?.error ?? {}
 
   if (code && message) {

@@ -1,20 +1,4 @@
-mutation PlaceOrder(
-  $poNumber: String
-  $invoiceData: InvoiceData
-  $selectedCostCenters: [CostCenter!]!
-  $defaultCostCenter: CostCenter!
-  $deliveryOptionsByCostCenter: CostCenterDeliveryOptions!
-) {
-  placeOrder(
-    poNumber: $poNumber
-    invoiceData: $invoiceData
-    selectedCostCenters: $selectedCostCenters
-    defaultCostCenter: $defaultCostCenter
-    deliveryOptionsByCostCenter: $deliveryOptionsByCostCenter
-  ) @context(provider: "ssesandbox04.checkout-b2b") {
-    costId
-    costCenterName
-    orderGroup
-    value
-  }
+mutation PlaceOrder($poNumber: String, $invoiceData: InvoiceData) {
+  placeOrder(poNumber: $poNumber, invoiceData: $invoiceData)
+    @context(provider: "ssesandbox04.checkout-b2b")
 }
