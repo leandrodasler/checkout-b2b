@@ -10,9 +10,7 @@ export async function getCurrentCartSpreadsheet(ctx: ServiceContext<Clients>) {
 
   const orderForm = await ctx.clients.checkout.orderForm(orderFormId)
 
-  const { items } = orderForm
-
-  const csvLines = items.reduce((acc, item) => {
+  const csvLines = orderForm.items.reduce((acc, item) => {
     return `${acc}"${item.skuName}",${item.quantity}\n`
   }, 'Item,Quantity\n')
 

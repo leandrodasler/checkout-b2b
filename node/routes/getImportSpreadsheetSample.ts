@@ -3,7 +3,7 @@ import { ServiceContext } from '@vtex/api'
 import { Clients } from '../clients'
 
 export async function getImportSpreadsheetSample(ctx: ServiceContext<Clients>) {
-  const sampleSearchResults = await ctx.clients.search.products({
+  const sampleProducts = await ctx.clients.search.products({
     query: '',
     category: null,
     specificationFilters: null,
@@ -17,8 +17,8 @@ export async function getImportSpreadsheetSample(ctx: ServiceContext<Clients>) {
     simulationBehavior: 'default',
   })
 
-  const csvLines = sampleSearchResults.reduce((acc, result, index) => {
-    const [item] = result.items
+  const csvLines = sampleProducts.reduce((acc, product, index) => {
+    const [item] = product.items
 
     return `${acc}"${item.name}",${index + 1}\n`
   }, 'Item,Quantity\n')

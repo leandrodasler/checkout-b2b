@@ -1,7 +1,6 @@
 import readline from 'readline'
 
 import { NotFoundError, ServiceContext } from '@vtex/api'
-import { SearchProduct } from '@vtex/clients'
 
 import { Clients } from '../../clients'
 import { getDefaultSellerOrWithLowestPrice, getSessionData } from '../../utils'
@@ -33,10 +32,7 @@ export const uploadSpreadsheet = async (
     crlfDelay: Infinity,
   })
 
-  const orderItems: Array<{
-    item: SearchProduct['items'][number]
-    quantity: number
-  }> = []
+  const orderItems: AddItemsBody = []
 
   for await (const line of lineReader) {
     const match = line.match(/^"?([^"]+)"?[,;\t](\d+)$/)
@@ -45,7 +41,7 @@ export const uploadSpreadsheet = async (
 
     const [, itemName, quantity] = match
 
-    const [searchResult] = await search
+    const [product] = await search
       .products({
         query: itemName,
         category: null,
@@ -61,12 +57,13 @@ export const uploadSpreadsheet = async (
       })
       .catch(() => [undefined])
 
-    const foundSku = searchResult?.items.find((item) => item.name === itemName)
+    const sku = product?.items.find((item) => item.name === itemName)
 
-    if (foundSku) {
+    if (sku) {
       orderItems.push({
-        item: foundSku,
+        id: +sku.itemId,
         quantity: +quantity,
+        seller: getDefaultSellerOrWithLowestPrice(sku.sellers),
       })
     }
   }
@@ -74,13 +71,7 @@ export const uploadSpreadsheet = async (
   lineReader.close()
 
   if (orderItems.length) {
-    return checkoutExtension.addItemsToCart(
-      orderItems.map(({ item, quantity }) => ({
-        id: +item.itemId,
-        quantity,
-        seller: getDefaultSellerOrWithLowestPrice(item.sellers),
-      }))
-    )
+    return checkoutExtension.addItemsToCart(orderItems)
   }
 
   return checkout.orderForm(orderFormId)
