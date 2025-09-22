@@ -290,4 +290,18 @@ export const messages = defineMessages({
   shareCartInvalidEmail: {
     id: 'store/checkout.b2b.share-cart.invalid.email',
   },
+  importSpreadsheetLabel: { id: 'store/checkout.b2b.import-spreadsheet.label' },
+  importSpreadsheetSuccess: {
+    id: 'store/checkout.b2b.import-spreadsheet.success',
+  },
+  importSpreadsheetSelect: {
+    id: 'store/checkout.b2b.import-spreadsheet.select',
+  },
+  importSpreadsheetSample: {
+    id: 'store/checkout.b2b.import-spreadsheet.sample',
+  },
+  importSpreadsheetCart: { id: 'store/checkout.b2b.import-spreadsheet.cart' },
+  importSpreadsheetCartHelp: {
+    id: 'store/checkout.b2b.import-spreadsheet.cart.help',
+  },
 })

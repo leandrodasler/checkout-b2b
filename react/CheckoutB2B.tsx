@@ -11,6 +11,7 @@ import {
   Button,
   ButtonWithIcon,
   IconDelete,
+  IconDownload,
   Layout,
   PageBlock,
   PageHeader,
@@ -18,6 +19,7 @@ import {
   Table,
   ToastProvider,
   Toggle,
+  Tooltip,
   Totalizer,
 } from 'vtex.styleguide'
 
@@ -29,6 +31,7 @@ import { ContactInfos } from './components/ContactInfos'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import { ShareCartPDF } from './components/ShareCartPDF'
+import { UploadSpreadsheetForm } from './components/SpreadsheetUploader'
 import MUTATION_UPDATE_PRICES from './graphql/updatePrices.graphql'
 import {
   useClearCart,
@@ -459,9 +462,30 @@ function CheckoutB2B() {
               </>
             )}
           </div>
-          {!!items.length && !loading && (
-            <div className="flex flex-wrap">
-              <ShareCartPDF mainRef={pdfElementRef} />
+          <div className="flex flex-wrap">
+            {!!items.length && !loading && (
+              <>
+                <ShareCartPDF mainRef={pdfElementRef} />
+                <Tooltip
+                  label={formatMessage(messages.importSpreadsheetCartHelp)}
+                >
+                  <div>
+                    <ButtonWithIcon
+                      icon={<IconDownload />}
+                      variation="tertiary"
+                      href="/_v/checkout-b2b/cart.csv"
+                      target="_blank"
+                    >
+                      {formatMessage(messages.importSpreadsheetCart)}
+                    </ButtonWithIcon>
+                  </div>
+                </Tooltip>
+              </>
+            )}
+
+            <UploadSpreadsheetForm />
+
+            {!!items.length && !loading && (
               <ButtonWithIcon
                 icon={<IconDelete />}
                 variation="danger-tertiary"
@@ -470,8 +494,8 @@ function CheckoutB2B() {
               >
                 {formatMessage(messages.clearCart)}
               </ButtonWithIcon>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </Layout>
     </div>

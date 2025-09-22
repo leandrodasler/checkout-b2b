@@ -155,5 +155,12 @@
   "store/checkout.b2b.share-cart.email-origin.user": "Selecione um usuário",
   "store/checkout.b2b.share-cart.email-origin.user.placeholder": "Selecione um usuário do mesmo centro de custo",
   "store/checkout.b2b.share-cart.email-origin.input": "Insira um e-mail",
-  "store/checkout.b2b.share-cart.invalid.email": "E-mail inválido"
+  "store/checkout.b2b.share-cart.invalid.email": "E-mail inválido",
+
+  "store/checkout.b2b.import-spreadsheet.label": "Importar CSV",
+  "store/checkout.b2b.import-spreadsheet.success": "Planilha aplicada com sucesso",
+  "store/checkout.b2b.import-spreadsheet.select": "Selecione um arquivo CSV",
+  "store/checkout.b2b.import-spreadsheet.sample": "Baixar planilha de exemplo",
+  "store/checkout.b2b.import-spreadsheet.cart": "Exportar CSV",
+  "store/checkout.b2b.import-spreadsheet.cart.help": "Exportar CSV do carrinho atual para importações futuras"
 }

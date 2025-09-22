@@ -154,4 +154,6 @@ type Mutation {
     addressId: String!
     selectedSla: String!
   ): UpdatedOrderForm!
+
+  uploadSpreadsheet(file: Upload!): UpdatedOrderForm!
 }
