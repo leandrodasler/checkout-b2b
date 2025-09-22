@@ -1,11 +1,25 @@
-import React, { ChangeEvent, useState } from 'react'
-import { Button, Input } from 'vtex.styleguide'
+import React, { ChangeEvent, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useCssHandles } from 'vtex.css-handles'
+import {
+  Button,
+  ButtonWithIcon,
+  IconUpload,
+  Input,
+  Link,
+  Modal,
+} from 'vtex.styleguide'
 
 import { useUploadSpreadsheet } from '../hooks/useUploadSpreadSheet'
+import { messages } from '../utils'
 
 export function UploadSpreadsheetForm() {
-  const [file, setFile] = useState<File | null>(null)
+  const handles = useCssHandles(['container'] as const)
+  const { formatMessage } = useIntl()
+  const [file, setFile] = useState<File>()
   const [uploadSpreadsheet, { loading }] = useUploadSpreadsheet()
+  const ref = useRef<HTMLInputElement>(null)
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -13,28 +27,62 @@ export function UploadSpreadsheetForm() {
     }
   }
 
-  const handleUpload = async () => {
-    if (!file) return
+  const handleClose = () => {
+    setIsOpen(false)
+    setFile(undefined)
 
-    try {
-      await uploadSpreadsheet({
-        variables: { file },
-      })
-    } catch (err) {
-      console.error('Erro ao enviar arquivo:', err)
+    if (ref.current) {
+      ref.current.value = ''
     }
   }
 
+  const handleUpload = () => {
+    if (!file) return
+
+    uploadSpreadsheet({ variables: { file } }).then(handleClose)
+  }
+
   return (
-    <div className="flex flex-column gap-4">
-      <Input type="file" accept=".xlsx,.xls,.csv" onChange={handleFileChange} />
-      <Button
-        onClick={handleUpload}
-        disabled={!file || loading}
-        variation="primary"
+    <>
+      <ButtonWithIcon
+        icon={<IconUpload />}
+        variation="tertiary"
+        onClick={() => setIsOpen(true)}
       >
-        {loading ? 'Enviando...' : 'Enviar arquivo'}
-      </Button>
-    </div>
+        {formatMessage(messages.importSpreadsheetLabel)}
+      </ButtonWithIcon>
+      <Modal
+        isOpen={isOpen}
+        container={document.querySelector(`.${handles.container}`)}
+        onClose={handleClose}
+        size="small"
+        title={formatMessage(messages.importSpreadsheetLabel)}
+        bottomBar={
+          <div className="w-100 flex justify-between flex-wrap">
+            <Link href="/_v/checkout-b2b/sample-import-csv.csv" target="_blank">
+              {formatMessage(messages.importSpreadsheetSample)}
+            </Link>
+            <Button
+              variation="primary"
+              onClick={handleUpload}
+              isLoading={loading}
+              disabled={!file}
+            >
+              {formatMessage(messages.importSpreadsheetLabel)}
+            </Button>
+          </div>
+        }
+      >
+        <div className="flex flex-wrap items-center w-100 pb4">
+          <Input
+            type="file"
+            accept=".csv"
+            ref={ref}
+            helpText={formatMessage(messages.importSpreadsheetSelect)}
+            onChange={handleFileChange}
+          />
+        </div>
+      </Modal>
+    </>
   )
 }

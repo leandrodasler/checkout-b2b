@@ -250,19 +250,12 @@ export function SavedCartsTable() {
     setSelectedCart(cart)
     setQuery({ savedCart: cart.id })
 
-    const {
-      items,
-      salesChannel,
-      marketingData,
-      paymentData,
-      shippingData,
-      customData,
-    } = JSON.parse(cart.data ?? '{}')
+    const { items, paymentData, shippingData, customData } = JSON.parse(
+      cart.data ?? '{}'
+    )
 
-    const { utmipage, ...newMarketingData } = marketingData ?? {}
     const { payments } = paymentData
     const { logisticsInfo } = shippingData ?? {}
-
     const selectedDeliveryOption = (logisticsInfo as LogisticsInfo[]).find(
       (logisticsInfoItem) => !!logisticsInfoItem.selectedSla
     )?.selectedSla
@@ -274,23 +267,11 @@ export function SavedCartsTable() {
         onSuccess: async () => {
           await addItemsMutation({
             variables: {
-              items: items?.map(
-                (item: Item & { assemblies?: unknown }, index: number) => ({
-                  id: +item.id,
-                  index,
-                  quantity: item.quantity,
-                  seller: item.seller,
-                  uniqueId: item.uniqueId,
-                  options: item.assemblies,
-                })
-              ),
-              salesChannel,
-              marketingData: marketingData
-                ? {
-                    ...newMarketingData,
-                    ...(utmipage && { utmiPage: utmipage }),
-                  }
-                : null,
+              orderItems: items?.map((item: Item) => ({
+                id: +item.id,
+                quantity: item.quantity,
+                seller: item.seller,
+              })),
             },
           })
 
@@ -484,7 +465,10 @@ export function SavedCartsTable() {
 
           return (
             <CellWrapper isChildren={rowData.parentCartId}>
-              {cartData?.items?.length ?? 0}
+              {cartData?.items?.reduce(
+                (acc: number, item: Item) => acc + item.quantity,
+                0
+              )}
             </CellWrapper>
           )
         },

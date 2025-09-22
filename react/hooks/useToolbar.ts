@@ -1,26 +1,21 @@
 import { useIntl } from 'react-intl'
-import type { Item } from 'vtex.checkout-graphql'
 
 import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { CustomItem } from '../typings'
 import { messages, removeAccents } from '../utils'
 
 export function useToolbar() {
   const { formatMessage } = useIntl()
   const { loading: loadingOrganization } = useOrganization()
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
-  const {
-    pending,
-    loadingGetShipping,
-    searchQuery,
-    setSearchQuery,
-  } = useCheckoutB2BContext()
+  const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
 
   const { placeOrder, isLoading } = usePlaceOrder()
 
   if (loadingOrganization || loadingOrderForm) return null
 
-  const handleFilterItems = (items: Item[]) => {
+  const handleFilterItems = (items: CustomItem[]) => {
     return searchQuery
       ? items.filter(({ name, skuName, refId }) =>
           removeAccents(searchQuery)
@@ -60,8 +55,7 @@ export function useToolbar() {
       onSubmit: handleSubmit,
     },
     newLine: {
-      disabled:
-        isLoading || pending || loadingGetShipping || !orderForm.items.length,
+      disabled: isLoading || pending || !orderForm.items.length,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,

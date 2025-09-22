@@ -2,5 +2,9 @@
   "admin.app.RepresentativeBalances": {
     "component": "AdminRepresentativeBalances",
     "path": "/admin/app/checkout-b2b/representative-balances"
+  },
+  "admin.app.RepresentativeBalancesTransactions": {
+    "component": "AdminRepresentativeBalancesTransactions",
+    "path": "/admin/app/checkout-b2b/representative-balances/transactions/:email"
   }
 }

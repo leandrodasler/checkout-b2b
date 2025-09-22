@@ -11,6 +11,7 @@ import {
   Button,
   ButtonWithIcon,
   IconDelete,
+  IconDownload,
   Layout,
   PageBlock,
   PageHeader,
@@ -18,6 +19,7 @@ import {
   Table,
   ToastProvider,
   Toggle,
+  Tooltip,
   Totalizer,
 } from 'vtex.styleguide'
 
@@ -26,7 +28,6 @@ import {
   useCheckoutB2BContext,
 } from './CheckoutB2BContext'
 import { ContactInfos } from './components/ContactInfos'
-import { MultipleOrdersModal } from './components/MultipleOrdersModal'
 import ProductAutocomplete from './components/ProductAutocomplete'
 import { SavedCarts } from './components/SavedCarts'
 import { ShareCartPDF } from './components/ShareCartPDF'
@@ -292,7 +293,6 @@ function CheckoutB2B() {
 
   return (
     <div className={handles.container}>
-      <MultipleOrdersModal />
       <Layout
         fullWidth
         pageHeader={
@@ -361,6 +361,10 @@ function CheckoutB2B() {
                 <Table
                   updateTableKey={`table-${
                     'tax' in schema.properties ? 'with-tax' : 'no-tax'
+                  }${
+                    'costCenter' in schema.properties
+                      ? 'with-costCenter'
+                      : 'no-costCenter'
                   }${
                     'listPrice' in schema.properties
                       ? 'with-margin'
@@ -458,9 +462,30 @@ function CheckoutB2B() {
               </>
             )}
           </div>
-          {!!items.length && !loading && (
-            <div className="flex flex-wrap">
-              <ShareCartPDF mainRef={pdfElementRef} />
+          <div className="flex flex-wrap">
+            {!!items.length && !loading && (
+              <>
+                <ShareCartPDF mainRef={pdfElementRef} />
+                <Tooltip
+                  label={formatMessage(messages.importSpreadsheetCartHelp)}
+                >
+                  <div>
+                    <ButtonWithIcon
+                      icon={<IconDownload />}
+                      variation="tertiary"
+                      href="/_v/checkout-b2b/cart.csv"
+                      target="_blank"
+                    >
+                      {formatMessage(messages.importSpreadsheetCart)}
+                    </ButtonWithIcon>
+                  </div>
+                </Tooltip>
+              </>
+            )}
+
+            <UploadSpreadsheetForm />
+
+            {!!items.length && !loading && (
               <ButtonWithIcon
                 icon={<IconDelete />}
                 variation="danger-tertiary"
@@ -469,9 +494,8 @@ function CheckoutB2B() {
               >
                 {formatMessage(messages.clearCart)}
               </ButtonWithIcon>
-              <UploadSpreadsheetForm />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </Layout>
     </div>

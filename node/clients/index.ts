@@ -1,6 +1,6 @@
 import type { Cached, ClientsConfig } from '@vtex/api'
 import { IOClients, LRUCache } from '@vtex/api'
-import { Checkout } from '@vtex/clients'
+import { Checkout, Search } from '@vtex/clients'
 
 import { CheckoutExtension } from './CheckoutExtension'
 import Mail from './Mail'
@@ -8,6 +8,10 @@ import Mail from './Mail'
 export class Clients extends IOClients {
   public get checkout() {
     return this.getOrSet('checkout', Checkout)
+  }
+
+  public get search() {
+    return this.getOrSet('search', Search)
   }
 
   public get checkoutExtension() {

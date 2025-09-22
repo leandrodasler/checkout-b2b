@@ -150,8 +150,8 @@ export const messages = defineMessages({
   userCostCenterDefaultInfo: {
     id: 'store/checkout.b2b.cost-centers.user-cost-center.default.info',
   },
-  multipleOrdersInfo: {
-    id: 'store/checkout.b2b.cost-centers.multiple-orders.info',
+  costCenterRemoveConfirmation: {
+    id: 'store/checkout.b2b.cost-centers.remove.confirmation',
   },
   multipleOrdersTitle: {
     id: 'store/checkout.b2b.cost-centers.multiple-orders.title',
@@ -219,6 +219,50 @@ export const messages = defineMessages({
   representativeBalanceSettingsSave: {
     id: 'admin/representativebalances.settings.save',
   },
+
+  representativeBalanceTransactions: {
+    id: 'admin/representativebalances.transactions.title',
+  },
+  representativeBalanceTransactionTitle: {
+    id: 'admin/representativebalances.transactions.title',
+  },
+  representativeBalanceTransactionEmail: {
+    id: 'admin/representativebalances.transactions.email',
+  },
+  representativeBalanceTransactionCurrentBalance: {
+    id: 'admin/representativebalances.transactions.current-balance',
+  },
+  representativeBalanceTransactionTransaction: {
+    id: 'admin/representativebalances.transactions.transaction',
+  },
+  representativeBalanceTransactionOldBalance: {
+    id: 'admin/representativebalances.transactions.old-balance',
+  },
+  representativeBalanceTransactionNewBalance: {
+    id: 'admin/representativebalances.transactions.new-balance',
+  },
+  representativeBalanceTransactionCreatedIn: {
+    id: 'admin/representativebalances.transactions.created-in',
+  },
+  representativeBalanceTransactionLastInteraction: {
+    id: 'admin/representativebalances.transactions.last-interaction',
+  },
+  representativeBalanceTransactionOrderGroup: {
+    id: 'admin/representativebalances.transactions.order-group',
+  },
+  representativeBalanceTransactionBackToRepresentative: {
+    id: 'admin/representativebalances.transactions.back-to-representative',
+  },
+  representativeBalanceTransactionPageBack: {
+    id: 'admin/representativebalances.transactions.page-back',
+  },
+  representativeBalanceTransactionPageNext: {
+    id: 'admin/representativebalances.transactions.page-next',
+  },
+  representativeBalanceTransactionNoTransactionsFound: {
+    id: 'admin/representativebalances.transactions.no-transactions-found',
+  },
+
   shareCartButton: { id: 'store/checkout.b2b.share-cart.button' },
   shareCartSubject: { id: 'store/checkout.b2b.share-cart.subject' },
   shareCartTitle: { id: 'store/checkout.b2b.share-cart.title' },
@@ -245,5 +289,19 @@ export const messages = defineMessages({
   },
   shareCartInvalidEmail: {
     id: 'store/checkout.b2b.share-cart.invalid.email',
+  },
+  importSpreadsheetLabel: { id: 'store/checkout.b2b.import-spreadsheet.label' },
+  importSpreadsheetSuccess: {
+    id: 'store/checkout.b2b.import-spreadsheet.success',
+  },
+  importSpreadsheetSelect: {
+    id: 'store/checkout.b2b.import-spreadsheet.select',
+  },
+  importSpreadsheetSample: {
+    id: 'store/checkout.b2b.import-spreadsheet.sample',
+  },
+  importSpreadsheetCart: { id: 'store/checkout.b2b.import-spreadsheet.cart' },
+  importSpreadsheetCartHelp: {
+    id: 'store/checkout.b2b.import-spreadsheet.cart.help',
   },
 })

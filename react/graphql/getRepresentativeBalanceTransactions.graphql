@@ -1,0 +1,21 @@
+query GetRepresentativeBalanceTransactions(
+  $email: String!
+  $page: Int
+  $pageSize: Int
+  $sort: String
+) {
+  getRepresentativeBalanceTransactions(
+    email: $email
+    page: $page
+    pageSize: $pageSize
+    sort: $sort
+  ) {
+    id
+    createdIn
+    lastInteractionIn
+    email
+    oldBalance
+    newBalance
+    orderGroup
+  }
+}

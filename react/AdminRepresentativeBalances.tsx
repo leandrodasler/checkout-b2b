@@ -12,7 +12,7 @@ const AdminRepresentativeBalances: FC = () => {
       pageHeader={
         <PageHeader
           title={
-            <span className="flex flex-wrap justify-between">
+            <span className="flex flex-wrap flex-nowrap-l justify-between">
               <span>
                 <FormattedMessage id="admin/checkout-b2b.title" />
                 <br />
@@ -20,7 +20,7 @@ const AdminRepresentativeBalances: FC = () => {
                   <FormattedMessage id="admin/representativebalances.title" />
                 </span>
               </span>
-              <div className="w-100 mt4 mt0-l w-50-l">
+              <div className="mt4 mt0-l">
                 <RepresentativeBalanceSettings />
               </div>
             </span>

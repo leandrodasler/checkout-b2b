@@ -2,7 +2,6 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Spinner, Tooltip } from 'vtex.styleguide'
 
-import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { useFormatPrice, useOrderFormCustom, useOrganization } from '../hooks'
 import { useFetchRepresentativeBalance } from '../hooks/useFetchRepresentativeBalance'
 import { messages } from '../utils'
@@ -11,7 +10,6 @@ export function RepresentativeBalanceData() {
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
   const { organization } = useOrganization()
-  const { selectedCostCenters } = useCheckoutB2BContext()
   const { role } = organization
 
   const {
@@ -22,13 +20,10 @@ export function RepresentativeBalanceData() {
     (item) => item.manualPrice && item.manualPrice !== item.price
   )
 
-  const selectedCostCentersCount = selectedCostCenters?.length ?? 1
   const discountTotalizerValue =
     totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0
 
-  const discounts = hasManualPrice
-    ? (selectedCostCentersCount * discountTotalizerValue) / 100
-    : 0
+  const discounts = hasManualPrice ? discountTotalizerValue / 100 : 0
 
   const email = clientProfileData?.email
 

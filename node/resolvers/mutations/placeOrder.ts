@@ -1,8 +1,12 @@
 import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
-import { Mutation, MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
+import { MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
-import { getFirstInstallmentByPaymentSystem, getSessionData } from '../../utils'
+import {
+  getFirstInstallmentByPaymentSystem,
+  getSessionData,
+  handleCheckoutApiError,
+} from '../../utils'
 import { getAppSettings } from '../queries/getAppSettings'
 import { saveRepresentativeBalance } from './saveRepresentativeBalance'
 
@@ -11,106 +15,28 @@ const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 
 export async function placeOrder(
   _: unknown,
-  {
-    poNumber,
-    invoiceData,
-    selectedCostCenters,
-    deliveryOptionsByCostCenter,
-    defaultCostCenter,
-  }: MutationPlaceOrderArgs,
+  { poNumber, invoiceData }: MutationPlaceOrderArgs,
   context: ServiceContext<Clients>
 ) {
-  const { orderFormId, organizationId, roleId } = await getSessionData(context)
+  const { orderFormId, roleId } = await getSessionData(context)
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
   const { checkout, checkoutExtension } = context.clients
-  const initialOrderForm = (await checkout.orderForm(orderFormId)) as OrderForm
-  const {
-    items,
-    marketingData,
-    shippingData: { logisticsInfo },
-  } = initialOrderForm
 
   checkoutExtension.setOrderFormId(orderFormId)
+  const initialOrderForm = (await checkout.orderForm(orderFormId)) as OrderForm
+  const { storePreferencesData, value } = initialOrderForm
+  const { address } = initialOrderForm.shippingData
+  const { installmentOptions, payments } = initialOrderForm.paymentData
+  const [payment] = payments
+  const installment = getFirstInstallmentByPaymentSystem(
+    installmentOptions,
+    payment?.paymentSystem
+  )
 
-  const orders: Mutation['placeOrder'] = []
-  let lastError: Error | null = null
-
-  for await (const costCenter of selectedCostCenters) {
-    try {
-      const order = await process(costCenter)
-
-      orders.push(order)
-    } catch (e) {
-      lastError = e
-    }
-  }
-
-  const resetCostCenter = defaultCostCenter as CostCenter
-  const [defaultCostCenterAddress] = resetCostCenter.addresses
-  const orderFormResetPromises = [
-    checkoutExtension.updateOrderFormShipping({
-      address: {
-        ...defaultCostCenterAddress,
-        geoCoordinates: defaultCostCenterAddress.geoCoordinates ?? [],
-        isDisposable: true,
-      },
-    }),
-    checkoutExtension.updateOrderFormMarketingData({
-      attachmentId: 'marketingData',
-      marketingTags: marketingData?.marketingTags ?? [],
-      utmCampaign: organizationId,
-      utmMedium: resetCostCenter.costId,
-    }),
-  ]
-
-  await Promise.all(orderFormResetPromises)
-
-  if (!orders.length && lastError) {
-    throw lastError
-  }
-
-  return orders
-
-  async function process({ costId, costCenterName, address }: CostCenter) {
-    const optionsBySeller = deliveryOptionsByCostCenter[
-      costCenterName
-    ] as Record<string, { id: string }>
-
-    const updatedLogisticsInfo = logisticsInfo.map((logisticsItem) => ({
-      ...logisticsItem,
-      selectedSla: optionsBySeller[items[logisticsItem.itemIndex].seller].id,
-    }))
-
-    const newAddress = {
-      ...address,
-      geoCoordinates: address.geoCoordinates ?? [],
-      isDisposable: true,
-    }
-
-    const updatedOrderForm = await checkoutExtension.updateOrderFormShipping({
-      address: newAddress,
-      selectedAddresses: [newAddress],
-      logisticsInfo: updatedLogisticsInfo,
-    })
-
-    const { paymentData, storePreferencesData, value } = updatedOrderForm
-    const { installmentOptions, payments } = paymentData
-    const [payment] = payments
-    const installment = getFirstInstallmentByPaymentSystem(
-      installmentOptions,
-      payment?.paymentSystem
-    )
-
-    const orderFormUpdatePromises = [
-      checkoutExtension.updateOrderFormMarketingData({
-        attachmentId: 'marketingData',
-        marketingTags: marketingData?.marketingTags ?? [],
-        utmCampaign: organizationId,
-        utmMedium: costId,
-      }),
-    ]
+  try {
+    const orderFormUpdatePromises: Array<Promise<void>> = []
 
     if (poNumber) {
       orderFormUpdatePromises.push(
@@ -207,11 +133,8 @@ export async function placeOrder(
       }
     }
 
-    return {
-      orderGroup,
-      costId,
-      costCenterName,
-      value: payment?.value ?? value,
-    }
+    return orderGroup
+  } catch (e) {
+    handleCheckoutApiError(e)
   }
 }

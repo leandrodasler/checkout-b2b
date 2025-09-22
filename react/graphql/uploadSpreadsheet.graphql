@@ -1,7 +1,3 @@
 mutation uploadSpreadsheet($file: Upload!) {
-  uploadSpreadsheet(file: $file) {
-    filename
-    mimetype
-    encoding
-  }
+  uploadSpreadsheet(file: $file) @context(provider: "ssesandbox04.checkout-b2b")
 }

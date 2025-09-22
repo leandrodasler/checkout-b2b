@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
+import { Query, RepresentativeBalance } from 'ssesandbox04.checkout-b2b'
 import { useRuntime } from 'vtex.render-runtime'
+import {
+  QueryListUsersArgs,
+  Query as StorefrontPermissionsQuery,
+} from 'vtex.storefront-permissions'
 import { Button, InputCurrency, Spinner, Table } from 'vtex.styleguide'
 
 import GET_REPRESENTATIVE_BALANCES from '../graphql/getRepresentativeBalances.graphql'
@@ -11,13 +16,8 @@ import { useFormatPrice } from '../hooks'
 import { usePermissions } from '../hooks/usePermissions'
 import { getCurrencySymbol, messages } from '../utils'
 
-type RepresentativeBalance = {
-  id: string
-  email: string
-  balance: number
-  createdIn: string
-  lastInteractionIn: string
-}
+type ListUsersQuery = Pick<StorefrontPermissionsQuery, 'listUsers'>
+type GetRepresentativeBalancesQuery = Pick<Query, 'getRepresentativeBalances'>
 
 const RepresentativeBalancesTable = () => {
   const { formatMessage } = useIntl()
@@ -30,14 +30,14 @@ const RepresentativeBalancesTable = () => {
     data: usersData,
     loading: loadingUsers,
     error: errorUsers,
-  } = useQuery(LIST_USERS)
+  } = useQuery<ListUsersQuery, QueryListUsersArgs>(LIST_USERS)
 
   const {
     data: balancesData,
     loading: loadingBalances,
     error: errorBalances,
     refetch,
-  } = useQuery(GET_REPRESENTATIVE_BALANCES)
+  } = useQuery<GetRepresentativeBalancesQuery>(GET_REPRESENTATIVE_BALANCES)
 
   const [saveBalance, { loading: loadingSave }] = useMutation(
     SAVE_REPRESENTATIVE_BALANCE
@@ -59,48 +59,55 @@ const RepresentativeBalancesTable = () => {
 
   const [isEditing, setIsEditing] = useState(false)
 
-  useEffect(() => {
-    if (!usersData?.listUsers) return
+  const initialBalances = useMemo(() => {
+    if (!usersData?.listUsers) return {}
 
     const balanceMap = new Map<string, RepresentativeBalance>()
 
     balancesData?.getRepresentativeBalances?.forEach(
-      (rep: RepresentativeBalance) => {
-        balanceMap.set(rep.email, rep)
+      (rep?: RepresentativeBalance | null) => {
+        if (rep) {
+          balanceMap.set(rep.email, rep)
+        }
       }
     )
 
     const uniqueUsers = Array.from(
-      new Map(
-        usersData.listUsers.map((u: { email: string }) => [u.email, u])
-      ).values()
+      new Map(usersData.listUsers.map((u) => [u?.email, u])).values()
     ) as Array<{ email: string }>
 
-    const mergedList: RepresentativeBalance[] = uniqueUsers.map(
-      (user, index) => {
-        const existing = balanceMap.get(user.email)
+    const mergedList = uniqueUsers.map((user, index) => {
+      const existing = balanceMap.get(user.email)
 
-        return (
-          existing ?? {
-            id: `new-${index}`,
-            email: user.email,
-            balance: openingBalance,
-            createdIn: new Date().toISOString(),
-            lastInteractionIn: new Date().toISOString(),
-          }
-        )
-      }
-    )
+      return (
+        existing ?? {
+          id: `new-${index}`,
+          email: user.email,
+          balance: openingBalance,
+          createdIn: new Date().toISOString(),
+          lastInteractionIn: new Date().toISOString(),
+        }
+      )
+    })
 
     setRepresentatives(mergedList)
 
-    const initialBalances: Record<string, number> = {}
+    const initialBalancesData: Record<string, number> = {}
 
     mergedList.forEach((rep) => {
-      initialBalances[rep.id] = rep.balance
+      initialBalancesData[rep.id] = rep.balance
     })
+
+    return initialBalancesData
+  }, [
+    balancesData?.getRepresentativeBalances,
+    openingBalance,
+    usersData?.listUsers,
+  ])
+
+  useEffect(() => {
     setEditedBalances(initialBalances)
-  }, [usersData, balancesData, openingBalance])
+  }, [initialBalances])
 
   const handleBalanceChange = (id: string) => (
     e: React.ChangeEvent<HTMLInputElement>
@@ -160,9 +167,13 @@ const RepresentativeBalancesTable = () => {
       title: formatMessage(messages.representativeBalanceValue, {
         currency: currencySymbol,
       }),
-      cellRenderer: Object.assign(
-        ({ rowData }: { rowData: RepresentativeBalance }) =>
-          isEditing ? (
+      cellRenderer({ rowData }: { rowData: RepresentativeBalance }) {
+        return isEditing ? (
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+          <div
+            onKeyUp={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
             <InputCurrency
               disabled={loadingSave}
               size="small"
@@ -171,31 +182,37 @@ const RepresentativeBalancesTable = () => {
               currencyCode={currency}
               onChange={handleBalanceChange(rowData.id)}
             />
-          ) : (
-            <span>{formatPrice(rowData.balance)}</span>
-          ),
-        { displayName: 'BalanceCellRenderer' }
-      ),
+          </div>
+        ) : (
+          <span>{formatPrice(rowData.balance)}</span>
+        )
+      },
     },
     createdIn: {
       width: 180,
       title: formatMessage(messages.representativeBalanceCreatedIn),
-      cellRenderer: Object.assign(
-        ({ cellData }: { cellData: string }) => (
-          <span>{new Date(cellData).toLocaleDateString()}</span>
-        ),
-        { displayName: 'CreatedInCellRenderer' }
-      ),
+      cellRenderer({ rowData }: { rowData: RepresentativeBalance }) {
+        return (
+          <span>
+            {rowData.__typename
+              ? new Date(rowData.createdIn).toLocaleDateString()
+              : '---'}
+          </span>
+        )
+      },
     },
     lastInteractionIn: {
       width: 180,
       title: formatMessage(messages.representativeBalanceLastInteractionIn),
-      cellRenderer: Object.assign(
-        ({ cellData }: { cellData: string }) => (
-          <span>{new Date(cellData).toLocaleDateString()}</span>
-        ),
-        { displayName: 'LastInteractionInCellRenderer' }
-      ),
+      cellRenderer({ rowData }: { rowData: RepresentativeBalance }) {
+        return (
+          <span>
+            {rowData.__typename
+              ? new Date(rowData.lastInteractionIn).toLocaleDateString()
+              : '---'}
+          </span>
+        )
+      },
     },
   }
 
@@ -212,6 +229,7 @@ const RepresentativeBalancesTable = () => {
           variation={isEditing ? 'secondary' : 'primary'}
           onClick={() => {
             setIsEditing((prev) => !prev)
+            setEditedBalances(initialBalances)
             setErrorMessage(null)
           }}
         >
@@ -239,7 +257,11 @@ const RepresentativeBalancesTable = () => {
         </div>
       )}
       <Table
-        onRowClick={() => {}}
+        onRowClick={({ rowData }: { rowData: RepresentativeBalance }) => {
+          window.location.assign(
+            `/admin/app/checkout-b2b/representative-balances/transactions/${rowData.email}`
+          )
+        }}
         fullWidth
         items={representatives.sort((a, b) => a.email.localeCompare(b.email))}
         schema={{ properties: columns }}

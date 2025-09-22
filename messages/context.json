@@ -98,7 +98,7 @@
   "store/checkout.b2b.cost-centers.single.label": "Cost Center",
   "store/checkout.b2b.cost-centers.not-empty.error": "At least one cost center must be selected",
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "The user cost center is pre-selected by default",
-  "store/checkout.b2b.cost-centers.multiple-orders.info": "Upon completing the purchase, a separate order will be created for each selected cost center.",
+  "store/checkout.b2b.cost-centers.remove.confirmation": "When you remove a cost center from the order, its items will also be removed.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} orders placed successfully",
   "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Open order confirmation in another tab",
 
@@ -125,6 +125,19 @@
   "admin/representativebalances.settings.allowNegative": "Allow negative balances",
   "admin/representativebalances.settings.openingBalance": "Opening balance",
   "admin/representativebalances.settings.save": "Save settings",
+  "admin/representativebalances.transactions.title": "Transactions",
+  "admin/representativebalances.transactions.email": "Email",
+  "admin/representativebalances.transactions.current-balance": "Current Balance",
+  "admin/representativebalances.transactions.transaction": "Transaction",
+  "admin/representativebalances.transactions.old-balance": "Previous Balance",
+  "admin/representativebalances.transactions.new-balance": "Final Balance",
+  "admin/representativebalances.transactions.created-in": "Created At",
+  "admin/representativebalances.transactions.last-interaction": "Last Interaction",
+  "admin/representativebalances.transactions.order-group": "Order",
+  "admin/representativebalances.transactions.back-to-representative": "Back to Representatives",
+  "admin/representativebalances.transactions.page-back": "Previous",
+  "admin/representativebalances.transactions.page-next": "Next",
+  "admin/representativebalances.transactions.no-transactions-found": "No transactions found for {email}",
 
   "store/checkout.b2b.share-cart.button": "Share PDF",
   "store/checkout.b2b.share-cart.subject": "A store cart of {storeName} has been shared with you",
@@ -142,5 +155,12 @@
   "store/checkout.b2b.share-cart.email-origin.user": "Select a user",
   "store/checkout.b2b.share-cart.email-origin.user.placeholder": "Select a user from the same cost center",
   "store/checkout.b2b.share-cart.email-origin.input": "Enter an email",
-  "store/checkout.b2b.share-cart.invalid.email": "Invalid email address"
+  "store/checkout.b2b.share-cart.invalid.email": "Invalid email address",
+
+  "store/checkout.b2b.import-spreadsheet.label": "Import CSV",
+  "store/checkout.b2b.import-spreadsheet.success": "Spreadsheet successfully applied",
+  "store/checkout.b2b.import-spreadsheet.select": "Select a CSV file",
+  "store/checkout.b2b.import-spreadsheet.sample": "Download sample spreadsheet",
+  "store/checkout.b2b.import-spreadsheet.cart": "Export CSV",
+  "store/checkout.b2b.import-spreadsheet.cart.help": "Export CSV of current cart for future import"
 }

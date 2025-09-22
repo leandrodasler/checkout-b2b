@@ -4,5 +4,15 @@
   "timeout": 30,
   "minReplicas": 2,
   "maxReplicas": 4,
-  "workers": 1
+  "workers": 1,
+  "routes": {
+    "getImportSpreadsheetSample": {
+      "path": "/_v/checkout-b2b/sample-import-csv.csv",
+      "public": true
+    },
+    "getCurrentCartSpreadsheet": {
+      "path": "/_v/checkout-b2b/cart.csv",
+      "public": true
+    }
+  }
 }

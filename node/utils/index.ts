@@ -1,7 +1,8 @@
-import type { ServiceContext } from '@vtex/api'
-import { ForbiddenError } from '@vtex/api'
+import type { ErrorLike, ServiceContext } from '@vtex/api'
+import { ForbiddenError, ResolverError } from '@vtex/api'
 import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
+import { SearchProduct } from '@vtex/clients'
 
 import { Clients } from '../clients'
 import { B2B_USERS_ENTITY, B2B_USERS_FIELDS } from './constants'
@@ -149,4 +150,26 @@ export async function getRepresentativeEmail(
   }
 
   return inputEmail
+}
+
+export function handleCheckoutApiError(e: ErrorLike): never {
+  const { code, message } = e.response?.data?.error ?? {}
+
+  if (code && message) {
+    throw new ResolverError(`${code}: ${message}`)
+  }
+
+  throw e as Error
+}
+
+export function getDefaultSellerOrWithLowestPrice<
+  T extends SearchProduct['items'][number]['sellers']
+>(sellers: T) {
+  return (
+    sellers.find((s) => s.sellerDefault)?.sellerId ??
+    sellers.sort(
+      (s1: T[number], s2: T[number]) =>
+        s1.commertialOffer.Price - s2.commertialOffer.Price
+    )[0].sellerId
+  )
 }

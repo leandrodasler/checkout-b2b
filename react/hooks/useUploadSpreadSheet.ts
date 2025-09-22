@@ -1,34 +1,29 @@
 import { useMutation } from 'react-apollo'
+import { useIntl } from 'react-intl'
 
 import UploadSpreadsheetMutation from '../graphql/uploadSpreadsheet.graphql'
+import { messages } from '../utils'
+import { useOrderFormCustom } from './useOrderFormCustom'
 import { useToast } from './useToast'
-
-interface UploadSpreadsheetResult {
-  uploadSpreadsheet: {
-    filename: string
-    mimetype: string
-    encoding: string
-  }
-}
-
-interface UploadSpreadsheetVariables {
-  file: File
-}
 
 export function useUploadSpreadsheet() {
   const showToast = useToast()
+  const { formatMessage } = useIntl()
+  const { orderForm, setOrderForm } = useOrderFormCustom()
 
-  return useMutation<UploadSpreadsheetResult, UploadSpreadsheetVariables>(
-    UploadSpreadsheetMutation,
-    {
-      onError({ message }) {
-        showToast({ message })
-      },
-      onCompleted({ uploadSpreadsheet }) {
-        showToast({
-          message: `Arquivo "${uploadSpreadsheet.filename}" enviado com sucesso!`,
-        })
-      },
-    }
-  )
+  return useMutation(UploadSpreadsheetMutation, {
+    onError: showToast,
+    onCompleted({ uploadSpreadsheet }) {
+      showToast({
+        message: formatMessage(messages.importSpreadsheetSuccess),
+      })
+
+      setOrderForm({
+        ...orderForm,
+        ...uploadSpreadsheet,
+        paymentAddress: orderForm.paymentAddress,
+        customData: orderForm.customData,
+      })
+    },
+  })
 }

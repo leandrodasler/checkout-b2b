@@ -8,7 +8,10 @@ import type {
   Maybe,
   OrderForm as OrderFormType,
 } from 'vtex.checkout-graphql'
-import type { OrderForm as OrderFormStore } from 'vtex.store-graphql'
+import type {
+  LogisticsInfo,
+  OrderForm as OrderFormStore,
+} from 'vtex.store-graphql'
 
 type ShowToastArgs = {
   message: string
@@ -52,6 +55,12 @@ export type CustomItem = OrderFormType['items'][number] & { tax?: number } & {
   components?: CustomItem[]
   __component?: true
   parentItemId?: string
+  itemIndex: number
+  costCenter?:
+    | (NonNullable<CustomOrganization['userCostCenters']>[number] & {
+        color: string
+      })
+    | null
 }
 
 export type CompleteOrderFormData = ApiResponse &
@@ -64,16 +73,22 @@ export type CompleteOrderFormData = ApiResponse &
       customerClass?: string | null
     }
     items: CustomItem[]
-    poNumber?: string
+  } & {
+    shippingData: OrderFormStore['shippingData'] & {
+      logisticsInfo: Array<
+        LogisticsInfo & { itemIndex: number; addressId: string }
+      >
+    }
   }
 
-export type PaymentAddress = {
+export type OrderFormExtraFields = {
   paymentAddress?: Maybe<Address>
+  poNumber?: string
 }
 
-export type CompleteOrderForm = OrderFormType &
-  PaymentAddress &
-  CompleteOrderFormData
+export type CompleteOrderForm = Omit<OrderFormType, 'items'> &
+  CompleteOrderFormData &
+  OrderFormExtraFields
 
 export type TransactionResponse = ApiResponse & {
   id: string

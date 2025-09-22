@@ -1,0 +1,4 @@
+mutation AddItemsToCart($orderItems: [AddItemsToCartInput!]!) {
+  addItemsToCart(orderItems: $orderItems)
+    @context(provider: "ssesandbox04.checkout-b2b")
+}

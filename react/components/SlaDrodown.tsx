@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { TranslateEstimate } from 'vtex.shipping-estimate-translator'
 import { ShippingSla } from 'vtex.store-graphql'
-import { Dropdown } from 'vtex.styleguide'
+import { Dropdown, Spinner } from 'vtex.styleguide'
 
 import { messages } from '../utils'
 
@@ -13,15 +13,15 @@ type Props = {
     label: string
   }>
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
-  isSmall?: boolean
+  isLoading?: boolean
 }
 
 export function SlaDropdown(props: Props) {
-  const { selectedSla, options, onChange, isSmall } = props
+  const { selectedSla, options, onChange, isLoading } = props
   const { formatMessage } = useIntl()
 
   return (
-    <div className={isSmall ? 'w-90' : 'w-100'}>
+    <div className="w-100">
       <Dropdown
         size="small"
         placeholder={formatMessage(messages.shippingOption)}
@@ -29,11 +29,15 @@ export function SlaDropdown(props: Props) {
         value={selectedSla?.id}
         onChange={onChange}
         helpText={
-          <span {...(isSmall && { className: 't-mini' })}>
-            <TranslateEstimate
-              shippingEstimate={selectedSla?.shippingEstimate}
-            />
-          </span>
+          isLoading ? (
+            <Spinner size={12} />
+          ) : (
+            <span className="t-mini">
+              <TranslateEstimate
+                shippingEstimate={selectedSla?.shippingEstimate}
+              />
+            </span>
+          )
         }
       />
     </div>

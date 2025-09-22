@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Item } from 'vtex.checkout-graphql'
 
 import { CustomItem } from '../typings'
+import { compareCostCenters } from '../utils'
 
 type UseGroupedProductsProps = {
   items: CustomItem[]
@@ -32,20 +33,26 @@ export function useGroupedProducts({
 }: UseGroupedProductsProps): CustomItem[] {
   return useMemo(() => {
     const baseItems = searchStore ? items : fallbackItems ?? items
+    const sortedItems = baseItems.sort((a, b) =>
+      compareCostCenters(a.costCenter, b.costCenter)
+    )
 
-    if (!isGrouping) return baseItems
+    if (!isGrouping) return sortedItems
 
-    const grouped = baseItems.reduce<Map<string, CustomItem[]>>((acc, item) => {
-      const key = item.productId ?? ''
+    const grouped = sortedItems.reduce<Map<string, CustomItem[]>>(
+      (acc, item) => {
+        const key = item.productId ?? ''
 
-      if (!acc.has(key)) {
-        acc.set(key, [])
-      }
+        if (!acc.has(key)) {
+          acc.set(key, [])
+        }
 
-      acc.get(key)?.push(normalizeTax(item))
+        acc.get(key)?.push(normalizeTax(item))
 
-      return acc
-    }, new Map())
+        return acc
+      },
+      new Map()
+    )
 
     const result: CustomItem[] = []
 

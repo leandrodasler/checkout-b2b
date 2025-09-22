@@ -98,7 +98,7 @@
   "store/checkout.b2b.cost-centers.single.label": "Centro de Costo",
   "store/checkout.b2b.cost-centers.not-empty.error": "Al menos un centro de costo debe ser seleccionado",
   "store/checkout.b2b.cost-centers.user-cost-center.default.info": "El centro de costo del usuario está preseleccionado por defecto",
-  "store/checkout.b2b.cost-centers.multiple-orders.info": "Al completar la compra, se creará un pedido separado para cada centro de costo seleccionado.",
+  "store/checkout.b2b.cost-centers.remove.confirmation": "Al eliminar un centro de costo del pedido, sus artículos también se eliminarán.",
   "store/checkout.b2b.cost-centers.multiple-orders.title": "{count} pedidos realizados con éxito",
   "store/checkout.b2b.cost-centers.multiple-orders.order.link": "Abrir la confirmación del pedido en otra pestaña",
 
@@ -125,6 +125,19 @@
   "admin/representativebalances.settings.allowNegative": "Permitir saldos negativos",
   "admin/representativebalances.settings.openingBalance": "Saldo inicial",
   "admin/representativebalances.settings.save": "Guardar configuración",
+  "admin/representativebalances.transactions.title": "Transacciones",
+  "admin/representativebalances.transactions.email": "Correo electrónico",
+  "admin/representativebalances.transactions.current-balance": "Saldo actual",
+  "admin/representativebalances.transactions.transaction": "Transacción",
+  "admin/representativebalances.transactions.old-balance": "Saldo anterior",
+  "admin/representativebalances.transactions.new-balance": "Saldo final",
+  "admin/representativebalances.transactions.created-in": "Creado en",
+  "admin/representativebalances.transactions.last-interaction": "Última interacción",
+  "admin/representativebalances.transactions.order-group": "Pedido",
+  "admin/representativebalances.transactions.back-to-representative": "Volver a Representantes",
+  "admin/representativebalances.transactions.page-back": "Anterior",
+  "admin/representativebalances.transactions.page-next": "Siguiente",
+  "admin/representativebalances.transactions.no-transactions-found": "No se encontraron transacciones para {email}",
 
   "store/checkout.b2b.share-cart.button": "Compartir PDF",
   "store/checkout.b2b.share-cart.subject": "Un carrito de la tienda {storeName} ha sido compartido contigo",
@@ -142,5 +155,12 @@
   "store/checkout.b2b.share-cart.email-origin.user": "Seleccione un usuario",
   "store/checkout.b2b.share-cart.email-origin.user.placeholder": "Seleccione un usuario del mismo centro de costo",
   "store/checkout.b2b.share-cart.email-origin.input": "Ingrese un e-mail",
-  "store/checkout.b2b.share-cart.invalid.email": "E-mail inválido"
+  "store/checkout.b2b.share-cart.invalid.email": "E-mail inválido",
+
+  "store/checkout.b2b.import-spreadsheet.label": "Importar CSV",
+  "store/checkout.b2b.import-spreadsheet.success": "Hoja de cálculo aplicada correctamente",
+  "store/checkout.b2b.import-spreadsheet.select": "Seleccione un archivo CSV",
+  "store/checkout.b2b.import-spreadsheet.sample": "Descargar hoja de cálculo de muestra",
+  "store/checkout.b2b.import-spreadsheet.cart": "Exportar CSV",
+  "store/checkout.b2b.import-spreadsheet.cart.help": "Exportar CSV del carrito actual para futuras importaciones"
 }

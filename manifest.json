@@ -1,7 +1,7 @@
 {
   "vendor": "ssesandbox04",
   "name": "checkout-b2b",
-  "version": "1.0.54",
+  "version": "1.0.55",
   "title": "Checkout B2B",
   "description": "Checkout for B2B Stores",
   "builders": {
@@ -35,7 +35,8 @@
     "vtex.country-codes": "2.x",
     "vtex.session-client": "1.x",
     "vtex.apps-graphql": "3.x",
-    "ssesandbox04.file-manager": "0.x"
+    "ssesandbox04.file-manager": "0.x",
+    "vtex.catalog-api-proxy": "0.x"
   },
   "registries": ["smartcheckout"],
   "policies": [
@@ -44,6 +45,12 @@
     },
     {
       "name": "colossus-write-logs"
+    },
+    {
+      "name": "vtex.catalog-api-proxy:catalog-proxy"
+    },
+    {
+      "name": "vtex.catalog-api-proxy:authenticated-catalog-proxy"
     },
     {
       "name": "ADMIN_DS"

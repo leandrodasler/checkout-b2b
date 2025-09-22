@@ -97,10 +97,11 @@ function RepresentativeBalanceSettingsContent({
 
   return (
     <form
-      className="flex items-center b--solid bw1 b--muted-3 br3 pa4 t-body"
+      className="flex flex-wrap items-end justify-center b--solid ba b--muted-4 br3 pa4 t-small bg-white"
+      style={{ gap: '1.5rem' }}
       onSubmit={handleSaveSettings}
     >
-      <div className="flex flex-column justify-center">
+      <div className="flex flex-column">
         <Toggle
           semantic
           id="representative-balances-enabled"
@@ -125,22 +126,20 @@ function RepresentativeBalanceSettingsContent({
           />
         </div>
       </div>
-      <div className="ml6">
-        <InputCurrency
-          disabled={!currentEnabled}
-          label={formatMessage(
-            messages.representativeBalanceSettingsOpeningBalance
-          )}
-          id="representative-opening-balance"
-          size="small"
-          currencyCode={currency}
-          value={currentOpeningBalance}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setOpeningBalanceInput(+e.target.value)
-          }
-        />
-      </div>
-      <div className="ml6">
+      <InputCurrency
+        disabled={!currentEnabled}
+        label={formatMessage(
+          messages.representativeBalanceSettingsOpeningBalance
+        )}
+        id="representative-opening-balance"
+        size="small"
+        currencyCode={currency}
+        value={currentOpeningBalance}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setOpeningBalanceInput(+e.target.value)
+        }
+      />
+      <div className="flex">
         <Button
           isLoading={loading}
           disabled={!isChanged}
