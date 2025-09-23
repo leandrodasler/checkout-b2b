@@ -75,6 +75,17 @@ input UpdateItemsQuantityInput {
   quantity: Int!
 }
 
+type Pagination {
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+
+type RepresentativeBalanceTransactionResponse {
+  data: [RepresentativeBalanceTransaction]! @CheckSchemas
+  pagination: Pagination!
+}
+
 type Query {
   getCart(id: ID!): SavedCart @CheckSchemas
 
@@ -92,7 +103,7 @@ type Query {
     page: Int
     pageSize: Int
     sort: String
-  ): [RepresentativeBalanceTransaction]! @CheckSchemas
+  ): RepresentativeBalanceTransactionResponse! @CheckSchemas
 }
 
 type Mutation {

@@ -10,22 +10,23 @@ import {
 
 export const getRepresentativeBalanceTransactions = async (
   _: unknown,
-  {
-    email,
-    page,
-    pageSize,
-    sort,
-  }: QueryGetRepresentativeBalanceTransactionsArgs,
+  args: QueryGetRepresentativeBalanceTransactionsArgs,
   context: ServiceContext<Clients>
 ) => {
   const { masterdata } = context.clients
 
-  return masterdata.searchDocuments<RepresentativeBalanceTransaction>({
-    dataEntity: REPRESENTATIVE_BALANCE_TRANSACTION_ENTITY,
-    fields: REPRESENTATIVE_BALANCE_TRANSACTION_FIELDS,
-    schema: SCHEMA_VERSION,
-    where: `email="${email}"`,
-    pagination: { page: page ?? 1, pageSize: pageSize ?? 15 },
-    sort: sort ?? 'createdIn asc',
-  })
+  const { email, page = 1, pageSize = 20, sort = 'createdIn DESC' } = args
+
+  const response = await masterdata.searchDocumentsWithPaginationInfo<RepresentativeBalanceTransactionResponse>(
+    {
+      dataEntity: REPRESENTATIVE_BALANCE_TRANSACTION_ENTITY,
+      fields: REPRESENTATIVE_BALANCE_TRANSACTION_FIELDS,
+      schema: SCHEMA_VERSION,
+      where: `email="${email}"`,
+      pagination: { page: page ?? 1, pageSize: pageSize ?? 15 },
+      sort: sort ?? 'createdIn asc',
+    }
+  )
+
+  return response
 }

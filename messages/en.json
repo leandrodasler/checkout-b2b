@@ -135,8 +135,8 @@
   "admin/representativebalances.transactions.last-interaction": "Last Interaction",
   "admin/representativebalances.transactions.order-group": "Order",
   "admin/representativebalances.transactions.back-to-representative": "Back to Representatives",
-  "admin/representativebalances.transactions.page-back": "Previous",
-  "admin/representativebalances.transactions.page-next": "Next",
+  "admin/representativebalances.transactions.page-back": "Most recent",
+  "admin/representativebalances.transactions.page-next": "Older",
   "admin/representativebalances.transactions.no-transactions-found": "No transactions found for {email}",
 
   "store/checkout.b2b.share-cart.button": "Share PDF",
