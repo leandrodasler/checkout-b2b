@@ -1,7 +1,7 @@
 import { ServiceContext } from '@vtex/api'
 
 import { Clients } from '../clients'
-import { getSessionData } from '../utils'
+import { getSessionData, normalizeString } from '../utils'
 
 export async function getCurrentCartSpreadsheet(ctx: ServiceContext<Clients>) {
   const { orderFormId } = await getSessionData(ctx)
@@ -10,10 +10,18 @@ export async function getCurrentCartSpreadsheet(ctx: ServiceContext<Clients>) {
 
   const orderForm = await ctx.clients.checkout.orderForm(orderFormId)
 
-  const csvLines = orderForm.items.reduce((acc, item) => {
-    return `${acc}"${item.skuName}",${item.quantity}\n`
+  const csvContent = orderForm.items.reduce((acc, item) => {
+    const { name, skuName } = item
+
+    const outputName = normalizeString(skuName).includes(normalizeString(name))
+      ? skuName
+      : normalizeString(name).includes(normalizeString(skuName))
+      ? name
+      : `${name} ${skuName}`
+
+    return `${acc}"${outputName}",${item.quantity}\n`
   }, 'Item,Quantity\n')
 
   ctx.set('content-type', 'text/csv')
-  ctx.body = csvLines
+  ctx.body = csvContent
 }

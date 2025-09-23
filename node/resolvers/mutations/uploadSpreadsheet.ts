@@ -3,7 +3,11 @@ import readline from 'readline'
 import { NotFoundError, ServiceContext } from '@vtex/api'
 
 import { Clients } from '../../clients'
-import { getDefaultSellerOrWithLowestPrice, getSessionData } from '../../utils'
+import {
+  getDefaultSellerOrWithLowestPrice,
+  getSessionData,
+  normalizeString,
+} from '../../utils'
 
 type FileUpload = Promise<{
   filename: string
@@ -57,7 +61,13 @@ export const uploadSpreadsheet = async (
       })
       .catch(() => [undefined])
 
-    const sku = product?.items.find((item) => item.name === itemName)
+    const itemNameNormalized = normalizeString(itemName)
+
+    const sku = product?.items.find(
+      (item) =>
+        itemNameNormalized.includes(normalizeString(item.name)) ||
+        itemNameNormalized.includes(normalizeString(item.nameComplete))
+    )
 
     if (sku) {
       orderItems.push({

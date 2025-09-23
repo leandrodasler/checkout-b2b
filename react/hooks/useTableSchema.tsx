@@ -171,6 +171,8 @@ export function useTableSchema({
             : skuName
             ? normalizeString(skuName).includes(normalizeString(name))
               ? skuName
+              : normalizeString(name).includes(normalizeString(skuName))
+              ? name
               : `${name} - ${skuName}`
             : name
 

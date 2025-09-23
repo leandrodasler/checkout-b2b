@@ -1,8 +1,8 @@
 import type { ErrorLike, ServiceContext } from '@vtex/api'
 import { ForbiddenError, ResolverError } from '@vtex/api'
+import { SearchProduct } from '@vtex/clients'
 import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
-import { SearchProduct } from '@vtex/clients'
 
 import { Clients } from '../clients'
 import { B2B_USERS_ENTITY, B2B_USERS_FIELDS } from './constants'
@@ -172,4 +172,18 @@ export function getDefaultSellerOrWithLowestPrice<
         s1.commertialOffer.Price - s2.commertialOffer.Price
     )[0].sellerId
   )
+}
+
+export function removeAccents(str?: string | null) {
+  return (
+    str
+      ?.normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim() ?? ''
+  )
+}
+
+export function normalizeString(str?: string | null) {
+  return removeAccents(str)?.replace(/\s/g, '') ?? ''
 }

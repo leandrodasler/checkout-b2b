@@ -8,7 +8,7 @@ export async function getImportSpreadsheetSample(ctx: ServiceContext<Clients>) {
     category: null,
     specificationFilters: null,
     collection: null,
-    orderBy: null,
+    orderBy: 'OrderByScoreDESC',
     salesChannel: null,
     from: 0,
     to: 2,
@@ -17,12 +17,12 @@ export async function getImportSpreadsheetSample(ctx: ServiceContext<Clients>) {
     simulationBehavior: 'default',
   })
 
-  const csvLines = sampleProducts.reduce((acc, product, index) => {
+  const csvContent = sampleProducts.reduce((acc, product, index) => {
     const [item] = product.items
 
-    return `${acc}"${item.name}",${index + 1}\n`
+    return `${acc}"${item.nameComplete}",${index + 1}\n`
   }, 'Item,Quantity\n')
 
   ctx.set('content-type', 'text/csv')
-  ctx.body = csvLines
+  ctx.body = csvContent
 }
