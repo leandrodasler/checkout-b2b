@@ -4990,9 +4990,9 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.55/public/@types/ssesandbox04.checkout-b2b":
-  version "1.0.55"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.55/public/@types/ssesandbox04.checkout-b2b#cbca11bad87b84b9bea7a070a4e4868019c72ddf"
+"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.57/public/@types/ssesandbox04.checkout-b2b":
+  version "1.0.57"
+  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.57/public/@types/ssesandbox04.checkout-b2b#a676587c2d59fadb91480a9446ade7fb093f1df4"
 
 "ssesandbox04.file-manager@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager":
   version "0.7.7"
@@ -5410,6 +5410,10 @@ verror@1.10.0:
   version "0.65.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.65.1/public/@types/vtex.b2b-organizations-graphql#abd324218e9d2fc469c2bbdc7b677bd32642fcd1"
 
+"vtex.catalog-api-proxy@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.10.4/public/_types/react":
+  version "0.0.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.catalog-api-proxy@0.10.4/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
+
 "vtex.checkout-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql":
   version "0.67.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.checkout-graphql@0.67.1/public/@types/vtex.checkout-graphql#28a28b8e5b1f39e45ac7fd57a06f05a2468e192e"
@@ -5450,9 +5454,9 @@ verror@1.10.0:
   version "0.16.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text#0cdcaccffb37ae0d025894ba7055f69bc3c9aa30"
 
-"vtex.search-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.1/public/@types/vtex.search-graphql":
-  version "0.69.1"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.1/public/@types/vtex.search-graphql#50f4cb42a01352cabffcf56f29fe378deefa114b"
+"vtex.search-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.2/public/@types/vtex.search-graphql":
+  version "0.69.2"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.2/public/@types/vtex.search-graphql#f3cbb5c2310718c1e5257ad3c3f0a913c7d114dc"
 
 "vtex.session-client@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.session-client@1.0.4/public/@types/vtex.session-client":
   version "1.0.4"
