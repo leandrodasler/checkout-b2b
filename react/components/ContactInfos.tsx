@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type {
@@ -9,11 +9,11 @@ import { MutationUpdateOrderFormProfile } from 'vtex.checkout-resources'
 import { Tag, Totalizer } from 'vtex.styleguide'
 
 import { useOrderFormCustom, useOrganization, usePermissions } from '../hooks'
-import { MAX_SALES_USERS_TO_SHOW, messages } from '../utils'
+import { messages } from '../utils'
 import { BillingAddress } from './BillingAddress'
 import { CostCentersShipping } from './CostCentersShipping'
 import { RepresentativeBalanceData } from './RepresentativeBalanceData'
-import { ShowMoreButton } from './ShowMoreButton'
+import { RepresentativeUsers } from './RepresentativeUsers'
 
 export function ContactInfos() {
   const { formatMessage } = useIntl()
@@ -23,14 +23,7 @@ export function ContactInfos() {
   } = useOrderFormCustom()
 
   const { representativeBalanceEnabled } = usePermissions()
-  const { costCenter, users, tradeName, name, roleName } = organization
-  const [showMoreSalesAdmin, setShowMoreSalesAdmin] = useState(false)
-
-  const [
-    showMoreSalesRepresentative,
-    setShowMoreSalesRepresentative,
-  ] = useState(false)
-
+  const { costCenter, tradeName, name, roleName } = organization
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
 
@@ -67,20 +60,10 @@ export function ContactInfos() {
     })
   }, [clientProfileData, organizationName, phone, updateProfile])
 
-  const getUsersByRole = useCallback(
-    (role: string) =>
-      users
-        ?.filter((user) => user?.roleId === role)
-        .map((user) => user?.name)
-        .sort(),
-    [users]
-  )
-
   if (!clientProfileData) return null
 
   const { firstName, lastName, email } = clientProfileData
-  const salesRepresentative = getUsersByRole('sales-representative')
-  const salesAdmin = getUsersByRole('sales-admin')
+
   const contactFields: Array<{
     label: string
     value: React.ReactNode
@@ -95,49 +78,14 @@ export function ContactInfos() {
             {organizationName}
             {costCenter?.name && <Tag size="small">{costCenter?.name}</Tag>}
           </div>
-          {(!!salesRepresentative?.length || !!salesAdmin?.length) && (
-            <span className="t-mini">
-              {!!salesRepresentative?.length && (
-                <>
-                  <span className="b">
-                    {formatMessage(messages.salesRepresentative)}
-                  </span>{' '}
-                  {showMoreSalesRepresentative
-                    ? salesRepresentative.join(', ')
-                    : salesRepresentative
-                        .slice(0, MAX_SALES_USERS_TO_SHOW)
-                        .join(', ')}
-                  {salesRepresentative.length > MAX_SALES_USERS_TO_SHOW && (
-                    <ShowMoreButton
-                      isExpanded={showMoreSalesRepresentative}
-                      onClick={() =>
-                        setShowMoreSalesRepresentative(
-                          !showMoreSalesRepresentative
-                        )
-                      }
-                    />
-                  )}
-                </>
-              )}
-              {!!salesRepresentative?.length && !!salesAdmin?.length && <br />}
-              {!!salesAdmin?.length && (
-                <>
-                  <span className="b">
-                    {formatMessage(messages.salesAdmin)}
-                  </span>{' '}
-                  {showMoreSalesAdmin
-                    ? salesAdmin.join(', ')
-                    : salesAdmin.slice(0, MAX_SALES_USERS_TO_SHOW).join(', ')}
-                  {salesAdmin.length > MAX_SALES_USERS_TO_SHOW && (
-                    <ShowMoreButton
-                      isExpanded={showMoreSalesAdmin}
-                      onClick={() => setShowMoreSalesAdmin(!showMoreSalesAdmin)}
-                    />
-                  )}
-                </>
-              )}
-            </span>
-          )}
+          <RepresentativeUsers
+            b2bRole="sales-representative"
+            title={formatMessage(messages.salesRepresentative)}
+          />
+          <RepresentativeUsers
+            b2bRole="sales-admin"
+            title={formatMessage(messages.salesAdmin)}
+          />
         </>
       ),
     })
