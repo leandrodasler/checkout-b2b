@@ -8,7 +8,7 @@
   ],
   "imageSize": 100,
   "commit": true,
-  "commitConvention": "none",
+  "commitConvention": "angular",
   "contributors": [
     {
       "login": "berseabra",
@@ -42,6 +42,15 @@
       "name": "Fabiano Rabelo",
       "avatar_url": "https://avatars.githubusercontent.com/u/80130507?v=4",
       "profile": "https://www.linkedin.com/in/raabelo/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "joaomarcosc",
+      "name": "João Marcos Carvalho",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57837180?v=4",
+      "profile": "https://www.linkedin.com/in/joaomarcosc/",
       "contributions": [
         "code"
       ]
