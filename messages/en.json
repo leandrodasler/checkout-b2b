@@ -69,6 +69,7 @@
   "store/checkout.b2b.button.backToHome": "Back to home page",
   "store/checkout.b2b.button.backToCheckout": "Back to checkout",
   "store/checkout.b2b.button.clearCart": "Clear cart",
+  "store/checkout.b2b.button.deletedSelectedItems": "Delete selected items",
   "store/checkout.b2b.button.removeItem": "Remove item",
   "store/checkout.b2b.button.placeOrder": "Place Order",
   "store/checkout.b2b.button.placeOrder.error": "Error processing order",
