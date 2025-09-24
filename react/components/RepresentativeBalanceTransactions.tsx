@@ -1,6 +1,14 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Button, Link, Spinner, Table, Tooltip } from 'vtex.styleguide'
+import {
+  Button,
+  IconArrowDown,
+  IconArrowUp,
+  Link,
+  Spinner,
+  Table,
+  Tooltip,
+} from 'vtex.styleguide'
 
 import {
   useFetchRepresentativeBalance,
@@ -48,9 +56,22 @@ const RepresentativeBalanceTransactions = ({
         messages.representativeBalanceTransactionTransaction
       ),
       cellRenderer: function renderCell({ rowData }: { rowData: Transaction }) {
+        const difference = rowData.newBalance - rowData.oldBalance
+        const isPositive = difference > 0
+
+        const Icon = isPositive ? IconArrowUp : IconArrowDown
+        const formattedDiff = `${isPositive ? '+' : ''}${formatPrice(
+          difference
+        )}`
+
         return (
-          <Tooltip label={formatPrice(rowData.newBalance - rowData.oldBalance)}>
-            <span>{formatPrice(rowData.newBalance - rowData.oldBalance)}</span>
+          <Tooltip label={formatPrice(difference)}>
+            <div>
+              <span className={`ml3 ${isPositive ? 'c-success' : 'c-danger'}`}>
+                <Icon size={12} />
+              </span>
+              <span>{formattedDiff}</span>
+            </div>
           </Tooltip>
         )
       },
