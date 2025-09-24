@@ -26,8 +26,11 @@ export const useFetchRepresentativeBalanceTransactions = ({
     }
   )
 
+  const transactionsResponse = data?.getRepresentativeBalanceTransactions
+
   return {
-    transactions: data?.getRepresentativeBalanceTransactions ?? [],
+    transactions: transactionsResponse?.data ?? [],
+    pagination: transactionsResponse?.pagination,
     loading,
     error,
     refetch,

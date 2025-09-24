@@ -32,6 +32,7 @@ const RepresentativeBalanceTransactions = ({
   const [page, setPage] = useState<number>(1)
   const {
     transactions,
+    pagination,
     loading: isLoadingTransactions,
     error,
   } = useFetchRepresentativeBalanceTransactions({ email, page })
@@ -183,8 +184,13 @@ const RepresentativeBalanceTransactions = ({
             >
               {formatMessage(messages.representativeBalanceTransactionPageBack)}
             </Button>
+
             <Button
-              disabled={!transactions.length}
+              disabled={
+                !transactions.length ||
+                !pagination ||
+                page * pagination.pageSize >= pagination.total
+              }
               isLoading={isLoadingTransactions}
               size="small"
               variation="primary"

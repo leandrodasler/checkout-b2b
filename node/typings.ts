@@ -88,6 +88,17 @@ declare global {
     orderGroup: string
   }>
 
+  type Pagination = {
+    total: number
+    page: number
+    pageSize: number
+  }
+
+  type RepresentativeBalanceTransactionResponse = {
+    data: RepresentativeBalanceTransaction[]
+    pagination: Pagination
+  }
+
   type AppSettings = {
     salesRepresentative: number
     salesManager: number

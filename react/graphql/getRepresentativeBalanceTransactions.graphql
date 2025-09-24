@@ -10,12 +10,19 @@ query GetRepresentativeBalanceTransactions(
     pageSize: $pageSize
     sort: $sort
   ) {
-    id,
-    createdIn,
-    lastInteractionIn,
-    email,
-    oldBalance,
-    newBalance,
-    orderGroup,
+    data {
+      id
+      email
+      oldBalance
+      newBalance
+      orderGroup
+      createdIn
+      lastInteractionIn
+    }
+    pagination {
+      total
+      page
+      pageSize
+    }
   }
 }
