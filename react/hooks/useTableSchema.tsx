@@ -1,14 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
-import { ButtonWithIcon, IconDelete, Tooltip } from 'vtex.styleguide'
+import { ButtonWithIcon, IconCheck, IconDelete, Tooltip } from 'vtex.styleguide'
 
-import {
-  useOrderFormCustom,
-  usePermissions,
-  useTotalMargin,
-  useUpdateItemsQuantity,
-} from '.'
+import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CellWrapper } from '../components/CellWrapper'
 import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
@@ -30,20 +25,25 @@ export function useTableSchema({
   isEditing,
   discount,
   onUpdatePrice,
+  itemsAwaitingDeletion,
+  setItemsAwaitingDeletion,
+  removeLoading = false,
 }: {
   expandedProducts: string[]
   setExpandedProducts: React.Dispatch<React.SetStateAction<string[]>>
   isGrouping: boolean
   isEditing: boolean
   discount: number
+  itemsAwaitingDeletion: CustomItem[]
+  setItemsAwaitingDeletion: React.Dispatch<React.SetStateAction<CustomItem[]>>
+  removeLoading: boolean
   onUpdatePrice: (id: string, newPrice: number) => void
 }): TableSchema<CustomItem> {
   const { hasMargin } = useTotalMargin()
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
-  const [updateQuantity, { loading: removeLoading }] = useUpdateItemsQuantity()
   const { canSeeMargin } = usePermissions()
-  const lastDeletedIndexRef = useRef<number | null>(null)
+
   const {
     getSellingPrice,
     getDiscountedPrice,
@@ -54,8 +54,28 @@ export function useTableSchema({
   const prevHasMarginRef = useRef(hasMargin)
 
   const isRemoving = useCallback(
-    (index: number) => removeLoading && lastDeletedIndexRef.current === index,
-    [removeLoading]
+    (index: number) =>
+      itemsAwaitingDeletion.some((item) => item.itemIndex === index),
+    [itemsAwaitingDeletion]
+  )
+
+  const handleDeleteClick = useCallback(
+    (item: CustomItem) => {
+      const isAwaitingDeletion = itemsAwaitingDeletion.some(
+        (awaitingItem) => awaitingItem.itemIndex === item.itemIndex
+      )
+
+      if (isAwaitingDeletion) {
+        setItemsAwaitingDeletion((prev) =>
+          prev.filter(
+            (awaitingItem) => awaitingItem.itemIndex !== item.itemIndex
+          )
+        )
+      } else {
+        setItemsAwaitingDeletion((prev) => [...prev, item])
+      }
+    },
+    [itemsAwaitingDeletion, setItemsAwaitingDeletion]
   )
 
   useEffect(() => {
@@ -354,29 +374,35 @@ export function useTableSchema({
       },
       id: {
         width: 50,
-        title: ' ',
+        title:
+          itemsAwaitingDeletion.length > 0 ? itemsAwaitingDeletion.length : ' ',
         cellRenderer({ rowData }) {
           return (
             !rowData.__group && (
-              <Tooltip label={formatMessage(messages.delete)}>
+              <Tooltip
+                label={
+                  itemsAwaitingDeletion.some(
+                    (item) => item.itemIndex === rowData.itemIndex
+                  )
+                    ? formatMessage(messages.confirm)
+                    : formatMessage(messages.delete)
+                }
+              >
                 <div>
                   <ButtonWithIcon
-                    isLoading={isRemoving(rowData.itemIndex)}
                     disabled={removeLoading}
                     size="small"
-                    icon={<IconDelete />}
+                    icon={
+                      itemsAwaitingDeletion.some(
+                        (item) => item.itemIndex === rowData.itemIndex
+                      ) ? (
+                        <IconCheck />
+                      ) : (
+                        <IconDelete />
+                      )
+                    }
                     variation="danger-tertiary"
-                    onClick={() => {
-                      lastDeletedIndexRef.current = rowData.itemIndex
-
-                      updateQuantity({
-                        variables: {
-                          orderItems: [
-                            { index: rowData.itemIndex, quantity: 0 },
-                          ],
-                        },
-                      })
-                    }}
+                    onClick={() => handleDeleteClick(rowData)}
                   />
                 </div>
               </Tooltip>

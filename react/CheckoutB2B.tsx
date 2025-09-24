@@ -43,6 +43,7 @@ import {
   useToast,
   useToolbar,
   useTotalizers,
+  useUpdateItemsQuantity,
 } from './hooks'
 import { queryClient } from './services'
 import './styles.css'
@@ -82,6 +83,10 @@ function CheckoutB2B() {
     getDiscountedPrice,
   } = useCheckoutB2BContext()
 
+  const [itemsAwaitingDeletion, setItemsAwaitingDeletion] = useState<
+    CustomItem[]
+  >([])
+
   const [expandedProducts, setExpandedProducts] = useState<string[]>([])
 
   const [isGrouping, setIsGrouping] = useState(false)
@@ -101,6 +106,11 @@ function CheckoutB2B() {
   const showToast = useToast()
 
   const { maximumDiscount, isSalesUser } = usePermissions()
+
+  const [
+    updateItemsQuantity,
+    { loading: removeLoading },
+  ] = useUpdateItemsQuantity()
 
   useEffect(() => {
     if (listedPrice > 0) {
@@ -146,6 +156,9 @@ function CheckoutB2B() {
     isEditing,
     discount: discountApplied,
     onUpdatePrice: updatePrice,
+    itemsAwaitingDeletion,
+    setItemsAwaitingDeletion,
+    removeLoading,
   })
 
   const [updateItemsPrice, { loading: saving }] = useMutation<
@@ -493,6 +506,30 @@ function CheckoutB2B() {
                 isLoading={clearCartLoading}
               >
                 {formatMessage(messages.clearCart)}
+              </ButtonWithIcon>
+            )}
+
+            {itemsAwaitingDeletion.length > 0 && !loading && (
+              <ButtonWithIcon
+                icon={<IconDelete />}
+                variation="danger-tertiary"
+                isLoading={removeLoading}
+                onClick={() => {
+                  const orderItems = itemsAwaitingDeletion.map((item) => ({
+                    index: item.itemIndex,
+                    quantity: 0,
+                  }))
+
+                  updateItemsQuantity({
+                    variables: {
+                      orderItems,
+                    },
+                  }).then(() => {
+                    setItemsAwaitingDeletion([])
+                  })
+                }}
+              >
+                {formatMessage(messages.deletedSelectedItems)}
               </ButtonWithIcon>
             )}
           </div>

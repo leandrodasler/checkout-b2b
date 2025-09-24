@@ -69,6 +69,7 @@
   "store/checkout.b2b.button.backToHome": "Voltar à página inicial",
   "store/checkout.b2b.button.backToCheckout": "Voltar para o checkout",
   "store/checkout.b2b.button.clearCart": "Limpar carrinho",
+  "store/checkout.b2b.button.deletedSelectedItems": "Excluir selecionados",
   "store/checkout.b2b.button.removeItem": "Remover",
   "store/checkout.b2b.button.placeOrder": "Finalizar Pedido",
   "store/checkout.b2b.button.placeOrder.error": "Erro ao processar pedido",
