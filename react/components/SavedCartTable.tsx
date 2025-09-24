@@ -84,7 +84,11 @@ function getEmptySimpleCart(parentCartId: string): SavedCartRow {
   }
 }
 
-export function SavedCartsTable() {
+type Props = {
+  onChangeItems?: () => void
+}
+
+export function SavedCartsTable(props?: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { setQuery, page, navigate, query } = useRuntime()
@@ -97,7 +101,11 @@ export function SavedCartsTable() {
   } = useCheckoutB2BContext()
 
   const selectedCartData = JSON.parse(selectedCart?.data ?? '{}')
-  const { clearCart, isLoading: loadingClearCart } = useClearCart(false)
+  const { clearCart, isLoading: loadingClearCart } = useClearCart({
+    updateOrderForm: false,
+    onChangeItems: props?.onChangeItems,
+  })
+
   const [deletingCartId, setDeletingCartId] = useState('')
   const [expandedCarts, setExpandedCarts] = React.useState<string[]>([])
   const [childrenCarts, setChildrenCarts] = React.useState<

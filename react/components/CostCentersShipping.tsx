@@ -32,7 +32,11 @@ import { ShippingOption } from './ShippingOption'
 
 type AddAddressMutation = Pick<Mutation, 'addAddressToCart'>
 
-export function CostCentersShipping() {
+type Props = {
+  onChangeItems: () => void
+}
+
+export function CostCentersShipping({ onChangeItems }: Props) {
   const handles = useCssHandles(['itemContent'] as const)
   const { formatMessage } = useIntl()
   const showToast = useToast()
@@ -110,10 +114,11 @@ export function CostCentersShipping() {
       (c) => c?.costId === value
     )
 
-    setPending(true)
     lastCostCenterUpdateIndexRef.current = value
 
     if (checked) {
+      setPending(true)
+
       addAddress({
         variables: {
           address: {
@@ -123,7 +128,10 @@ export function CostCentersShipping() {
             addressQuery: undefined,
           },
         },
-      }).then(() => setPending(false))
+      }).then(() => {
+        onChangeItems()
+        setPending(false)
+      })
     } else {
       setAddressToBeDeleted(
         selectedAddresses.find((a) =>
@@ -133,16 +141,21 @@ export function CostCentersShipping() {
     }
   }
 
-  const handleCancelation = () => setAddressToBeDeleted(null)
+  const handleCancelDeleteCostCenterItems = () => {
+    setPending(false)
+    setAddressToBeDeleted(null)
+  }
 
-  const handleConfirmation = () => {
+  const handleDeleteCostCenterItems = () => {
     const orderItems = logisticsInfo
       .filter((l) => l.addressId === addressToBeDeleted?.addressId)
       .map((l) => ({ index: l.itemIndex, quantity: 0 }))
 
+    setPending(true)
+
     updateItemsQuantity({ variables: { orderItems } }).then(() => {
-      setPending(false)
-      handleCancelation()
+      onChangeItems()
+      handleCancelDeleteCostCenterItems()
     })
   }
 
@@ -216,16 +229,16 @@ export function CostCentersShipping() {
         centered
         loading={loading}
         confirmation={{
-          onClick: handleConfirmation,
+          onClick: handleDeleteCostCenterItems,
           label: formatMessage(messages.confirm),
           isDangerous: true,
         }}
         cancelation={{
-          onClick: handleCancelation,
+          onClick: handleCancelDeleteCostCenterItems,
           label: formatMessage(messages.cancel),
         }}
         isOpen={!!addressToBeDeleted}
-        onClose={handleCancelation}
+        onClose={handleCancelDeleteCostCenterItems}
       >
         <p>{formatMessage(messages.costCenterRemoveConfirmation)}</p>
       </ModalDialog>

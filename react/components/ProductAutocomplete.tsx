@@ -7,6 +7,7 @@ import React, {
 } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
+import { MutationUpdateItemsQuantityArgs } from 'ssesandbox04.checkout-b2b'
 import {
   AutocompleteInput,
   ButtonWithIcon,
@@ -78,6 +79,7 @@ type CustomOptionProps = {
   inserted: boolean
   loading: boolean
   handleAddItem: (item: CustomOptionValue['item']) => void
+  onChangeItems: () => void
 }
 
 type AddToCartFn = (newItems: Item[], retryCount?: number) => void
@@ -97,7 +99,11 @@ function shouldRetryOnError(error: Error) {
   )
 }
 
-const ProductAutocomplete = () => {
+type Props = {
+  onChangeItems: () => void
+}
+
+const ProductAutocomplete = ({ onChangeItems }: Props) => {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const { searchStore, searchQuery, setSearchQuery } = useCheckoutB2BContext()
@@ -207,6 +213,8 @@ const ProductAutocomplete = () => {
 
       if (validItems.length === 0) return
 
+      onChangeItems()
+
       const newItems = [
         ...itemsQueue,
         ...validItems.filter(
@@ -217,7 +225,7 @@ const ProductAutocomplete = () => {
       setItemsQueue(newItems)
       addToCartDebounced(newItems)
     },
-    [addToCartDebounced, itemsQueue]
+    [addToCartDebounced, itemsQueue, onChangeItems]
   )
 
   const isEmpty = networkStatus === 7 && !itemsOptions.length
@@ -254,6 +262,7 @@ const ProductAutocomplete = () => {
           {...props}
           inserted={inserted}
           handleAddItem={handleAddItem}
+          onChangeItems={onChangeItems}
           loading={loading}
         />
       )
@@ -300,6 +309,7 @@ function CustomOption(props: CustomOptionProps) {
     selected,
     inserted,
     handleAddItem,
+    onChangeItems,
     loading,
   } = props
 
@@ -341,23 +351,24 @@ function CustomOption(props: CustomOptionProps) {
       e.stopPropagation()
       e.preventDefault()
 
+      onChangeItems()
       const itemsToRemove = value.type === 'product' ? value.item : [value.item]
 
-      itemsToRemove.forEach((item) => {
-        const sellerId = item.sellers.find((s) => s.sellerDefault)?.sellerId
-
-        if (!sellerId) return
-
-        updateQuantity({
-          variables: {
-            orderItems: orderForm.items
+      updateQuantity({
+        variables: {
+          orderItems: itemsToRemove.reduce<
+            MutationUpdateItemsQuantityArgs['orderItems']
+          >((acc, item) => {
+            const orderItems = orderForm.items
               .filter((i) => i.id === item.itemId)
-              .map(({ itemIndex }) => ({ index: itemIndex, quantity: 0 })),
-          },
-        })
+              .map(({ itemIndex }) => ({ index: itemIndex, quantity: 0 }))
+
+            return [...acc, ...orderItems]
+          }, []),
+        },
       })
     },
-    [orderForm.items, updateQuantity, value.item, value.type]
+    [onChangeItems, orderForm.items, updateQuantity, value.item, value.type]
   )
 
   const mainElement = (

@@ -7,7 +7,13 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { apiRequest } from '../services'
 import type { ApiResponse, CompleteOrderForm } from '../typings'
 
-export function useClearCart(updateOrderForm = true) {
+type Props = {
+  updateOrderForm?: boolean
+  onChangeItems?: () => void
+}
+
+export function useClearCart(props?: Props) {
+  const { updateOrderForm = true, onChangeItems } = props ?? {}
   const showToast = useToast()
   const { query, setQuery } = useRuntime()
   const { orderForm, setOrderForm } = useOrderFormCustom()
@@ -27,7 +33,10 @@ export function useClearCart(updateOrderForm = true) {
         `/api/checkout/pub/orderForm/${orderForm.id}/items/removeAll`,
         'POST',
         {}
-      ).finally(() => handlePending(false))
+      ).finally(() => {
+        onChangeItems?.()
+        handlePending(false)
+      })
     },
     onSuccess(newOrderForm) {
       if (!updateOrderForm) return

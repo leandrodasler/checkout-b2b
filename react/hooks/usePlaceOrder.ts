@@ -8,10 +8,14 @@ import { getOrderPlacedUrl, messages } from '../utils'
 
 type MutationPlaceOrder = Pick<Mutation, 'placeOrder'>
 
-export function usePlaceOrder() {
+type Props = {
+  onChangeItems: () => void
+}
+
+export function usePlaceOrder({ onChangeItems }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
-  const { clearCart } = useClearCart()
+  const { clearCart } = useClearCart({ onChangeItems })
   const { orderForm } = useOrderFormCustom()
   const { poNumber, paymentAddress, shipping } = orderForm
 

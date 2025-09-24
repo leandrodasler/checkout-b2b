@@ -15,7 +15,11 @@ import { CostCentersShipping } from './CostCentersShipping'
 import { RepresentativeBalanceData } from './RepresentativeBalanceData'
 import { RepresentativeUsers } from './RepresentativeUsers'
 
-export function ContactInfos() {
+type Props = {
+  onChangeItems: () => void
+}
+
+export function ContactInfos({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { organization } = useOrganization()
   const {
@@ -118,7 +122,7 @@ export function ContactInfos() {
     label: `${formatMessage(messages.costCentersLabel)} / ${formatMessage(
       messages.shippingAddress
     )}`,
-    value: <CostCentersShipping />,
+    value: <CostCentersShipping onChangeItems={onChangeItems} />,
   })
 
   contactFields.push({

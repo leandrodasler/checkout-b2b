@@ -15,7 +15,11 @@ import { messages } from '../utils'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
 import { SavedCartsListModal } from './SavedCartsListModal'
 
-export function SavedCarts() {
+type Props = {
+  onChangeItems: () => void
+}
+
+export function SavedCarts({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { isSalesUser } = usePermissions()
 
@@ -83,6 +87,7 @@ export function SavedCarts() {
         <SavedCartsListModal
           open={openSavedCartModal}
           setOpen={setOpenSavedCartModal}
+          onChangeItems={onChangeItems}
         />
       )}
       {openForm && (

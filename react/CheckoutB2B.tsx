@@ -67,7 +67,6 @@ function CheckoutB2B() {
     setOrderForm,
   } = useOrderFormCustom()
 
-  const { clearCart, isLoading: clearCartLoading } = useClearCart()
   const totalizers = useTotalizers()
   const {
     discountApplied = 0,
@@ -87,12 +86,21 @@ function CheckoutB2B() {
     CustomItem[]
   >([])
 
+  const handleClearAwaitingDeletion = () => setItemsAwaitingDeletion([])
+
+  const { clearCart, isLoading: clearCartLoading } = useClearCart({
+    onChangeItems: handleClearAwaitingDeletion,
+  })
+
   const [expandedProducts, setExpandedProducts] = useState<string[]>([])
 
   const [isGrouping, setIsGrouping] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
-  const toolbar = useToolbar()
+  const toolbar = useToolbar({
+    onChangeItems: handleClearAwaitingDeletion,
+  })
+
   const { navigate } = useRuntime()
   const [prices, setPrices] = useState<Record<string, number>>({})
   const { formatMessage } = useIntl()
@@ -316,7 +324,7 @@ function CheckoutB2B() {
               navigate({ page: 'store.home', fallbackToWindowLocation: true })
             }
           >
-            <SavedCarts />
+            <SavedCarts onChangeItems={handleClearAwaitingDeletion} />
           </PageHeader>
         }
       >
@@ -325,7 +333,7 @@ function CheckoutB2B() {
             {!loading && (
               <div className="mb4">
                 <Box title={formatMessage(messages.totalizerBoxTitle)}>
-                  <ContactInfos />
+                  <ContactInfos onChangeItems={handleClearAwaitingDeletion} />
                   <Totalizer items={totalizers} />
                 </Box>
               </div>
@@ -353,7 +361,9 @@ function CheckoutB2B() {
                 className={`${handles.containerToggle} dn flex-wrap items-center w-100 w-60-m`}
                 ref={autocompleteRef}
               >
-                <ProductAutocomplete />
+                <ProductAutocomplete
+                  onChangeItems={handleClearAwaitingDeletion}
+                />
 
                 <div className={`${handles.groupToggles} flex items-center`}>
                   <Toggle
@@ -496,7 +506,9 @@ function CheckoutB2B() {
               </>
             )}
 
-            <UploadSpreadsheetForm />
+            <UploadSpreadsheetForm
+              onChangeItems={handleClearAwaitingDeletion}
+            />
 
             {!!items.length && !loading && (
               <ButtonWithIcon
@@ -524,9 +536,7 @@ function CheckoutB2B() {
                     variables: {
                       orderItems,
                     },
-                  }).then(() => {
-                    setItemsAwaitingDeletion([])
-                  })
+                  }).then(handleClearAwaitingDeletion)
                 }}
               >
                 {formatMessage(messages.deletedSelectedItems)}

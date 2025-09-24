@@ -13,7 +13,11 @@ import {
 import { useUploadSpreadsheet } from '../hooks/useUploadSpreadSheet'
 import { messages } from '../utils'
 
-export function UploadSpreadsheetForm() {
+type Props = {
+  onChangeItems: () => void
+}
+
+export function UploadSpreadsheetForm({ onChangeItems }: Props) {
   const handles = useCssHandles(['container'] as const)
   const { formatMessage } = useIntl()
   const [file, setFile] = useState<File>()
@@ -39,7 +43,10 @@ export function UploadSpreadsheetForm() {
   const handleUpload = () => {
     if (!file) return
 
-    uploadSpreadsheet({ variables: { file } }).then(handleClose)
+    uploadSpreadsheet({ variables: { file } }).then(() => {
+      onChangeItems()
+      handleClose()
+    })
   }
 
   return (

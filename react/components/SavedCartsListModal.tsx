@@ -6,13 +6,13 @@ import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
 import { messages } from '../utils'
 import { SavedCartsTable } from './SavedCartTable'
 
-export function SavedCartsListModal({
-  open,
-  setOpen,
-}: {
+type Props = {
   open: boolean
   setOpen: (value: boolean) => void
-}) {
+  onChangeItems: () => void
+}
+
+export function SavedCartsListModal({ open, setOpen, onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { navigate, query } = useRuntime()
 
@@ -44,7 +44,7 @@ export function SavedCartsListModal({
       showBottomBarBorder={false}
     >
       <div className="t-small">
-        <SavedCartsTable />
+        <SavedCartsTable onChangeItems={onChangeItems} />
       </div>
     </Modal>
   )

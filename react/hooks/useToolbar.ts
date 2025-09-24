@@ -5,13 +5,17 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CustomItem } from '../typings'
 import { messages, removeAccents } from '../utils'
 
-export function useToolbar() {
+type Props = {
+  onChangeItems: () => void
+}
+
+export function useToolbar({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { loading: loadingOrganization } = useOrganization()
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
   const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
 
-  const { placeOrder, isLoading } = usePlaceOrder()
+  const { placeOrder, isLoading } = usePlaceOrder({ onChangeItems })
 
   if (loadingOrganization || loadingOrderForm) return null
 
