@@ -78,6 +78,9 @@ export function useOrderFormCustom() {
             )
           )
         ),
+        logisticsInfo: shippingData?.logisticsInfo.find(
+          (l) => l.itemIndex === index
+        ),
         tax: data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
         components: data?.items.find((i) => i.uniqueId === item.uniqueId)
           ?.components,

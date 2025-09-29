@@ -10,6 +10,7 @@ import ChildrenProductsColumn from '../components/ChildrenProductsColumn'
 import ManualPrice from '../components/ManualPrice'
 import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
+import { ShippingOptionItem } from '../components/ShippingOptionItem'
 import { TruncatedText } from '../components/TruncatedText'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
@@ -352,7 +353,13 @@ export function useTableSchema({
           }),
         },
       }),
-
+      logisticsInfo: {
+        width: 110,
+        title: formatMessage(messages.shippingAddress),
+        cellRenderer({ rowData }) {
+          return <ShippingOptionItem item={rowData} />
+        },
+      },
       priceDefinition: {
         width: 120,
         title: formatMessage(messages.totalPrice),
