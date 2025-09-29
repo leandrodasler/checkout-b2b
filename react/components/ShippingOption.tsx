@@ -1,21 +1,17 @@
 import React, { useMemo } from 'react'
-import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type {
-  Mutation,
-  MutationUpdateShippingOptionArgs,
-} from 'ssesandbox04.checkout-b2b'
 import { Address } from 'vtex.b2b-organizations-graphql'
 import { useCssHandles } from 'vtex.css-handles'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import MUTATION_UPDATE_SHIPPING_OPTION from '../graphql/updateShippingOption.graphql'
-import { useFormatPrice, useOrderFormCustom, useToast } from '../hooks'
+import {
+  useFormatPrice,
+  useOrderFormCustom,
+  useUpdateShippingOption,
+} from '../hooks'
 import { groupShippingOptionsBySeller, isSameAddress, messages } from '../utils'
 import { Sla } from './Sla'
 import { SlaDropdown } from './SlaDrodown'
-
-type MutationUpdateShippingOption = Pick<Mutation, 'updateShippingOption'>
 
 type Props = {
   costCenter: string
@@ -23,10 +19,9 @@ type Props = {
 }
 
 export function ShippingOption({ address }: Props) {
-  const showToast = useToast()
   const handles = useCssHandles(['shippingEstimates'])
   const { formatMessage } = useIntl()
-  const { orderForm, setOrderForm } = useOrderFormCustom()
+  const { orderForm } = useOrderFormCustom()
   const { setPending } = useCheckoutB2BContext()
   const formatPrice = useFormatPrice()
   const { logisticsInfo, selectedAddresses } = orderForm.shippingData
@@ -45,20 +40,7 @@ export function ShippingOption({ address }: Props) {
     [logisticsInfoFromAddress, orderForm.items]
   )
 
-  const [updateShippingOption, { loading }] = useMutation<
-    MutationUpdateShippingOption,
-    MutationUpdateShippingOptionArgs
-  >(MUTATION_UPDATE_SHIPPING_OPTION, {
-    onError: showToast,
-    onCompleted(data) {
-      setOrderForm({
-        ...orderForm,
-        ...data.updateShippingOption,
-        paymentAddress: orderForm.paymentAddress,
-        customData: orderForm.customData,
-      })
-    },
-  })
+  const [updateShippingOption, { loading }] = useUpdateShippingOption()
 
   const handleChange = (seller: string) => (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -93,8 +75,11 @@ export function ShippingOption({ address }: Props) {
           }
           options={singlePackageSlas.slas.map((sla) => ({
             value: sla.id,
-            label: `${sla.id} - ${formatPrice((sla.price ?? 0) / 100)}`,
+            label: `${sla.name}${
+              sla.price ? ` - ${formatPrice((sla.price ?? 0) / 100)}` : ''
+            }`,
           }))}
+          shippingEstimates={singlePackageSlas.shippingEstimates}
           onChange={handleChange(seller)}
           isLoading={loading}
         />
@@ -110,7 +95,11 @@ export function ShippingOption({ address }: Props) {
         {Object.entries(shippingOptionsBySeller).map(
           ([seller, options], index) => {
             const quantity = formatMessage(messages.itemCount, {
-              count: options.slas[0].deliveryIds?.[0]?.quantity,
+              count: orderForm.items.reduce(
+                (acc, item) =>
+                  acc + (item.seller === seller ? item.quantity : 0),
+                0
+              ),
             })
 
             const singlePrice = formatPrice((options.slas[0].price ?? 0) / 100)
@@ -126,10 +115,13 @@ export function ShippingOption({ address }: Props) {
                     selectedSla={options.selectedSla ?? options.slas[0]}
                     options={options.slas.map((sla) => ({
                       value: sla.id,
-                      label: `${sla.id} - ${formatPrice(
-                        (sla.price ?? 0) / 100
-                      )}`,
+                      label: `${sla.name}${
+                        sla.price
+                          ? ` - ${formatPrice((sla.price ?? 0) / 100)}`
+                          : ''
+                      }`,
                     }))}
+                    shippingEstimates={options.shippingEstimates}
                     onChange={handleChange(seller)}
                     isLoading={loading}
                   />

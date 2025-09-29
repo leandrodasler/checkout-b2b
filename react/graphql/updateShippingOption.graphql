@@ -1,4 +1,11 @@
-mutation UpdateShippingOption($addressId: String!, $selectedSla: String!) {
-  updateShippingOption(addressId: $addressId, selectedSla: $selectedSla)
-    @context(provider: "ssesandbox04.checkout-b2b")
+mutation UpdateShippingOption(
+  $addressId: String
+  $itemIndex: Int
+  $selectedSla: String!
+) {
+  updateShippingOption(
+    addressId: $addressId
+    itemIndex: $itemIndex
+    selectedSla: $selectedSla
+  ) @context(provider: "ssesandbox04.checkout-b2b")
 }

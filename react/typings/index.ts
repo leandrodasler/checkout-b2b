@@ -56,6 +56,7 @@ export type CustomItem = OrderFormType['items'][number] & { tax?: number } & {
   __component?: true
   parentItemId?: string
   itemIndex: number
+  logisticsInfo?: LogisticsInfo & { itemIndex: number; addressId: string }
   costCenter?:
     | (NonNullable<CustomOrganization['userCostCenters']>[number] & {
         color: string

@@ -162,7 +162,8 @@ type Mutation {
   addAddressToCart(address: Address!): UpdatedOrderForm!
 
   updateShippingOption(
-    addressId: String!
+    addressId: String
+    itemIndex: Int
     selectedSla: String!
   ): UpdatedOrderForm!
 

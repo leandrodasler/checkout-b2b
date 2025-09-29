@@ -158,21 +158,96 @@ export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
   )
 }
 
+function buildDistinctBySeller<T>(
+  items: CompleteOrderForm['items'],
+  logisticsInfoFromAddress: CompleteOrderForm['shippingData']['logisticsInfo'],
+  getter: (
+    logisticsInfoItem: typeof logisticsInfoFromAddress[number]
+  ) => T | null | undefined
+): Record<string, T[]> {
+  const result: Record<string, T[]> = {}
+
+  items.forEach((item) => {
+    if (!item.seller) return
+
+    if (!result[item.seller]) {
+      result[item.seller] = []
+    }
+
+    const logisticsInfoItem = logisticsInfoFromAddress.find(
+      (li) => li.itemIndex === item.itemIndex
+    )
+
+    if (!logisticsInfoItem) return
+
+    const value = getter(logisticsInfoItem)
+
+    if (!value) return
+
+    if (!result[item.seller].includes(value)) {
+      result[item.seller].push(value)
+    }
+  })
+
+  return result
+}
+
 export function groupShippingOptionsBySeller(
   logisticsInfoFromAddress: CompleteOrderForm['shippingData']['logisticsInfo'],
   items: CompleteOrderForm['items']
 ) {
+  const distinctSelectedSlaIdsBySeller = buildDistinctBySeller(
+    items,
+    logisticsInfoFromAddress,
+    (li) => li.selectedSla
+  )
+
+  const distinctSelectedSlaNamesBySeller = buildDistinctBySeller(
+    items,
+    logisticsInfoFromAddress,
+    (li) => li.slas?.find((sla) => sla?.id === li.selectedSla)?.name
+  )
+
+  const distinctSelectedSlaShippingEstimatesBySeller = buildDistinctBySeller(
+    items,
+    logisticsInfoFromAddress,
+    (li) => li.slas?.find((sla) => sla?.id === li.selectedSla)?.shippingEstimate
+  )
+
   return logisticsInfoFromAddress.reduce<
-    Record<string, { selectedSla: ShippingSla; slas: ShippingSla[] }>
+    Record<
+      string,
+      {
+        selectedSla: ShippingSla
+        slas: ShippingSla[]
+        shippingEstimates?: Array<string | null | undefined>
+      }
+    >
   >((acc, l) => {
     const item = items.find((i) => i.itemIndex === l.itemIndex)
 
     if (!item) return acc
 
     const seller = item.seller ?? '1'
-    const selectedSla = l.slas?.find((sla) => sla?.id === l.selectedSla)
+
+    const selectedSla =
+      distinctSelectedSlaIdsBySeller[seller].length > 1
+        ? ({
+            name: distinctSelectedSlaNamesBySeller[seller].join(', '),
+            id: distinctSelectedSlaIdsBySeller[seller].join(),
+          } as ShippingSla)
+        : l.slas?.find((sla) => sla?.id === l.selectedSla)
 
     acc[seller] = acc[seller] ?? { selectedSla, slas: [] }
+
+    if (distinctSelectedSlaIdsBySeller[seller].length > 1) {
+      acc[seller].slas = [
+        {
+          name: distinctSelectedSlaNamesBySeller[seller].join(', '),
+          id: distinctSelectedSlaIdsBySeller[seller].join(),
+        },
+      ]
+    }
 
     l.slas?.forEach((sla) => {
       if (!sla) return
@@ -200,14 +275,24 @@ export function groupShippingOptionsBySeller(
 
         acc[seller].slas[addedSlaIndex] = {
           ...addedSla,
-          price: (addedSla.price ?? 0) + (sla.price ?? 0),
+          price:
+            distinctSelectedSlaIdsBySeller[seller].length > 1
+              ? 0
+              : (addedSla.price ?? 0) + (sla.price ?? 0),
           deliveryIds: mergedDeliveryIds,
         }
       } else {
         acc[seller].slas.push({
           ...sla,
+          price:
+            distinctSelectedSlaIdsBySeller[seller].length > 1 ? 0 : sla.price,
           deliveryIds: sla.deliveryIds?.map((d) => ({ ...d })) ?? [],
         })
+
+        if (distinctSelectedSlaIdsBySeller[seller].length > 1) {
+          acc[seller].shippingEstimates =
+            distinctSelectedSlaShippingEstimatesBySeller[seller]
+        }
       }
     })
 
