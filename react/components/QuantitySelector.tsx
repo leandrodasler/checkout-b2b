@@ -1,32 +1,25 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { OrderItems } from 'vtex.order-items'
 import { NumericStepper } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import GET_PRODUCTS from '../graphql/productQuery.graphql'
-import { useOrderFormCustom, useToast } from '../hooks'
+import { useToast } from '../hooks'
 import { CustomItem } from '../typings'
 import { isWithoutStock, messages } from '../utils'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
 
-type Props = { item: CustomItem; disabled?: boolean }
+type Props = { item: CustomItem; disabled?: boolean; minQuantity?: number }
 
-export function QuantitySelector({ item, disabled }: Props) {
+export function QuantitySelector({ item, disabled, minQuantity = 1 }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
   const { updateQuantity } = useOrderItems()
   const { setPending } = useCheckoutB2BContext()
-  const { orderForm } = useOrderFormCustom()
-  const { items } = orderForm
-
   const [newQuantity, setNewQuantity] = React.useState(item.quantity)
-  const [minQuantity, setMinQuantity] = React.useState<number>(1)
-
   const handleFinish = useCallback(() => setPending(false), [setPending])
 
   const handleQuantityChange = useCallback(
@@ -49,37 +42,30 @@ export function QuantitySelector({ item, disabled }: Props) {
     [handleFinish, item.itemIndex, item.seller, setPending, updateQuantity]
   )
 
-  useQuery(GET_PRODUCTS, {
-    skip: !items?.length,
-    variables: { values: items.map((orderItem) => orderItem.productId) },
-    onCompleted: (data) => {
-      const product = data.productsByIdentifier.find(
-        (p: { productId?: string }) => p.productId === item.productId
-      )
+  useEffect(() => {
+    if (item.quantity >= minQuantity) return
 
-      if (!product) return
+    showToast({
+      message: `${formatMessage(messages.changeMinimumQuantity)} ${
+        item.skuName
+      }`,
+    })
 
-      const minQuantityProp = product.properties?.find(
-        (prop: { originalName: string }) => prop.originalName === 'minQuantity'
-      )
-
-      const minQuantityValue = Number(minQuantityProp?.values[0] || 1)
-
-      setMinQuantity(minQuantityValue)
-      if (item.quantity < minQuantityValue) {
-        showToast({
-          message: `${formatMessage(messages.changeMinimumQuantity)} ${
-            item.skuName
-          }`,
-        })
-        updateQuantity({
-          index: item.itemIndex,
-          seller: item.seller ?? '1',
-          quantity: minQuantityValue,
-        })
-      }
-    },
-  })
+    updateQuantity({
+      index: item.itemIndex,
+      seller: item.seller ?? '1',
+      quantity: minQuantity,
+    })
+  }, [
+    formatMessage,
+    item.itemIndex,
+    item.quantity,
+    item.seller,
+    item.skuName,
+    minQuantity,
+    showToast,
+    updateQuantity,
+  ])
 
   useEffect(() => {
     setNewQuantity(item.quantity < minQuantity ? minQuantity : item.quantity)

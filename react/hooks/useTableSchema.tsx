@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { FormattedPrice } from 'vtex.formatted-price'
+import { Query, QueryProductsByIdentifierArgs } from 'vtex.search-graphql'
 import { ButtonWithIcon, IconCheck, IconDelete, Tooltip } from 'vtex.styleguide'
 
 import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
@@ -12,8 +14,11 @@ import { MarginProductPrice } from '../components/MarginProductPrice'
 import { QuantitySelector } from '../components/QuantitySelector'
 import { ShippingOptionItem } from '../components/ShippingOptionItem'
 import { TruncatedText } from '../components/TruncatedText'
+import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import type { CustomItem, TableSchema } from '../typings'
 import { isWithoutStock, messages, normalizeString } from '../utils'
+
+type GetProductsQuery = Pick<Query, 'productsByIdentifier'>
 
 function getStrike(item: CustomItem, isRemoving?: boolean) {
   return { strike: isWithoutStock(item) || isRemoving }
@@ -130,6 +135,38 @@ export function useTableSchema({
 
     return data?.__group ? '--' : render(rowData)
   }
+
+  const { data: productsData } = useQuery<
+    GetProductsQuery,
+    QueryProductsByIdentifierArgs
+  >(GET_PRODUCTS, {
+    skip: !orderForm.items.length,
+    variables: {
+      field: 'id',
+      values: orderForm.items.map(
+        (orderItem) => orderItem.productId
+      ) as string[],
+    },
+  })
+
+  const productsByIdentifier = productsData?.productsByIdentifier
+
+  const getMinQuantity = useCallback(
+    (productId?: string | null) => {
+      const product = productsByIdentifier?.find(
+        (p) => p?.productId === productId
+      )
+
+      if (!product) return
+
+      const minQuantityProp = product.properties?.find(
+        (prop) => prop?.originalName === 'minQuantity'
+      )
+
+      return Number(minQuantityProp?.values?.[0] ?? 1)
+    },
+    [productsByIdentifier]
+  )
 
   return {
     properties: {
@@ -329,6 +366,7 @@ export function useTableSchema({
                 (rowData.__component ?? false) ||
                 isRemoving(rowData.itemIndex)
               }
+              minQuantity={getMinQuantity(rowData.productId)}
             />
           )
         },
