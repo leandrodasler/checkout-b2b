@@ -6,7 +6,7 @@ import { getSessionData, handleCheckoutApiError } from '../../utils'
 
 export async function updateShippingOption(
   _: unknown,
-  { addressId, itemIndex, selectedSla }: MutationUpdateShippingOptionArgs,
+  { addressId, itemIndexes, selectedSla }: MutationUpdateShippingOptionArgs,
   context: ServiceContext<Clients>
 ) {
   const { orderFormId } = await getSessionData(context)
@@ -26,7 +26,7 @@ export async function updateShippingOption(
     selectedSla:
       addressId && l.addressId === addressId
         ? selectedSla
-        : typeof itemIndex === 'number' && l.itemIndex === itemIndex
+        : itemIndexes?.includes(l.itemIndex)
         ? selectedSla
         : l.selectedSla,
   }))

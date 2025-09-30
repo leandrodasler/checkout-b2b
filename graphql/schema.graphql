@@ -163,7 +163,7 @@ type Mutation {
 
   updateShippingOption(
     addressId: String
-    itemIndex: Int
+    itemIndexes: [Int!]
     selectedSla: String!
   ): UpdatedOrderForm!
 

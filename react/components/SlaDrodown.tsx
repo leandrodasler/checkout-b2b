@@ -17,6 +17,7 @@ type Props = {
   showEstimateDate?: boolean
   variation?: 'default' | 'inline'
   shippingEstimates?: Array<string | null | undefined>
+  disabled?: boolean
 }
 
 const SlaDropdownSpinner = () => (
@@ -33,6 +34,7 @@ export function SlaDropdown({
   variation = 'default',
   showEstimateDate = true,
   shippingEstimates,
+  disabled,
 }: Props) {
   const { formatMessage } = useIntl()
 
@@ -41,6 +43,7 @@ export function SlaDropdown({
   return (
     <div className="w-100">
       <Dropdown
+        disabled={disabled}
         variation={variation}
         size="small"
         placeholder={formatMessage(messages.shippingOption)}

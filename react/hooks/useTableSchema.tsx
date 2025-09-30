@@ -392,11 +392,26 @@ export function useTableSchema({
         },
       }),
       logisticsInfo: {
-        width: 110,
+        width: 120,
         title: formatMessage(messages.shippingAddress),
-        cellRenderer({ rowData }) {
-          return <ShippingOptionItem item={rowData} />
-        },
+        cellRenderer: makeSafeCell((rowData) => {
+          const selectedSla = rowData.logisticsInfo?.slas?.find(
+            (sla) => rowData.logisticsInfo?.selectedSla === sla?.id
+          )
+
+          return (
+            <TruncatedText
+              label={selectedSla?.name}
+              text={
+                <ShippingOptionItem
+                  item={rowData}
+                  disabled={isRemoving(rowData.itemIndex)}
+                />
+              }
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
+          )
+        }),
       },
       priceDefinition: {
         width: 120,

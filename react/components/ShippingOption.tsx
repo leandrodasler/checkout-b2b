@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { Address } from 'vtex.b2b-organizations-graphql'
 import { useCssHandles } from 'vtex.css-handles'
@@ -42,6 +42,8 @@ export function ShippingOption({ address }: Props) {
 
   const [updateShippingOption, { loading }] = useUpdateShippingOption()
 
+  const loadingSellerRef = useRef<string | null>(null)
+
   const handleChange = (seller: string) => (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -49,16 +51,21 @@ export function ShippingOption({ address }: Props) {
       (sla) => sla.id === e.target.value
     )
 
-    if (newDeliveryOption?.id && addressInSelected?.addressId) {
-      setPending(true)
+    const itemIndexes = orderForm.items
+      .filter((item) => item.seller === seller)
+      .map((item) => item.itemIndex)
 
-      updateShippingOption({
-        variables: {
-          addressId: addressInSelected.addressId,
-          selectedSla: newDeliveryOption.id,
-        },
-      }).then(() => setPending(false))
-    }
+    if (!newDeliveryOption?.id) return
+    setPending(true)
+
+    loadingSellerRef.current = seller
+
+    updateShippingOption({
+      variables: {
+        itemIndexes,
+        selectedSla: newDeliveryOption.id,
+      },
+    }).then(() => setPending(false))
   }
 
   const packages = Object.keys(shippingOptionsBySeller).length
@@ -123,7 +130,7 @@ export function ShippingOption({ address }: Props) {
                     }))}
                     shippingEstimates={options.shippingEstimates}
                     onChange={handleChange(seller)}
-                    isLoading={loading}
+                    isLoading={loading && loadingSellerRef.current === seller}
                   />
                 ) : (
                   <Sla sla={options.slas[0]} price={singlePrice} />

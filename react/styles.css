@@ -30,6 +30,10 @@
   cursor: auto;
 }
 
+.container :global(.vtex-dropdown) {
+  max-width: 100%;
+}
+
 .container :global(.vtex-dropdown__help-text) {
   margin-top: var(--small-gap);
   text-align: center;

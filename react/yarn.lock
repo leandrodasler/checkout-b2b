@@ -4990,10 +4990,6 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.60/public/@types/ssesandbox04.checkout-b2b":
-  version "1.0.60"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.60/public/@types/ssesandbox04.checkout-b2b#682c82ff1b30df8759ed763b560bf54b0067f7cf"
-
 "ssesandbox04.file-manager@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager":
   version "0.7.7"
   resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager#97eef27e249866699d479efbd75528d81b4a5888"

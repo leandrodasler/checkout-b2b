@@ -1,11 +1,11 @@
 mutation UpdateShippingOption(
   $addressId: String
-  $itemIndex: Int
+  $itemIndexes: [Int!]
   $selectedSla: String!
 ) {
   updateShippingOption(
     addressId: $addressId
-    itemIndex: $itemIndex
+    itemIndexes: $itemIndexes
     selectedSla: $selectedSla
   ) @context(provider: "ssesandbox04.checkout-b2b")
 }

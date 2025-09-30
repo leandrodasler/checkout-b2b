@@ -235,6 +235,7 @@ export function groupShippingOptionsBySeller(
         ? ({
             name: distinctSelectedSlaNamesBySeller[seller].join(', '),
             id: distinctSelectedSlaIdsBySeller[seller].join(),
+            deliveryChannel: 'delivery',
           } as ShippingSla)
         : l.slas?.find((sla) => sla?.id === l.selectedSla)
 
@@ -245,56 +246,59 @@ export function groupShippingOptionsBySeller(
         {
           name: distinctSelectedSlaNamesBySeller[seller].join(', '),
           id: distinctSelectedSlaIdsBySeller[seller].join(),
+          deliveryChannel: 'delivery',
         },
       ]
     }
 
-    l.slas?.forEach((sla) => {
-      if (!sla) return
+    l.slas
+      ?.filter((sla) => sla?.deliveryChannel === 'delivery')
+      ?.forEach((sla) => {
+        if (!sla) return
 
-      const addedSlaIndex = acc[seller].slas.findIndex((s) => s.id === sla.id)
+        const addedSlaIndex = acc[seller].slas.findIndex((s) => s.id === sla.id)
 
-      if (addedSlaIndex !== -1) {
-        const addedSla = acc[seller].slas[addedSlaIndex]
-        const mergedDeliveryIds: DeliveryIds[] = [
-          ...((addedSla.deliveryIds as DeliveryIds[]) ?? []),
-        ]
+        if (addedSlaIndex !== -1) {
+          const addedSla = acc[seller].slas[addedSlaIndex]
+          const mergedDeliveryIds: DeliveryIds[] = [
+            ...((addedSla.deliveryIds as DeliveryIds[]) ?? []),
+          ]
 
-        sla.deliveryIds?.forEach((delivery, index) => {
-          if (!mergedDeliveryIds[index]) {
-            mergedDeliveryIds[index] = { ...delivery }
-          } else {
-            mergedDeliveryIds[index] = {
-              ...mergedDeliveryIds[index],
-              quantity:
-                (mergedDeliveryIds[index].quantity ?? 0) +
-                (delivery?.quantity ?? 0),
+          sla.deliveryIds?.forEach((delivery, index) => {
+            if (!mergedDeliveryIds[index]) {
+              mergedDeliveryIds[index] = { ...delivery }
+            } else {
+              mergedDeliveryIds[index] = {
+                ...mergedDeliveryIds[index],
+                quantity:
+                  (mergedDeliveryIds[index].quantity ?? 0) +
+                  (delivery?.quantity ?? 0),
+              }
             }
+          })
+
+          acc[seller].slas[addedSlaIndex] = {
+            ...addedSla,
+            price:
+              distinctSelectedSlaIdsBySeller[seller].length > 1
+                ? 0
+                : (addedSla.price ?? 0) + (sla.price ?? 0),
+            deliveryIds: mergedDeliveryIds,
           }
-        })
+        } else {
+          acc[seller].slas.push({
+            ...sla,
+            price:
+              distinctSelectedSlaIdsBySeller[seller].length > 1 ? 0 : sla.price,
+            deliveryIds: sla.deliveryIds?.map((d) => ({ ...d })) ?? [],
+          })
 
-        acc[seller].slas[addedSlaIndex] = {
-          ...addedSla,
-          price:
-            distinctSelectedSlaIdsBySeller[seller].length > 1
-              ? 0
-              : (addedSla.price ?? 0) + (sla.price ?? 0),
-          deliveryIds: mergedDeliveryIds,
+          if (distinctSelectedSlaIdsBySeller[seller].length > 1) {
+            acc[seller].shippingEstimates =
+              distinctSelectedSlaShippingEstimatesBySeller[seller]
+          }
         }
-      } else {
-        acc[seller].slas.push({
-          ...sla,
-          price:
-            distinctSelectedSlaIdsBySeller[seller].length > 1 ? 0 : sla.price,
-          deliveryIds: sla.deliveryIds?.map((d) => ({ ...d })) ?? [],
-        })
-
-        if (distinctSelectedSlaIdsBySeller[seller].length > 1) {
-          acc[seller].shippingEstimates =
-            distinctSelectedSlaShippingEstimatesBySeller[seller]
-        }
-      }
-    })
+      })
 
     return acc
   }, {})
