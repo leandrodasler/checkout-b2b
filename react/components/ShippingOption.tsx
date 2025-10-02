@@ -51,14 +51,19 @@ export function ShippingOption({ address }: Props) {
       (sla) => sla.id === e.target.value
     )
 
-    const itemIndexes = orderForm.items
-      .filter((item) => item.seller === seller)
-      .map((item) => item.itemIndex)
-
     if (!newDeliveryOption?.id) return
+
     setPending(true)
 
     loadingSellerRef.current = seller
+
+    const itemIndexes = orderForm.items
+      .filter(
+        (item) =>
+          item.seller === seller &&
+          logisticsInfoFromAddress.some((li) => li.itemIndex === item.itemIndex)
+      )
+      .map((item) => item.itemIndex)
 
     updateShippingOption({
       variables: {
