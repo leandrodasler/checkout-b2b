@@ -1,3 +1,5 @@
+#import "./fragments/RepresentativeBalanceFields.graphql"
+
 mutation SaveRepresentativeBalance(
   $email: String!
   $balance: Float!
@@ -10,10 +12,6 @@ mutation SaveRepresentativeBalance(
     orderGroup: $orderGroup
     overwrite: $overwrite
   ) {
-    id
-    email
-    balance
-    createdIn
-    lastInteractionIn
+    ...RepresentativeBalanceFields
   }
 }

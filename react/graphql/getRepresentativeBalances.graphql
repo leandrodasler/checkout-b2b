@@ -1,9 +1,7 @@
+#import "./fragments/RepresentativeBalanceFields.graphql"
+
 query GetRepresentativeBalances {
   getRepresentativeBalances {
-    id
-    email
-    balance
-    createdIn
-    lastInteractionIn
+    ...RepresentativeBalanceFields
   }
 }

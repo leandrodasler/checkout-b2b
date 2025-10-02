@@ -1,0 +1,8 @@
+fragment RepresentativeBalanceFields on RepresentativeBalance
+@context(provider: "ssesandbox04.checkout-b2b") {
+  id
+  email
+  balance
+  createdIn
+  lastInteractionIn
+}
