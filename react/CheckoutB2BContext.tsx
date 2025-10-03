@@ -26,8 +26,6 @@ type CheckoutB2BContextData = {
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
   setDiscountApplied: Dispatch<SetStateAction<number>>
-  maximumDiscount?: number
-  setMaximumDiscount: Dispatch<SetStateAction<number | undefined>>
   subtotal: number
   setSubtotal: Dispatch<SetStateAction<number>>
   listedPrice: number
@@ -58,7 +56,6 @@ function CheckoutB2BProviderWrapper({
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
-  const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
 
   const savedCartId = query?.savedCart
 
@@ -108,8 +105,6 @@ function CheckoutB2BProviderWrapper({
     getDiscountedPrice,
     discountApplied,
     setDiscountApplied,
-    maximumDiscount,
-    setMaximumDiscount,
     subtotal,
     setSubtotal,
     listedPrice,

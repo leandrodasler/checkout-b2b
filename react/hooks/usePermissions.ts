@@ -37,25 +37,7 @@ export function usePermissions() {
     [role]
   )
 
-  const maximumDiscount = useMemo(() => {
-    if (!appSettings) return 0
-
-    const { salesAdmin, salesManager, salesRepresentative } = appSettings
-
-    switch (role) {
-      case 'sales-admin':
-        return salesAdmin
-
-      case 'sales-manager':
-        return salesManager
-
-      case 'sales-representative':
-        return salesRepresentative
-
-      default:
-        return 0
-    }
-  }, [appSettings, role])
+  const maximumDiscount = appSettings?.salesAdmin ?? 0
 
   const canSeeMargin = useMemo(
     () => appSettings?.rolesAllowedToSeeMargin.includes(role) ?? false,
