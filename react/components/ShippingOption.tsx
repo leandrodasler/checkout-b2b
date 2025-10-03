@@ -12,6 +12,7 @@ import {
 import { groupShippingOptionsBySeller, isSameAddress, messages } from '../utils'
 import { Sla } from './Sla'
 import { SlaDropdown } from './SlaDrodown'
+import { TruncatedText } from './TruncatedText'
 
 type Props = {
   costCenter: string
@@ -105,23 +106,34 @@ export function ShippingOption({ address }: Props) {
     return (
       <ol className={`${handles.shippingEstimates} flex flex-wrap`}>
         {Object.entries(shippingOptionsBySeller).map(
-          ([seller, options], index) => {
+          ([sellerId, options], index) => {
             const quantity = formatMessage(messages.itemCount, {
               count: orderForm.items.reduce(
                 (acc, item) =>
-                  acc + (item.seller === seller ? item.quantity : 0),
+                  acc + (item.seller === sellerId ? item.quantity : 0),
                 0
               ),
             })
 
             const singlePrice = formatPrice((options.slas[0].price ?? 0) / 100)
+            const seller = orderForm.sellers?.find((s) => s?.id === sellerId)
+            const sellerInfo = (
+              <>
+                {seller?.name}
+                <br />({quantity})
+              </>
+            )
 
             return (
               <li key={index} className="flex flex-column flex-wrap">
-                <span className="b c-muted-1">
-                  {orderForm.sellers?.find((s) => s?.id === seller)?.name} (
-                  {quantity})
-                </span>
+                <TruncatedText
+                  label={
+                    <>
+                      {formatMessage(messages.seller)}: {sellerInfo}
+                    </>
+                  }
+                  text={<span className="b c-muted-1">{sellerInfo}</span>}
+                />
                 {options.slas.length > 1 ? (
                   <SlaDropdown
                     selectedSla={options.selectedSla ?? options.slas[0]}
@@ -134,8 +146,8 @@ export function ShippingOption({ address }: Props) {
                       }`,
                     }))}
                     shippingEstimates={options.shippingEstimates}
-                    onChange={handleChange(seller)}
-                    isLoading={loading && loadingSellerRef.current === seller}
+                    onChange={handleChange(sellerId)}
+                    isLoading={loading && loadingSellerRef.current === sellerId}
                   />
                 ) : (
                   <Sla sla={options.slas[0]} price={singlePrice} />

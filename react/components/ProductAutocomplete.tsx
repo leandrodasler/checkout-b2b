@@ -399,7 +399,7 @@ function CustomOption(props: CustomOptionProps) {
         }
       }}
     >
-      <div className="flex flex-wrap items-center justify-between">
+      <div className="flex items-center justify-between">
         <span className="truncate">
           {value.type === 'sku' && (
             <img

@@ -10,7 +10,7 @@ type Props = {
 export function TruncatedText({ text, label = text, strike = false }: Props) {
   return (
     <Tooltip label={label}>
-      <div className={`truncate${strike ? ' strike' : ''}`}>{text}</div>
+      <div className={`truncate w-100${strike ? ' strike' : ''}`}>{text}</div>
     </Tooltip>
   )
 }
