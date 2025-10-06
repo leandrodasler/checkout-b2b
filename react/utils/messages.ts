@@ -307,4 +307,23 @@ export const messages = defineMessages({
   importSpreadsheetCartHelp: {
     id: 'store/checkout.b2b.import-spreadsheet.cart.help',
   },
+
+  discountStatusOpen: {
+    id: 'store/checkout.b2b.discountStatus.open',
+  },
+  discountStatusPending: {
+    id: 'store/checkout.b2b.discountStatus.pending',
+  },
+  discountStatusApproved: {
+    id: 'store/checkout.b2b.discountStatus.approved',
+  },
+  discountStatusDenied: {
+    id: 'store/checkout.b2b.discountStatus.denied',
+  },
+  discountStatusOrderApproved: {
+    id: 'store/checkout.b2b.discountStatus.orderApproved',
+  },
+  noRequests: {
+    id: 'store/checkout.b2b.discountStatus.noRequests',
+  },
 })

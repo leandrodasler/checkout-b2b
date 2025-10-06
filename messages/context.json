@@ -163,5 +163,12 @@
   "store/checkout.b2b.import-spreadsheet.select": "Select a CSV file",
   "store/checkout.b2b.import-spreadsheet.sample": "Download sample spreadsheet",
   "store/checkout.b2b.import-spreadsheet.cart": "Export CSV",
-  "store/checkout.b2b.import-spreadsheet.cart.help": "Export CSV of current cart for future import"
+  "store/checkout.b2b.import-spreadsheet.cart.help": "Export CSV of current cart for future import",
+
+  "store/checkout.b2b.discountStatus.open": "Open",
+  "store/checkout.b2b.discountStatus.pending": "Pending Approval",
+  "store/checkout.b2b.discountStatus.approved": "Tier Approved",
+  "store/checkout.b2b.discountStatus.denied": "Tier Denied",
+  "store/checkout.b2b.discountStatus.orderApproved": "Order Approved",
+  "store/checkout.b2b.discountStatus.noRequests": "No requests"
 }
