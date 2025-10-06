@@ -113,7 +113,7 @@ function CheckoutB2B() {
 
   const showToast = useToast()
 
-  const { maximumDiscount, isSalesUser } = usePermissions()
+  const { maximumRoleDiscount, maximumDiscount, isSalesUser } = usePermissions()
 
   const [
     updateItemsQuantity,
@@ -132,8 +132,12 @@ function CheckoutB2B() {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
   }, [maximumDiscount, percentualDiscount])
 
-  const isExceedingDiscount = percentualDiscount > maximumDiscount
-  const [isRequestingDiscount, setIsRequestingDiscount] = useState(true)
+  const isExceedingDiscount =
+    discountApplied + percentualDiscount > maximumRoleDiscount
+
+  const [isRequestingDiscount, setIsRequestingDiscount] = useState(false)
+
+  // TODO: implement loading state when requesting
   const [isLoadingRequestDiscount] = useState(false)
 
   const handleRequestDiscount = () => {
