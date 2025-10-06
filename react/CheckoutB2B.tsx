@@ -13,6 +13,7 @@ import {
   IconDelete,
   IconDownload,
   Layout,
+  ModalDialog,
   PageBlock,
   PageHeader,
   Slider,
@@ -136,6 +137,15 @@ function CheckoutB2B() {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
   }, [maximumDiscount, percentualDiscount])
 
+  const isExceedingDiscount = percentualDiscount > maximumDiscount
+  const [isRequestingDiscount, setIsRequestingDiscount] = useState(true)
+  const [isLoadingRequestDiscount] = useState(false)
+
+  const handleRequestDiscount = () => {
+    setIsRequestingDiscount(true)
+    setIsEditing(false)
+  }
+
   const filteredItems = useGroupedProducts({
     items,
     fallbackItems: toolbar?.filteredItems,
@@ -210,10 +220,12 @@ function CheckoutB2B() {
   }, [filteredItems, prices])
 
   const handleSavePrices = async () => {
-    if (percentualDiscount > maximumDiscount) {
+    if (isExceedingDiscount) {
       showToast({
         message: formatMessage(messages.manualPriceDiscountExceeded),
       })
+
+      // TODO: Implement request discount modal
 
       return
     }
@@ -479,7 +491,9 @@ function CheckoutB2B() {
                     isLoading={saving}
                     disabled={saving}
                   >
-                    {formatMessage(messages.saveManualPrice)}
+                    {isExceedingDiscount
+                      ? formatMessage(messages.requestDiscount)
+                      : formatMessage(messages.saveManualPrice)}
                   </Button>
                 )}
               </>
@@ -544,6 +558,22 @@ function CheckoutB2B() {
             )}
           </div>
         </div>
+        <ModalDialog
+          centered
+          title={formatMessage(messages.modalRequestDiscount)}
+          loading={isLoadingRequestDiscount}
+          confirmation={{
+            onClick: handleRequestDiscount,
+            label: formatMessage(messages.confirm),
+          }}
+          cancelation={{
+            onClick: () => setIsRequestingDiscount(false),
+            label: formatMessage(messages.cancel),
+          }}
+          isOpen={isRequestingDiscount}
+        >
+          <p>{formatMessage(messages.modalRequestDiscountConfirmation)}</p>
+        </ModalDialog>
       </Layout>
     </div>
   )
