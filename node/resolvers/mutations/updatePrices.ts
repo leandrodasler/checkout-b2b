@@ -3,10 +3,11 @@ import { MutationUpdatePricesArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import { getSessionData, handleCheckoutApiError } from '../../utils'
+import { saveCart } from './saveCart'
 
 export async function updatePrices(
   _: unknown,
-  { items }: MutationUpdatePricesArgs,
+  { items, title, additionalData }: MutationUpdatePricesArgs,
   context: ServiceContext<Clients>
 ) {
   const { orderFormId } = await getSessionData(context)
@@ -32,6 +33,10 @@ export async function updatePrices(
 
   if (!updatedOrderForm) {
     throw new ResolverError('error-updating-prices')
+  }
+
+  if (title) {
+    await saveCart(null, { title, additionalData }, context)
   }
 
   return updatedOrderForm

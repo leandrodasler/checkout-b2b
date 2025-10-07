@@ -9,9 +9,13 @@ export const getCart = async (
   { id }: QueryGetCartArgs,
   context: ServiceContext<Clients>
 ) => {
-  return context.clients.masterdata.getDocument<SavedCart>({
+  const cart = await context.clients.masterdata.getDocument<SavedCart>({
     dataEntity: SAVED_CART_ENTITY,
     fields: SAVED_CART_FIELDS,
     id,
   })
+
+  if (!cart) return null
+
+  return { ...cart, status: cart.status ?? 'open' }
 }

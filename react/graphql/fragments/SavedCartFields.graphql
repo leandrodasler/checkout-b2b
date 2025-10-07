@@ -1,0 +1,17 @@
+fragment SavedCartFields on SavedCart
+@context(provider: "ssesandbox04.checkout-b2b") {
+  id
+  createdIn
+  lastInteractionIn
+  title
+  email
+  orderFormId
+  organizationId
+  costCenterId
+  data
+  childrenQuantity
+  parentCartId
+  status
+  requestedDiscount
+  roleId
+}

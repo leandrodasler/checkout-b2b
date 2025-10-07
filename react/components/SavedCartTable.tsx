@@ -3,7 +3,7 @@ import { ExecutionResult, useMutation, useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type {
   Mutation,
-  MutationSaveCartArgs,
+  MutationDeleteCartArgs,
   MutationUpdatePricesArgs,
   SavedCart,
 } from 'ssesandbox04.checkout-b2b'
@@ -81,6 +81,7 @@ function getEmptySimpleCart(parentCartId: string): SavedCartRow {
     paymentMethod: '',
     action: '',
     loading: true,
+    status: 'open',
   }
 }
 
@@ -117,19 +118,15 @@ export function SavedCartsTable(props?: Props) {
     {
       ssr: false,
       fetchPolicy: 'network-only',
-      onError({ message }) {
-        showToast({ message })
-      },
+      onError: showToast,
     }
   )
 
   const [deleteCartMutation, { loading: loadingDeleteCart }] = useMutation<
     Pick<Mutation, 'deleteCart'>,
-    MutationSaveCartArgs
+    MutationDeleteCartArgs
   >(DELETE_SAVED_CART, {
-    onError({ message }) {
-      showToast({ message })
-    },
+    onError: showToast,
     onCompleted({ deleteCart }) {
       if (!deleteCart) return
 
@@ -192,9 +189,7 @@ export function SavedCartsTable(props?: Props) {
           paymentData: selectedCartData.paymentData,
         } as CompleteOrderForm)
       },
-      onError({ message }) {
-        showToast({ message })
-      },
+      onError: showToast,
     }
   )
 
@@ -210,9 +205,7 @@ export function SavedCartsTable(props?: Props) {
         paymentData: selectedCartData.paymentData,
       } as CompleteOrderForm)
     },
-    onError({ message }) {
-      showToast({ message })
-    },
+    onError: showToast,
   })
 
   const { updatePayment, loading: loadingUpdatePayment } = useUpdatePayment()

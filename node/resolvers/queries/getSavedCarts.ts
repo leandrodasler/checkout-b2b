@@ -6,7 +6,7 @@ import { getAllSavedCarts, getSessionData } from '../../utils'
 
 export const getSavedCarts = async (
   _: unknown,
-  { parentCartId }: QueryGetSavedCartsArgs,
+  { parentCartId, getAll }: QueryGetSavedCartsArgs,
   context: ServiceContext<Clients>
 ) => {
   const { organizationId, costCenterId } = await getSessionData(context)
@@ -18,13 +18,13 @@ export const getSavedCarts = async (
 
   if (parentCartId) {
     where.push(`(parentCartId='${parentCartId}')`)
-  } else {
+  } else if (!getAll) {
     where.push(`(parentCartId is null)`)
   }
 
   return getAllSavedCarts({
     context,
     where: where.join(' AND '),
-    sort: `createdIn ${parentCartId ? 'ASC' : 'DESC'}`,
+    sort: `createdIn ${parentCartId || getAll ? 'ASC' : 'DESC'}`,
   })
 }
