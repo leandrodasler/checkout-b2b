@@ -308,6 +308,7 @@ export const messages = defineMessages({
     id: 'store/checkout.b2b.import-spreadsheet.cart.help',
   },
 
+  discountKanbanModal: { id: 'store/checkout.b2b.discountKanban.modal' },
   discountStatusOpen: {
     id: 'store/checkout.b2b.discountStatus.open',
   },

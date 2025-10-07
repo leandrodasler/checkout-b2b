@@ -165,6 +165,7 @@
   "store/checkout.b2b.import-spreadsheet.cart": "Export CSV",
   "store/checkout.b2b.import-spreadsheet.cart.help": "Export CSV of current cart for future import",
 
+  "store/checkout.b2b.discountKanban.modal": "Approve carts",
   "store/checkout.b2b.discountStatus.open": "Open",
   "store/checkout.b2b.discountStatus.pending": "Pending Approval",
   "store/checkout.b2b.discountStatus.approved": "Tier Approved",

@@ -42,8 +42,9 @@ export function DiscountApprovalKanban({
           key={col.key}
           className="flex flex-column mh3 bg-muted-5 w-20 min-w5 br3"
           style={{
-            minWidth: '240px',
-            maxHeight: '600px',
+            minWidth: '200px',
+            minHeight: '240px',
+            maxHeight: '400px',
           }}
         >
           <div className="mt4 mh5 c-action-primary br3 b flex items-center justify-between">
@@ -65,7 +66,7 @@ export function DiscountApprovalKanban({
             )}
 
             {groupedRequests[col.key].map((req) => (
-              <Card key={req.id} className="pa4 br2 shadow-2">
+              <Card key={req.id} className="ph4 pv2 br2 shadow-2">
                 <div className="fw5">#{req.id}</div>
                 <div className="c-muted-1">
                   Solicitante: <span className="fw5">{req.requester}</span>
