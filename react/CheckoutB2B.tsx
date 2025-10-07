@@ -74,7 +74,6 @@ function CheckoutB2B() {
     setDiscountApplied,
     subtotal,
     listedPrice,
-    percentualDiscount,
     setPercentualDiscount,
     searchQuery,
     searchStore,
@@ -128,18 +127,12 @@ function CheckoutB2B() {
     }
   }, [listedPrice, subtotal, setPercentualDiscount])
 
-  const sliderMaxValue = useMemo(() => {
-    return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
-  }, [maximumDiscount, percentualDiscount])
-
-  const isExceedingDiscount =
-    discountApplied + percentualDiscount > maximumRoleDiscount
+  const isExceedingDiscount = discountApplied > maximumRoleDiscount
 
   const [isRequestingDiscount, setIsRequestingDiscount] = useState(false)
 
-  // TODO: implement loading state when requesting
+  // TODO: implement actual request logic and state
   const [isLoadingRequestDiscount] = useState(false)
-
   const handleRequestDiscount = () => {
     setIsRequestingDiscount(true)
     setIsEditing(false)
@@ -224,7 +217,7 @@ function CheckoutB2B() {
         message: formatMessage(messages.manualPriceDiscountExceeded),
       })
 
-      // TODO: Implement request discount modal
+      setIsRequestingDiscount(true)
 
       return
     }
@@ -465,7 +458,7 @@ function CheckoutB2B() {
               })
             }}
             min={0}
-            max={sliderMaxValue}
+            max={maximumDiscount}
             step={1}
             defaultValues={[discountApplied]}
             formatValue={(value: number) => `${value}%`}
@@ -569,6 +562,7 @@ function CheckoutB2B() {
             onClick: () => setIsRequestingDiscount(false),
             label: formatMessage(messages.cancel),
           }}
+          onClose={() => setIsRequestingDiscount(false)}
           isOpen={isRequestingDiscount}
         >
           <p>{formatMessage(messages.modalRequestDiscountConfirmation)}</p>
