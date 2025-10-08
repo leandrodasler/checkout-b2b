@@ -6,6 +6,14 @@ scalar CostCenterDeliveryOptions
 scalar UpdatedOrderForm
 scalar Address
 
+enum SavedCartStatus {
+  open
+  pending
+  approved
+  denied
+  orderPlaced
+}
+
 type SavedCart {
   id: ID!
   createdIn: String!
@@ -18,6 +26,9 @@ type SavedCart {
   data: String!
   parentCartId: String
   childrenQuantity: Int
+  status: SavedCartStatus!
+  requestedDiscount: Int
+  roleId: String
 }
 
 type RepresentativeBalanceSettings {
@@ -89,7 +100,7 @@ type RepresentativeBalanceTransactionResponse {
 type Query {
   getCart(id: ID!): SavedCart @CheckSchemas
 
-  getSavedCarts(parentCartId: ID): [SavedCart!]! @CheckSchemas
+  getSavedCarts(parentCartId: ID, getAll: Boolean): [SavedCart!]! @CheckSchemas
 
   getAppSettings: AppSettings!
 
@@ -108,17 +119,23 @@ type Query {
 
 type Mutation {
   saveCart(
-    id: ID
     title: String
     additionalData: String
     parentCartId: String
   ): SavedCart! @CheckSchemas
 
-  deleteCart(id: ID): ID @CheckSchemas
+  updateSavedCartStatus(id: ID!, status: SavedCartStatus!): SavedCart!
+    @CheckSchemas
+
+  deleteCart(id: ID!): ID @CheckSchemas
 
   placeOrder(poNumber: String, invoiceData: InvoiceData): String
 
-  updatePrices(items: [ItemsUpdatePriceInput]!): UpdatedOrderForm!
+  updatePrices(
+    items: [ItemsUpdatePriceInput]!
+    title: String
+    additionalData: String
+  ): UpdatedOrderForm!
 
   saveRepresentativeBalance(
     email: String

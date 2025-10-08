@@ -1,3 +1,8 @@
-mutation UpdatePrices($items: [ItemsUpdatePriceInput]!) {
-  updatePrices(items: $items) @context(provider: "ssesandbox04.checkout-b2b")
+mutation UpdatePrices(
+  $items: [ItemsUpdatePriceInput]!
+  $title: String
+  $additionalData: String
+) {
+  updatePrices(items: $items, title: $title, additionalData: $additionalData)
+    @context(provider: "ssesandbox04.checkout-b2b")
 }

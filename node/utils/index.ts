@@ -64,7 +64,7 @@ export async function getSessionData(context: ServiceContext<Clients>) {
 
 type GetAllSavedCartsArgs = {
   context: ServiceContext<Clients>
-  where: string
+  where?: string
   sort?: string
 }
 
@@ -90,7 +90,12 @@ export async function getAllSavedCarts({
     })
 
     if (savedCarts.length) {
-      result.push(...savedCarts)
+      result.push(
+        ...savedCarts.map((cart) => ({
+          ...cart,
+          status: cart.status ?? 'open',
+        }))
+      )
 
       await fetchCarts(page + 1)
     }
@@ -186,4 +191,32 @@ export function removeAccents(str?: string | null) {
 
 export function normalizeString(str?: string | null) {
   return removeAccents(str)?.replace(/\s/g, '') ?? ''
+}
+
+export function getManualPriceDiscount({ items, totalizers }: OrderForm) {
+  const hasManualPrice = items?.some(
+    (item) => item.manualPrice && item.manualPrice !== item.price
+  )
+
+  const discountTotalizer = totalizers.find(
+    (totalizer) => totalizer.id === 'Discounts'
+  )
+
+  return hasManualPrice ? (discountTotalizer?.value ?? 0) / 100 : 0
+}
+
+export function getMaxDiscountByRoleId(settings: AppSettings, roleId: string) {
+  switch (roleId) {
+    case 'sales-admin':
+      return settings.salesAdmin ?? 0
+
+    case 'sales-manager':
+      return settings.salesManager ?? 0
+
+    case 'sales-representative':
+      return settings.salesRepresentative ?? 0
+
+    default:
+      return Infinity
+  }
 }
