@@ -71,7 +71,6 @@ function CheckoutB2B() {
   const {
     discountApplied = 0,
     setDiscountApplied,
-    setMaximumDiscount,
     subtotal,
     listedPrice,
     percentualDiscount,
@@ -127,10 +126,6 @@ function CheckoutB2B() {
       setPercentualDiscount(discountPercentage)
     }
   }, [listedPrice, subtotal, setPercentualDiscount])
-
-  useEffect(() => {
-    setMaximumDiscount(maximumDiscount)
-  }, [maximumDiscount, setMaximumDiscount])
 
   const sliderMaxValue = useMemo(() => {
     return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
@@ -218,7 +213,18 @@ function CheckoutB2B() {
       return
     }
 
-    updateItemsPrice({ variables: { items: getUpdatedPrices() } })
+    const additionalData = JSON.stringify({
+      paymentAddress: orderForm.paymentAddress,
+      customData: orderForm.customData,
+    })
+
+    const title = formatMessage(messages.savedCartsSaveDefaultTitle, {
+      date: new Date().toLocaleString(),
+    })
+
+    updateItemsPrice({
+      variables: { items: getUpdatedPrices(), additionalData, title },
+    })
   }
 
   const toggleEditMode = () => {

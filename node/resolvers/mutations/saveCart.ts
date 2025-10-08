@@ -3,15 +3,18 @@ import type { MutationSaveCartArgs, SavedCart } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
+  getManualPriceDiscount,
+  getMaxDiscountByRoleId,
   getSessionData,
   SAVED_CART_ENTITY,
-  SAVED_CART_FIELDS,
   SCHEMA_VERSION,
 } from '../../utils'
+import { getAppSettings } from '../queries/getAppSettings'
+import { getCart } from '../queries/getCart'
 
 export const saveCart = async (
   _: unknown,
-  { id, title, additionalData, parentCartId }: MutationSaveCartArgs,
+  { title, additionalData, parentCartId }: MutationSaveCartArgs,
   context: ServiceContext<Clients>
 ) => {
   const {
@@ -19,11 +22,12 @@ export const saveCart = async (
     orderFormId,
     organizationId,
     costCenterId,
+    roleId,
   } = await getSessionData(context)
 
   const { clients } = context
+  const orderForm = (await clients.checkout.orderForm(orderFormId)) as OrderForm
 
-  const orderForm = await clients.checkout.orderForm(orderFormId)
   let additionalDataObject = {}
 
   try {
@@ -32,25 +36,31 @@ export const saveCart = async (
     /**/
   }
 
-  const data = JSON.stringify({ ...orderForm, ...additionalDataObject })
-
   let parentSavedCart: SavedCart | null = null
   let newTitle = title
 
   if (parentCartId) {
-    parentSavedCart = await clients.masterdata.getDocument<SavedCart>({
-      dataEntity: SAVED_CART_ENTITY,
-      id: parentCartId,
-      fields: SAVED_CART_FIELDS,
-    })
+    parentSavedCart = await getCart(null, { id: parentCartId }, context)
 
-    newTitle = `${parentSavedCart.title} (${
-      (parentSavedCart.childrenQuantity ?? 0) + 2
-    })`
+    if (parentSavedCart) {
+      newTitle = `${parentSavedCart.title} (${
+        (parentSavedCart.childrenQuantity ?? 0) + 2
+      })`
+    }
   }
 
-  const { DocumentId } = await clients.masterdata.createOrUpdateEntireDocument({
-    ...(id && { id }),
+  const discounts = getManualPriceDiscount(orderForm) * 100
+  const totalizerItems = orderForm.totalizers.find((t) => t.id === 'Items')
+  const percentualDiscount = Math.round(
+    ((discounts * -1) / (totalizerItems?.value ?? 0)) * 100
+  )
+
+  const settings = await getAppSettings(null, null, context)
+  const maxDiscount = getMaxDiscountByRoleId(settings, roleId)
+  const status = percentualDiscount > maxDiscount ? 'pending' : 'open'
+  const data = JSON.stringify({ ...orderForm, ...additionalDataObject })
+
+  const { DocumentId } = await clients.masterdata.createDocument({
     schema: SCHEMA_VERSION,
     dataEntity: SAVED_CART_ENTITY,
     fields: {
@@ -61,14 +71,13 @@ export const saveCart = async (
       costCenterId,
       data,
       parentCartId,
+      requestedDiscount: percentualDiscount,
+      status,
+      roleId,
     },
   })
 
-  const savedCart = await clients.masterdata.getDocument<SavedCart>({
-    dataEntity: SAVED_CART_ENTITY,
-    id: DocumentId,
-    fields: SAVED_CART_FIELDS,
-  })
+  const savedCart = await getCart(null, { id: DocumentId }, context)
 
   if (parentSavedCart?.id) {
     await clients.masterdata.updatePartialDocument({

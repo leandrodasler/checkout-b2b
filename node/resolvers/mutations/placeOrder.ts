@@ -4,6 +4,7 @@ import { MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 import { Clients } from '../../clients'
 import {
   getFirstInstallmentByPaymentSystem,
+  getManualPriceDiscount,
   getSessionData,
   handleCheckoutApiError,
 } from '../../utils'
@@ -111,24 +112,14 @@ export async function placeOrder(
       const settings = await getAppSettings(null, null, context)
 
       if (settings.representativeBalance?.enabled) {
-        const hasManualPrice = initialOrderForm.items?.some(
-          (item) => item.manualPrice && item.manualPrice !== item.price
-        )
+        const discounts = getManualPriceDiscount(initialOrderForm)
 
-        if (hasManualPrice) {
-          const discountTotalizer = initialOrderForm.totalizers?.find(
-            (t) => t.id === 'Discounts'
-          )
-
-          const balanceDiff = (discountTotalizer?.value ?? 0) / 100
-
-          if (balanceDiff) {
-            await saveRepresentativeBalance(
-              null,
-              { balance: balanceDiff, orderGroup },
-              context
-            ).catch(() => null)
-          }
+        if (discounts) {
+          await saveRepresentativeBalance(
+            null,
+            { balance: discounts, orderGroup },
+            context
+          ).catch(() => null)
         }
       }
     }

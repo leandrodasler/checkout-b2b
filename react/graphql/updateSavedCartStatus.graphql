@@ -1,7 +1,7 @@
 #import "./fragments/SavedCartFields.graphql"
 
-query getSavedCarts($parentCartId: ID) {
-  getSavedCarts(parentCartId: $parentCartId)
+mutation updateSavedCartStatus($id: ID!, $status: SavedCartStatus!) {
+  updateSavedCartStatus(id: $id, status: $status)
     @context(provider: "ssesandbox04.checkout-b2b") {
     ...SavedCartFields
   }

@@ -15,6 +15,9 @@ export const SAVED_CART_FIELDS = [
   'data',
   'parentCartId',
   'childrenQuantity',
+  'status',
+  'requestedDiscount',
+  'roleId',
 ]
 
 export const REPRESENTATIVE_BALANCE_ENTITY =
@@ -57,6 +60,9 @@ export const schemas = [
         data: { type: 'string' },
         parentCartId: { type: ['string', 'null'] },
         childrenQuantity: { type: ['number', 'null'] },
+        status: { type: ['string', 'null'] },
+        requestedDiscount: { type: ['number', 'null'] },
+        roleId: { type: ['string', 'null'] },
       },
       'v-indexed': [
         'title',
@@ -66,6 +72,8 @@ export const schemas = [
         'costCenterId',
         'parentCartId',
         'childrenQuantity',
+        'status',
+        'roleId',
       ],
       'v-immediate-indexing': true,
       'v-cache': false,

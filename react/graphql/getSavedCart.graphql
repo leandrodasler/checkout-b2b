@@ -1,15 +1,7 @@
+#import "./fragments/SavedCartFields.graphql"
+
 query getSavedCart($id: ID!) {
   getCart(id: $id) @context(provider: "ssesandbox04.checkout-b2b") {
-    id
-    createdIn
-    lastInteractionIn
-    title
-    email
-    orderFormId
-    organizationId
-    costCenterId
-    data
-    childrenQuantity
-    parentCartId
+    ...SavedCartFields
   }
 }

@@ -9,6 +9,7 @@ import { saveRepresentativeBalanceSettings } from './mutations/saveRepresentativ
 import { shareCart } from './mutations/shareCart'
 import { updateItemsQuantity } from './mutations/updateItemsQuantity'
 import { updatePrices } from './mutations/updatePrices'
+import { updateSavedCartStatus } from './mutations/updateSavedCartStatus'
 import { updateShippingOption } from './mutations/updateShippingOption'
 import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
 import { getAppSettings } from './queries/getAppSettings'
@@ -30,6 +31,7 @@ export default {
     },
     Mutation: {
       saveCart,
+      updateSavedCartStatus,
       deleteCart,
       placeOrder,
       updatePrices,
