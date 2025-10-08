@@ -1,16 +1,14 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Card, Tag } from 'vtex.styleguide'
+import { SavedCart } from 'ssesandbox04.checkout-b2b'
+import { Button, ButtonPlain, Card, Tag } from 'vtex.styleguide'
 
 import { messages } from '../utils/messages'
 
 interface DiscountApprovalKanbanProps {
-  requests?: Array<{
-    id: string
-    requester: string
-    discount: number
-    status: 'open' | 'pending' | 'approved' | 'denied' | 'orderApproved'
-  }>
+  requests?: Array<
+    Pick<SavedCart, 'id' | 'title' | 'email' | 'requestedDiscount' | 'status'>
+  >
 }
 
 export function DiscountApprovalKanban({
@@ -30,7 +28,7 @@ export function DiscountApprovalKanban({
   ]
 
   const groupedRequests = columns.reduce((acc, col) => {
-    acc[col.key] = requests.filter((r) => r.status === col.key)
+    acc[col.key] = requests?.filter((r) => r.status === col.key)
 
     return acc
   }, {} as Record<string, typeof requests>)
@@ -40,11 +38,11 @@ export function DiscountApprovalKanban({
       {columns.map((col) => (
         <div
           key={col.key}
-          className="flex flex-column mh3 bg-muted-5 w-20 min-w5 br3"
+          className="flex flex-column mh3 bg-muted-5 min-w5 br3"
           style={{
-            minWidth: '200px',
+            width: '320px',
             minHeight: '240px',
-            maxHeight: '400px',
+            maxHeight: '420px',
           }}
         >
           <div className="mt4 mh5 c-action-primary br3 b flex items-center justify-between">
@@ -67,12 +65,27 @@ export function DiscountApprovalKanban({
 
             {groupedRequests[col.key].map((req) => (
               <Card key={req.id} className="ph4 pv2 br2 shadow-2">
-                <div className="fw5">#{req.id}</div>
-                <div className="c-muted-1">
-                  Solicitante: <span className="fw5">{req.requester}</span>
+                <div className="c-action-primary mb2">
+                  <span className="fw5">{req.title}</span>
                 </div>
                 <div className="c-muted-1">
-                  Desconto: <span className="fw5">{req.discount}%</span>
+                  <span className="fw5">{req.email}</span>
+                </div>
+                <div className="c-muted-1">
+                  <span className="fw5">{req.requestedDiscount}%</span>
+                </div>
+                {/* TODO: implement proper both deny and approve logics */}
+                <div className="flex flex-row justify-between mt2">
+                  <ButtonPlain
+                    size="small"
+                    variant="primary"
+                    onClick={() => {}}
+                  >
+                    {formatMessage(messages.discountKanbanModalDeny)}
+                  </ButtonPlain>
+                  <Button size="small" variant="primary" onClick={() => {}}>
+                    {formatMessage(messages.discountKanbanModalApprove)}
+                  </Button>
                 </div>
               </Card>
             ))}

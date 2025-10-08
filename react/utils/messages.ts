@@ -309,6 +309,10 @@ export const messages = defineMessages({
   },
 
   discountKanbanModal: { id: 'store/checkout.b2b.discountKanban.modal' },
+  discountKanbanModalApprove: {
+    id: 'store/checkout.b2b.discountKanban.approve',
+  },
+  discountKanbanModalDeny: { id: 'store/checkout.b2b.discountKanban.deny' },
   discountStatusOpen: {
     id: 'store/checkout.b2b.discountStatus.open',
   },

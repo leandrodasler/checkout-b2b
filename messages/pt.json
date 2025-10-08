@@ -166,10 +166,12 @@
   "store/checkout.b2b.import-spreadsheet.cart.help": "Exportar CSV do carrinho atual para importações futuras",
 
   "store/checkout.b2b.discountKanban.modal": "Aprovar carrinhos",
+  "store/checkout.b2b.discountKanban.approve": "Aprovar",
+  "store/checkout.b2b.discountKanban.deny": "Negar",
   "store/checkout.b2b.discountStatus.open": "Em aberto",
   "store/checkout.b2b.discountStatus.pending": "Pendente de Aprovação",
   "store/checkout.b2b.discountStatus.approved": "Alçada Aprovada",
   "store/checkout.b2b.discountStatus.denied": "Alçada Negada",
-  "store/checkout.b2b.discountStatus.orderApproved": "Pedido Aprovado",
+  "store/checkout.b2b.discountStatus.orderApproved": "Pedido Realizado",
   "store/checkout.b2b.discountStatus.noRequests": "Nenhuma solicitação"
 }

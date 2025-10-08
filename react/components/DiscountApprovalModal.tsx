@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react'
+import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import { Button, EXPERIMENTAL_Modal as Modal } from 'vtex.styleguide'
+import { EXPERIMENTAL_Modal as Modal, Spinner } from 'vtex.styleguide'
 
+import GET_ALL_SAVED_CARTS from '../graphql/getAllSavedCarts.graphql'
 import { messages } from '../utils'
 import { DiscountApprovalKanban } from './DiscountApprovalKanban'
 
@@ -17,25 +19,27 @@ export function DiscountApprovalModal({ open, setOpen }: Props) {
     setOpen(false)
   }, [setOpen])
 
+  const { data, loading } = useQuery(GET_ALL_SAVED_CARTS)
+
+  const carts = data?.getSavedCarts ?? []
+
   return (
     <Modal
       isOpen={open}
       onClose={handleCloseModal}
       centered
-      title={formatMessage(messages.discountChanges)}
+      title={formatMessage(messages.discountKanbanModal)}
       showBottomBarBorder={false}
       style={{ minHeight: '600px', minWidth: '1280px' }}
-      bottomBar={
-        // TODO: implements actions
-        <div className="flex justify-end">
-          <Button variation="tertiary" onClick={handleCloseModal}>
-            {formatMessage(messages.cancel)}
-          </Button>
-        </div>
-      }
     >
       <div>
-        <DiscountApprovalKanban />
+        {!loading ? (
+          <DiscountApprovalKanban requests={carts} />
+        ) : (
+          <div className="flex justify-center items-center">
+            <Spinner />
+          </div>
+        )}
       </div>
     </Modal>
   )

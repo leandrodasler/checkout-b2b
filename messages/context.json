@@ -166,10 +166,12 @@
   "store/checkout.b2b.import-spreadsheet.cart.help": "Export CSV of current cart for future import",
 
   "store/checkout.b2b.discountKanban.modal": "Approve carts",
+  "store/checkout.b2b.discountKanban.approve": "Approve",
+  "store/checkout.b2b.discountKanban.deny": "Deny",
   "store/checkout.b2b.discountStatus.open": "Open",
   "store/checkout.b2b.discountStatus.pending": "Pending Approval",
   "store/checkout.b2b.discountStatus.approved": "Tier Approved",
   "store/checkout.b2b.discountStatus.denied": "Tier Denied",
-  "store/checkout.b2b.discountStatus.orderApproved": "Order Approved",
+  "store/checkout.b2b.discountStatus.orderApproved": "Order Placed",
   "store/checkout.b2b.discountStatus.noRequests": "No requests"
 }
