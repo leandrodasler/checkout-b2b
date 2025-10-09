@@ -98,6 +98,11 @@ export const messages = defineMessages({
   savedCartsSaveNew: {
     id: 'store/checkout.b2b.savedCarts.save-cart.new',
   },
+  requestDiscount: { id: 'store/checkout.b2b.button.requestDiscount' },
+  modalRequestDiscount: { id: 'store/checkout.b2b.modal.requestDiscount' },
+  modalRequestDiscountConfirmation: {
+    id: 'store/checkout.b2b.modal.requestDiscountConfirmation',
+  },
   saveManualPrice: { id: 'store/checkout.b2b.button.saveManualPrice' },
   editManualPrice: { id: 'store/checkout.b2b.button.editManualPrice' },
   manualPriceStopEdit: {
