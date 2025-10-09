@@ -124,10 +124,14 @@ export function useTotalizers() {
             <TruncatedText
               text={<FormattedPrice value={t.value / 100} />}
               strike
+              inline
             />
           )}
           {(t.id !== 'Items' || totalItems === t.value) && (
-            <TruncatedText text={<FormattedPrice value={t.value / 100} />} />
+            <TruncatedText
+              text={<FormattedPrice value={t.value / 100} />}
+              inline
+            />
           )}
           {t.id === 'Tax' && taxes?.length && (
             <div className="flex flex-wrap flex-column w-100 t-mini">
@@ -155,6 +159,7 @@ export function useTotalizers() {
             <div className="flex flex-wrap w-100">
               <TruncatedText
                 text={<FormattedPrice value={totalItems / 100} />}
+                inline
               />
 
               {!canSeeDiscount && totalDiscount < 0 && (
@@ -187,7 +192,10 @@ export function useTotalizers() {
           {
             label: formatMessage(messages.totalMargin),
             value: (
-              <TruncatedText text={<FormattedPrice value={totalMargin} />} />
+              <TruncatedText
+                text={<FormattedPrice value={totalMargin} />}
+                inline
+              />
             ),
           },
         ]
