@@ -120,6 +120,7 @@ export function DiscountApprovalKanban({
                     )}
                   </div>
 
+                  {/* TODO: add proper logic to both deny and approve buttons */}
                   {req.status === 'pending' && (
                     <div className="flex flex-row justify-between mt2">
                       <ButtonPlain
