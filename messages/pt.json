@@ -27,6 +27,11 @@
   "store/checkout.b2b.savedCarts.use-cart.inUse.label": "Carrinho em uso neste momento",
   "store/checkout.b2b.savedCarts.save-cart.current": "Salvar carrinho na mesma negociação",
   "store/checkout.b2b.savedCarts.save-cart.new": "Salvar carrinho em nova negociação",
+  "store/checkout.b2b.savedCarts.status.open": "Em aberto",
+  "store/checkout.b2b.savedCarts.status.pending": "Pendente",
+  "store/checkout.b2b.savedCarts.status.approved": "Aprovado",
+  "store/checkout.b2b.savedCarts.status.denied": "Negado",
+  "store/checkout.b2b.savedCarts.status.orderPlaced": "Pedido realizado",
 
   "store/checkout.b2b.totalizer.boxTitle": "Cabeçalho do Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Entrega",

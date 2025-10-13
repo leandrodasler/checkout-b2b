@@ -1,11 +1,13 @@
 #import "./fragments/SavedCartFields.graphql"
 
 mutation saveCart(
+  $id: ID
   $title: String
   $additionalData: String
   $parentCartId: String
 ) {
   saveCart(
+    id: $id
     title: $title
     additionalData: $additionalData
     parentCartId: $parentCartId

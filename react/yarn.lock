@@ -4990,6 +4990,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
+"ssesandbox04.checkout-b2b@https://tiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@1.0.61+build1760324527/public/@types/ssesandbox04.checkout-b2b":
+  version "1.0.61"
+  resolved "https://tiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@1.0.61+build1760324527/public/@types/ssesandbox04.checkout-b2b#6ad66ff3c01570dffdb8c04a176374197961ae92"
+
 "ssesandbox04.file-manager@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager":
   version "0.7.7"
   resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager#97eef27e249866699d479efbd75528d81b4a5888"
@@ -5430,9 +5434,9 @@ verror@1.10.0:
   version "0.21.5"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout#732a9584402f5a97308c079beffa41d839b4c06a"
 
-"vtex.formatted-price@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price":
-  version "0.7.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price#345e34745d9c4ad469a125c1e6f4c99267ba0c8c"
+"vtex.formatted-price@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.8.1/public/@types/vtex.formatted-price":
+  version "0.8.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.8.1/public/@types/vtex.formatted-price#0df3cd98ef210e7e6750f7d3c16320e56ebca7b4"
 
 "vtex.order-items@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-items@0.14.0/public/@types/vtex.order-items":
   version "0.14.0"

@@ -79,6 +79,7 @@ function CheckoutB2B() {
     searchStore,
     setSearchStore,
     getDiscountedPrice,
+    setPending,
   } = useCheckoutB2BContext()
 
   const [itemsAwaitingDeletion, setItemsAwaitingDeletion] = useState<
@@ -172,7 +173,7 @@ function CheckoutB2B() {
       setOrderForm({
         ...orderForm,
         ...updatePrices,
-        customData: orderForm.customData,
+        customData: updatePrices.customData,
       } as CompleteOrderForm)
 
       setDiscountApplied(0)
@@ -222,9 +223,15 @@ function CheckoutB2B() {
       date: new Date().toLocaleString(),
     })
 
+    setPending(true)
+
     updateItemsPrice({
-      variables: { items: getUpdatedPrices(), additionalData, title },
-    })
+      variables: {
+        items: getUpdatedPrices(),
+        additionalData,
+        title,
+      },
+    }).then(() => setPending(false))
   }
 
   const toggleEditMode = () => {

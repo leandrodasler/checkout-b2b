@@ -6,13 +6,19 @@ import type {
   SavedCart,
 } from 'ssesandbox04.checkout-b2b'
 import type { Item } from 'vtex.checkout-graphql'
-import { useRuntime } from 'vtex.render-runtime'
 import { withToast } from 'vtex.styleguide'
 
+import CHECK_ORDER_FORM_CONFIGURATION from './graphql/checkOrderFormConfiguration.graphql'
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
+import { useOrderFormCustom } from './hooks'
 import type { WithToast } from './typings'
+import { CHECKOUT_B2B_CUSTOM_APP_ID } from './utils'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
+type QueryCheckOrderFormConfiguration = Pick<
+  Query,
+  'checkOrderFormConfiguration'
+>
 
 type CheckoutB2BContextData = {
   pending: boolean
@@ -46,7 +52,6 @@ function CheckoutB2BProviderWrapper({
   children,
   showToast,
 }: React.PropsWithChildren<WithToast>) {
-  const { query, setQuery } = useRuntime()
   const [pending, setPending] = useState(false)
   const [selectedCart, setSelectedCart] = useState<SavedCart | null>()
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
@@ -57,7 +62,13 @@ function CheckoutB2BProviderWrapper({
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
 
-  const savedCartId = query?.savedCart
+  const { orderForm } = useOrderFormCustom()
+
+  const customApp = orderForm.customData?.customApps.find(
+    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+  )
+
+  const savedCartId = customApp?.fields?.savedCart
 
   useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
     ssr: false,
@@ -68,8 +79,11 @@ function CheckoutB2BProviderWrapper({
     },
     onError() {
       setSelectedCart(null)
-      setQuery({ savedCart: undefined })
     },
+  })
+
+  useQuery<QueryCheckOrderFormConfiguration>(CHECK_ORDER_FORM_CONFIGURATION, {
+    ssr: false,
   })
 
   const getSellingPrice = useCallback(

@@ -14,6 +14,11 @@ enum SavedCartStatus {
   orderPlaced
 }
 
+enum OrderFormConfigurationState {
+  ready
+  updated
+}
+
 type SavedCart {
   id: ID!
   createdIn: String!
@@ -93,11 +98,13 @@ type Pagination {
 }
 
 type RepresentativeBalanceTransactionResponse {
-  data: [RepresentativeBalanceTransaction]! @CheckSchemas
+  data: [RepresentativeBalanceTransaction]!
   pagination: Pagination!
 }
 
 type Query {
+  checkOrderFormConfiguration: OrderFormConfigurationState!
+
   getCart(id: ID!): SavedCart @CheckSchemas
 
   getSavedCarts(parentCartId: ID, getAll: Boolean): [SavedCart!]! @CheckSchemas
@@ -119,15 +126,18 @@ type Query {
 
 type Mutation {
   saveCart(
+    id: ID
     title: String
     additionalData: String
     parentCartId: String
   ): SavedCart! @CheckSchemas
 
-  updateSavedCartStatus(id: ID!, status: SavedCartStatus!): SavedCart!
+  updateSavedCartStatus(id: ID!, status: SavedCartStatus!): [SavedCart!]!
     @CheckSchemas
 
   deleteCart(id: ID!): ID @CheckSchemas
+
+  clearCart: UpdatedOrderForm!
 
   placeOrder(poNumber: String, invoiceData: InvoiceData): String
 

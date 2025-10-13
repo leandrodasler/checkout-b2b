@@ -4,7 +4,7 @@ mutation setOrderFormCustomData(
   $value: String
 ) {
   setOrderFormCustomData(appId: $appId, field: $field, value: $value)
-    @context(provider: "vtex.checkout-grapqhl") {
+    @context(provider: "vtex.store-graphql") {
     customData {
       customApps {
         fields

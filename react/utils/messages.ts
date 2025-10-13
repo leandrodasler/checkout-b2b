@@ -1,4 +1,5 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, MessageDescriptor } from 'react-intl'
+import { SavedCartStatus } from 'ssesandbox04.checkout-b2b'
 
 export const messages = defineMessages({
   order: { id: 'store/checkout.b2b.order' },
@@ -307,4 +308,15 @@ export const messages = defineMessages({
   importSpreadsheetCartHelp: {
     id: 'store/checkout.b2b.import-spreadsheet.cart.help',
   },
+})
+
+export const savedCartStatusMessages = defineMessages<
+  MessageDescriptor,
+  Record<SavedCartStatus, MessageDescriptor>
+>({
+  open: { id: 'store/checkout.b2b.savedCarts.status.open' },
+  pending: { id: 'store/checkout.b2b.savedCarts.status.pending' },
+  approved: { id: 'store/checkout.b2b.savedCarts.status.approved' },
+  denied: { id: 'store/checkout.b2b.savedCarts.status.denied' },
+  orderPlaced: { id: 'store/checkout.b2b.savedCarts.status.orderPlaced' },
 })

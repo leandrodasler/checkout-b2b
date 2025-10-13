@@ -220,3 +220,37 @@ export function getMaxDiscountByRoleId(settings: AppSettings, roleId: string) {
       return Infinity
   }
 }
+
+export const CHECKOUT_B2B_CUSTOM_APP_ID = 'checkout-b2b'
+
+const CHECKOUT_B2B_CUSTOM_APP = {
+  fields: ['savedCart'],
+  id: CHECKOUT_B2B_CUSTOM_APP_ID,
+  major: 1,
+}
+
+export const ORDER_FORM_CONFIGURATION = {
+  allowManualPrice: true,
+  allowMultipleDeliveries: true,
+  apps: [CHECKOUT_B2B_CUSTOM_APP],
+}
+
+export function isExpectedOrderFormConfiguration(
+  config: OrderFormConfiguration
+) {
+  const orderFormAppConfiguration = config.apps.find(
+    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+  )
+
+  const hasExpectedCustomFields =
+    orderFormAppConfiguration &&
+    CHECKOUT_B2B_CUSTOM_APP.fields.every((expectedField) =>
+      orderFormAppConfiguration.fields.some((field) => field === expectedField)
+    )
+
+  return (
+    config.allowManualPrice &&
+    config.allowMultipleDeliveries &&
+    hasExpectedCustomFields
+  )
+}

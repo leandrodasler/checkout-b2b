@@ -14,6 +14,7 @@ import { usePermissions, useSaveCart } from '../hooks'
 import { messages } from '../utils'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
 import { SavedCartsListModal } from './SavedCartsListModal'
+import { SavedCartStatusBadge } from './SavedCartStatusBadge'
 
 type Props = {
   onChangeItems: () => void
@@ -44,10 +45,13 @@ export function SavedCarts({ onChangeItems }: Props) {
     <div className="flex items-center flex-wrap pl4">
       {loading && <Spinner size={20} />}
       {selectedCart && !loading && (
-        <Tag variation="low">
-          {formatMessage(messages.savedCartsCurrentLabel)}:{' '}
-          <strong>{selectedCart.title}</strong>
-        </Tag>
+        <>
+          <Tag variation="low">
+            {formatMessage(messages.savedCartsCurrentLabel)}:{' '}
+            <strong>{selectedCart.title}</strong>
+          </Tag>
+          <SavedCartStatusBadge status={selectedCart.status} />
+        </>
       )}
       <ActionMenu
         label={formatMessage(messages.savedCartsMainTitle)}

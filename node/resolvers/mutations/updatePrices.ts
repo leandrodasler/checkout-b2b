@@ -2,7 +2,11 @@ import { NotFoundError, ResolverError, ServiceContext } from '@vtex/api'
 import { MutationUpdatePricesArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
-import { getSessionData, handleCheckoutApiError } from '../../utils'
+import {
+  CHECKOUT_B2B_CUSTOM_APP_ID,
+  getSessionData,
+  handleCheckoutApiError,
+} from '../../utils'
 import { saveCart } from './saveCart'
 
 export async function updatePrices(
@@ -36,7 +40,15 @@ export async function updatePrices(
   }
 
   if (title) {
-    await saveCart(null, { title, additionalData }, context)
+    const customApp = updatedOrderForm.customData?.customApps.find(
+      (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+    )
+
+    const savedCartId = customApp?.fields?.savedCart
+
+    await saveCart(null, { id: savedCartId, title, additionalData }, context)
+
+    return checkout.orderForm(orderFormId)
   }
 
   return updatedOrderForm

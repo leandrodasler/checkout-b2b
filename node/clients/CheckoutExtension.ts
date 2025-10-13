@@ -41,6 +41,10 @@ export class CheckoutExtension extends JanusClient {
     }
   }
 
+  private get<T = void>(url: string, options?: RequestConfig) {
+    return this.http.get<T>(url, this.getRequestConfig(options))
+  }
+
   private post<T = void>(url: string, body: unknown, options?: RequestConfig) {
     return this.http.post<T>(url, body, this.getRequestConfig(options))
   }
@@ -53,8 +57,35 @@ export class CheckoutExtension extends JanusClient {
     return this.http.patch<T>(url, body, this.getRequestConfig(options))
   }
 
+  private delete<T = void>(url: string, options?: RequestConfig) {
+    return this.http.delete<T>(url, this.getRequestConfig(options))
+  }
+
   public setOrderFormId(orderFormId: string) {
     this.orderFormId = orderFormId
+  }
+
+  public async getOrderFormConfiguration() {
+    return this.get<OrderFormConfiguration>(
+      this.routes.orderFormConfiguration,
+      {
+        metric: 'checkoutExtension-getOrderFormConfiguration',
+        headers: {
+          VtexIdclientAutCookie: this.context.authToken,
+        },
+      }
+    )
+  }
+
+  public async updateOrderFormConfiguration(
+    orderFormConfig: OrderFormConfiguration
+  ) {
+    return this.post(this.routes.orderFormConfiguration, orderFormConfig, {
+      metric: 'checkoutExtension-updateOrderFormConfiguration',
+      headers: {
+        VtexIdclientAutCookie: this.context.authToken,
+      },
+    })
   }
 
   public async updateOrderFormInvoiceData(invoiceData: unknown) {
@@ -134,11 +165,26 @@ export class CheckoutExtension extends JanusClient {
     )
   }
 
+  public removeAllItems() {
+    return this.post<OrderForm>(this.routes.removeAllItems, {
+      metric: 'checkoutExtension-removeAllItems',
+    })
+  }
+
+  public removeCustomField(appId: string, appFieldName: string) {
+    return this.delete<OrderForm>(
+      this.routes.removeCustomField(appId, appFieldName),
+      { metric: 'checkoutExtension-removeCustomField' }
+    )
+  }
+
   private get routes() {
     const orderFormBasePath = `${CHECKOUT_API_BASE_PATH}/orderForm/${this.orderFormId}`
     const attachmentsBasePath = `${orderFormBasePath}/attachments`
+    const itemsBasePath = `${orderFormBasePath}/items`
 
     return {
+      orderFormConfiguration: '/api/checkout/pvt/configuration/orderForm',
       invoiceData: `${attachmentsBasePath}/invoiceData`,
       shippingData: `${attachmentsBasePath}/shippingData`,
       marketingData: `${attachmentsBasePath}/marketingData`,
@@ -147,11 +193,13 @@ export class CheckoutExtension extends JanusClient {
         `/api/payments/pub/transactions/${transactionId}/payments?orderId=${orderGroup}`,
       gatewayCallback: (orderGroup: string) =>
         `${CHECKOUT_API_BASE_PATH}/gatewayCallback/${orderGroup}`,
-      items: `${orderFormBasePath}/items`,
-      updatePrice: (itemIndex: number) =>
-        `${this.routes.items}/${itemIndex}/price`,
+      items: itemsBasePath,
+      updatePrice: (itemIndex: number) => `${itemsBasePath}/${itemIndex}/price`,
       splitItems: (itemUniqueId: string) =>
-        `${this.routes.items}/${itemUniqueId}/split`,
+        `${itemsBasePath}/${itemUniqueId}/split`,
+      removeAllItems: `${itemsBasePath}/removeAll`,
+      removeCustomField: (appId: string, appFieldName: string) =>
+        `${orderFormBasePath}/customData/${appId}/${appFieldName}`,
     }
   }
 }

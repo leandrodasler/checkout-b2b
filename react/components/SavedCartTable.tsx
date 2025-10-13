@@ -41,7 +41,7 @@ import type {
   GetSavedCartsQuery,
   TableSchema,
 } from '../typings'
-import { messages } from '../utils'
+import { CHECKOUT_B2B_CUSTOM_APP_ID, messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
 import { CellWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
@@ -92,7 +92,7 @@ type Props = {
 export function SavedCartsTable(props?: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
-  const { setQuery, page, navigate, query } = useRuntime()
+  const { page, navigate, query } = useRuntime()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const {
     setPending,
@@ -213,7 +213,16 @@ export function SavedCartsTable(props?: Props) {
   const [setOrderFormCustomData] = useMutation<
     MutationSetOrderFormCustomData,
     MutationSetOrderFormCustomDataArgs
-  >(SET_ORDER_FORM_CUSTOM_DATA)
+  >(SET_ORDER_FORM_CUSTOM_DATA, {
+    onCompleted(customDataMutation) {
+      setOrderForm({
+        ...orderForm,
+        ...customDataMutation.setOrderFormCustomData,
+        customData: selectedCartData.customData,
+        paymentData: selectedCartData.paymentData,
+      } as CompleteOrderForm)
+    },
+  })
 
   const loadingApplySavedCart = useMemo(
     () =>
@@ -247,9 +256,8 @@ export function SavedCartsTable(props?: Props) {
     }
   }
 
-  const handleConfirm = (cart: SavedCart) => {
+  const handleConfirm = async (cart: SavedCart) => {
     setSelectedCart(cart)
-    setQuery({ savedCart: cart.id })
 
     const { items, paymentData, shippingData, customData } = JSON.parse(
       cart.data ?? '{}'
@@ -264,106 +272,114 @@ export function SavedCartsTable(props?: Props) {
     setPending(true)
 
     try {
-      clearCart(undefined, {
-        onSuccess: async () => {
-          await addItemsMutation({
-            variables: {
-              orderItems: items?.map((item: Item) => ({
-                id: +item.id,
-                quantity: item.quantity,
-                seller: item.seller,
-              })),
-            },
-          })
-
-          if (payments?.[0]) {
-            await updatePayment({
-              variables: {
-                paymentData: {
-                  payments: [
-                    {
-                      paymentSystem: payments[0].paymentSystem,
-                      referenceValue: payments[0].referenceValue,
-                      installmentsInterestRate:
-                        payments[0].merchantSellerPayments?.[0]?.interestRate ??
-                        0,
-                      installments: payments[0].installment ?? 1,
-                      value: payments[0].value,
-                    },
-                  ],
-                },
-              },
-            })
-          }
-
-          if (selectedDeliveryOption) {
-            await selectDeliveryOption({
-              variables: {
-                deliveryOptionId: selectedDeliveryOption,
-              },
-            })
-          }
-
-          if (customData?.customApps?.length) {
-            const { customApps } = customData as {
-              customApps: NonNullable<CustomData>['customApps']
-            }
-
-            const setCustomDataPromises: Array<
-              Promise<ExecutionResult<MutationSetOrderFormCustomData>>
-            > = []
-
-            customApps.forEach((app) => {
-              Object.entries(app.fields).forEach(([field, value]) => {
-                setCustomDataPromises.push(
-                  setOrderFormCustomData({
-                    variables: {
-                      appId: app.id,
-                      field,
-                      value: value as string,
-                    },
-                  })
-                )
-              })
-            })
-
-            await Promise.all(setCustomDataPromises)
-          }
-
-          const manualPriceItems = items
-            ?.map((item: Item, index: number) => {
-              if (item.manualPrice) {
-                return {
-                  index,
-                  price: item.manualPrice ?? item.sellingPrice ?? 0,
-                }
-              }
-
-              return null
-            })
-            .filter(Boolean)
-
-          if (manualPriceItems?.length) {
-            await setManualPriceMutation({
-              variables: { items: manualPriceItems },
-            })
-          }
-
-          setPending(false)
-          setOpenSavedCartModal(false)
-
-          if (page !== 'store.checkout-b2b') {
-            navigate({
-              page: 'store.checkout-b2b',
-              fallbackToWindowLocation: true,
-              query: new URLSearchParams({
-                ...query,
-                savedCart: cart.id,
-              }).toString(),
-            })
-          }
+      await clearCart()
+      await addItemsMutation({
+        variables: {
+          orderItems: items?.map((item: Item) => ({
+            id: +item.id,
+            quantity: item.quantity,
+            seller: item.seller,
+          })),
         },
       })
+
+      if (payments?.[0]) {
+        await updatePayment({
+          variables: {
+            paymentData: {
+              payments: [
+                {
+                  paymentSystem: payments[0].paymentSystem,
+                  referenceValue: payments[0].referenceValue,
+                  installmentsInterestRate:
+                    payments[0].merchantSellerPayments?.[0]?.interestRate ?? 0,
+                  installments: payments[0].installment ?? 1,
+                  value: payments[0].value,
+                },
+              ],
+            },
+          },
+        })
+      }
+
+      if (selectedDeliveryOption) {
+        await selectDeliveryOption({
+          variables: {
+            deliveryOptionId: selectedDeliveryOption,
+          },
+        })
+      }
+
+      await setOrderFormCustomData({
+        variables: {
+          appId: CHECKOUT_B2B_CUSTOM_APP_ID,
+          field: 'savedCart',
+          value: cart.id,
+        },
+      })
+
+      if (customData?.customApps?.length) {
+        const { customApps } = customData as {
+          customApps: NonNullable<CustomData>['customApps']
+        }
+
+        const setCustomDataPromises: Array<
+          Promise<ExecutionResult<MutationSetOrderFormCustomData>>
+        > = []
+
+        customApps.forEach((app) => {
+          Object.entries(app.fields).forEach(([field, value]) => {
+            if (
+              app.id === CHECKOUT_B2B_CUSTOM_APP_ID &&
+              field === 'savedCart'
+            ) {
+              return
+            }
+
+            setCustomDataPromises.push(
+              setOrderFormCustomData({
+                variables: {
+                  appId: app.id,
+                  field,
+                  value: value as string,
+                },
+              })
+            )
+          })
+        })
+
+        await Promise.all(setCustomDataPromises)
+      }
+
+      const manualPriceItems = items
+        ?.map((item: Item, index: number) => {
+          if (item.manualPrice) {
+            return {
+              index,
+              price: item.manualPrice ?? item.sellingPrice ?? 0,
+            }
+          }
+
+          return null
+        })
+        .filter(Boolean)
+
+      if (manualPriceItems?.length) {
+        await setManualPriceMutation({
+          variables: { items: manualPriceItems },
+        })
+      }
+
+      setPending(false)
+      setOpenSavedCartModal(false)
+
+      if (page !== 'store.checkout-b2b') {
+        navigate({
+          page: 'store.checkout-b2b',
+          fallbackToWindowLocation: true,
+          query: new URLSearchParams(query).toString(),
+        })
+      }
     } catch (error) {
       setPending(false)
       showToast({ message: error.message })

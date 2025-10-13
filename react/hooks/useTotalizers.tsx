@@ -21,8 +21,8 @@ export function useTotalizers() {
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
   const { orderForm } = useOrderFormCustom()
-  const { isSalesUser } = usePermissions()
   const { totalizers = [], items, value: total } = orderForm
+  const { isSalesUser, exceedingDiscount } = usePermissions()
 
   const hasQuotationDiscount = useMemo(
     () =>
@@ -107,7 +107,9 @@ export function useTotalizers() {
               totalDiscount < 0
                 ? formatMessage(messages.surplus)
                 : formatMessage(messages.totalDiscount),
-            value: `${Math.abs(totalDiscount)}%`,
+            value: `${Math.abs(totalDiscount)}%${
+              exceedingDiscount > 0 ? ` (+${exceedingDiscount}%)` : ''
+            }`,
           },
         ]
       : []),

@@ -23,7 +23,9 @@ export function PaymentData() {
   const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
   const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
-  const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
+  const { paymentSystems = [], payments = [], installmentOptions = [] } =
+    orderForm.paymentData ?? {}
+
   const { organization } = useOrganization()
   const organizationPaymentSystems = useMemo(
     () =>

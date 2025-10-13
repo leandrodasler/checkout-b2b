@@ -1,10 +1,11 @@
 import { IOContext, SegmentData } from '@vtex/api'
 import { OrderForm as OrderFormType } from '@vtex/clients'
-import { Address, PaymentData } from 'vtex.checkout-graphql'
+import { Address, CustomData, PaymentData } from 'vtex.checkout-graphql'
 
 declare global {
-  type OrderForm = Omit<OrderFormType, 'items'> & {
+  type OrderForm = Omit<OrderFormType, 'items' | 'customData'> & {
     paymentData: PaymentData
+    customData: CustomData
     items: Array<
       OrderFormType['items'][number] & {
         manualPrice?: number
@@ -181,5 +182,51 @@ declare global {
         Parameters: string[]
       }
     }
+  }
+
+  export type OrderFormConfiguration = {
+    paymentConfiguration: {
+      requiresAuthenticationForPreAuthorizedPaymentOption: boolean
+      allowInstallmentsMerge: boolean | null
+      blockPaymentSession: boolean | null
+      paymentSystemToCheckFirstInstallment: string | null
+      defaultPaymentSystemToApplyOnUserOrderForm: string | null
+      alwaysShowMarketplacePaymentSystems: boolean
+    }
+
+    taxConfiguration: {
+      url: string | null
+      authorizationHeader: string | null
+      appId: string
+      isMarketplaceResponsibleForTaxes: boolean
+    } | null
+
+    minimumQuantityAccumulatedForItems: number
+    decimalDigitsPrecision: number
+    minimumValueAccumulated: number | null
+
+    apps: Array<{
+      id: string
+      fields: string[]
+      major: number
+    }>
+
+    allowMultipleDeliveries: boolean | null
+    allowManualPrice: boolean | null
+    savePersonalDataAsOptIn: boolean | null
+    maxNumberOfWhiteLabelSellers: number | null
+    maskFirstPurchaseData?: boolean | null
+    maskStateOnAddress: boolean | null
+    recaptchaValidation: 'never' | 'always' | 'vtexcriteria' | 'vtexCriteria'
+    recaptchaMinScore: number | null
+    recaptchaKeys: {
+      publicKey?: string | null
+      privateKey?: string | null
+    } | null
+    additionalRoutingSellersIds: string[]
+    useOwnershipCookie: boolean | null
+    ignoreProfileData: boolean | null
+    useIndividualShippingEstimates: boolean | null
+    allowMultipleCoupons: boolean | null
   }
 }

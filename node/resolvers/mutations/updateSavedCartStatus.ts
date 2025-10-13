@@ -3,6 +3,7 @@ import { NotFoundError, ServiceContext } from '@vtex/api'
 import { Clients } from '../../clients'
 import { SAVED_CART_ENTITY, SCHEMA_VERSION } from '../../utils'
 import { getCart } from '../queries/getCart'
+import { getSavedCarts } from '../queries/getSavedCarts'
 
 export async function updateSavedCartStatus(
   _: unknown,
@@ -20,5 +21,5 @@ export async function updateSavedCartStatus(
     fields: { status },
   })
 
-  return { ...cart, status }
+  return getSavedCarts(null, { getAll: true }, context)
 }
