@@ -80,6 +80,10 @@
   "store/checkout.b2b.button.placeOrder.error": "Error al procesar el pedido",
   "store/checkout.b2b.button.saveManualPrice": "Aplicar Precios",
   "store/checkout.b2b.button.editManualPrice": "Editar preços",
+  "store/checkout.b2b.button.requestDiscount": "Solicitar descuento por encima del límite permitido",
+
+  "store/checkout.b2b.modal.requestDiscount": "Solicitar aprobación de descuento",
+  "store/checkout.b2b.modal.requestDiscountConfirmation": "El descuento aplicado supera el límite máximo permitido para su perfil. ¿Desea enviar una solicitud de aprobación para continuar con estos valores?",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Finalizar edicion",
   "store/checkout.b2b.manualPrice.placeOrder": "Todos los precios se actualizaron con éxito",

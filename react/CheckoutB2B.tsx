@@ -13,6 +13,7 @@ import {
   IconDelete,
   IconDownload,
   Layout,
+  ModalDialog,
   PageBlock,
   PageHeader,
   Slider,
@@ -73,7 +74,6 @@ function CheckoutB2B() {
     setDiscountApplied,
     subtotal,
     listedPrice,
-    percentualDiscount,
     setPercentualDiscount,
     searchQuery,
     searchStore,
@@ -113,7 +113,7 @@ function CheckoutB2B() {
 
   const showToast = useToast()
 
-  const { maximumDiscount, isSalesUser } = usePermissions()
+  const { maximumRoleDiscount, maximumDiscount, isSalesUser } = usePermissions()
 
   const [
     updateItemsQuantity,
@@ -128,9 +128,16 @@ function CheckoutB2B() {
     }
   }, [listedPrice, subtotal, setPercentualDiscount])
 
-  const sliderMaxValue = useMemo(() => {
-    return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
-  }, [maximumDiscount, percentualDiscount])
+  const isExceedingDiscount = discountApplied > maximumRoleDiscount
+
+  const [isRequestingDiscount, setIsRequestingDiscount] = useState(false)
+
+  // TODO: implement actual request logic and state
+  const [isLoadingRequestDiscount] = useState(false)
+  const handleRequestDiscount = () => {
+    setIsRequestingDiscount(true)
+    setIsEditing(false)
+  }
 
   const filteredItems = useGroupedProducts({
     items,
@@ -206,10 +213,12 @@ function CheckoutB2B() {
   }, [filteredItems, prices])
 
   const handleSavePrices = async () => {
-    if (percentualDiscount > maximumDiscount) {
+    if (isExceedingDiscount) {
       showToast({
         message: formatMessage(messages.manualPriceDiscountExceeded),
       })
+
+      setIsRequestingDiscount(true)
 
       return
     }
@@ -467,7 +476,7 @@ function CheckoutB2B() {
               })
             }}
             min={0}
-            max={sliderMaxValue}
+            max={maximumDiscount}
             step={1}
             defaultValues={[discountApplied]}
             formatValue={(value: number) => `${value}%`}
@@ -492,7 +501,9 @@ function CheckoutB2B() {
                     isLoading={saving}
                     disabled={saving}
                   >
-                    {formatMessage(messages.saveManualPrice)}
+                    {isExceedingDiscount
+                      ? formatMessage(messages.requestDiscount)
+                      : formatMessage(messages.saveManualPrice)}
                   </Button>
                 )}
               </>
@@ -557,6 +568,23 @@ function CheckoutB2B() {
             )}
           </div>
         </div>
+        <ModalDialog
+          centered
+          title={formatMessage(messages.modalRequestDiscount)}
+          loading={isLoadingRequestDiscount}
+          confirmation={{
+            onClick: handleRequestDiscount,
+            label: formatMessage(messages.confirm),
+          }}
+          cancelation={{
+            onClick: () => setIsRequestingDiscount(false),
+            label: formatMessage(messages.cancel),
+          }}
+          onClose={() => setIsRequestingDiscount(false)}
+          isOpen={isRequestingDiscount}
+        >
+          <p>{formatMessage(messages.modalRequestDiscountConfirmation)}</p>
+        </ModalDialog>
       </Layout>
     </div>
   )
