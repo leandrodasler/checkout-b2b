@@ -19,7 +19,11 @@ export function DiscountApprovalModal({ open, setOpen }: Props) {
     setOpen(false)
   }, [setOpen])
 
-  const { data, loading } = useQuery(GET_ALL_SAVED_CARTS)
+  const { data, loading } = useQuery(GET_ALL_SAVED_CARTS, {
+    ssr: false,
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+  })
 
   const carts = data?.getSavedCarts ?? []
 

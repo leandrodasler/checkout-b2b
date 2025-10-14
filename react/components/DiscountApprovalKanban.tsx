@@ -116,7 +116,13 @@ export function DiscountApprovalKanban({
                       }
                     </span>
                     {req.requestedDiscount && (
-                      <Tag size="small">{req.requestedDiscount}%</Tag>
+                      <Tag
+                        size="small"
+                        type={req.requestedDiscount < 0 ? 'success' : 'error'}
+                      >
+                        {req.requestedDiscount < 0 && '+'}
+                        {req.requestedDiscount * -1}%
+                      </Tag>
                     )}
                   </div>
 
