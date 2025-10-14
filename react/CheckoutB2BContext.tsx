@@ -46,6 +46,7 @@ type CheckoutB2BContextData = {
   refetchCurrentSavedCart: (
     variables?: QueryGetCartArgs | undefined
   ) => Promise<ApolloQueryResult<QueryGetSavedCart>>
+  loadingCurrentSavedCart: boolean
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -74,10 +75,10 @@ function CheckoutB2BProviderWrapper({
 
   const savedCartId = customApp?.fields?.savedCart
 
-  const { refetch: refetchCurrentSavedCart } = useQuery<
-    QueryGetSavedCart,
-    QueryGetCartArgs
-  >(GET_SAVED_CART, {
+  const {
+    refetch: refetchCurrentSavedCart,
+    loading: loadingCurrentSavedCart,
+  } = useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
     ssr: false,
     skip: !savedCartId,
     variables: { id: savedCartId ?? '' },
@@ -138,6 +139,7 @@ function CheckoutB2BProviderWrapper({
     searchStore,
     setSearchStore,
     refetchCurrentSavedCart,
+    loadingCurrentSavedCart,
   }
 
   return (

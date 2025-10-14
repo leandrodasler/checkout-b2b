@@ -131,10 +131,13 @@ function CheckoutB2B() {
   }, [listedPrice, subtotal, setPercentualDiscount])
 
   const sliderMaxValue = useMemo(() => {
-    return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
+    return Math.round(
+      Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
+    )
   }, [maximumDiscount, percentualDiscount])
 
-  const isExceedingDiscount = exceedingDiscount > 0
+  const isExceedingDiscount =
+    exceedingDiscount > 0 && percentualDiscount <= maximumDiscount
 
   const [isRequestingDiscount, setIsRequestingDiscount] = useState(false)
 
@@ -214,6 +217,16 @@ function CheckoutB2B() {
   }, [filteredItems, prices])
 
   const handleSavePrices = async () => {
+    if (percentualDiscount > maximumDiscount) {
+      showToast({
+        message: formatMessage(messages.manualPriceDiscountExceeded, {
+          value: maximumDiscount,
+        }),
+      })
+
+      return
+    }
+
     const additionalData = JSON.stringify({
       paymentAddress: orderForm.paymentAddress,
       customData: orderForm.customData,

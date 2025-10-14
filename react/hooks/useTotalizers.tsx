@@ -107,13 +107,20 @@ export function useTotalizers() {
               totalDiscount < 0
                 ? formatMessage(messages.surplus)
                 : formatMessage(messages.totalDiscount),
-            value: `${Math.abs(totalDiscount)}%${
-              exceedingDiscount > 0
-                ? ` (${formatMessage(messages.discountAbove, {
-                    value: exceedingDiscount,
-                  })})`
-                : ''
-            }`,
+            value: (
+              <>
+                {Math.abs(totalDiscount)}%
+                {exceedingDiscount > 0 && (
+                  <div className="t-mini mt1">
+                    (
+                    {formatMessage(messages.discountAbove, {
+                      value: exceedingDiscount,
+                    })}
+                    )
+                  </div>
+                )}
+              </>
+            ),
           },
         ]
       : []),

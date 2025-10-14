@@ -90,7 +90,7 @@
   "store/checkout.b2b.manualPrice.placeOrder": "Todos los precios se actualizaron con éxito",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error al actualizar los precios:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Precios actualizados con éxito",
-  "store/checkout.b2b.manualPrice.discount-exceeded": "El descuento superó el límite permitido",
+  "store/checkout.b2b.manualPrice.discount-exceeded": "El descuento superó el límite global permitido: {value}%",
   "store/checkout.b2b.manualPrice.input.placeholder": "Escriba un valor monetario",
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",
