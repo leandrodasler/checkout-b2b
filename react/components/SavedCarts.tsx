@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActionMenu,
+  IconCheck,
   IconCopy,
   IconPlusLines,
   IconShoppingCart,
@@ -12,6 +13,7 @@ import {
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { usePermissions, useSaveCart } from '../hooks'
 import { messages } from '../utils'
+import { DiscountApprovalModal } from './DiscountApprovalModal'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
 import { SavedCartsListModal } from './SavedCartsListModal'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
@@ -26,6 +28,8 @@ export function SavedCarts({ onChangeItems }: Props) {
 
   const [openForm, setOpenForm] = useState(false)
 
+  const [openDiscountKanbanModal, setOpenDiscountKanbanModal] = useState(false)
+
   const {
     selectedCart,
     openSavedCartModal,
@@ -38,6 +42,7 @@ export function SavedCarts({ onChangeItems }: Props) {
 
   const handleOpenListModal = () => setOpenSavedCartModal(true)
   const handleOpenFormModal = () => setOpenForm(true)
+  const handleOpenDiscountKanbanModal = () => setOpenDiscountKanbanModal(true)
 
   if (!isSalesUser) return null
 
@@ -85,6 +90,14 @@ export function SavedCarts({ onChangeItems }: Props) {
             ),
             onClick: handleOpenListModal,
           },
+          {
+            label: (
+              <OptionMenuWrapper icon={<IconCheck size={12} />}>
+                {formatMessage(messages.discountKanbanModal)}
+              </OptionMenuWrapper>
+            ),
+            onClick: handleOpenDiscountKanbanModal,
+          },
         ]}
       />
       {openSavedCartModal && (
@@ -96,6 +109,12 @@ export function SavedCarts({ onChangeItems }: Props) {
       )}
       {openForm && (
         <SavedCartsFormModal open={openForm} setOpen={setOpenForm} />
+      )}
+      {openDiscountKanbanModal && (
+        <DiscountApprovalModal
+          open={openDiscountKanbanModal}
+          setOpen={setOpenDiscountKanbanModal}
+        />
       )}
     </div>
   )
