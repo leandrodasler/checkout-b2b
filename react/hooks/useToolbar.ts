@@ -18,6 +18,7 @@ export function useToolbar({ onChangeItems }: Props) {
     searchQuery,
     setSearchQuery,
     selectedCart,
+    loadingCurrentSavedCart,
   } = useCheckoutB2BContext()
 
   const { placeOrder, isLoading } = usePlaceOrder({ onChangeItems })
@@ -68,7 +69,11 @@ export function useToolbar({ onChangeItems }: Props) {
     },
     newLine: {
       disabled:
-        isLoading || pending || !orderForm.items.length || blockedCartStatus,
+        isLoading ||
+        pending ||
+        !orderForm.items.length ||
+        blockedCartStatus ||
+        loadingCurrentSavedCart,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,
