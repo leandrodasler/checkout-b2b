@@ -74,12 +74,14 @@ function CheckoutB2B() {
     setDiscountApplied,
     subtotal,
     listedPrice,
+    percentualDiscount,
     setPercentualDiscount,
     searchQuery,
     searchStore,
     setSearchStore,
     getDiscountedPrice,
     setPending,
+    refetchCurrentSavedCart,
   } = useCheckoutB2BContext()
 
   const [itemsAwaitingDeletion, setItemsAwaitingDeletion] = useState<
@@ -113,7 +115,7 @@ function CheckoutB2B() {
 
   const showToast = useToast()
 
-  const { maximumRoleDiscount, maximumDiscount, isSalesUser } = usePermissions()
+  const { exceedingDiscount, maximumDiscount, isSalesUser } = usePermissions()
 
   const [
     updateItemsQuantity,
@@ -128,16 +130,13 @@ function CheckoutB2B() {
     }
   }, [listedPrice, subtotal, setPercentualDiscount])
 
-  const isExceedingDiscount = discountApplied > maximumRoleDiscount
+  const sliderMaxValue = useMemo(() => {
+    return Math.min(maximumDiscount, maximumDiscount - percentualDiscount)
+  }, [maximumDiscount, percentualDiscount])
+
+  const isExceedingDiscount = exceedingDiscount > 0
 
   const [isRequestingDiscount, setIsRequestingDiscount] = useState(false)
-
-  // TODO: implement actual request logic and state
-  const [isLoadingRequestDiscount] = useState(false)
-  const handleRequestDiscount = () => {
-    setIsRequestingDiscount(true)
-    setIsEditing(false)
-  }
 
   const filteredItems = useGroupedProducts({
     items,
@@ -183,7 +182,9 @@ function CheckoutB2B() {
         customData: updatePrices.customData,
       } as CompleteOrderForm)
 
+      refetchCurrentSavedCart()
       setDiscountApplied(0)
+      setIsRequestingDiscount(false)
       setIsEditing(false)
 
       showToast?.({
@@ -213,16 +214,6 @@ function CheckoutB2B() {
   }, [filteredItems, prices])
 
   const handleSavePrices = async () => {
-    if (isExceedingDiscount) {
-      showToast({
-        message: formatMessage(messages.manualPriceDiscountExceeded),
-      })
-
-      setIsRequestingDiscount(true)
-
-      return
-    }
-
     const additionalData = JSON.stringify({
       paymentAddress: orderForm.paymentAddress,
       customData: orderForm.customData,
@@ -476,7 +467,7 @@ function CheckoutB2B() {
               })
             }}
             min={0}
-            max={maximumDiscount}
+            max={sliderMaxValue}
             step={1}
             defaultValues={[discountApplied]}
             formatValue={(value: number) => `${value}%`}
@@ -497,7 +488,11 @@ function CheckoutB2B() {
                 {isEditing && (
                   <Button
                     variation="primary"
-                    onClick={handleSavePrices}
+                    onClick={
+                      isExceedingDiscount
+                        ? () => setIsRequestingDiscount(true)
+                        : handleSavePrices
+                    }
                     isLoading={saving}
                     disabled={saving}
                   >
@@ -571,9 +566,9 @@ function CheckoutB2B() {
         <ModalDialog
           centered
           title={formatMessage(messages.modalRequestDiscount)}
-          loading={isLoadingRequestDiscount}
+          loading={saving}
           confirmation={{
-            onClick: handleRequestDiscount,
+            onClick: handleSavePrices,
             label: formatMessage(messages.confirm),
           }}
           cancelation={{

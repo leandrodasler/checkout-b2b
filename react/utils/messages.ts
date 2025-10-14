@@ -42,6 +42,7 @@ export const messages = defineMessages({
   surplus: { id: 'store/checkout.b2b.totalizer.surplus' },
   totalSurplus: { id: 'store/checkout.b2b.totalizer.totalSurplus' },
   tax: { id: 'store/checkout.b2b.totalizer.tax' },
+  discountAbove: { id: 'store/checkout.b2b.totalizer.discount.above' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },

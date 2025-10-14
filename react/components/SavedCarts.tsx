@@ -48,9 +48,9 @@ export function SavedCarts({ onChangeItems }: Props) {
         <>
           <Tag variation="low">
             {formatMessage(messages.savedCartsCurrentLabel)}:{' '}
-            <strong>{selectedCart.title}</strong>
+            <strong>{selectedCart.title}</strong>{' '}
+            <SavedCartStatusBadge status={selectedCart.status} />
           </Tag>
-          <SavedCartStatusBadge status={selectedCart.status} />
         </>
       )}
       <ActionMenu

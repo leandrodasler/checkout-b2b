@@ -1,3 +1,4 @@
+import { ApolloQueryResult } from 'apollo-client'
 import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
@@ -42,6 +43,9 @@ type CheckoutB2BContextData = {
   setSearchQuery: Dispatch<SetStateAction<string>>
   searchStore: boolean
   setSearchStore: Dispatch<SetStateAction<boolean>>
+  refetchCurrentSavedCart: (
+    variables?: QueryGetCartArgs | undefined
+  ) => Promise<ApolloQueryResult<QueryGetSavedCart>>
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -70,10 +74,14 @@ function CheckoutB2BProviderWrapper({
 
   const savedCartId = customApp?.fields?.savedCart
 
-  useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
+  const { refetch: refetchCurrentSavedCart } = useQuery<
+    QueryGetSavedCart,
+    QueryGetCartArgs
+  >(GET_SAVED_CART, {
     ssr: false,
-    skip: !savedCartId || selectedCart?.id === savedCartId,
+    skip: !savedCartId,
     variables: { id: savedCartId ?? '' },
+    notifyOnNetworkStatusChange: true,
     onCompleted({ getCart }) {
       setSelectedCart(getCart)
     },
@@ -129,6 +137,7 @@ function CheckoutB2BProviderWrapper({
     setSearchQuery,
     searchStore,
     setSearchStore,
+    refetchCurrentSavedCart,
   }
 
   return (

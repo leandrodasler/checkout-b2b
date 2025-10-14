@@ -45,6 +45,7 @@ import { CHECKOUT_B2B_CUSTOM_APP_ID, messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
 import { CellWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
+import { SavedCartStatusBadge } from './SavedCartStatusBadge'
 import { TruncatedText } from './TruncatedText'
 
 type SavedCartRow = SavedCart &
@@ -135,6 +136,15 @@ export function SavedCartsTable(props?: Props) {
         selectedCart?.parentCartId === deleteCart
       ) {
         setSelectedCart(null)
+
+        if (
+          selectedCart.status === 'denied' ||
+          selectedCart.status === 'pending'
+        ) {
+          clearCart().then((clearCartData) => {
+            setOrderForm(clearCartData.data?.clearCart)
+          })
+        }
       }
 
       const deletedChild: Record<string, boolean> = { '': false }
@@ -438,6 +448,19 @@ export function SavedCartsTable(props?: Props) {
                   {new Date(rowData.createdIn).toLocaleDateString()}
                 </span>
               </Tooltip>
+            </CellWrapper>
+          )
+        },
+      },
+      status: {
+        width: 130,
+        title: 'Status',
+        cellRenderer: function Column({ rowData }) {
+          if (rowData.loading) return <Spinner size={16} />
+
+          return (
+            <CellWrapper isChildren={rowData.parentCartId}>
+              <SavedCartStatusBadge status={rowData.status} />
             </CellWrapper>
           )
         },

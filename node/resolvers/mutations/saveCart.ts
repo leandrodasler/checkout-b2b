@@ -28,8 +28,8 @@ export const saveCart = async (
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-  const { clients } = context
-  const orderForm = (await clients.checkout.orderForm(orderFormId)) as OrderForm
+  const { checkout, masterdata } = context.clients
+  const orderForm = (await checkout.orderForm(orderFormId)) as OrderForm
 
   let additionalDataObject = {}
 
@@ -52,6 +52,14 @@ export const saveCart = async (
     }
   }
 
+  if (id) {
+    const currentCart = await getCart(null, { id }, context)
+
+    if (currentCart?.title) {
+      newTitle = currentCart.title
+    }
+  }
+
   const discounts = getManualPriceDiscount(orderForm) * 100
   const totalizerItems = orderForm.totalizers.find((t) => t.id === 'Items')
   const percentualDiscount = Math.round(
@@ -63,7 +71,7 @@ export const saveCart = async (
   const status = percentualDiscount > maxDiscount ? 'pending' : 'open'
   const data = JSON.stringify({ ...orderForm, ...additionalDataObject })
 
-  const { DocumentId } = await clients.masterdata.createOrUpdateEntireDocument({
+  const { DocumentId } = await masterdata.createOrUpdatePartialDocument({
     schema: SCHEMA_VERSION,
     dataEntity: SAVED_CART_ENTITY,
     fields: {
@@ -82,7 +90,7 @@ export const saveCart = async (
   })
 
   const savedCartPromises = [
-    clients.checkout.setSingleCustomData(orderFormId, {
+    checkout.setSingleCustomData(orderFormId, {
       appFieldName: 'savedCart',
       appId: CHECKOUT_B2B_CUSTOM_APP_ID,
       value: DocumentId,
@@ -91,7 +99,7 @@ export const saveCart = async (
 
   if (parentSavedCart?.id) {
     savedCartPromises.push(
-      clients.masterdata.updatePartialDocument({
+      masterdata.updatePartialDocument({
         dataEntity: SAVED_CART_ENTITY,
         id: parentSavedCart.id,
         schema: SCHEMA_VERSION,

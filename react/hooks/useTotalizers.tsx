@@ -108,7 +108,11 @@ export function useTotalizers() {
                 ? formatMessage(messages.surplus)
                 : formatMessage(messages.totalDiscount),
             value: `${Math.abs(totalDiscount)}%${
-              exceedingDiscount > 0 ? ` (+${exceedingDiscount}%)` : ''
+              exceedingDiscount > 0
+                ? ` (${formatMessage(messages.discountAbove, {
+                    value: exceedingDiscount,
+                  })})`
+                : ''
             }`,
           },
         ]

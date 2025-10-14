@@ -57,6 +57,7 @@
   "store/checkout.b2b.totalizer.surplus": "Superávit (%)",
   "store/checkout.b2b.totalizer.totalSurplus": "Superávit Total",
   "store/checkout.b2b.totalizer.tax": "Impuestos",
+  "store/checkout.b2b.totalizer.discount.above": "{value}% por encima del límite",
 
   "store/checkout.b2b.column.name": "Nombre",
   "store/checkout.b2b.column.quantity": "Cantidad",

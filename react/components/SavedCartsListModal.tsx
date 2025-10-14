@@ -25,7 +25,7 @@ export function SavedCartsListModal({ open, setOpen, onChangeItems }: Props) {
       isOpen={open}
       onClose={handleCloseModal}
       centered
-      size="large"
+      size="extralarge"
       title={formatMessage(messages.savedCartsTitle)}
       bottomBar={
         <Button

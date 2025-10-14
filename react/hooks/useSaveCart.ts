@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { Mutation, MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
-import { useRuntime } from 'vtex.render-runtime'
 
 import { useOrderFormCustom, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
-  const { setQuery } = useRuntime()
   const { setPending, selectedCart, setSelectedCart } = useCheckoutB2BContext()
   const { orderForm } = useOrderFormCustom()
   const showToast = useToast()
@@ -32,7 +30,6 @@ export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
     refetchQueries: [{ query: GET_SAVED_CARTS }],
     onCompleted({ saveCart }) {
       showToast({ message: formatMessage(messages.savedCartsSaveSuccess) })
-      setQuery({ savedCart: saveCart.id })
       setSelectedCart(saveCart)
     },
     onError({ message }) {
