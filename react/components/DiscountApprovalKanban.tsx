@@ -49,7 +49,7 @@ export function DiscountApprovalKanban({
     { key: 'approved', label: formatMessage(messages.discountStatusApproved) },
     { key: 'denied', label: formatMessage(messages.discountStatusDenied) },
     {
-      key: 'orderApproved',
+      key: 'orderPlaced',
       label: formatMessage(messages.discountStatusOrderApproved),
     },
   ]
