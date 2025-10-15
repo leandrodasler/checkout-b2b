@@ -229,4 +229,11 @@ declare global {
     useIndividualShippingEstimates: boolean | null
     allowMultipleCoupons: boolean | null
   }
+
+  type Order = {
+    orderId: string
+    items: unknown[]
+    status: string
+    customData: CustomData
+  }
 }

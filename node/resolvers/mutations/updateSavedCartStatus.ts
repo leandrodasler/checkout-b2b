@@ -1,4 +1,5 @@
 import { NotFoundError, ServiceContext } from '@vtex/api'
+import { MutationUpdateSavedCartStatusArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import { SAVED_CART_ENTITY, SCHEMA_VERSION } from '../../utils'
@@ -7,7 +8,7 @@ import { getSavedCarts } from '../queries/getSavedCarts'
 
 export async function updateSavedCartStatus(
   _: unknown,
-  { id, status }: { id: string; status: string },
+  { id, status }: MutationUpdateSavedCartStatusArgs,
   context: ServiceContext<Clients>
 ) {
   const cart = await getCart(null, { id }, context)

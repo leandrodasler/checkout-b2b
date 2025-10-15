@@ -14,5 +14,11 @@
       "path": "/_v/checkout-b2b/cart.csv",
       "public": true
     }
+  },
+  "events": {
+    "broadcasterOrder": {
+      "sender": "vtex.orders-broadcast",
+      "topics": ["order-created"]
+    }
   }
 }
