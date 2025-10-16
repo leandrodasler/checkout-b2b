@@ -86,6 +86,7 @@ export function DiscountApprovalModal({ open, setOpen }: Props) {
           requests={carts}
           onChangeCartStatus={handleCartStatus}
           isLoadingChangeCartStatus={updateCartStatusLoading}
+          onUseCart={handleCloseModal}
         />
       ) : (
         <div
