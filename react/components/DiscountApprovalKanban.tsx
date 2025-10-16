@@ -12,24 +12,15 @@ import {
 } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { useSavedCart } from '../hooks'
 import { messages } from '../utils/messages'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 
 interface DiscountApprovalKanbanProps {
-  requests?: Array<
-    Pick<
-      SavedCart,
-      | 'id'
-      | 'title'
-      | 'email'
-      | 'requestedDiscount'
-      | 'status'
-      | 'createdIn'
-      | 'data'
-    >
-  >
+  requests?: SavedCart[]
   onChangeCartStatus: (id: string, status: SavedCartStatus) => void
   isLoadingChangeCartStatus: boolean
+  onUseCart: () => void
 }
 
 interface CartData {
@@ -40,9 +31,11 @@ export function DiscountApprovalKanban({
   requests = [],
   onChangeCartStatus,
   isLoadingChangeCartStatus,
+  onUseCart,
 }: DiscountApprovalKanbanProps) {
   const { formatMessage } = useIntl()
   const { selectedCart } = useCheckoutB2BContext()
+  const { handleUseSavedCart, loading } = useSavedCart()
 
   const columns = [
     { key: 'open', label: formatMessage(messages.discountStatusOpen) },
@@ -141,7 +134,10 @@ export function DiscountApprovalKanban({
                               size="small"
                               variation="tertiary"
                               icon={<IconShoppingCart size={16} />}
-                              onClick={() => {}}
+                              onClick={() =>
+                                handleUseSavedCart(req).then(onUseCart)
+                              }
+                              isLoading={loading && isCurrent}
                               disabled={isCurrent}
                               style={{ padding: 0 }}
                             />

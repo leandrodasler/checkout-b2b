@@ -25,16 +25,10 @@ type Props = {
 export function SavedCarts({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { isSalesUser } = usePermissions()
-
   const [openForm, setOpenForm] = useState(false)
-
   const [openDiscountKanbanModal, setOpenDiscountKanbanModal] = useState(false)
-
-  const {
-    selectedCart,
-    openSavedCartModal,
-    setOpenSavedCartModal,
-  } = useCheckoutB2BContext()
+  const { selectedCart } = useCheckoutB2BContext()
+  const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
 
   const { handleSaveCart, loading } = useSaveCart({
     isCurrent: true,

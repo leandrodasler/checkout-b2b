@@ -44,7 +44,7 @@ export function SavedCartsListModal({ open, setOpen, onChangeItems }: Props) {
       showBottomBarBorder={false}
     >
       <div className="t-small">
-        <SavedCartsTable onChangeItems={onChangeItems} />
+        <SavedCartsTable onChangeItems={onChangeItems} setOpen={setOpen} />
       </div>
     </Modal>
   )
