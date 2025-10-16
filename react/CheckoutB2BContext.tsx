@@ -78,6 +78,7 @@ function CheckoutB2BProviderWrapper({
   } = useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
     ssr: false,
     skip: !savedCartId,
+    fetchPolicy: 'network-only',
     variables: { id: savedCartId ?? '' },
     notifyOnNetworkStatusChange: true,
     onCompleted({ getCart }) {
