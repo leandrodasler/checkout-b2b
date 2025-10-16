@@ -13,6 +13,7 @@ import {
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { messages } from '../utils/messages'
+import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 
 interface DiscountApprovalKanbanProps {
   requests?: Array<
@@ -121,8 +122,13 @@ export function DiscountApprovalKanban({
 
               return (
                 <div key={req.id} className="relative">
-                  <Card className="ph4 pv2 br2 shadow-2">
-                    <div className="flex flex-column" style={{ gap: 6 }}>
+                  <Card noPadding>
+                    <div
+                      className={`flex flex-column pa6 br2${
+                        isCurrent ? ' bg-success--faded' : ''
+                      }`}
+                      style={{ gap: 6 }}
+                    >
                       <div className="flex justify-between items-center">
                         <div className="c-muted-1">
                           <span className="t-mini">
@@ -162,17 +168,9 @@ export function DiscountApprovalKanban({
                             />
                           }
                         </span>
-                        {req.requestedDiscount && (
-                          <Tag
-                            size="small"
-                            type={
-                              req.requestedDiscount < 0 ? 'success' : 'error'
-                            }
-                          >
-                            {req.requestedDiscount < 0 && '+'}
-                            {req.requestedDiscount * -1}%
-                          </Tag>
-                        )}
+                        <SavedCartDiscountBadge
+                          discount={req.requestedDiscount}
+                        />
                       </div>
 
                       {req.status === 'pending' && (

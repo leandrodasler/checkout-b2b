@@ -100,6 +100,9 @@ export const messages = defineMessages({
   savedCartsSaveNew: {
     id: 'store/checkout.b2b.savedCarts.save-cart.new',
   },
+  savedCartsDiscount: {
+    id: 'store/checkout.b2b.savedCarts.discount',
+  },
   requestDiscount: { id: 'store/checkout.b2b.button.requestDiscount' },
   modalRequestDiscount: { id: 'store/checkout.b2b.modal.requestDiscount' },
   modalRequestDiscountConfirmation: {

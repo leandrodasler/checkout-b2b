@@ -27,6 +27,7 @@
   "store/checkout.b2b.savedCarts.use-cart.inUse.label": "Carrito en uso en este momento",
   "store/checkout.b2b.savedCarts.save-cart.current": "Guardar carrito en la misma transacción",
   "store/checkout.b2b.savedCarts.save-cart.new": "Guardar carrito in nueva transacción",
+  "store/checkout.b2b.savedCarts.discount": "Descuento/Superávit",
   "store/checkout.b2b.savedCarts.status.open": "Abierto",
   "store/checkout.b2b.savedCarts.status.pending": "Pendiente",
   "store/checkout.b2b.savedCarts.status.approved": "Aprobado",

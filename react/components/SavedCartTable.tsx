@@ -45,6 +45,7 @@ import { CHECKOUT_B2B_CUSTOM_APP_ID, messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
 import { CellWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
+import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
 import { TruncatedText } from './TruncatedText'
 
@@ -479,6 +480,19 @@ export function SavedCartsTable(props?: Props) {
                 </CellWrapper>
               }
             />
+          )
+        },
+      },
+      requestedDiscount: {
+        width: 150,
+        title: formatMessage(messages.savedCartsDiscount),
+        cellRenderer: function Column({ rowData }) {
+          if (rowData.loading) return <Spinner size={16} />
+
+          return (
+            <CellWrapper isChildren={rowData.parentCartId}>
+              <SavedCartDiscountBadge discount={rowData.requestedDiscount} />
+            </CellWrapper>
           )
         },
       },
