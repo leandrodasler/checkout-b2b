@@ -4,8 +4,8 @@ import type { MutationSaveCartArgs, SavedCart } from 'ssesandbox04.checkout-b2b'
 import { Clients } from '../../clients'
 import {
   CHECKOUT_B2B_CUSTOM_APP_ID,
-  getManualPriceDiscount,
   getMaxDiscountByRoleId,
+  getPercentualDiscount,
   getSessionData,
   SAVED_CART_ENTITY,
   SCHEMA_VERSION,
@@ -52,23 +52,16 @@ export const saveCart = async (
     }
   }
 
-  if (id) {
-    const currentCart = await getCart(null, { id }, context)
+  let currentCart: SavedCart | null = null
 
-    if (currentCart?.title) {
-      newTitle = currentCart.title
-    }
+  if (id) {
+    currentCart = await getCart(null, { id }, context)
   }
 
-  const discounts = getManualPriceDiscount(orderForm) * 100
-  const totalizerItems = orderForm.totalizers.find((t) => t.id === 'Items')
-  const percentualDiscount = Math.round(
-    ((discounts * -1) / (totalizerItems?.value ?? 0)) * 100
-  )
-
+  const percentualDiscount = getPercentualDiscount(orderForm)
   const settings = await getAppSettings(null, null, context)
   const maxDiscount = getMaxDiscountByRoleId(settings, roleId)
-  const status = percentualDiscount > maxDiscount ? 'pending' : 'open'
+  const calculatedStatus = percentualDiscount > maxDiscount ? 'pending' : 'open'
   const data = JSON.stringify({ ...orderForm, ...additionalDataObject })
 
   const { DocumentId } = await masterdata.createOrUpdatePartialDocument({
@@ -76,16 +69,21 @@ export const saveCart = async (
     dataEntity: SAVED_CART_ENTITY,
     fields: {
       id,
-      title: newTitle,
-      email,
+      title: currentCart?.title ?? newTitle,
+      email:
+        calculatedStatus === 'pending' ? email : currentCart?.email ?? email,
       orderFormId,
-      organizationId,
-      costCenterId,
+      organizationId: currentCart?.organizationId ?? organizationId,
+      costCenterId: currentCart?.costCenterId ?? costCenterId,
       data,
-      parentCartId,
+      parentCartId: currentCart?.parentCartId ?? parentCartId,
       requestedDiscount: percentualDiscount,
-      status,
-      roleId,
+      status:
+        currentCart?.status === 'pending' && calculatedStatus === 'open'
+          ? 'pending'
+          : calculatedStatus,
+      roleId:
+        calculatedStatus === 'pending' ? roleId : currentCart?.roleId ?? roleId,
     },
   })
 
@@ -102,7 +100,6 @@ export const saveCart = async (
       masterdata.updatePartialDocument({
         dataEntity: SAVED_CART_ENTITY,
         id: parentSavedCart.id,
-        schema: SCHEMA_VERSION,
         fields: {
           childrenQuantity: (parentSavedCart.childrenQuantity ?? 0) + 1,
         },

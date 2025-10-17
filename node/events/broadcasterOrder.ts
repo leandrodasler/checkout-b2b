@@ -1,11 +1,7 @@
 import { EventContext } from '@vtex/api'
 
 import { Clients } from '../clients'
-import {
-  CHECKOUT_B2B_CUSTOM_APP_ID,
-  SAVED_CART_ENTITY,
-  SCHEMA_VERSION,
-} from '../utils'
+import { CHECKOUT_B2B_CUSTOM_APP_ID, SAVED_CART_ENTITY } from '../utils'
 
 export async function broadcasterOrder(context: EventContext<Clients>) {
   if (context.body.currentState !== 'order-created' || !context.body.orderId) {
@@ -24,7 +20,6 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
 
   context.clients.masterdata.updatePartialDocument({
     dataEntity: SAVED_CART_ENTITY,
-    schema: SCHEMA_VERSION,
     id: savedCartId,
     fields: { status: 'orderPlaced' },
   })

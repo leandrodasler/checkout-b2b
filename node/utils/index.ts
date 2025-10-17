@@ -5,7 +5,11 @@ import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
-import { B2B_USERS_ENTITY, B2B_USERS_FIELDS } from './constants'
+import {
+  B2B_USERS_ENTITY,
+  B2B_USERS_FIELDS,
+  B2B_USERS_SCHEMA,
+} from './constants'
 import {
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
@@ -89,16 +93,50 @@ export async function getAllSavedCarts({
       sort,
     })
 
-    if (savedCarts.length) {
-      result.push(
-        ...savedCarts.map((cart) => ({
-          ...cart,
-          status: cart.status ?? 'open',
-        }))
-      )
+    if (!savedCarts.length) return
 
-      await fetchCarts(page + 1)
+    const savedCartsWithoutRoleId = savedCarts.filter((cart) => !cart.roleId)
+    const emailRoleIdMap: Record<string, string> = {}
+
+    for await (const cart of savedCartsWithoutRoleId) {
+      if (emailRoleIdMap[cart.email]) continue
+
+      const [user] = await masterdata.searchDocuments<B2BUser>({
+        dataEntity: B2B_USERS_ENTITY,
+        schema: B2B_USERS_SCHEMA,
+        fields: B2B_USERS_FIELDS,
+        pagination: { page: 1, pageSize: 1 },
+        where: `email=${cart.email} AND orgId=${cart.organizationId} AND costId=${cart.costCenterId}`,
+      })
+
+      if (!user?.roleId) continue
+
+      await masterdata.updatePartialDocument({
+        dataEntity: SAVED_CART_ENTITY,
+        fields: { roleId: user.roleId },
+        id: cart.id,
+      })
+
+      emailRoleIdMap[cart.email] = user.roleId
     }
+
+    result.push(
+      ...savedCarts.map((cart) => {
+        const status = cart.status ?? 'open'
+        const roleId = cart.roleId ?? emailRoleIdMap[cart.email]
+        let { requestedDiscount } = cart
+
+        if (!requestedDiscount) {
+          const orderForm = JSON.parse(cart.data) as OrderForm
+
+          requestedDiscount = getPercentualDiscount(orderForm)
+        }
+
+        return { ...cart, status, requestedDiscount, roleId }
+      })
+    )
+
+    await fetchCarts(page + 1)
   }
 
   await fetchCarts()
@@ -203,6 +241,13 @@ export function getManualPriceDiscount({ items, totalizers }: OrderForm) {
   )
 
   return hasManualPrice ? (discountTotalizer?.value ?? 0) / 100 : 0
+}
+
+export function getPercentualDiscount(orderForm: OrderForm) {
+  const discounts = getManualPriceDiscount(orderForm) * 100
+  const totalizerItems = orderForm.totalizers.find((t) => t.id === 'Items')
+
+  return Math.round(((discounts * -1) / (totalizerItems?.value ?? 0)) * 100)
 }
 
 export function getMaxDiscountByRoleId(settings: AppSettings, roleId: string) {

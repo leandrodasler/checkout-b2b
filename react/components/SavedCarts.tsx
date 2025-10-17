@@ -98,6 +98,7 @@ export function SavedCarts({ onChangeItems }: Props) {
         <SavedCartsListModal
           open={openSavedCartModal}
           setOpen={setOpenSavedCartModal}
+          setOpenKanban={setOpenDiscountKanbanModal}
           onChangeItems={onChangeItems}
         />
       )}
@@ -108,6 +109,7 @@ export function SavedCarts({ onChangeItems }: Props) {
         <DiscountApprovalModal
           open={openDiscountKanbanModal}
           setOpen={setOpenDiscountKanbanModal}
+          onChangeItems={onChangeItems}
         />
       )}
     </div>

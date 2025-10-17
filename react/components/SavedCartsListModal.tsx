@@ -9,10 +9,16 @@ import { SavedCartsTable } from './SavedCartTable'
 type Props = {
   open: boolean
   setOpen: (value: boolean) => void
+  setOpenKanban: (value: boolean) => void
   onChangeItems: () => void
 }
 
-export function SavedCartsListModal({ open, setOpen, onChangeItems }: Props) {
+export function SavedCartsListModal({
+  open,
+  setOpen,
+  setOpenKanban,
+  onChangeItems,
+}: Props) {
   const { formatMessage } = useIntl()
   const { navigate, query } = useRuntime()
 
@@ -28,18 +34,30 @@ export function SavedCartsListModal({ open, setOpen, onChangeItems }: Props) {
       size="extralarge"
       title={formatMessage(messages.savedCartsTitle)}
       bottomBar={
-        <Button
-          variation="tertiary"
-          onClick={() =>
-            navigate({
-              page: 'store.b2b-saved-carts',
-              fallbackToWindowLocation: true,
-              query: new URLSearchParams(query).toString(),
-            })
-          }
-        >
-          {formatMessage(messages.savedCartsFullScreen)}
-        </Button>
+        <div className="flex flex-wrap">
+          <Button
+            variation="tertiary"
+            onClick={() => {
+              setOpen(false)
+              setOpenKanban(true)
+            }}
+          >
+            {formatMessage(messages.discountKanbanModal)}
+          </Button>
+
+          <Button
+            variation="tertiary"
+            onClick={() =>
+              navigate({
+                page: 'store.b2b-saved-carts',
+                fallbackToWindowLocation: true,
+                query: new URLSearchParams(query).toString(),
+              })
+            }
+          >
+            {formatMessage(messages.savedCartsFullScreen)}
+          </Button>
+        </div>
       }
       showBottomBarBorder={false}
     >

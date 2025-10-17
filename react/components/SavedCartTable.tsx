@@ -1,11 +1,7 @@
 import React, { useCallback, useState } from 'react'
-import { useMutation, useQuery } from 'react-apollo'
+import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
-import type {
-  Mutation,
-  MutationDeleteCartArgs,
-  SavedCart,
-} from 'ssesandbox04.checkout-b2b'
+import type { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import {
@@ -13,14 +9,13 @@ import {
   IconDelete,
   Spinner,
   Table,
+  Tag,
   Tooltip,
 } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import DELETE_SAVED_CART from '../graphql/deleteCart.graphql'
 import GET_SAVED_CARTS from '../graphql/getSavedCarts.graphql'
-import { useClearCart, useSavedCart } from '../hooks'
-import { useOrderFormCustom } from '../hooks/useOrderFormCustom'
+import { useDeleteSavedCart, useSavedCart } from '../hooks'
 import { useToast } from '../hooks/useToast'
 import type { GetSavedCartsQuery, TableSchema } from '../typings'
 import { messages } from '../utils'
@@ -70,14 +65,7 @@ type Props = {
 export function SavedCartsTable(props?: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
-  const { setOrderForm } = useOrderFormCustom()
-  const { selectedCart, setSelectedCart } = useCheckoutB2BContext()
-
-  const { clearCart } = useClearCart({
-    updateOrderForm: false,
-    onChangeItems: props?.onChangeItems,
-  })
-
+  const { selectedCart } = useCheckoutB2BContext()
   const [deletingCartId, setDeletingCartId] = useState('')
   const [expandedCarts, setExpandedCarts] = React.useState<string[]>([])
   const [childrenCarts, setChildrenCarts] = React.useState<
@@ -93,58 +81,14 @@ export function SavedCartsTable(props?: Props) {
     }
   )
 
-  const [deleteCartMutation, { loading: loadingDeleteCart }] = useMutation<
-    Pick<Mutation, 'deleteCart'>,
-    MutationDeleteCartArgs
-  >(DELETE_SAVED_CART, {
-    onError: showToast,
-    onCompleted({ deleteCart }) {
-      if (!deleteCart) return
-
-      if (
-        selectedCart?.id === deleteCart ||
-        selectedCart?.parentCartId === deleteCart
-      ) {
-        setSelectedCart(null)
-
-        if (
-          selectedCart.status === 'denied' ||
-          selectedCart.status === 'pending'
-        ) {
-          clearCart().then((clearCartData) => {
-            setOrderForm(clearCartData.data?.clearCart)
-          })
-        }
-      }
-
-      const deletedChild: Record<string, boolean> = { '': false }
-
-      Object.keys(childrenCarts).forEach((parentCartId) => {
-        if (childrenCarts[parentCartId].some((c) => c.id === deleteCart)) {
-          deletedChild[parentCartId] = true
-          setChildrenCarts({
-            ...childrenCarts,
-            [parentCartId]: childrenCarts[parentCartId].filter(
-              (c) => c.id !== deleteCart
-            ),
-          })
-        }
-      })
-
-      updateQuery((prev) => ({
-        getSavedCarts: prev.getSavedCarts
-          .filter(
-            (cart: SavedCart) =>
-              cart.id !== deleteCart && cart.parentCartId !== deleteCart
-          )
-          .map((cart: SavedCart) => ({
-            ...cart,
-            childrenQuantity: deletedChild[cart.id]
-              ? (cart.childrenQuantity ?? 1) - 1
-              : cart.childrenQuantity,
-          })),
-      }))
-    },
+  const [
+    deleteCartMutation,
+    { loading: loadingDeleteCart },
+  ] = useDeleteSavedCart({
+    childrenCarts,
+    setChildrenCarts,
+    onChangeItems: props?.onChangeItems,
+    updateQuery,
   })
 
   const { loading: loadingApplySavedCart, handleUseSavedCart } = useSavedCart({
@@ -259,6 +203,42 @@ export function SavedCartsTable(props?: Props) {
           )
         },
       },
+      email: {
+        title: formatMessage(messages.shareCartUser),
+        cellRenderer: function Column({ rowData }) {
+          if (rowData.loading) return <Spinner size={16} />
+
+          return (
+            <TruncatedText
+              label={rowData.email}
+              text={
+                <CellWrapper isChildren={rowData.parentCartId}>
+                  {rowData.email}
+                </CellWrapper>
+              }
+            />
+          )
+        },
+      },
+      roleId: {
+        title: ' ',
+        width: 155,
+        cellRenderer: function Column({ rowData }) {
+          if (rowData.loading) return <Spinner size={16} />
+
+          return (
+            <CellWrapper isChildren={rowData.parentCartId}>
+              {rowData.roleId ? (
+                <Tag size="small" variation="low">
+                  {rowData.roleId}
+                </Tag>
+              ) : (
+                '---'
+              )}
+            </CellWrapper>
+          )
+        },
+      },
       requestedDiscount: {
         width: 150,
         title: formatMessage(messages.savedCartsDiscount),
@@ -267,7 +247,11 @@ export function SavedCartsTable(props?: Props) {
 
           return (
             <CellWrapper isChildren={rowData.parentCartId}>
-              <SavedCartDiscountBadge discount={rowData.requestedDiscount} />
+              {rowData.requestedDiscount ? (
+                <SavedCartDiscountBadge discount={rowData.requestedDiscount} />
+              ) : (
+                'N/A'
+              )}
             </CellWrapper>
           )
         },
@@ -392,6 +376,7 @@ export function SavedCartsTable(props?: Props) {
       items={savedCarts ?? []}
       density="high"
       loading={loading}
+      onRowClick={() => {}}
     />
   )
 }

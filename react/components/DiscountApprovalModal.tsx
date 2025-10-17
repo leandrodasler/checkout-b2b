@@ -23,28 +23,31 @@ type MutationUpdateSavedCartStatus = Pick<Mutation, 'updateSavedCartStatus'>
 type Props = {
   open: boolean
   setOpen: (value: boolean) => void
+  onChangeItems: () => void
 }
 
-export function DiscountApprovalModal({ open, setOpen }: Props) {
+export function DiscountApprovalModal({ open, setOpen, onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const showToast = useToast()
   const { refetchCurrentSavedCart } = useCheckoutB2BContext()
+  const lastUpdateCartStatusData = useRef<SavedCart[]>()
 
   const handleCloseModal = useCallback(() => {
     setOpen(false)
   }, [setOpen])
 
-  const { data, loading } = useQuery<QueryGetAllSavedCarts>(
+  const { data, networkStatus } = useQuery<QueryGetAllSavedCarts>(
     GET_ALL_SAVED_CARTS,
     {
       ssr: false,
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-and-network',
       notifyOnNetworkStatusChange: true,
       onError: showToast,
+      onCompleted() {
+        lastUpdateCartStatusData.current = undefined
+      },
     }
   )
-
-  const lastUpdateCartStatusData = useRef<SavedCart[]>()
 
   const [
     updateSavedCartStatus,
@@ -81,12 +84,13 @@ export function DiscountApprovalModal({ open, setOpen }: Props) {
       size="extralarge"
       style={{ minHeight: '50vh' }}
     >
-      {!loading ? (
+      {networkStatus !== 1 ? (
         <DiscountApprovalKanban
           requests={carts}
           onChangeCartStatus={handleCartStatus}
           isLoadingChangeCartStatus={updateCartStatusLoading}
           onUseCart={handleCloseModal}
+          onChangeItems={onChangeItems}
         />
       ) : (
         <div

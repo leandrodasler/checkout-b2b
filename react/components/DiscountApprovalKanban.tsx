@@ -6,13 +6,14 @@ import {
   ButtonPlain,
   ButtonWithIcon,
   Card,
+  IconDelete,
   IconShoppingCart,
   Tag,
   Tooltip,
 } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { useSavedCart } from '../hooks'
+import { useDeleteSavedCart, useSavedCart } from '../hooks'
 import { messages } from '../utils/messages'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 
@@ -21,6 +22,7 @@ interface DiscountApprovalKanbanProps {
   onChangeCartStatus: (id: string, status: SavedCartStatus) => void
   isLoadingChangeCartStatus: boolean
   onUseCart: () => void
+  onChangeItems: () => void
 }
 
 interface CartData {
@@ -32,10 +34,21 @@ export function DiscountApprovalKanban({
   onChangeCartStatus,
   isLoadingChangeCartStatus,
   onUseCart,
+  onChangeItems,
 }: DiscountApprovalKanbanProps) {
   const { formatMessage } = useIntl()
   const { selectedCart } = useCheckoutB2BContext()
-  const { handleUseSavedCart, loading } = useSavedCart()
+
+  const { handleUseSavedCart, loading: loadingUseCart } = useSavedCart({
+    onChangeItems,
+  })
+
+  const [deleteCart, { loading: loadingDeleteCart }] = useDeleteSavedCart({
+    onChangeItems,
+    options: { refetchQueries: ['getAllSavedCarts'] },
+  })
+
+  const deletingCart = useRef<string>()
 
   const columns = [
     { key: 'open', label: formatMessage(messages.discountStatusOpen) },
@@ -128,21 +141,47 @@ export function DiscountApprovalKanban({
                             {new Date(req.createdIn).toLocaleString()}
                           </span>
                         </div>
-                        <Tooltip label={tooltipLabel}>
-                          <div className="absolute right-1 top-1">
-                            <ButtonWithIcon
-                              size="small"
-                              variation="tertiary"
-                              icon={<IconShoppingCart size={16} />}
-                              onClick={() =>
-                                handleUseSavedCart(req).then(onUseCart)
-                              }
-                              isLoading={loading && isCurrent}
-                              disabled={isCurrent}
-                              style={{ padding: 0 }}
-                            />
-                          </div>
-                        </Tooltip>
+
+                        <div className="absolute right-1 top-1 flex flex-wrap">
+                          <Tooltip label={formatMessage(messages.delete)}>
+                            <div>
+                              <ButtonWithIcon
+                                size="small"
+                                variation="tertiary"
+                                icon={<IconDelete size={16} />}
+                                onClick={() => {
+                                  deletingCart.current = req.id
+                                  deleteCart({ variables: { id: req.id } })
+                                }}
+                                isLoading={
+                                  loadingDeleteCart &&
+                                  deletingCart.current === req.id
+                                }
+                                disabled={loadingUseCart || loadingDeleteCart}
+                                style={{ padding: 0 }}
+                              />
+                            </div>
+                          </Tooltip>
+                          <Tooltip label={tooltipLabel}>
+                            <div>
+                              <ButtonWithIcon
+                                size="small"
+                                variation="tertiary"
+                                icon={<IconShoppingCart size={16} />}
+                                onClick={() =>
+                                  handleUseSavedCart(req).then(onUseCart)
+                                }
+                                isLoading={loadingUseCart && isCurrent}
+                                disabled={
+                                  loadingUseCart ||
+                                  loadingDeleteCart ||
+                                  isCurrent
+                                }
+                                style={{ padding: 0 }}
+                              />
+                            </div>
+                          </Tooltip>
+                        </div>
                       </div>
 
                       <div className="c-action-primary">
