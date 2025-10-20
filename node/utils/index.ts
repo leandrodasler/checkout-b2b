@@ -266,7 +266,15 @@ export function getMaxDiscountByRoleId(settings: AppSettings, roleId: string) {
   }
 }
 
+export const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
+export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CHECKOUT_B2B_CUSTOM_APP_ID = 'checkout-b2b'
+
+const B2B_CHECKOUT_SETTINGS_APP = {
+  fields: [PO_NUMBER_CUSTOM_FIELD],
+  id: B2B_CHECKOUT_CUSTOM_APP_ID,
+  major: 1,
+}
 
 const CHECKOUT_B2B_CUSTOM_APP = {
   fields: ['savedCart'],
@@ -277,25 +285,40 @@ const CHECKOUT_B2B_CUSTOM_APP = {
 export const ORDER_FORM_CONFIGURATION = {
   allowManualPrice: true,
   allowMultipleDeliveries: true,
-  apps: [CHECKOUT_B2B_CUSTOM_APP],
+  apps: [B2B_CHECKOUT_SETTINGS_APP, CHECKOUT_B2B_CUSTOM_APP],
 }
 
 export function isExpectedOrderFormConfiguration(
   config: OrderFormConfiguration
 ) {
-  const orderFormAppConfiguration = config.apps.find(
+  const orderFormB2BCheckoutSettingsAppConfiguration = config.apps.find(
+    (app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID
+  )
+
+  const orderFormCheckoutB2BAppConfiguration = config.apps.find(
     (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
   )
 
-  const hasExpectedCustomFields =
-    orderFormAppConfiguration &&
+  const hasExpectedB2BCheckoutSettingsCustomFields =
+    orderFormB2BCheckoutSettingsAppConfiguration &&
+    B2B_CHECKOUT_SETTINGS_APP.fields.every((expectedField) =>
+      orderFormB2BCheckoutSettingsAppConfiguration.fields.some(
+        (field) => field === expectedField
+      )
+    )
+
+  const hasExpectedCheckoutB2BCustomFields =
+    orderFormCheckoutB2BAppConfiguration &&
     CHECKOUT_B2B_CUSTOM_APP.fields.every((expectedField) =>
-      orderFormAppConfiguration.fields.some((field) => field === expectedField)
+      orderFormCheckoutB2BAppConfiguration.fields.some(
+        (field) => field === expectedField
+      )
     )
 
   return (
     config.allowManualPrice &&
     config.allowMultipleDeliveries &&
-    hasExpectedCustomFields
+    hasExpectedB2BCheckoutSettingsCustomFields &&
+    hasExpectedCheckoutB2BCustomFields
   )
 }

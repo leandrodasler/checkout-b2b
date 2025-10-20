@@ -152,6 +152,14 @@ export function getOrderFormPoNumber(customData?: CustomData | null): string {
   )
 }
 
+export function getOrderFormSavedCart(
+  customData?: CustomData | null
+): string | undefined {
+  return customData?.customApps?.find(
+    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+  )?.fields?.savedCart
+}
+
 export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
   return (
     customData?.customApps?.filter(

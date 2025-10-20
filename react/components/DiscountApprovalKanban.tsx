@@ -189,7 +189,13 @@ export function DiscountApprovalKanban({
                       </div>
 
                       <div className="c-muted-1">
-                        <span className="f6">{req.email}</span>
+                        <span className="f6">
+                          {req.email}
+                          <br />
+                          <Tag size="small" variation="low">
+                            {req.roleId}
+                          </Tag>
+                        </span>
                       </div>
 
                       <div
