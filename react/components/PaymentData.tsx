@@ -23,7 +23,9 @@ export function PaymentData() {
   const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
   const { updatePayment, loading } = useUpdatePayment()
   const { value } = orderForm
-  const { paymentSystems, payments, installmentOptions } = orderForm.paymentData
+  const { paymentSystems = [], payments = [], installmentOptions = [] } =
+    orderForm.paymentData ?? {}
+
   const { organization } = useOrganization()
   const organizationPaymentSystems = useMemo(
     () =>
@@ -57,13 +59,20 @@ export function PaymentData() {
 
   const [selectedPayment] = payments
 
-  const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
+  const {
+    data: customerCreditData,
+    isLoading,
+    isError,
+  } = useFetchCustomerCredit({
     enabled: selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
   })
 
   const customerCreditLoading = useMemo(
-    () => selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID && isLoading,
-    [isLoading, selectedPayment?.paymentSystem]
+    () =>
+      selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID &&
+      isLoading &&
+      !isError,
+    [isError, isLoading, selectedPayment?.paymentSystem]
   )
 
   const setPayment = useCallback(

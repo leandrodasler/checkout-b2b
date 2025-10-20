@@ -32,6 +32,9 @@ export const getAppSettings = async (
 
   return {
     ...settings,
+    salesRepresentative: settings.salesRepresentative ?? 0,
+    salesManager: settings.salesManager ?? 0,
+    salesAdmin: settings.salesAdmin ?? 0,
     rolesAllowedToSeeMargin,
     representativeBalance,
   } as AppSettings
