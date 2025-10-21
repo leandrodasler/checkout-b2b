@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { SavedCart, SavedCartStatus } from 'ssesandbox04.checkout-b2b'
 import { FormattedPrice } from 'vtex.formatted-price'
@@ -13,7 +13,7 @@ import {
 } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { useDeleteSavedCart, useSavedCart } from '../hooks'
+import { useDeleteSavedCart, useOrganization, useSavedCart } from '../hooks'
 import { messages } from '../utils/messages'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 
@@ -29,6 +29,20 @@ interface CartData {
   value: number
 }
 
+const ROLES = {
+  ADMIN: 'sales-admin',
+  MANAGER: 'sales-manager',
+  REP: 'sales-representative',
+} as const
+
+const STATUSES = {
+  OPEN: 'open',
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  DENIED: 'denied',
+  ORDER_PLACED: 'orderPlaced',
+} as const
+
 export function DiscountApprovalKanban({
   requests = [],
   onChangeCartStatus,
@@ -38,6 +52,9 @@ export function DiscountApprovalKanban({
 }: DiscountApprovalKanbanProps) {
   const { formatMessage } = useIntl()
   const { selectedCart } = useCheckoutB2BContext()
+  const { organization } = useOrganization()
+
+  const currentUserRole = organization?.role
 
   const { handleUseSavedCart, loading: loadingUseCart } = useSavedCart({
     onChangeItems,
@@ -48,63 +65,119 @@ export function DiscountApprovalKanban({
     options: { refetchQueries: ['getAllSavedCarts'] },
   })
 
+  const [updatingCart, setUpdatingCart] = useState<{
+    id: string
+    status: SavedCartStatus
+  } | null>(null)
+
   const deletingCart = useRef<string>()
 
-  const columns = [
-    { key: 'open', label: formatMessage(messages.discountStatusOpen) },
-    { key: 'pending', label: formatMessage(messages.discountStatusPending) },
-    { key: 'approved', label: formatMessage(messages.discountStatusApproved) },
-    { key: 'denied', label: formatMessage(messages.discountStatusDenied) },
-    {
-      key: 'orderPlaced',
-      label: formatMessage(messages.discountStatusOrderApproved),
+  const parseCartData = useCallback((data: string): CartData => {
+    try {
+      return JSON.parse(data)
+    } catch {
+      return { value: 0 }
+    }
+  }, [])
+
+  const canManageCart = useCallback(
+    (cartRoleId: string) => {
+      switch (currentUserRole) {
+        case ROLES.ADMIN:
+          return cartRoleId === ROLES.MANAGER || cartRoleId === ROLES.REP
+
+        case ROLES.MANAGER:
+          return cartRoleId === ROLES.REP
+
+        default:
+          return false
+      }
     },
-  ]
-
-  const groupedRequests = columns.reduce((acc, col) => {
-    acc[col.key] = requests?.filter((r) => r.status === col.key)
-
-    return acc
-  }, {} as Record<string, typeof requests>)
-
-  const parseCartData: (savedCartData: string) => CartData = useCallback(
-    (savedCartData: string) => {
-      return JSON.parse(savedCartData) || ({} as CartData)
-    },
-    []
+    [currentUserRole]
   )
 
-  const currentUpdateId = useRef('')
-  const currentUpdateStatus = useRef<SavedCartStatus>()
+  const filterCartsByUserRole = useCallback(
+    (carts: SavedCart[], columnKey: string) => {
+      if (columnKey !== STATUSES.PENDING) return carts
 
-  const handleChangeCartStatus = (
-    id: string,
-    status: SavedCartStatus
-  ) => () => {
-    currentUpdateId.current = id
-    currentUpdateStatus.current = status
-    onChangeCartStatus(id, status)
-  }
+      switch (currentUserRole) {
+        case ROLES.ADMIN:
+          return carts
 
-  const isLoading = (id: string, status: SavedCartStatus) =>
-    isLoadingChangeCartStatus &&
-    currentUpdateId.current === id &&
-    currentUpdateStatus.current === status
+        case ROLES.MANAGER:
+          return carts.filter(
+            (c) => c.roleId === ROLES.MANAGER || c.roleId === ROLES.REP
+          )
+
+        case ROLES.REP:
+          return carts.filter((c) => c.roleId === ROLES.REP)
+
+        default:
+          return []
+      }
+    },
+    [currentUserRole]
+  )
+
+  const columns = useMemo(
+    () => [
+      { key: STATUSES.OPEN, label: formatMessage(messages.discountStatusOpen) },
+      {
+        key: STATUSES.PENDING,
+        label: formatMessage(messages.discountStatusPending),
+      },
+      {
+        key: STATUSES.APPROVED,
+        label: formatMessage(messages.discountStatusApproved),
+      },
+      {
+        key: STATUSES.DENIED,
+        label: formatMessage(messages.discountStatusDenied),
+      },
+      {
+        key: STATUSES.ORDER_PLACED,
+        label: formatMessage(messages.discountStatusOrderApproved),
+      },
+    ],
+    [formatMessage]
+  )
+
+  const filteredColumns = useMemo(() => {
+    return columns.map((col) => ({
+      ...col,
+      carts: filterCartsByUserRole(requests, col.key).filter(
+        (c) => c.status === col.key
+      ),
+    }))
+  }, [columns, requests, filterCartsByUserRole])
+
+  const handleChangeCartStatus = useCallback(
+    (id: string, status: SavedCartStatus) => () => {
+      setUpdatingCart({ id, status })
+      onChangeCartStatus(id, status)
+    },
+    [onChangeCartStatus]
+  )
+
+  const isLoading = useCallback(
+    (id: string, status: SavedCartStatus) =>
+      isLoadingChangeCartStatus &&
+      updatingCart?.id === id &&
+      updatingCart?.status === status,
+    [isLoadingChangeCartStatus, updatingCart]
+  )
 
   return (
     <div className="flex flex-row justify-between overflow-x-auto pa2">
-      {columns.map((col) => (
+      {filteredColumns.map(({ key, label, carts }) => (
         <div
-          key={col.key}
+          key={key}
           className="flex flex-column mh3 bg-muted-5 br3 flex-grow-1"
           style={{ maxWidth: '300px' }}
         >
-          <div
-            className="mt4 mh5 c-action-primary br3 b flex items-center justify-between"
-            style={{ gap: 6 }}
-          >
-            <span>{col.label}</span>
-            <Tag>{groupedRequests[col.key].length}</Tag>
+          <div className="mt4 mh5 c-action-primary br3 b flex items-center justify-between gap-2">
+            <span>{label}</span>
+            <Tag>{carts.length}</Tag>
           </div>
 
           <div
@@ -114,132 +187,136 @@ export function DiscountApprovalKanban({
               gap: '6px',
             }}
           >
-            {groupedRequests[col.key].length === 0 && (
+            {carts.length === 0 && (
               <span className="c-muted-2 ph4 pt2">
                 {formatMessage(messages.noRequests)}
               </span>
             )}
 
-            {groupedRequests[col.key].map((req) => {
-              const isCurrent = selectedCart?.id === req.id
+            {carts.map((cart) => {
+              const isCurrent = selectedCart?.id === cart.id
               const tooltipLabel = isCurrent
                 ? formatMessage(messages.savedCartsInUseLabel)
                 : formatMessage(messages.savedCartsSelectLabel)
 
+              const canManage = canManageCart(cart.roleId)
+
               return (
-                <div key={req.id} className="relative">
+                <div key={cart.id} className="relative">
                   <Card noPadding>
                     <div
-                      className={`flex flex-column pa6 br2${
-                        isCurrent ? ' bg-success--faded' : ''
-                      }`}
-                      style={{ gap: 6 }}
+                      className={`flex flex-column pa6 br2 ${
+                        isCurrent ? 'bg-success--faded' : ''
+                      } gap-2`}
                     >
                       <div className="flex justify-between items-center">
                         <div className="c-muted-1">
                           <span className="t-mini">
-                            {new Date(req.createdIn).toLocaleString()}
+                            {new Date(cart.createdIn).toLocaleString()}
                           </span>
                         </div>
 
                         <div className="absolute right-1 top-1 flex flex-wrap">
                           <Tooltip label={formatMessage(messages.delete)}>
-                            <div>
-                              <ButtonWithIcon
-                                size="small"
-                                variation="tertiary"
-                                icon={<IconDelete size={16} />}
-                                onClick={() => {
-                                  deletingCart.current = req.id
-                                  deleteCart({ variables: { id: req.id } })
-                                }}
-                                isLoading={
-                                  loadingDeleteCart &&
-                                  deletingCart.current === req.id
-                                }
-                                disabled={loadingUseCart || loadingDeleteCart}
-                                style={{ padding: 0 }}
-                              />
-                            </div>
+                            <ButtonWithIcon
+                              size="small"
+                              variation="tertiary"
+                              icon={<IconDelete size={16} />}
+                              onClick={() => {
+                                deletingCart.current = cart.id
+                                deleteCart({ variables: { id: cart.id } })
+                              }}
+                              isLoading={
+                                loadingDeleteCart &&
+                                deletingCart.current === cart.id
+                              }
+                              disabled={loadingUseCart || loadingDeleteCart}
+                              style={{ padding: 0 }}
+                            />
                           </Tooltip>
+
                           <Tooltip label={tooltipLabel}>
-                            <div>
-                              <ButtonWithIcon
-                                size="small"
-                                variation="tertiary"
-                                icon={<IconShoppingCart size={16} />}
-                                onClick={() =>
-                                  handleUseSavedCart(req).then(onUseCart)
-                                }
-                                isLoading={loadingUseCart && isCurrent}
-                                disabled={
-                                  loadingUseCart ||
-                                  loadingDeleteCart ||
-                                  isCurrent
-                                }
-                                style={{ padding: 0 }}
-                              />
-                            </div>
+                            <ButtonWithIcon
+                              size="small"
+                              variation="tertiary"
+                              icon={<IconShoppingCart size={16} />}
+                              onClick={() =>
+                                handleUseSavedCart(cart).then(onUseCart)
+                              }
+                              isLoading={loadingUseCart && isCurrent}
+                              disabled={
+                                loadingUseCart || loadingDeleteCart || isCurrent
+                              }
+                              style={{ padding: 0 }}
+                            />
                           </Tooltip>
                         </div>
                       </div>
 
                       <div className="c-action-primary">
-                        <span className="fw5">{req.title}</span>
+                        <span className="fw5">{cart.title}</span>
                       </div>
 
                       <div className="c-muted-1">
-                        <span className="f6">{req.email}</span>
+                        <span className="f6">{cart.email}</span>
                       </div>
 
-                      <div
-                        className="flex flex-row items-center"
-                        style={{ gap: 6 }}
-                      >
-                        <span className="fw5 ">
-                          {
-                            <FormattedPrice
-                              value={parseCartData(req.data)?.value / 100}
-                            />
-                          }
+                      <div className="flex items-center" style={{ gap: 6 }}>
+                        <span className="fw5">
+                          <FormattedPrice
+                            value={parseCartData(cart.data)?.value / 100}
+                          />
                         </span>
                         <SavedCartDiscountBadge
-                          discount={req.requestedDiscount}
+                          discount={cart.requestedDiscount}
                         />
                       </div>
 
-                      {req.status === 'pending' && (
-                        <div className="flex flex-row justify-between mt2">
+                      {cart.status === STATUSES.PENDING && canManage && (
+                        <div className="flex justify-between mt2">
                           <ButtonPlain
                             size="small"
                             variant="primary"
-                            onClick={handleChangeCartStatus(req.id, 'denied')}
-                            isLoading={isLoading(req.id, 'denied')}
+                            onClick={handleChangeCartStatus(
+                              cart.id,
+                              STATUSES.DENIED
+                            )}
+                            isLoading={isLoading(cart.id, STATUSES.DENIED)}
                           >
                             {formatMessage(messages.discountKanbanModalDeny)}
                           </ButtonPlain>
                           <ButtonPlain
                             size="small"
                             variant="primary"
-                            onClick={handleChangeCartStatus(req.id, 'approved')}
-                            isLoading={isLoading(req.id, 'approved')}
+                            onClick={handleChangeCartStatus(
+                              cart.id,
+                              STATUSES.APPROVED
+                            )}
+                            isLoading={isLoading(cart.id, STATUSES.APPROVED)}
                           >
                             {formatMessage(messages.discountKanbanModalApprove)}
                           </ButtonPlain>
                         </div>
                       )}
-                      {['approved', 'denied'].includes(req.status) && (
-                        <div className="mt2">
-                          <ButtonPlain
-                            size="small"
-                            variant="primary"
-                            onClick={handleChangeCartStatus(req.id, 'pending')}
-                            isLoading={isLoading(req.id, 'pending')}
-                          >
-                            {formatMessage(messages.cancel)}
-                          </ButtonPlain>
-                        </div>
-                      )}
+
+                      {[STATUSES.APPROVED, STATUSES.DENIED].includes(
+                        cart.status
+                      ) &&
+                        canManage && (
+                          <div className="mt2">
+                            <ButtonPlain
+                              size="small"
+                              variant="primary"
+                              onClick={handleChangeCartStatus(
+                                cart.id,
+                                STATUSES.PENDING
+                              )}
+                              isLoading={isLoading(cart.id, STATUSES.PENDING)}
+                            >
+                              {formatMessage(messages.cancel)}
+                            </ButtonPlain>
+                          </div>
+                        )}
                     </div>
                   </Card>
                 </div>
