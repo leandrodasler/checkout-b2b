@@ -3,16 +3,15 @@ import { MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
+  B2B_CHECKOUT_CUSTOM_APP_ID,
   getFirstInstallmentByPaymentSystem,
   getManualPriceDiscount,
   getSessionData,
   handleCheckoutApiError,
+  PO_NUMBER_CUSTOM_FIELD,
 } from '../../utils'
 import { getAppSettings } from '../queries/getAppSettings'
 import { saveRepresentativeBalance } from './saveRepresentativeBalance'
-
-const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
-const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 
 export async function placeOrder(
   _: unknown,

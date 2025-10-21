@@ -40,6 +40,7 @@ import {
   useOrderFormCustom,
   useOrganization,
   usePermissions,
+  useSavedCart,
   useTableSchema,
   useToast,
   useToolbar,
@@ -49,7 +50,7 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm, CustomItem } from './typings'
-import { messages, SEARCH_TYPE, welcome } from './utils'
+import { getOrderFormSavedCart, messages, SEARCH_TYPE, welcome } from './utils'
 
 type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
 
@@ -82,6 +83,7 @@ function CheckoutB2B() {
     getDiscountedPrice,
     setPending,
     refetchCurrentSavedCart,
+    selectedCart,
   } = useCheckoutB2BContext()
 
   const [itemsAwaitingDeletion, setItemsAwaitingDeletion] = useState<
@@ -103,10 +105,29 @@ function CheckoutB2B() {
     onChangeItems: handleClearAwaitingDeletion,
   })
 
-  const { navigate } = useRuntime()
+  const { navigate, query } = useRuntime()
   const [prices, setPrices] = useState<Record<string, number>>({})
   const { formatMessage } = useIntl()
   const { items } = orderForm
+  const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
+  const { handleUseSavedCart, loading: useCartLoading } = useSavedCart()
+
+  useEffect(() => {
+    if (
+      query?.savedCart &&
+      query.savedCart !== customAppSavedCartId &&
+      selectedCart &&
+      !useCartLoading
+    ) {
+      handleUseSavedCart(selectedCart)
+    }
+  }, [
+    customAppSavedCartId,
+    handleUseSavedCart,
+    query?.savedCart,
+    selectedCart,
+    useCartLoading,
+  ])
 
   const loading = useMemo(() => orderFormLoading || organizationLoading, [
     orderFormLoading,

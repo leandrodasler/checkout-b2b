@@ -258,7 +258,13 @@ export function DiscountApprovalKanban({
                       </div>
 
                       <div className="c-muted-1">
-                        <span className="f6">{cart.email}</span>
+                        <span className="f6">
+                          {cart.email}
+                          <br />
+                          <Tag size="small" variation="low">
+                            {cart.roleId}
+                          </Tag>
+                        </span>
                       </div>
 
                       <div className="flex items-center" style={{ gap: 6 }}>
