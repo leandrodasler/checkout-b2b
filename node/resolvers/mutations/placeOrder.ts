@@ -25,7 +25,7 @@ export async function placeOrder(
   const { checkout, checkoutExtension } = context.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
-  const initialOrderForm = (await checkout.orderForm(orderFormId)) as OrderForm
+  const initialOrderForm = await checkoutExtension.getOrderForm()
   const { storePreferencesData, value } = initialOrderForm
   const { address } = initialOrderForm.shippingData
   const { installmentOptions, payments } = initialOrderForm.paymentData

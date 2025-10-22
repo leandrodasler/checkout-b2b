@@ -20,7 +20,7 @@ import { useToast } from '../hooks/useToast'
 import type { GetSavedCartsQuery, TableSchema } from '../typings'
 import { messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
-import { CellWrapper } from './CellWrapper'
+import { CellWrapper, SelectedWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
@@ -145,13 +145,15 @@ export function SavedCartsTable(props?: Props) {
         title: ' ',
         cellRenderer: function Column({ rowData }) {
           return (
-            <ChildrenCartsColumn
-              cart={rowData}
-              childrenCarts={childrenCarts}
-              setChildrenCarts={setChildrenCarts}
-              expandedCarts={expandedCarts}
-              setExpandedCarts={setExpandedCarts}
-            />
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <ChildrenCartsColumn
+                cart={rowData}
+                childrenCarts={childrenCarts}
+                setChildrenCarts={setChildrenCarts}
+                expandedCarts={expandedCarts}
+                setExpandedCarts={setExpandedCarts}
+              />
+            </SelectedWrapper>
           )
         },
       },
@@ -163,13 +165,15 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <CellWrapper isChildren={rowData.parentCartId}>
-              <Tooltip label={new Date(rowData.createdIn).toLocaleString()}>
-                <span className={rowData.parentCartId ? '' : ''}>
-                  {new Date(rowData.createdIn).toLocaleDateString()}
-                </span>
-              </Tooltip>
-            </CellWrapper>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <CellWrapper isChildren={rowData.parentCartId}>
+                <Tooltip label={new Date(rowData.createdIn).toLocaleString()}>
+                  <span className={rowData.parentCartId ? '' : ''}>
+                    {new Date(rowData.createdIn).toLocaleDateString()}
+                  </span>
+                </Tooltip>
+              </CellWrapper>
+            </SelectedWrapper>
           )
         },
       },
@@ -180,9 +184,11 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <CellWrapper isChildren={rowData.parentCartId}>
-              <SavedCartStatusBadge status={rowData.status} />
-            </CellWrapper>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <CellWrapper isChildren={rowData.parentCartId}>
+                <SavedCartStatusBadge status={rowData.status} />
+              </CellWrapper>
+            </SelectedWrapper>
           )
         },
       },
@@ -192,14 +198,16 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <TruncatedText
-              label={rowData.title}
-              text={
-                <CellWrapper isChildren={rowData.parentCartId}>
-                  {rowData.title}
-                </CellWrapper>
-              }
-            />
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <TruncatedText
+                label={rowData.title}
+                text={
+                  <CellWrapper isChildren={rowData.parentCartId}>
+                    {rowData.title}
+                  </CellWrapper>
+                }
+              />
+            </SelectedWrapper>
           )
         },
       },
@@ -209,14 +217,16 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <TruncatedText
-              label={rowData.email}
-              text={
-                <CellWrapper isChildren={rowData.parentCartId}>
-                  {rowData.email}
-                </CellWrapper>
-              }
-            />
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <TruncatedText
+                label={rowData.email}
+                text={
+                  <CellWrapper isChildren={rowData.parentCartId}>
+                    {rowData.email}
+                  </CellWrapper>
+                }
+              />
+            </SelectedWrapper>
           )
         },
       },
@@ -227,15 +237,17 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <CellWrapper isChildren={rowData.parentCartId}>
-              {rowData.roleId ? (
-                <Tag size="small" variation="low">
-                  {rowData.roleId}
-                </Tag>
-              ) : (
-                '---'
-              )}
-            </CellWrapper>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <CellWrapper isChildren={rowData.parentCartId}>
+                {rowData.roleId ? (
+                  <Tag size="small" variation="low">
+                    {rowData.roleId}
+                  </Tag>
+                ) : (
+                  '---'
+                )}
+              </CellWrapper>
+            </SelectedWrapper>
           )
         },
       },
@@ -246,13 +258,17 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <CellWrapper isChildren={rowData.parentCartId}>
-              {rowData.requestedDiscount ? (
-                <SavedCartDiscountBadge discount={rowData.requestedDiscount} />
-              ) : (
-                'N/A'
-              )}
-            </CellWrapper>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <CellWrapper isChildren={rowData.parentCartId}>
+                {rowData.requestedDiscount ? (
+                  <SavedCartDiscountBadge
+                    discount={rowData.requestedDiscount}
+                  />
+                ) : (
+                  'N/A'
+                )}
+              </CellWrapper>
+            </SelectedWrapper>
           )
         },
       },
@@ -263,9 +279,11 @@ export function SavedCartsTable(props?: Props) {
           if (rowData.loading) return <Spinner size={16} />
 
           return (
-            <CellWrapper isChildren={rowData.parentCartId}>
-              {renderCartValue(rowData)}
-            </CellWrapper>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <CellWrapper isChildren={rowData.parentCartId}>
+                {renderCartValue(rowData)}
+              </CellWrapper>
+            </SelectedWrapper>
           )
         },
       },
@@ -278,12 +296,14 @@ export function SavedCartsTable(props?: Props) {
           const cartData = parseCartData(rowData.data ?? '{}')
 
           return (
-            <CellWrapper isChildren={rowData.parentCartId}>
-              {cartData?.items?.reduce(
-                (acc: number, item: Item) => acc + item.quantity,
-                0
-              )}
-            </CellWrapper>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <CellWrapper isChildren={rowData.parentCartId}>
+                {cartData?.items?.reduce(
+                  (acc: number, item: Item) => acc + item.quantity,
+                  0
+                )}
+              </CellWrapper>
+            </SelectedWrapper>
           )
         },
       },
@@ -303,14 +323,16 @@ export function SavedCartsTable(props?: Props) {
           )?.name
 
           return (
-            <TruncatedText
-              label={paymentMethodName}
-              text={
-                <CellWrapper isChildren={rowData.parentCartId}>
-                  {paymentMethodName}
-                </CellWrapper>
-              }
-            />
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <TruncatedText
+                label={paymentMethodName}
+                text={
+                  <CellWrapper isChildren={rowData.parentCartId}>
+                    {paymentMethodName}
+                  </CellWrapper>
+                }
+              />
+            </SelectedWrapper>
           )
         },
       },
@@ -319,20 +341,22 @@ export function SavedCartsTable(props?: Props) {
         width: 50,
         cellRenderer: function Column({ rowData }) {
           return (
-            <ActionCellRenderer
-              rowData={rowData}
-              handleConfirm={handleConfirm}
-              loading={
-                rowData.loading ??
-                (loadingApplySavedCart && rowData.id === selectedCart?.id)
-              }
-              disabled={
-                rowData.loading ??
-                (loadingDeleteCart ||
-                  loadingApplySavedCart ||
-                  selectedCart?.id === rowData.id)
-              }
-            />
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <ActionCellRenderer
+                rowData={rowData}
+                handleConfirm={handleConfirm}
+                loading={
+                  rowData.loading ??
+                  (loadingApplySavedCart && rowData.id === selectedCart?.id)
+                }
+                disabled={
+                  rowData.loading ??
+                  (loadingDeleteCart ||
+                    loadingApplySavedCart ||
+                    selectedCart?.id === rowData.id)
+                }
+              />
+            </SelectedWrapper>
           )
         },
       },
@@ -341,27 +365,29 @@ export function SavedCartsTable(props?: Props) {
         title: ' ',
         cellRenderer({ rowData }) {
           return (
-            <Tooltip label={formatMessage(messages.delete)}>
-              <div>
-                <ButtonWithIcon
-                  disabled={
-                    rowData.loading ??
-                    (loadingApplySavedCart || loadingDeleteCart)
-                  }
-                  isLoading={
-                    rowData.loading ??
-                    (deletingCartId === rowData.id && loadingDeleteCart)
-                  }
-                  size="small"
-                  icon={<IconDelete />}
-                  variation="danger-tertiary"
-                  onClick={() => {
-                    setDeletingCartId(rowData.id)
-                    deleteCartMutation({ variables: { id: rowData.id } })
-                  }}
-                />
-              </div>
-            </Tooltip>
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <Tooltip label={formatMessage(messages.delete)}>
+                <div>
+                  <ButtonWithIcon
+                    disabled={
+                      rowData.loading ??
+                      (loadingApplySavedCart || loadingDeleteCart)
+                    }
+                    isLoading={
+                      rowData.loading ??
+                      (deletingCartId === rowData.id && loadingDeleteCart)
+                    }
+                    size="small"
+                    icon={<IconDelete />}
+                    variation="danger-tertiary"
+                    onClick={() => {
+                      setDeletingCartId(rowData.id)
+                      deleteCartMutation({ variables: { id: rowData.id } })
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            </SelectedWrapper>
           )
         },
       },

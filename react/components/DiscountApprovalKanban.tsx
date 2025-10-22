@@ -131,7 +131,7 @@ export function DiscountApprovalKanban({
                   <Card noPadding>
                     <div
                       className={`flex flex-column pa6 br2${
-                        isCurrent ? ' bg-success--faded' : ''
+                        isCurrent ? ' bg-washed-blue' : ''
                       }`}
                       style={{ gap: 6 }}
                     >

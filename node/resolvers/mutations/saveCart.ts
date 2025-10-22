@@ -28,8 +28,10 @@ export const saveCart = async (
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-  const { checkout, masterdata } = context.clients
-  const orderForm = (await checkout.orderForm(orderFormId)) as OrderForm
+  const { checkout, checkoutExtension, masterdata } = context.clients
+
+  checkoutExtension.setOrderFormId(orderFormId)
+  const orderForm = await checkoutExtension.getOrderForm()
 
   let additionalDataObject = {}
 

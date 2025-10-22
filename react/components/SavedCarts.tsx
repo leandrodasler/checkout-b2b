@@ -2,18 +2,22 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActionMenu,
+  ButtonWithIcon,
   IconCheck,
   IconCopy,
+  IconEdit,
   IconPlusLines,
   IconShoppingCart,
   Spinner,
   Tag,
+  Tooltip,
 } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { usePermissions, useSaveCart } from '../hooks'
 import { messages } from '../utils'
 import { DiscountApprovalModal } from './DiscountApprovalModal'
+import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
 import { SavedCartsListModal } from './SavedCartsListModal'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
@@ -26,6 +30,7 @@ export function SavedCarts({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { isSalesUser } = usePermissions()
   const [openForm, setOpenForm] = useState(false)
+  const [openFormRenameCart, setOpenFormRenameCart] = useState(false)
   const [openDiscountKanbanModal, setOpenDiscountKanbanModal] = useState(false)
   const { selectedCart } = useCheckoutB2BContext()
   const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
@@ -36,21 +41,37 @@ export function SavedCarts({ onChangeItems }: Props) {
 
   const handleOpenListModal = () => setOpenSavedCartModal(true)
   const handleOpenFormModal = () => setOpenForm(true)
+  const handleOpenFormRenameModal = () => setOpenFormRenameCart(true)
   const handleOpenDiscountKanbanModal = () => setOpenDiscountKanbanModal(true)
 
   if (!isSalesUser) return null
 
   return (
-    <div className="flex items-center flex-wrap pl4">
+    <div className="flex items-center justify-center flex-wrap pl4">
       {loading && <Spinner size={20} />}
       {selectedCart && !loading && (
-        <>
+        <div className="flex">
           <Tag variation="low">
-            {formatMessage(messages.savedCartsCurrentLabel)}:{' '}
-            <strong>{selectedCart.title}</strong>{' '}
-            <SavedCartStatusBadge status={selectedCart.status} />
+            <div className="flex flex-wrap items-center">
+              {formatMessage(messages.savedCartsCurrentLabel)}:
+              <strong>{selectedCart.title}</strong>
+              <Tooltip label={formatMessage(messages.savedCartsRename)}>
+                <div>
+                  <ButtonWithIcon
+                    size="small"
+                    variation="tertiary"
+                    icon={<IconEdit />}
+                    onClick={handleOpenFormRenameModal}
+                  />
+                </div>
+              </Tooltip>
+              <SavedCartStatusBadge status={selectedCart.status} />
+              <SavedCartDiscountBadge
+                discount={selectedCart.requestedDiscount}
+              />
+            </div>
           </Tag>
-        </>
+        </div>
       )}
       <ActionMenu
         label={formatMessage(messages.savedCartsMainTitle)}
@@ -104,6 +125,13 @@ export function SavedCarts({ onChangeItems }: Props) {
       )}
       {openForm && (
         <SavedCartsFormModal open={openForm} setOpen={setOpenForm} />
+      )}
+      {openFormRenameCart && (
+        <SavedCartsFormModal
+          open={openFormRenameCart}
+          setOpen={setOpenFormRenameCart}
+          isRenamingCart
+        />
       )}
       {openDiscountKanbanModal && (
         <DiscountApprovalModal

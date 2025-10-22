@@ -1,0 +1,8 @@
+#import "./fragments/SavedCartFields.graphql"
+
+mutation updateSavedCartTitle($id: ID!, $title: String!) {
+  updateSavedCartTitle(id: $id, title: $title)
+    @context(provider: "ssesandbox04.checkout-b2b") {
+    ...SavedCartFields
+  }
+}

@@ -33,6 +33,7 @@
   "store/checkout.b2b.savedCarts.status.approved": "Aprobado",
   "store/checkout.b2b.savedCarts.status.denied": "Rechazado",
   "store/checkout.b2b.savedCarts.status.orderPlaced": "Pedido realizado",
+  "store/checkout.b2b.savedCarts.rename": "Renombrar carrito",
 
   "store/checkout.b2b.totalizer.boxTitle": "Encabezado del Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Envío",

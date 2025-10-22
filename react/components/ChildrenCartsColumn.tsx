@@ -86,7 +86,7 @@ export default function ChildrenCartsColumn({
 
 function ButtonCollapseWrapper({ children }: React.PropsWithChildren<unknown>) {
   return (
-    <div className="absolute flex items-center pointer w-100 h-100 left-0">
+    <div className="absolute flex items-center pointer w-100 h-100 left-0 z-1">
       {children}
     </div>
   )

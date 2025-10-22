@@ -11,6 +11,7 @@ import { shareCart } from './mutations/shareCart'
 import { updateItemsQuantity } from './mutations/updateItemsQuantity'
 import { updatePrices } from './mutations/updatePrices'
 import { updateSavedCartStatus } from './mutations/updateSavedCartStatus'
+import { updateSavedCartTitle } from './mutations/updateSavedCartTitle'
 import { updateShippingOption } from './mutations/updateShippingOption'
 import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
 import { checkOrderFormConfiguration } from './queries/checkOrderFormConfiguration'
@@ -36,6 +37,7 @@ export default {
       clearCart,
       saveCart,
       updateSavedCartStatus,
+      updateSavedCartTitle,
       deleteCart,
       placeOrder,
       updatePrices,

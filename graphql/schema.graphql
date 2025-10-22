@@ -135,6 +135,8 @@ type Mutation {
   updateSavedCartStatus(id: ID!, status: SavedCartStatus!): [SavedCart!]!
     @CheckSchemas
 
+  updateSavedCartTitle(id: ID!, title: String!): SavedCart! @CheckSchemas
+
   deleteCart(id: ID!): ID @CheckSchemas
 
   clearCart: UpdatedOrderForm!

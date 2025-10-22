@@ -18,13 +18,14 @@ export async function updatePrices(
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-  const { checkout, checkoutExtension } = context.clients
-
-  if (!items.length) {
-    return checkout.orderForm(orderFormId)
-  }
+  const { checkoutExtension } = context.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
+
+  if (!items.length) {
+    return checkoutExtension.getOrderForm()
+  }
+
   let updatedOrderForm: OrderForm | null | void = null
 
   for await (const item of items) {
@@ -48,7 +49,7 @@ export async function updatePrices(
 
     await saveCart(null, { id: savedCartId, title, additionalData }, context)
 
-    return checkout.orderForm(orderFormId)
+    return checkoutExtension.getOrderForm()
   }
 
   return updatedOrderForm

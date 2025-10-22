@@ -13,10 +13,10 @@ export async function updateShippingOption(
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-  const { checkout, checkoutExtension } = context.clients
+  const { checkoutExtension } = context.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
-  const initialOrderForm = (await checkout.orderForm(orderFormId)) as OrderForm
+  const initialOrderForm = await checkoutExtension.getOrderForm()
   const { shippingData } = initialOrderForm
   const { logisticsInfo, selectedAddresses } = shippingData
 
