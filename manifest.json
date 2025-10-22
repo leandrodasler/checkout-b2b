@@ -36,7 +36,8 @@
     "vtex.session-client": "1.x",
     "vtex.apps-graphql": "3.x",
     "ssesandbox04.file-manager": "0.x",
-    "vtex.catalog-api-proxy": "0.x"
+    "vtex.catalog-api-proxy": "0.x",
+    "vtex.orders-broadcast": "0.x"
   },
   "registries": ["smartcheckout"],
   "policies": [

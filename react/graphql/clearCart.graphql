@@ -1,0 +1,3 @@
+mutation ClearCart {
+  clearCart @context(provider: "ssesandbox04.checkout-b2b")
+}

@@ -1,25 +1,51 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
+import { useRuntime } from 'vtex.render-runtime'
 import { Button, Input, Modal } from 'vtex.styleguide'
 
-import { useSaveCart } from '../hooks'
+import { useCheckoutB2BContext } from '../CheckoutB2BContext'
+import { useSaveCart, useUpdateSavedCartTitle } from '../hooks'
 import type { ModalProps } from '../typings'
 import { messages } from '../utils'
 
-type Props = ModalProps
+type Props = ModalProps & { isRenamingCart?: boolean }
 
-export function SavedCartsFormModal({ open, setOpen }: Props) {
+export function SavedCartsFormModal({ open, setOpen, isRenamingCart }: Props) {
+  const { locale } = useRuntime().culture
   const handles = useCssHandles(['container'])
   const { formatMessage } = useIntl()
-  const [title, setTitle] = useState('')
+  const { selectedCart } = useCheckoutB2BContext()
   const inputRef = useRef<HTMLInputElement>()
+  const [inputTitle, setInputTitle] = useState(
+    isRenamingCart ? selectedCart?.title ?? '' : ''
+  )
 
-  const { handleSaveCart, loading } = useSaveCart({
+  const title =
+    inputTitle.trim() ||
+    formatMessage(messages.savedCartsSaveDefaultTitle, {
+      date: new Date().toLocaleString(locale),
+    })
+
+  const { handleSaveCart, loading: saveLoading } = useSaveCart({
     setOpen,
     isCurrent: false,
-    cartTitle: title,
+    title,
   })
+
+  const {
+    handleUpdateSavedCartTitle,
+    loading: renameLoading,
+  } = useUpdateSavedCartTitle({
+    id: selectedCart?.id,
+    title,
+    onCompleted: () => setOpen(false),
+  })
+
+  const loading = saveLoading || renameLoading
+  const handleSaveCartAction = isRenamingCart
+    ? handleUpdateSavedCartTitle
+    : handleSaveCart
 
   useEffect(() => inputRef.current?.focus(), [])
 
@@ -29,14 +55,18 @@ export function SavedCartsFormModal({ open, setOpen }: Props) {
       container={document.querySelector(`.${handles.container}`)}
       onClose={() => setOpen(false)}
       size="small"
-      title={formatMessage(messages.savedCartsSaveNew)}
+      title={
+        isRenamingCart
+          ? formatMessage(messages.savedCartsRename)
+          : formatMessage(messages.savedCartsSaveNew)
+      }
       bottomBar={
         <div className="flex justify-end">
           <Button
             variation="primary"
             disabled={loading}
             isLoading={loading}
-            onClick={handleSaveCart}
+            onClick={handleSaveCartAction}
           >
             {formatMessage(messages.confirm)}
           </Button>
@@ -47,14 +77,14 @@ export function SavedCartsFormModal({ open, setOpen }: Props) {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            handleSaveCart()
+            handleSaveCartAction()
           }}
         >
           <Input
             ref={inputRef}
-            value={title}
+            value={inputTitle}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setTitle(e.target.value)
+              setInputTitle(e.target.value)
             }
             size="small"
             disabled={loading}

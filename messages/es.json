@@ -27,6 +27,13 @@
   "store/checkout.b2b.savedCarts.use-cart.inUse.label": "Carrito en uso en este momento",
   "store/checkout.b2b.savedCarts.save-cart.current": "Guardar carrito en la misma transacción",
   "store/checkout.b2b.savedCarts.save-cart.new": "Guardar carrito in nueva transacción",
+  "store/checkout.b2b.savedCarts.discount": "Descuento/Superávit",
+  "store/checkout.b2b.savedCarts.status.open": "Abierto",
+  "store/checkout.b2b.savedCarts.status.pending": "Pendiente",
+  "store/checkout.b2b.savedCarts.status.approved": "Aprobado",
+  "store/checkout.b2b.savedCarts.status.denied": "Rechazado",
+  "store/checkout.b2b.savedCarts.status.orderPlaced": "Pedido realizado",
+  "store/checkout.b2b.savedCarts.rename": "Renombrar carrito",
 
   "store/checkout.b2b.totalizer.boxTitle": "Encabezado del Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Envío",
@@ -52,6 +59,7 @@
   "store/checkout.b2b.totalizer.surplus": "Superávit (%)",
   "store/checkout.b2b.totalizer.totalSurplus": "Superávit Total",
   "store/checkout.b2b.totalizer.tax": "Impuestos",
+  "store/checkout.b2b.totalizer.discount.above": "{value}% por encima del límite",
 
   "store/checkout.b2b.column.name": "Nombre",
   "store/checkout.b2b.column.quantity": "Cantidad",
@@ -75,12 +83,16 @@
   "store/checkout.b2b.button.placeOrder.error": "Error al procesar el pedido",
   "store/checkout.b2b.button.saveManualPrice": "Aplicar Precios",
   "store/checkout.b2b.button.editManualPrice": "Editar preços",
+  "store/checkout.b2b.button.requestDiscount": "Solicitar descuento por encima del límite permitido",
+
+  "store/checkout.b2b.modal.requestDiscount": "Solicitar aprobación de descuento",
+  "store/checkout.b2b.modal.requestDiscountConfirmation": "El descuento aplicado supera el límite máximo permitido para su perfil. ¿Desea enviar una solicitud de aprobación para continuar con estos valores?",
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Finalizar edicion",
   "store/checkout.b2b.manualPrice.placeOrder": "Todos los precios se actualizaron con éxito",
   "store/checkout.b2b.manualPrice.placeOrder.error": "Error al actualizar los precios:",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Precios actualizados con éxito",
-  "store/checkout.b2b.manualPrice.discount-exceeded": "El descuento superó el límite permitido",
+  "store/checkout.b2b.manualPrice.discount-exceeded": "El descuento superó el límite global permitido: {value}%",
   "store/checkout.b2b.manualPrice.input.placeholder": "Escriba un valor monetario",
 
   "store/checkout.b2b.search.placeholder": "Buscar por nombre de SKU o EAN",
@@ -163,5 +175,15 @@
   "store/checkout.b2b.import-spreadsheet.select": "Seleccione un archivo CSV",
   "store/checkout.b2b.import-spreadsheet.sample": "Descargar hoja de cálculo de muestra",
   "store/checkout.b2b.import-spreadsheet.cart": "Exportar CSV",
-  "store/checkout.b2b.import-spreadsheet.cart.help": "Exportar CSV del carrito actual para futuras importaciones"
+  "store/checkout.b2b.import-spreadsheet.cart.help": "Exportar CSV del carrito actual para futuras importaciones",
+
+  "store/checkout.b2b.discountKanban.modal": "Aprobar carritos",
+  "store/checkout.b2b.discountKanban.approve": "Aprobar",
+  "store/checkout.b2b.discountKanban.deny": "Negar",
+  "store/checkout.b2b.discountStatus.open": "Abierto",
+  "store/checkout.b2b.discountStatus.pending": "Pendiente de aprobación",
+  "store/checkout.b2b.discountStatus.approved": "Nivel aprobado",
+  "store/checkout.b2b.discountStatus.denied": "Nivel rechazado",
+  "store/checkout.b2b.discountStatus.orderApproved": "Pedido realizado",
+  "store/checkout.b2b.discountStatus.noRequests": "No hay solicitudes"
 }

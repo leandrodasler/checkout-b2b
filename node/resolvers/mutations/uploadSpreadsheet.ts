@@ -26,7 +26,7 @@ export const uploadSpreadsheet = async (
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
   const { createReadStream } = await file
-  const { search, checkoutExtension, checkout } = ctx.clients
+  const { search, checkoutExtension } = ctx.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
 
@@ -84,5 +84,5 @@ export const uploadSpreadsheet = async (
     return checkoutExtension.addItemsToCart(orderItems)
   }
 
-  return checkout.orderForm(orderFormId)
+  return checkoutExtension.getOrderForm()
 }

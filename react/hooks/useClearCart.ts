@@ -1,11 +1,12 @@
-import { useMutation } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { useRuntime } from 'vtex.render-runtime'
+import { useMutation } from 'react-apollo'
+import { Mutation } from 'ssesandbox04.checkout-b2b'
 
 import { useOrderFormCustom, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { apiRequest } from '../services'
-import type { ApiResponse, CompleteOrderForm } from '../typings'
+import CLEAR_CART from '../graphql/clearCart.graphql'
+
+type MutationClearCart = Pick<Mutation, 'clearCart'>
 
 type Props = {
   updateOrderForm?: boolean
@@ -15,8 +16,7 @@ type Props = {
 export function useClearCart(props?: Props) {
   const { updateOrderForm = true, onChangeItems } = props ?? {}
   const showToast = useToast()
-  const { query, setQuery } = useRuntime()
-  const { orderForm, setOrderForm } = useOrderFormCustom()
+  const { setOrderForm } = useOrderFormCustom()
   const { setPending, setSelectedCart } = useCheckoutB2BContext()
   const handlePending = useCallback(
     (pending: boolean) => {
@@ -25,33 +25,24 @@ export function useClearCart(props?: Props) {
     [updateOrderForm, setPending]
   )
 
-  const { mutate, isLoading } = useMutation<CompleteOrderForm, Error>({
-    mutationFn: async () => {
-      handlePending(true)
+  const [mutate, { loading }] = useMutation<MutationClearCart>(CLEAR_CART, {
+    onCompleted({ clearCart }) {
+      onChangeItems?.()
+      handlePending(false)
 
-      return apiRequest<CompleteOrderForm & ApiResponse>(
-        `/api/checkout/pub/orderForm/${orderForm.id}/items/removeAll`,
-        'POST',
-        {}
-      ).finally(() => {
-        onChangeItems?.()
-        handlePending(false)
-      })
-    },
-    onSuccess(newOrderForm) {
       if (!updateOrderForm) return
 
-      setOrderForm(newOrderForm)
+      setOrderForm(clearCart)
       setSelectedCart(null)
-
-      if (query?.savedCart) {
-        setQuery({ savedCart: undefined }, { replace: true })
-      }
     },
-    onError({ message }) {
-      showToast({ message })
-    },
+    onError: showToast,
   })
 
-  return { clearCart: mutate, isLoading }
+  const clearCart = useCallback(() => {
+    handlePending(true)
+
+    return mutate()
+  }, [handlePending, mutate])
+
+  return { clearCart, isLoading: loading }
 }

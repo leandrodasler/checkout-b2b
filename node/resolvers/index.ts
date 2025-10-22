@@ -1,6 +1,7 @@
 import * as schemaDirectives from './directives'
 import { addAddressToCart } from './mutations/addAddressToCart'
 import { addItemsToCart } from './mutations/addItemsToCart'
+import { clearCart } from './mutations/clearCart'
 import { deleteCart } from './mutations/deleteCart'
 import { placeOrder } from './mutations/placeOrder'
 import { saveCart } from './mutations/saveCart'
@@ -9,8 +10,11 @@ import { saveRepresentativeBalanceSettings } from './mutations/saveRepresentativ
 import { shareCart } from './mutations/shareCart'
 import { updateItemsQuantity } from './mutations/updateItemsQuantity'
 import { updatePrices } from './mutations/updatePrices'
+import { updateSavedCartStatus } from './mutations/updateSavedCartStatus'
+import { updateSavedCartTitle } from './mutations/updateSavedCartTitle'
 import { updateShippingOption } from './mutations/updateShippingOption'
 import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
+import { checkOrderFormConfiguration } from './queries/checkOrderFormConfiguration'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
 import { getRepresentativeBalanceByEmail } from './queries/getRepresentativeBalanceByEmail'
@@ -21,6 +25,7 @@ import { getSavedCarts } from './queries/getSavedCarts'
 export default {
   resolvers: {
     Query: {
+      checkOrderFormConfiguration,
       getSavedCarts,
       getCart,
       getAppSettings,
@@ -29,7 +34,10 @@ export default {
       getRepresentativeBalanceTransactions,
     },
     Mutation: {
+      clearCart,
       saveCart,
+      updateSavedCartStatus,
+      updateSavedCartTitle,
       deleteCart,
       placeOrder,
       updatePrices,

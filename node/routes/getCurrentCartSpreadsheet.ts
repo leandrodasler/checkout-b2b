@@ -8,7 +8,8 @@ export async function getCurrentCartSpreadsheet(ctx: ServiceContext<Clients>) {
 
   if (!orderFormId) throw new Error('order-form-not-found')
 
-  const orderForm = await ctx.clients.checkout.orderForm(orderFormId)
+  ctx.clients.checkoutExtension.setOrderFormId(orderFormId)
+  const orderForm = await ctx.clients.checkoutExtension.getOrderForm()
 
   const csvContent = orderForm.items.reduce((acc, item) => {
     const { name, skuName } = item

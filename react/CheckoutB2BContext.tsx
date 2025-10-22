@@ -1,3 +1,4 @@
+import { ApolloQueryResult } from 'apollo-client'
 import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
@@ -9,10 +10,17 @@ import type { Item } from 'vtex.checkout-graphql'
 import { useRuntime } from 'vtex.render-runtime'
 import { withToast } from 'vtex.styleguide'
 
+import CHECK_ORDER_FORM_CONFIGURATION from './graphql/checkOrderFormConfiguration.graphql'
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
+import { useOrderFormCustom } from './hooks'
 import type { WithToast } from './typings'
+import { getOrderFormSavedCart } from './utils'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
+type QueryCheckOrderFormConfiguration = Pick<
+  Query,
+  'checkOrderFormConfiguration'
+>
 
 type CheckoutB2BContextData = {
   pending: boolean
@@ -20,14 +28,10 @@ type CheckoutB2BContextData = {
   showToast: WithToast['showToast']
   selectedCart?: SavedCart | null
   setSelectedCart: Dispatch<SetStateAction<SavedCart | null | undefined>>
-  openSavedCartModal: boolean
-  setOpenSavedCartModal: Dispatch<SetStateAction<boolean>>
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
   setDiscountApplied: Dispatch<SetStateAction<number>>
-  maximumDiscount?: number
-  setMaximumDiscount: Dispatch<SetStateAction<number | undefined>>
   subtotal: number
   setSubtotal: Dispatch<SetStateAction<number>>
   listedPrice: number
@@ -38,6 +42,10 @@ type CheckoutB2BContextData = {
   setSearchQuery: Dispatch<SetStateAction<string>>
   searchStore: boolean
   setSearchStore: Dispatch<SetStateAction<boolean>>
+  refetchCurrentSavedCart: (
+    variables?: QueryGetCartArgs | undefined
+  ) => Promise<ApolloQueryResult<QueryGetSavedCart>>
+  loadingCurrentSavedCart: boolean
 }
 
 const CheckoutB2BContext = React.createContext<CheckoutB2BContextData | null>(
@@ -51,21 +59,25 @@ function CheckoutB2BProviderWrapper({
   const { query, setQuery } = useRuntime()
   const [pending, setPending] = useState(false)
   const [selectedCart, setSelectedCart] = useState<SavedCart | null>()
-  const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchStore, setSearchStore] = useState(true)
   const [subtotal, setSubtotal] = useState(0)
   const [listedPrice, setListedPrice] = useState(0)
   const [percentualDiscount, setPercentualDiscount] = useState(0)
-  const [maximumDiscount, setMaximumDiscount] = useState<number | undefined>(0)
+  const { orderForm } = useOrderFormCustom()
+  const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
+  const savedCartId = query?.savedCart ?? customAppSavedCartId
 
-  const savedCartId = query?.savedCart
-
-  useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
+  const {
+    refetch: refetchCurrentSavedCart,
+    loading: loadingCurrentSavedCart,
+  } = useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
     ssr: false,
-    skip: !savedCartId || selectedCart?.id === savedCartId,
+    skip: !savedCartId,
+    fetchPolicy: 'network-only',
     variables: { id: savedCartId ?? '' },
+    notifyOnNetworkStatusChange: true,
     onCompleted({ getCart }) {
       setSelectedCart(getCart)
     },
@@ -73,6 +85,10 @@ function CheckoutB2BProviderWrapper({
       setSelectedCart(null)
       setQuery({ savedCart: undefined })
     },
+  })
+
+  useQuery<QueryCheckOrderFormConfiguration>(CHECK_ORDER_FORM_CONFIGURATION, {
+    ssr: false,
   })
 
   const getSellingPrice = useCallback(
@@ -101,15 +117,11 @@ function CheckoutB2BProviderWrapper({
     setPending,
     showToast,
     selectedCart,
-    openSavedCartModal,
-    setOpenSavedCartModal,
     setSelectedCart,
     getSellingPrice,
     getDiscountedPrice,
     discountApplied,
     setDiscountApplied,
-    maximumDiscount,
-    setMaximumDiscount,
     subtotal,
     setSubtotal,
     listedPrice,
@@ -120,6 +132,8 @@ function CheckoutB2BProviderWrapper({
     setSearchQuery,
     searchStore,
     setSearchStore,
+    refetchCurrentSavedCart,
+    loadingCurrentSavedCart,
   }
 
   return (

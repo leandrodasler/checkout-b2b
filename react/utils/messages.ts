@@ -1,4 +1,5 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, MessageDescriptor } from 'react-intl'
+import { SavedCartStatus } from 'ssesandbox04.checkout-b2b'
 
 export const messages = defineMessages({
   order: { id: 'store/checkout.b2b.order' },
@@ -41,6 +42,7 @@ export const messages = defineMessages({
   surplus: { id: 'store/checkout.b2b.totalizer.surplus' },
   totalSurplus: { id: 'store/checkout.b2b.totalizer.totalSurplus' },
   tax: { id: 'store/checkout.b2b.totalizer.tax' },
+  discountAbove: { id: 'store/checkout.b2b.totalizer.discount.above' },
   name: { id: 'store/checkout.b2b.column.name' },
   quantity: { id: 'store/checkout.b2b.column.quantity' },
   price: { id: 'store/checkout.b2b.column.price' },
@@ -97,6 +99,17 @@ export const messages = defineMessages({
   },
   savedCartsSaveNew: {
     id: 'store/checkout.b2b.savedCarts.save-cart.new',
+  },
+  savedCartsDiscount: {
+    id: 'store/checkout.b2b.savedCarts.discount',
+  },
+  savedCartsRename: {
+    id: 'store/checkout.b2b.savedCarts.rename',
+  },
+  requestDiscount: { id: 'store/checkout.b2b.button.requestDiscount' },
+  modalRequestDiscount: { id: 'store/checkout.b2b.modal.requestDiscount' },
+  modalRequestDiscountConfirmation: {
+    id: 'store/checkout.b2b.modal.requestDiscountConfirmation',
   },
   saveManualPrice: { id: 'store/checkout.b2b.button.saveManualPrice' },
   editManualPrice: { id: 'store/checkout.b2b.button.editManualPrice' },
@@ -307,4 +320,39 @@ export const messages = defineMessages({
   importSpreadsheetCartHelp: {
     id: 'store/checkout.b2b.import-spreadsheet.cart.help',
   },
+
+  discountKanbanModal: { id: 'store/checkout.b2b.discountKanban.modal' },
+  discountKanbanModalApprove: {
+    id: 'store/checkout.b2b.discountKanban.approve',
+  },
+  discountKanbanModalDeny: { id: 'store/checkout.b2b.discountKanban.deny' },
+  discountStatusOpen: {
+    id: 'store/checkout.b2b.discountStatus.open',
+  },
+  discountStatusPending: {
+    id: 'store/checkout.b2b.discountStatus.pending',
+  },
+  discountStatusApproved: {
+    id: 'store/checkout.b2b.discountStatus.approved',
+  },
+  discountStatusDenied: {
+    id: 'store/checkout.b2b.discountStatus.denied',
+  },
+  discountStatusOrderApproved: {
+    id: 'store/checkout.b2b.discountStatus.orderApproved',
+  },
+  noRequests: {
+    id: 'store/checkout.b2b.discountStatus.noRequests',
+  },
+})
+
+export const savedCartStatusMessages = defineMessages<
+  MessageDescriptor,
+  Record<SavedCartStatus, MessageDescriptor>
+>({
+  open: { id: 'store/checkout.b2b.savedCarts.status.open' },
+  pending: { id: 'store/checkout.b2b.savedCarts.status.pending' },
+  approved: { id: 'store/checkout.b2b.savedCarts.status.approved' },
+  denied: { id: 'store/checkout.b2b.savedCarts.status.denied' },
+  orderPlaced: { id: 'store/checkout.b2b.savedCarts.status.orderPlaced' },
 })

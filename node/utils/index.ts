@@ -5,7 +5,11 @@ import { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
-import { B2B_USERS_ENTITY, B2B_USERS_FIELDS } from './constants'
+import {
+  B2B_USERS_ENTITY,
+  B2B_USERS_FIELDS,
+  B2B_USERS_SCHEMA,
+} from './constants'
 import {
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
@@ -64,7 +68,7 @@ export async function getSessionData(context: ServiceContext<Clients>) {
 
 type GetAllSavedCartsArgs = {
   context: ServiceContext<Clients>
-  where: string
+  where?: string
   sort?: string
 }
 
@@ -89,11 +93,50 @@ export async function getAllSavedCarts({
       sort,
     })
 
-    if (savedCarts.length) {
-      result.push(...savedCarts)
+    if (!savedCarts.length) return
 
-      await fetchCarts(page + 1)
+    const savedCartsWithoutRoleId = savedCarts.filter((cart) => !cart.roleId)
+    const emailRoleIdMap: Record<string, string> = {}
+
+    for await (const cart of savedCartsWithoutRoleId) {
+      if (emailRoleIdMap[cart.email]) continue
+
+      const [user] = await masterdata.searchDocuments<B2BUser>({
+        dataEntity: B2B_USERS_ENTITY,
+        schema: B2B_USERS_SCHEMA,
+        fields: B2B_USERS_FIELDS,
+        pagination: { page: 1, pageSize: 1 },
+        where: `email=${cart.email} AND orgId=${cart.organizationId} AND costId=${cart.costCenterId}`,
+      })
+
+      if (!user?.roleId) continue
+
+      await masterdata.updatePartialDocument({
+        dataEntity: SAVED_CART_ENTITY,
+        fields: { roleId: user.roleId },
+        id: cart.id,
+      })
+
+      emailRoleIdMap[cart.email] = user.roleId
     }
+
+    result.push(
+      ...savedCarts.map((cart) => {
+        const status = cart.status ?? 'open'
+        const roleId = cart.roleId ?? emailRoleIdMap[cart.email]
+        let { requestedDiscount } = cart
+
+        if (!requestedDiscount) {
+          const orderForm = JSON.parse(cart.data) as OrderForm
+
+          requestedDiscount = getPercentualDiscount(orderForm)
+        }
+
+        return { ...cart, status, requestedDiscount, roleId }
+      })
+    )
+
+    await fetchCarts(page + 1)
   }
 
   await fetchCarts()
@@ -186,4 +229,96 @@ export function removeAccents(str?: string | null) {
 
 export function normalizeString(str?: string | null) {
   return removeAccents(str)?.replace(/\s/g, '') ?? ''
+}
+
+export function getManualPriceDiscount({ items, totalizers }: OrderForm) {
+  const hasManualPrice = items?.some(
+    (item) => item.manualPrice && item.manualPrice !== item.price
+  )
+
+  const discountTotalizer = totalizers.find(
+    (totalizer) => totalizer.id === 'Discounts'
+  )
+
+  return hasManualPrice ? (discountTotalizer?.value ?? 0) / 100 : 0
+}
+
+export function getPercentualDiscount(orderForm: OrderForm) {
+  const discounts = getManualPriceDiscount(orderForm) * 100
+  const totalizerItems = orderForm.totalizers.find((t) => t.id === 'Items')
+
+  return Math.round(((discounts * -1) / (totalizerItems?.value ?? 0)) * 100)
+}
+
+export function getMaxDiscountByRoleId(settings: AppSettings, roleId: string) {
+  switch (roleId) {
+    case 'sales-admin':
+      return settings.salesAdmin ?? 0
+
+    case 'sales-manager':
+      return settings.salesManager ?? 0
+
+    case 'sales-representative':
+      return settings.salesRepresentative ?? 0
+
+    default:
+      return Infinity
+  }
+}
+
+export const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
+export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
+export const CHECKOUT_B2B_CUSTOM_APP_ID = 'checkout-b2b'
+
+const B2B_CHECKOUT_SETTINGS_APP = {
+  fields: [PO_NUMBER_CUSTOM_FIELD],
+  id: B2B_CHECKOUT_CUSTOM_APP_ID,
+  major: 1,
+}
+
+const CHECKOUT_B2B_CUSTOM_APP = {
+  fields: ['savedCart'],
+  id: CHECKOUT_B2B_CUSTOM_APP_ID,
+  major: 1,
+}
+
+export const ORDER_FORM_CONFIGURATION = {
+  allowManualPrice: true,
+  allowMultipleDeliveries: true,
+  apps: [B2B_CHECKOUT_SETTINGS_APP, CHECKOUT_B2B_CUSTOM_APP],
+}
+
+export function isExpectedOrderFormConfiguration(
+  config: OrderFormConfiguration
+) {
+  const orderFormB2BCheckoutSettingsAppConfiguration = config.apps.find(
+    (app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID
+  )
+
+  const orderFormCheckoutB2BAppConfiguration = config.apps.find(
+    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+  )
+
+  const hasExpectedB2BCheckoutSettingsCustomFields =
+    orderFormB2BCheckoutSettingsAppConfiguration &&
+    B2B_CHECKOUT_SETTINGS_APP.fields.every((expectedField) =>
+      orderFormB2BCheckoutSettingsAppConfiguration.fields.some(
+        (field) => field === expectedField
+      )
+    )
+
+  const hasExpectedCheckoutB2BCustomFields =
+    orderFormCheckoutB2BAppConfiguration &&
+    CHECKOUT_B2B_CUSTOM_APP.fields.every((expectedField) =>
+      orderFormCheckoutB2BAppConfiguration.fields.some(
+        (field) => field === expectedField
+      )
+    )
+
+  return (
+    config.allowManualPrice &&
+    config.allowMultipleDeliveries &&
+    hasExpectedB2BCheckoutSettingsCustomFields &&
+    hasExpectedCheckoutB2BCustomFields
+  )
 }

@@ -6355,9 +6355,9 @@ splunk-events@^1.3.1:
   resolved "https://registry.yarnpkg.com/splunk-events/-/splunk-events-1.7.0.tgz#4400c2b224387e598806c8fb7e6e687cf9143fe4"
   integrity sha512-OdqBiyE45GIYWWzeNZVcZHqvagRwBINy26+u2Iu2nWQYzPtD7HnL6hSgWzFXNBzRxdQuUQWeAKE58I6pvJ9xjA==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.61/public/@types/ssesandbox04.checkout-b2b":
+"ssesandbox04.checkout-b2b@https://tiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@1.0.61+build1761097366/public/@types/ssesandbox04.checkout-b2b":
   version "1.0.61"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.61/public/@types/ssesandbox04.checkout-b2b#aae65fb4e5bd1d5e7f0df476b482d100a9324f0b"
+  resolved "https://tiago--bravtexfashionb2b.myvtex.com/_v/private/typings/linked/v1/ssesandbox04.checkout-b2b@1.0.61+build1761097366/public/@types/ssesandbox04.checkout-b2b#2eb590b853d968b4a6c80e2c7f07210ed61a4708"
 
 "ssesandbox04.file-manager@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager":
   version "0.7.7"
@@ -6917,13 +6917,13 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-"vtex.address-form@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.9/public/@types/vtex.address-form":
-  version "4.26.9"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.26.9/public/@types/vtex.address-form#10497d0053c8d2233ed5073cd52bc34b6aa6d79d"
+"vtex.address-form@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.27.0/public/@types/vtex.address-form":
+  version "4.27.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.27.0/public/@types/vtex.address-form#9e9d3992dd98aa2fbfdac347f9454876a02fb436"
 
-"vtex.apps-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.5/public/@types/vtex.apps-graphql":
-  version "3.17.5"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.17.5/public/@types/vtex.apps-graphql#9b4f2537ccca7c6966546d04e23da24a52b6a4b8"
+"vtex.apps-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.18.0/public/@types/vtex.apps-graphql":
+  version "3.18.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.18.0/public/@types/vtex.apps-graphql#4e1c3678d5472b5cdca134d893e1c52b143df114"
 
 "vtex.b2b-organizations-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.b2b-organizations-graphql@0.65.1/public/@types/vtex.b2b-organizations-graphql":
   version "0.65.1"
@@ -6953,9 +6953,9 @@ verror@1.10.0:
   version "0.21.5"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.flex-layout@0.21.5/public/@types/vtex.flex-layout#732a9584402f5a97308c079beffa41d839b4c06a"
 
-"vtex.formatted-price@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price":
-  version "0.7.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.7.0/public/@types/vtex.formatted-price#345e34745d9c4ad469a125c1e6f4c99267ba0c8c"
+"vtex.formatted-price@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.8.1/public/@types/vtex.formatted-price":
+  version "0.8.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.formatted-price@0.8.1/public/@types/vtex.formatted-price#0df3cd98ef210e7e6750f7d3c16320e56ebca7b4"
 
 "vtex.order-items@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-items@0.14.0/public/@types/vtex.order-items":
   version "0.14.0"
@@ -6965,13 +6965,17 @@ verror@1.10.0:
   version "0.12.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.order-manager@0.12.0/public/@types/vtex.order-manager#2cf6a9d2a31bc503b783c257695b0d17c09b5696"
 
+"vtex.orders-broadcast@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.orders-broadcast@0.3.3/public/_types/react":
+  version "0.0.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.orders-broadcast@0.3.3/public/_types/react#fa7a0347e046eab3dd768998fc9252b2c0dd5aef"
+
 "vtex.rich-text@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text":
   version "0.16.0"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text#0cdcaccffb37ae0d025894ba7055f69bc3c9aa30"
 
-"vtex.search-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.2/public/@types/vtex.search-graphql":
-  version "0.69.2"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.2/public/@types/vtex.search-graphql#f3cbb5c2310718c1e5257ad3c3f0a913c7d114dc"
+"vtex.search-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.3/public/@types/vtex.search-graphql":
+  version "0.69.3"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.3/public/@types/vtex.search-graphql#ebbeb1e1572e664f0537dda424ad1ee175434249"
 
 "vtex.session-client@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.session-client@1.0.4/public/@types/vtex.session-client":
   version "1.0.4"
@@ -6997,9 +7001,9 @@ verror@1.10.0:
   version "1.45.3"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions@1.45.3/public/@types/vtex.storefront-permissions#2cd2bb0626e1b26309c03955addcc307b2a0f25f"
 
-"vtex.styleguide@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide":
-  version "9.146.13"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.13/public/@types/vtex.styleguide#f4ccbc54621bf5114ddd115b6032ae320f2eba55"
+"vtex.styleguide@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.14/public/@types/vtex.styleguide":
+  version "9.146.14"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.14/public/@types/vtex.styleguide#88ebb29e191a947a7be9f500814a7256297c7e60"
 
 w3c-hr-time@^1.0.1:
   version "1.0.2"

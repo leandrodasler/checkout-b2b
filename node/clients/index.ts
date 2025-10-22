@@ -4,6 +4,7 @@ import { Checkout, Search } from '@vtex/clients'
 
 import { CheckoutExtension } from './CheckoutExtension'
 import Mail from './Mail'
+import Orders from './Orders'
 
 export class Clients extends IOClients {
   public get checkout() {
@@ -20,6 +21,10 @@ export class Clients extends IOClients {
 
   public get mail() {
     return this.getOrSet('mail', Mail)
+  }
+
+  public get orders() {
+    return this.getOrSet('orders', Orders)
   }
 }
 

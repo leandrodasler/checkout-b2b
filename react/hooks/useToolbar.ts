@@ -13,7 +13,13 @@ export function useToolbar({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { loading: loadingOrganization } = useOrganization()
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
-  const { pending, searchQuery, setSearchQuery } = useCheckoutB2BContext()
+  const {
+    pending,
+    searchQuery,
+    setSearchQuery,
+    selectedCart,
+    loadingCurrentSavedCart,
+  } = useCheckoutB2BContext()
 
   const { placeOrder, isLoading } = usePlaceOrder({ onChangeItems })
 
@@ -49,6 +55,9 @@ export function useToolbar({ onChangeItems }: Props) {
 
   const filteredItems = handleFilterItems(orderForm.items)
 
+  const blockedCartStatus =
+    selectedCart?.status === 'pending' || selectedCart?.status === 'denied'
+
   return {
     filteredItems,
     inputSearch: {
@@ -59,7 +68,12 @@ export function useToolbar({ onChangeItems }: Props) {
       onSubmit: handleSubmit,
     },
     newLine: {
-      disabled: isLoading || pending || !orderForm.items.length,
+      disabled:
+        isLoading ||
+        pending ||
+        !orderForm.items.length ||
+        blockedCartStatus ||
+        loadingCurrentSavedCart,
       isLoading,
       label: formatMessage(messages.placeOrder),
       handleCallback: placeOrder,

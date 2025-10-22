@@ -1,3 +1,4 @@
+import { SavedCartStatus } from 'ssesandbox04.checkout-b2b'
 import { Address, CustomData, Item, PaymentData } from 'vtex.checkout-graphql'
 import { DeliveryIds, ShippingSla } from 'vtex.store-graphql'
 
@@ -14,6 +15,7 @@ export const SESSION_NAMESPACE = 'storefront-permissions'
 export const NAMESPACE_ITEMS = ['organization', 'costcenter']
 export const B2B_QUOTES_CUSTOM_APP_ID = 'b2b-quotes-graphql'
 export const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
+export const CHECKOUT_B2B_CUSTOM_APP_ID = 'checkout-b2b'
 export const B2B_CHECKOUT_CUSTOM_APP_MAJOR = 1
 export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CUSTOMER_CREDIT_ID = '64'
@@ -148,6 +150,14 @@ export function getOrderFormPoNumber(customData?: CustomData | null): string {
     customData?.customApps?.find((app) => app.id === B2B_CHECKOUT_CUSTOM_APP_ID)
       ?.fields?.[PO_NUMBER_CUSTOM_FIELD] ?? ''
   )
+}
+
+export function getOrderFormSavedCart(
+  customData?: CustomData | null
+): string | undefined {
+  return customData?.customApps?.find(
+    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+  )?.fields?.savedCart
 }
 
 export function getCustomAppsExceptPoNumber(customData?: CustomData | null) {
@@ -337,4 +347,26 @@ export function isSameAddress<
     (a?.state ?? '') === (b?.state ?? '') &&
     (a?.street ?? '') === (b?.street ?? '')
   )
+}
+
+export function getCartStatusColor(status: SavedCartStatus): string {
+  switch (status) {
+    case 'open':
+      return '#3B82F6'
+
+    case 'pending':
+      return '#F59E0B'
+
+    case 'approved':
+      return '#10B981'
+
+    case 'denied':
+      return '#EF4444'
+
+    case 'orderPlaced':
+      return '#6366F1'
+
+    default:
+      return '#6B7280'
+  }
 }

@@ -1,8 +1,6 @@
-import { useCallback } from 'react'
 import { useMutation } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { Mutation, MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
-import { useRuntime } from 'vtex.render-runtime'
 
 import { useOrderFormCustom, useToast } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
@@ -15,11 +13,10 @@ type SaveCardMutation = Pick<Mutation, 'saveCart'>
 type Props = {
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>
   isCurrent: boolean
-  cartTitle?: string
+  title?: string
 }
 
-export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
-  const { setQuery } = useRuntime()
+export function useSaveCart({ setOpen, isCurrent, title }: Props) {
   const { setPending, selectedCart, setSelectedCart } = useCheckoutB2BContext()
   const { orderForm } = useOrderFormCustom()
   const showToast = useToast()
@@ -32,7 +29,6 @@ export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
     refetchQueries: [{ query: GET_SAVED_CARTS }],
     onCompleted({ saveCart }) {
       showToast({ message: formatMessage(messages.savedCartsSaveSuccess) })
-      setQuery({ savedCart: saveCart.id })
       setSelectedCart(saveCart)
     },
     onError({ message }) {
@@ -40,15 +36,9 @@ export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
     },
   })
 
-  const handleSaveCart = useCallback(() => {
+  const handleSaveCart = () => {
     setPending(true)
     setSelectedCart(null)
-
-    const title =
-      (cartTitle ?? '').trim() ||
-      formatMessage(messages.savedCartsSaveDefaultTitle, {
-        date: new Date().toLocaleString(),
-      })
 
     const additionalData = JSON.stringify({
       paymentAddress: orderForm.paymentAddress,
@@ -67,19 +57,7 @@ export function useSaveCart({ setOpen, isCurrent, cartTitle }: Props) {
       setPending(false)
       setOpen?.(false)
     })
-  }, [
-    cartTitle,
-    formatMessage,
-    isCurrent,
-    orderForm.customData,
-    orderForm.paymentAddress,
-    saveCartMutation,
-    selectedCart?.id,
-    selectedCart?.parentCartId,
-    setOpen,
-    setPending,
-    setSelectedCart,
-  ])
+  }
 
   return { handleSaveCart, loading }
 }

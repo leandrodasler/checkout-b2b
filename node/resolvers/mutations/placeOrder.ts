@@ -3,15 +3,15 @@ import { MutationPlaceOrderArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
+  B2B_CHECKOUT_CUSTOM_APP_ID,
   getFirstInstallmentByPaymentSystem,
+  getManualPriceDiscount,
   getSessionData,
   handleCheckoutApiError,
+  PO_NUMBER_CUSTOM_FIELD,
 } from '../../utils'
 import { getAppSettings } from '../queries/getAppSettings'
 import { saveRepresentativeBalance } from './saveRepresentativeBalance'
-
-const B2B_CHECKOUT_CUSTOM_APP_ID = 'b2b-checkout-settings'
-const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 
 export async function placeOrder(
   _: unknown,
@@ -25,7 +25,7 @@ export async function placeOrder(
   const { checkout, checkoutExtension } = context.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
-  const initialOrderForm = (await checkout.orderForm(orderFormId)) as OrderForm
+  const initialOrderForm = await checkoutExtension.getOrderForm()
   const { storePreferencesData, value } = initialOrderForm
   const { address } = initialOrderForm.shippingData
   const { installmentOptions, payments } = initialOrderForm.paymentData
@@ -111,24 +111,14 @@ export async function placeOrder(
       const settings = await getAppSettings(null, null, context)
 
       if (settings.representativeBalance?.enabled) {
-        const hasManualPrice = initialOrderForm.items?.some(
-          (item) => item.manualPrice && item.manualPrice !== item.price
-        )
+        const discounts = getManualPriceDiscount(initialOrderForm)
 
-        if (hasManualPrice) {
-          const discountTotalizer = initialOrderForm.totalizers?.find(
-            (t) => t.id === 'Discounts'
-          )
-
-          const balanceDiff = (discountTotalizer?.value ?? 0) / 100
-
-          if (balanceDiff) {
-            await saveRepresentativeBalance(
-              null,
-              { balance: balanceDiff, orderGroup },
-              context
-            ).catch(() => null)
-          }
+        if (discounts) {
+          await saveRepresentativeBalance(
+            null,
+            { balance: discounts, orderGroup },
+            context
+          ).catch(() => null)
         }
       }
     }

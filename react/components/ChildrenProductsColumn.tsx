@@ -27,7 +27,7 @@ export default function ChildrenProductsColumn({
   }
 
   return (
-    <div className="absolute flex items-center pointer w-100 h-100 left-0">
+    <div className="absolute flex items-center pointer w-100 h-100 left-0 z-1">
       <ButtonPlain onClick={toggleExpand}>
         {isExpanded ? (
           <IconCaretDown size={10} />
