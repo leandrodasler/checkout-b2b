@@ -59,13 +59,20 @@ export function PaymentData() {
 
   const [selectedPayment] = payments
 
-  const { data: customerCreditData, isLoading } = useFetchCustomerCredit({
+  const {
+    data: customerCreditData,
+    isLoading,
+    isError,
+  } = useFetchCustomerCredit({
     enabled: selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID,
   })
 
   const customerCreditLoading = useMemo(
-    () => selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID && isLoading,
-    [isLoading, selectedPayment?.paymentSystem]
+    () =>
+      selectedPayment?.paymentSystem === CUSTOMER_CREDIT_ID &&
+      isLoading &&
+      !isError,
+    [isError, isLoading, selectedPayment?.paymentSystem]
   )
 
   const setPayment = useCallback(
