@@ -1,7 +1,7 @@
 import { useMutation } from 'react-apollo'
 import {
   Mutation,
-  MutationUpdateSavedCartStatusArgs,
+  MutationUpdateSavedCartTitleArgs,
 } from 'ssesandbox04.checkout-b2b'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
@@ -18,7 +18,7 @@ export function useUpdateSavedCartTitle({ id, title, onCompleted }: Props) {
 
   const [updateSavedCartTitle, { loading }] = useMutation<
     MutationUpdateSavedCartTitle,
-    MutationUpdateSavedCartStatusArgs
+    MutationUpdateSavedCartTitleArgs
   >(UPDATE_SAVED_CART_TITLE, {
     notifyOnNetworkStatusChange: true,
     onError: showToast,

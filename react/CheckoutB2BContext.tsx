@@ -1,5 +1,11 @@
 import { ApolloQueryResult } from 'apollo-client'
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
 import { useQuery } from 'react-apollo'
 import type {
   Query,
@@ -25,6 +31,8 @@ type QueryCheckOrderFormConfiguration = Pick<
 type CheckoutB2BContextData = {
   pending: boolean
   setPending: Dispatch<SetStateAction<boolean>>
+  useCartLoading: boolean
+  setUseCartLoading: Dispatch<SetStateAction<boolean>>
   showToast: WithToast['showToast']
   selectedCart?: SavedCart | null
   setSelectedCart: Dispatch<SetStateAction<SavedCart | null | undefined>>
@@ -58,6 +66,7 @@ function CheckoutB2BProviderWrapper({
 }: React.PropsWithChildren<WithToast>) {
   const { query, setQuery } = useRuntime()
   const [pending, setPending] = useState(false)
+  const [useCartLoading, setUseCartLoading] = useState(false)
   const [selectedCart, setSelectedCart] = useState<SavedCart | null>()
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
@@ -68,24 +77,49 @@ function CheckoutB2BProviderWrapper({
   const { orderForm } = useOrderFormCustom()
   const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
   const savedCartId = query?.savedCart ?? customAppSavedCartId
+  const lastSaveCartQueryRef = useRef<string>()
 
-  const {
-    refetch: refetchCurrentSavedCart,
-    loading: loadingCurrentSavedCart,
-  } = useQuery<QueryGetSavedCart, QueryGetCartArgs>(GET_SAVED_CART, {
+  const { refetch, loading: loadingCurrentSavedCart } = useQuery<
+    QueryGetSavedCart,
+    QueryGetCartArgs
+  >(GET_SAVED_CART, {
     ssr: false,
-    skip: !savedCartId,
+    skip:
+      !savedCartId ||
+      (!query?.savedCart && lastSaveCartQueryRef.current === savedCartId),
     fetchPolicy: 'network-only',
     variables: { id: savedCartId ?? '' },
     notifyOnNetworkStatusChange: true,
     onCompleted({ getCart }) {
       setSelectedCart(getCart)
+
+      if (lastSaveCartQueryRef.current !== getCart?.id) {
+        lastSaveCartQueryRef.current = getCart?.id
+      } else {
+        lastSaveCartQueryRef.current = undefined
+      }
+
+      if (query?.savedCart) {
+        setQuery({ savedCart: undefined })
+      }
     },
     onError() {
       setSelectedCart(null)
+      lastSaveCartQueryRef.current = undefined
       setQuery({ savedCart: undefined })
     },
   })
+
+  const refetchCurrentSavedCart = useCallback(
+    async (variables?: QueryGetCartArgs) => {
+      const result = await refetch(variables)
+
+      setSelectedCart(result.data.getCart)
+
+      return result
+    },
+    [refetch]
+  )
 
   useQuery<QueryCheckOrderFormConfiguration>(CHECK_ORDER_FORM_CONFIGURATION, {
     ssr: false,
@@ -115,6 +149,8 @@ function CheckoutB2BProviderWrapper({
   const value = {
     pending,
     setPending,
+    useCartLoading,
+    setUseCartLoading,
     showToast,
     selectedCart,
     setSelectedCart,

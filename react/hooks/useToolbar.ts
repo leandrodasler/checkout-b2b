@@ -15,6 +15,7 @@ export function useToolbar({ onChangeItems }: Props) {
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
   const {
     pending,
+    useCartLoading,
     searchQuery,
     setSearchQuery,
     selectedCart,
@@ -71,6 +72,7 @@ export function useToolbar({ onChangeItems }: Props) {
       disabled:
         isLoading ||
         pending ||
+        useCartLoading ||
         !orderForm.items.length ||
         blockedCartStatus ||
         loadingCurrentSavedCart,

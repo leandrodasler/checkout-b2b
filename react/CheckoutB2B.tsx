@@ -216,9 +216,10 @@ function CheckoutB2B() {
       })
     },
     onError: (error) => {
-      console.error('Error when saving prices:', error)
-      showToast?.({
-        message: formatMessage(messages.manualPriceError),
+      showToast({
+        message: formatMessage(messages.manualPriceError, {
+          error: error.message,
+        }),
       })
     },
   })
@@ -508,7 +509,7 @@ function CheckoutB2B() {
           />
         )}
         <div className="flex justify-between mt4">
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap items-center">
             {!!items.length && isSalesUser && (
               <>
                 <Button
@@ -538,7 +539,7 @@ function CheckoutB2B() {
               </>
             )}
           </div>
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap items-center justify-end">
             {!!items.length && !loading && (
               <>
                 <ShareCartPDF mainRef={pdfElementRef} />

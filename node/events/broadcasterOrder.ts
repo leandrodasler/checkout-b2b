@@ -1,7 +1,7 @@
 import { EventContext } from '@vtex/api'
 
 import { Clients } from '../clients'
-import { CHECKOUT_B2B_CUSTOM_APP_ID, SAVED_CART_ENTITY } from '../utils'
+import { getSavedCartId, SAVED_CART_ENTITY } from '../utils'
 
 export async function broadcasterOrder(context: EventContext<Clients>) {
   if (context.body.currentState !== 'order-created' || !context.body.orderId) {
@@ -9,12 +9,7 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
   }
 
   const order = await context.clients.orders.getOrder(context.body.orderId)
-
-  const checkoutB2BCustomApp = order?.customData?.customApps?.find(
-    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
-  )
-
-  const savedCartId = checkoutB2BCustomApp?.fields?.savedCart
+  const savedCartId = getSavedCartId(order?.customData)
 
   if (!savedCartId) return
 

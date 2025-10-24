@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
+import { useOrderFormCustom, useOrganization, useToast } from '.'
 import { apiRequest } from '../services'
 import type { ApiResponse } from '../typings'
-import { useToast, useOrderFormCustom, useOrganization } from '.'
 
 interface Response extends ApiResponse {
   accountId: string
@@ -40,9 +40,6 @@ export function useFetchCustomerCredit({ enabled = true }: Options) {
     queryKey: ['fetchCustomerCredit', email, skus, salesChannel],
     queryFn: () => apiRequest<Response>(url, 'GET'),
     enabled,
-    onError: (error) => {
-      showToast({ message: error.message })
-      console.error(`Error fetching Customer Credit: ${error.message}`)
-    },
+    onError: showToast,
   })
 }

@@ -6,6 +6,7 @@ import {
   IconCheck,
   IconCopy,
   IconEdit,
+  IconInfo,
   IconPlusLines,
   IconShoppingCart,
   Spinner,
@@ -14,7 +15,7 @@ import {
 } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { usePermissions, useSaveCart } from '../hooks'
+import { useOrderFormCustom, usePermissions, useSaveCart } from '../hooks'
 import { messages } from '../utils'
 import { DiscountApprovalModal } from './DiscountApprovalModal'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
@@ -32,10 +33,17 @@ export function SavedCarts({ onChangeItems }: Props) {
   const [openForm, setOpenForm] = useState(false)
   const [openFormRenameCart, setOpenFormRenameCart] = useState(false)
   const [openDiscountKanbanModal, setOpenDiscountKanbanModal] = useState(false)
-  const { selectedCart } = useCheckoutB2BContext()
-  const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
+  const {
+    selectedCart,
+    loadingCurrentSavedCart,
+    useCartLoading,
+  } = useCheckoutB2BContext()
 
-  const { handleSaveCart, loading } = useSaveCart({
+  const [openSavedCartModal, setOpenSavedCartModal] = useState(false)
+  const { orderForm } = useOrderFormCustom()
+  const userEmail = orderForm.clientProfileData?.email
+
+  const { handleSaveCart, loading: saveCartLoading } = useSaveCart({
     isCurrent: true,
   })
 
@@ -43,6 +51,7 @@ export function SavedCarts({ onChangeItems }: Props) {
   const handleOpenFormModal = () => setOpenForm(true)
   const handleOpenFormRenameModal = () => setOpenFormRenameCart(true)
   const handleOpenDiscountKanbanModal = () => setOpenDiscountKanbanModal(true)
+  const loading = loadingCurrentSavedCart || useCartLoading || saveCartLoading
 
   if (!isSalesUser) return null
 
@@ -50,28 +59,44 @@ export function SavedCarts({ onChangeItems }: Props) {
     <div className="flex items-center justify-center flex-wrap pl4">
       {loading && <Spinner size={20} />}
       {selectedCart && !loading && (
-        <div className="flex">
-          <Tag variation="low">
-            <div className="flex flex-wrap items-center">
-              {formatMessage(messages.savedCartsCurrentLabel)}:
-              <strong>{selectedCart.title}</strong>
-              <Tooltip label={formatMessage(messages.savedCartsRename)}>
+        <Tag variation="low">
+          <div className="flex flex-wrap items-center justify-center">
+            {formatMessage(messages.savedCartsCurrentLabel)}:
+            <strong>{selectedCart.title}</strong>
+            {userEmail && selectedCart.email !== userEmail && (
+              <Tooltip
+                label={formatMessage(messages.savedCartsAnotherUser, {
+                  email: selectedCart.email,
+                })}
+              >
                 <div>
                   <ButtonWithIcon
                     size="small"
-                    variation="tertiary"
-                    icon={<IconEdit />}
-                    onClick={handleOpenFormRenameModal}
+                    variation="danger-tertiary"
+                    icon={
+                      <span className="c-danger">
+                        <IconInfo />
+                      </span>
+                    }
+                    disabled
                   />
                 </div>
               </Tooltip>
-              <SavedCartStatusBadge status={selectedCart.status} />
-              <SavedCartDiscountBadge
-                discount={selectedCart.requestedDiscount}
-              />
-            </div>
-          </Tag>
-        </div>
+            )}
+            <Tooltip label={formatMessage(messages.savedCartsRename)}>
+              <div>
+                <ButtonWithIcon
+                  size="small"
+                  variation="tertiary"
+                  icon={<IconEdit />}
+                  onClick={handleOpenFormRenameModal}
+                />
+              </div>
+            </Tooltip>
+            <SavedCartStatusBadge status={selectedCart.status} />
+            <SavedCartDiscountBadge discount={selectedCart.requestedDiscount} />
+          </div>
+        </Tag>
       )}
       <ActionMenu
         label={formatMessage(messages.savedCartsMainTitle)}

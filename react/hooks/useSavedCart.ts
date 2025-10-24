@@ -43,8 +43,8 @@ export function useSavedCart(props?: Props) {
   const { page, navigate, query } = useRuntime()
   const { orderForm, setOrderForm } = useOrderFormCustom()
   const {
-    pending,
-    setPending,
+    useCartLoading,
+    setUseCartLoading,
     selectedCart,
     setSelectedCart,
   } = useCheckoutB2BContext()
@@ -110,13 +110,13 @@ export function useSavedCart(props?: Props) {
 
   const loading = useMemo(
     () =>
-      pending ||
+      useCartLoading ||
       loadingClearCart ||
       loadingAddItemsToCart ||
       loadingSetManualPrice ||
       loadingUpdatePayment,
     [
-      pending,
+      useCartLoading,
       loadingAddItemsToCart,
       loadingClearCart,
       loadingSetManualPrice,
@@ -137,7 +137,7 @@ export function useSavedCart(props?: Props) {
       (logisticsInfoItem) => !!logisticsInfoItem.selectedSla
     )?.selectedSla
 
-    setPending(true)
+    setUseCartLoading(true)
 
     try {
       await clearCart()
@@ -238,7 +238,7 @@ export function useSavedCart(props?: Props) {
         })
       }
 
-      setPending(false)
+      setUseCartLoading(false)
 
       if (page !== 'store.checkout-b2b') {
         navigate({
@@ -248,7 +248,7 @@ export function useSavedCart(props?: Props) {
         })
       }
     } catch (error) {
-      setPending(false)
+      setUseCartLoading(false)
       showToast({ message: error.message })
     }
   }

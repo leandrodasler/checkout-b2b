@@ -34,6 +34,7 @@
   "store/checkout.b2b.savedCarts.status.denied": "Negado",
   "store/checkout.b2b.savedCarts.status.orderPlaced": "Pedido realizado",
   "store/checkout.b2b.savedCarts.rename": "Renomear carrinho",
+  "store/checkout.b2b.savedCarts.another-user": "Carrinho criado por outro usuário: {email}",
 
   "store/checkout.b2b.totalizer.boxTitle": "Cabeçalho do Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Entrega",
@@ -90,7 +91,7 @@
 
   "store/checkout.b2b.manualPrice.stopEditManualPrice": "Parar edição",
   "store/checkout.b2b.manualPrice.placeOrder": "Todos os preços foram atualizados com sucesso",
-  "store/checkout.b2b.manualPrice.placeOrder.error": "Erro ao atualizar os preços:",
+  "store/checkout.b2b.manualPrice.placeOrder.error": "Erro ao atualizar preços: {error}",
   "store/checkout.b2b.manualPrice.placeOrder.success": "Preço atualizado",
   "store/checkout.b2b.manualPrice.discount-exceeded": "O desconto ultrapassou o limite global permitido: {value}%",
   "store/checkout.b2b.manualPrice.input.placeholder": "Digite um valor monetário",

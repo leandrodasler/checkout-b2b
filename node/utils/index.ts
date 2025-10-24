@@ -2,7 +2,7 @@ import type { ErrorLike, ServiceContext } from '@vtex/api'
 import { ForbiddenError, ResolverError } from '@vtex/api'
 import { SearchProduct } from '@vtex/clients'
 import { SavedCart } from 'ssesandbox04.checkout-b2b'
-import { PaymentData } from 'vtex.checkout-graphql'
+import { CustomData, PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
 import {
@@ -321,4 +321,12 @@ export function isExpectedOrderFormConfiguration(
     hasExpectedB2BCheckoutSettingsCustomFields &&
     hasExpectedCheckoutB2BCustomFields
   )
+}
+
+export function getSavedCartId(customData?: CustomData): string | undefined {
+  const checkoutB2BCustomApp = customData?.customApps?.find(
+    (app) => app.id === CHECKOUT_B2B_CUSTOM_APP_ID
+  )
+
+  return checkoutB2BCustomApp?.fields?.savedCart
 }

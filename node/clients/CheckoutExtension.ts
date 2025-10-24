@@ -91,6 +91,7 @@ export class CheckoutExtension extends JanusClient {
   public async getOrderForm() {
     return this.get<OrderForm>(this.routes.orderForm, {
       metric: 'checkoutExtension-getOrderForm',
+      cacheable: 0,
     })
   }
 
