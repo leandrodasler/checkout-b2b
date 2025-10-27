@@ -43,10 +43,33 @@ export const REPRESENTATIVE_BALANCE_TRANSACTION_FIELDS = [
   'newBalance',
   'orderGroup',
 ]
+export const CHECKOUT_B2B_CART_COMMENT_FIELDS = [
+  'id',
+  'createdIn',
+  'savedCartId',
+  'email',
+  'comment',
+]
+
+export const CHECKOUT_B2B_CART_COMMENT_ENTITY = 'checkout_b2b_cart_comment'
 
 export const SCHEMA_VERSION = 'v0.0.1'
 
 export const schemas = [
+  {
+    name: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+    version: SCHEMA_VERSION,
+    body: {
+      properties: {
+        savedCartId: { type: 'string' },
+        email: { type: 'string' },
+        comment: { type: 'string' },
+      },
+      'v-indexed': ['savedCartId'],
+      'v-immediate-indexing': true,
+      'v-cache': false,
+    },
+  },
   {
     name: SAVED_CART_ENTITY,
     version: SCHEMA_VERSION,
