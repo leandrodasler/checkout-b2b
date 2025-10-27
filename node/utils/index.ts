@@ -1,7 +1,7 @@
-import type { ErrorLike, ServiceContext } from '@vtex/api'
 import { ForbiddenError, ResolverError } from '@vtex/api'
+import type { ErrorLike, ServiceContext } from '@vtex/api'
 import { SearchProduct } from '@vtex/clients'
-import { SavedCart } from 'ssesandbox04.checkout-b2b'
+import { CartComment, SavedCart } from 'ssesandbox04.checkout-b2b'
 import { PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
@@ -11,6 +11,8 @@ import {
   B2B_USERS_SCHEMA,
 } from './constants'
 import {
+  CHECKOUT_B2B_CART_COMMENT_ENTITY,
+  CHECKOUT_B2B_CART_COMMENT_FIELDS,
   SAVED_CART_ENTITY,
   SAVED_CART_FIELDS,
   SCHEMA_VERSION,
@@ -66,7 +68,7 @@ export async function getSessionData(context: ServiceContext<Clients>) {
   return { orderFormId, email, name, roleId, organizationId, costCenterId }
 }
 
-type GetAllSavedCartsArgs = {
+type GetAllDataArgs = {
   context: ServiceContext<Clients>
   where?: string
   sort?: string
@@ -76,7 +78,7 @@ export async function getAllSavedCarts({
   context,
   where,
   sort = 'createdIn DESC',
-}: GetAllSavedCartsArgs) {
+}: GetAllDataArgs) {
   const { masterdata } = context.clients
   const result: SavedCart[] = []
 
@@ -140,6 +142,39 @@ export async function getAllSavedCarts({
   }
 
   await fetchCarts()
+
+  return result
+}
+
+export async function getAllCartComments({
+  context,
+  where,
+  sort = 'createdIn DESC',
+}: GetAllDataArgs) {
+  const { masterdata } = context.clients
+  const result: CartComment[] = []
+
+  async function fetchComments(page = 1) {
+    const savedCartsComments = await masterdata.searchDocuments<CartComment>({
+      schema: SCHEMA_VERSION,
+      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+      fields: CHECKOUT_B2B_CART_COMMENT_FIELDS,
+      pagination: {
+        page,
+        pageSize: 100,
+      },
+      where,
+      sort,
+    })
+
+    if (!savedCartsComments.length) return
+
+    result.push(...savedCartsComments)
+
+    await fetchComments(page + 1)
+  }
+
+  await fetchComments()
 
   return result
 }
