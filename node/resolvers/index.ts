@@ -2,6 +2,7 @@ import * as schemaDirectives from './directives'
 import { addAddressToCart } from './mutations/addAddressToCart'
 import { addItemsToCart } from './mutations/addItemsToCart'
 import { clearCart } from './mutations/clearCart'
+import { createCartComment } from './mutations/createCartComment'
 import { deleteCart } from './mutations/deleteCart'
 import { placeOrder } from './mutations/placeOrder'
 import { saveCart } from './mutations/saveCart'
@@ -17,6 +18,7 @@ import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
 import { checkOrderFormConfiguration } from './queries/checkOrderFormConfiguration'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
+import { getCartComments } from './queries/getCartComments'
 import { getRepresentativeBalanceByEmail } from './queries/getRepresentativeBalanceByEmail'
 import { getRepresentativeBalances } from './queries/getRepresentativeBalances'
 import { getRepresentativeBalanceTransactions } from './queries/getRepresentativeBalanceTransactions'
@@ -32,6 +34,7 @@ export default {
       getRepresentativeBalances,
       getRepresentativeBalanceByEmail,
       getRepresentativeBalanceTransactions,
+      getCartComments,
     },
     Mutation: {
       clearCart,
@@ -49,6 +52,7 @@ export default {
       updateItemsQuantity,
       addAddressToCart,
       updateShippingOption,
+      createCartComment,
     },
   },
   schemaDirectives,

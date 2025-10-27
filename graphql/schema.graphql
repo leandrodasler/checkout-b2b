@@ -42,6 +42,14 @@ type SavedCart {
   roleId: String
 }
 
+type CartComment {
+  id: ID!
+  savedCartId: ID!
+  email: String!
+  comment: String!
+  createdIn: String!
+}
+
 type RepresentativeBalanceSettings {
   enabled: Boolean!
   openingBalance: Float
@@ -115,6 +123,8 @@ type Query {
 
   getSavedCarts(parentCartId: ID, getAll: Boolean): [SavedCart!]! @CheckSchemas
 
+  getCartComments(savedCartId: ID!): [CartComment]! @CheckSchemas
+
   getAppSettings: AppSettings!
 
   getRepresentativeBalances: [RepresentativeBalance]! @CheckSchemas
@@ -142,6 +152,9 @@ type Mutation {
     @CheckSchemas
 
   updateSavedCartTitle(id: ID!, title: String!): SavedCart! @CheckSchemas
+
+  createCartComment(savedCartId: ID!, comment: String!): CartComment!
+    @CheckSchemas
 
   deleteCart(id: ID!): ID @CheckSchemas
 
