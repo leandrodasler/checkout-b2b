@@ -1,3 +1,6 @@
 query CheckOrderFormConfiguration {
-  checkOrderFormConfiguration @context(provider: "ssesandbox04.checkout-b2b")
+  checkOrderFormConfiguration @context(provider: "ssesandbox04.checkout-b2b") {
+    state
+    data
+  }
 }

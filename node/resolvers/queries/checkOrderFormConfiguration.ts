@@ -15,18 +15,22 @@ export const checkOrderFormConfiguration = async (
   const currentOrderFormConfiguration = await checkoutExtension.getOrderFormConfiguration()
 
   if (isExpectedOrderFormConfiguration(currentOrderFormConfiguration)) {
-    return 'ready'
+    return { state: 'ready', data: currentOrderFormConfiguration }
   }
 
   const filteredCurrentApps = currentOrderFormConfiguration.apps.filter(
     (app) => !ORDER_FORM_CONFIGURATION.apps.some(({ id }) => id === app.id)
   )
 
-  await checkoutExtension.updateOrderFormConfiguration({
+  const updatedOrderFormConfiguration = {
     ...currentOrderFormConfiguration,
     ...ORDER_FORM_CONFIGURATION,
     apps: [...filteredCurrentApps, ...ORDER_FORM_CONFIGURATION.apps],
-  })
+  }
 
-  return 'updated'
+  await checkoutExtension.updateOrderFormConfiguration(
+    updatedOrderFormConfiguration
+  )
+
+  return { state: 'updated', data: updatedOrderFormConfiguration }
 }

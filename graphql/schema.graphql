@@ -5,6 +5,7 @@ scalar InvoiceData
 scalar CostCenterDeliveryOptions
 scalar UpdatedOrderForm
 scalar Address
+scalar OrderFormConfiguration
 
 enum SavedCartStatus {
   open
@@ -17,6 +18,11 @@ enum SavedCartStatus {
 enum OrderFormConfigurationState {
   ready
   updated
+}
+
+type CheckOrderFormConfigurationResponse {
+  state: OrderFormConfigurationState!
+  data: OrderFormConfiguration!
 }
 
 type SavedCart {
@@ -103,7 +109,7 @@ type RepresentativeBalanceTransactionResponse {
 }
 
 type Query {
-  checkOrderFormConfiguration: OrderFormConfigurationState!
+  checkOrderFormConfiguration: CheckOrderFormConfigurationResponse!
 
   getCart(id: ID!): SavedCart @CheckSchemas
 
