@@ -173,7 +173,7 @@ export function DiscountApprovalKanban({
         <div
           key={key}
           className="flex flex-column mh3 bg-muted-5 br3 flex-grow-1"
-          style={{ maxWidth: '300px' }}
+          style={{ flex: 1 }}
         >
           <div
             className="mt4 mh5 c-action-primary br3 b flex items-center justify-between"
