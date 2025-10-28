@@ -235,5 +235,6 @@ declare global {
     items: unknown[]
     status: string
     customData: CustomData
+    clientProfileData: { email: string }
   }
 }

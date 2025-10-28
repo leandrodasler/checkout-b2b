@@ -1,7 +1,13 @@
 import { EventContext } from '@vtex/api'
+import { SavedCart } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../clients'
-import { getSavedCartId, SAVED_CART_ENTITY } from '../utils'
+import {
+  CHECKOUT_B2B_CART_COMMENT_ENTITY,
+  getSavedCartId,
+  SAVED_CART_ENTITY,
+  SCHEMA_VERSION,
+} from '../utils'
 
 export async function broadcasterOrder(context: EventContext<Clients>) {
   if (context.body.currentState !== 'order-created' || !context.body.orderId) {
@@ -13,9 +19,31 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
 
   if (!savedCartId) return
 
-  context.clients.masterdata.updatePartialDocument({
+  const cart = await context.clients.masterdata.getDocument<
+    Pick<SavedCart, 'status'>
+  >({
     dataEntity: SAVED_CART_ENTITY,
+    fields: ['status'],
     id: savedCartId,
-    fields: { status: 'orderPlaced' },
+  })
+
+  let commentStatus = ''
+
+  if (cart.status !== 'orderPlaced') {
+    context.clients.masterdata.updatePartialDocument({
+      dataEntity: SAVED_CART_ENTITY,
+      id: savedCartId,
+      fields: { status: 'orderPlaced' },
+    })
+
+    commentStatus = `Status: ${cart.status} > orderPlaced. `
+  }
+
+  const comment = `${commentStatus}Order ID: ${context.body.orderId}`
+
+  context.clients.masterdata.createDocument({
+    dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+    schema: SCHEMA_VERSION,
+    fields: { comment, savedCartId, email: order.clientProfileData.email },
   })
 }
