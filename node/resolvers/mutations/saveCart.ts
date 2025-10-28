@@ -3,6 +3,7 @@ import type { MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
+  CHECKOUT_B2B_CART_COMMENT_ENTITY,
   CHECKOUT_B2B_CUSTOM_APP_ID,
   getMaxDiscountByRoleId,
   getPercentualDiscount,
@@ -76,6 +77,26 @@ export const saveCart = async (
       roleId,
     },
   })
+
+  if (currentCart && currentCart.status !== status) {
+    const comment = `Status: ${currentCart.status} > ${status}.`
+
+    context.clients.masterdata.createDocument({
+      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+      schema: SCHEMA_VERSION,
+      fields: { comment, savedCartId: currentCart.id, email },
+    })
+  }
+
+  if (!currentCart) {
+    const comment = `Status: ${status}.`
+
+    context.clients.masterdata.createDocument({
+      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+      schema: SCHEMA_VERSION,
+      fields: { comment, savedCartId: DocumentId, email },
+    })
+  }
 
   const savedCartPromises = [
     checkout.setSingleCustomData(orderFormId, {
