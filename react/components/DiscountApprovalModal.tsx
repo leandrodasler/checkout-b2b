@@ -8,7 +8,7 @@ import {
   SavedCart,
   SavedCartStatus,
 } from 'ssesandbox04.checkout-b2b'
-import { EXPERIMENTAL_Modal as Modal, Spinner } from 'vtex.styleguide'
+import { Button, EXPERIMENTAL_Modal as Modal, Spinner } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_ALL_SAVED_CARTS from '../graphql/getAllSavedCarts.graphql'
@@ -23,10 +23,16 @@ type MutationUpdateSavedCartStatus = Pick<Mutation, 'updateSavedCartStatus'>
 type Props = {
   open: boolean
   setOpen: (value: boolean) => void
+  setOpenTable: (value: boolean) => void
   onChangeItems: () => void
 }
 
-export function DiscountApprovalModal({ open, setOpen, onChangeItems }: Props) {
+export function DiscountApprovalModal({
+  open,
+  setOpen,
+  setOpenTable,
+  onChangeItems,
+}: Props) {
   const { formatMessage } = useIntl()
   const showToast = useToast()
   const { refetchCurrentSavedCart } = useCheckoutB2BContext()
@@ -83,6 +89,17 @@ export function DiscountApprovalModal({ open, setOpen, onChangeItems }: Props) {
       showBottomBarBorder={false}
       size="extralarge"
       style={{ minHeight: '50vh' }}
+      bottomBar={
+        <Button
+          variation="tertiary"
+          onClick={() => {
+            setOpen(false)
+            setOpenTable(true)
+          }}
+        >
+          {formatMessage(messages.openTable)}
+        </Button>
+      }
     >
       {networkStatus !== 1 ? (
         <DiscountApprovalKanban

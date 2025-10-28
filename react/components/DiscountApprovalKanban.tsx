@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { SavedCart, SavedCartStatus } from 'ssesandbox04.checkout-b2b'
 import { FormattedPrice } from 'vtex.formatted-price'
+import { useRuntime } from 'vtex.render-runtime'
 import {
   ButtonPlain,
   ButtonWithIcon,
@@ -15,6 +16,7 @@ import {
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { useDeleteSavedCart, useOrganization, useSavedCart } from '../hooks'
 import { messages } from '../utils/messages'
+import { IconUpdateHistory } from './IconUpdateHistory'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 
 interface DiscountApprovalKanbanProps {
@@ -50,6 +52,7 @@ export function DiscountApprovalKanban({
   onUseCart,
   onChangeItems,
 }: DiscountApprovalKanbanProps) {
+  const { locale } = useRuntime().culture
   const { formatMessage } = useIntl()
   const { selectedCart } = useCheckoutB2BContext()
   const { organization } = useOrganization()
@@ -205,138 +208,147 @@ export function DiscountApprovalKanban({
               const canManage = canManageCart(cart.roleId)
 
               return (
-                <div key={cart.id} className="relative">
-                  <Card noPadding>
-                    <div
-                      style={{ gap: 6 }}
-                      className={`flex flex-column pa6 br2 ${
-                        isCurrent ? 'bg-washed-blue' : ''
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="c-muted-1">
-                          <span className="t-mini">
-                            {new Date(cart.createdIn).toLocaleString()}
-                          </span>
-                        </div>
-
-                        <div className="absolute right-1 top-1 flex flex-wrap">
-                          <Tooltip label={formatMessage(messages.delete)}>
-                            <div>
-                              <ButtonWithIcon
-                                size="small"
-                                variation="danger-tertiary"
-                                icon={<IconDelete size={16} />}
-                                onClick={() => {
-                                  deletingCart.current = cart.id
-                                  deleteCart({ variables: { id: cart.id } })
-                                }}
-                                isLoading={
-                                  loadingDeleteCart &&
-                                  deletingCart.current === cart.id
-                                }
-                                disabled={loadingUseCart || loadingDeleteCart}
-                                style={{ padding: 0 }}
-                              />
-                            </div>
-                          </Tooltip>
-
-                          <Tooltip label={tooltipLabel}>
-                            <div>
-                              <ButtonWithIcon
-                                size="small"
-                                variation="tertiary"
-                                icon={<IconShoppingCart size={16} />}
-                                onClick={() =>
-                                  handleUseSavedCart(cart).then(onUseCart)
-                                }
-                                isLoading={loadingUseCart && isCurrent}
-                                disabled={
-                                  loadingUseCart ||
-                                  loadingDeleteCart ||
-                                  isCurrent
-                                }
-                                style={{ padding: 0 }}
-                              />
-                            </div>
-                          </Tooltip>
-                        </div>
-                      </div>
-
-                      <div className="c-action-primary">
-                        <span className="fw5">{cart.title}</span>
-                      </div>
-
-                      <div className="c-muted-1 f6 flex flex-column flex-wrap">
-                        <span style={{ wordWrap: 'break-word' }}>
-                          {cart.email}
+                <Card key={cart.id} noPadding>
+                  <div
+                    style={{ gap: 6 }}
+                    className={`flex flex-column pa6 br2 ${
+                      isCurrent ? 'bg-washed-blue' : ''
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="c-muted-1">
+                        <span className="t-mini nowrap">
+                          {new Date(cart.createdIn).toLocaleString(locale)}
                         </span>
+                      </div>
+                      <Tooltip
+                        label={formatMessage(messages.savedCartsUpdateHistory)}
+                      >
                         <div>
-                          <Tag size="small" variation="low">
-                            {cart.roleId}
-                          </Tag>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center" style={{ gap: 6 }}>
-                        <span className="fw5">
-                          <FormattedPrice
-                            value={parseCartData(cart.data)?.value / 100}
+                          <ButtonWithIcon
+                            size="small"
+                            variation="tertiary"
+                            icon={<IconUpdateHistory />}
+                            onClick={() => {} /* TODO */}
+                            isLoading={false /* TODO */}
+                            disabled={false /* TODO */}
+                            style={{ padding: 0 }}
                           />
-                        </span>
-                        <SavedCartDiscountBadge
-                          discount={cart.requestedDiscount}
-                        />
-                      </div>
+                        </div>
+                      </Tooltip>
 
-                      {cart.status === STATUSES.PENDING && canManage && (
-                        <div className="flex justify-between mt2">
+                      <Tooltip label={formatMessage(messages.delete)}>
+                        <div>
+                          <ButtonWithIcon
+                            size="small"
+                            variation="danger-tertiary"
+                            icon={<IconDelete size={16} />}
+                            onClick={() => {
+                              deletingCart.current = cart.id
+                              deleteCart({ variables: { id: cart.id } })
+                            }}
+                            isLoading={
+                              loadingDeleteCart &&
+                              deletingCart.current === cart.id
+                            }
+                            disabled={loadingUseCart || loadingDeleteCart}
+                            style={{ padding: 0 }}
+                          />
+                        </div>
+                      </Tooltip>
+
+                      <Tooltip label={tooltipLabel}>
+                        <div>
+                          <ButtonWithIcon
+                            size="small"
+                            variation="tertiary"
+                            icon={<IconShoppingCart size={16} />}
+                            onClick={() =>
+                              handleUseSavedCart(cart).then(onUseCart)
+                            }
+                            isLoading={loadingUseCart && isCurrent}
+                            disabled={
+                              loadingUseCart || loadingDeleteCart || isCurrent
+                            }
+                            style={{ padding: 0 }}
+                          />
+                        </div>
+                      </Tooltip>
+                    </div>
+
+                    <div className="c-action-primary">
+                      <span className="fw5">{cart.title}</span>
+                    </div>
+
+                    <div className="c-muted-1 f6 flex flex-column flex-wrap">
+                      <span style={{ wordWrap: 'break-word' }}>
+                        {cart.email}
+                      </span>
+                      <div>
+                        <Tag size="small" variation="low">
+                          {cart.roleId}
+                        </Tag>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center" style={{ gap: 6 }}>
+                      <span className="fw5">
+                        <FormattedPrice
+                          value={parseCartData(cart.data)?.value / 100}
+                        />
+                      </span>
+                      <SavedCartDiscountBadge
+                        discount={cart.requestedDiscount}
+                      />
+                    </div>
+
+                    {cart.status === STATUSES.PENDING && canManage && (
+                      <div className="flex justify-between mt2">
+                        <ButtonPlain
+                          size="small"
+                          variant="primary"
+                          onClick={handleChangeCartStatus(
+                            cart.id,
+                            STATUSES.DENIED
+                          )}
+                          isLoading={isLoading(cart.id, STATUSES.DENIED)}
+                        >
+                          {formatMessage(messages.discountKanbanModalDeny)}
+                        </ButtonPlain>
+                        <ButtonPlain
+                          size="small"
+                          variant="primary"
+                          onClick={handleChangeCartStatus(
+                            cart.id,
+                            STATUSES.APPROVED
+                          )}
+                          isLoading={isLoading(cart.id, STATUSES.APPROVED)}
+                        >
+                          {formatMessage(messages.discountKanbanModalApprove)}
+                        </ButtonPlain>
+                      </div>
+                    )}
+
+                    {[STATUSES.APPROVED, STATUSES.DENIED].includes(
+                      cart.status
+                    ) &&
+                      canManage && (
+                        <div className="mt2">
                           <ButtonPlain
                             size="small"
                             variant="primary"
                             onClick={handleChangeCartStatus(
                               cart.id,
-                              STATUSES.DENIED
+                              STATUSES.PENDING
                             )}
-                            isLoading={isLoading(cart.id, STATUSES.DENIED)}
+                            isLoading={isLoading(cart.id, STATUSES.PENDING)}
                           >
-                            {formatMessage(messages.discountKanbanModalDeny)}
-                          </ButtonPlain>
-                          <ButtonPlain
-                            size="small"
-                            variant="primary"
-                            onClick={handleChangeCartStatus(
-                              cart.id,
-                              STATUSES.APPROVED
-                            )}
-                            isLoading={isLoading(cart.id, STATUSES.APPROVED)}
-                          >
-                            {formatMessage(messages.discountKanbanModalApprove)}
+                            {formatMessage(messages.cancel)}
                           </ButtonPlain>
                         </div>
                       )}
-
-                      {[STATUSES.APPROVED, STATUSES.DENIED].includes(
-                        cart.status
-                      ) &&
-                        canManage && (
-                          <div className="mt2">
-                            <ButtonPlain
-                              size="small"
-                              variant="primary"
-                              onClick={handleChangeCartStatus(
-                                cart.id,
-                                STATUSES.PENDING
-                              )}
-                              isLoading={isLoading(cart.id, STATUSES.PENDING)}
-                            >
-                              {formatMessage(messages.cancel)}
-                            </ButtonPlain>
-                          </div>
-                        )}
-                    </div>
-                  </Card>
-                </div>
+                  </div>
+                </Card>
               )
             })}
           </div>
