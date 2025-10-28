@@ -47,7 +47,10 @@ export function SavedCartsFormModal({ open, setOpen, isRenamingCart }: Props) {
     ? handleUpdateSavedCartTitle
     : handleSaveCart
 
-  useEffect(() => inputRef.current?.focus(), [])
+  useEffect(() => {
+    inputRef.current?.focus()
+    inputRef.current?.select()
+  }, [])
 
   return (
     <Modal

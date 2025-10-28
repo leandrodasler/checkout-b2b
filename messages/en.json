@@ -35,6 +35,7 @@
   "store/checkout.b2b.savedCarts.status.orderPlaced": "Order placed",
   "store/checkout.b2b.savedCarts.rename": "Rename cart",
   "store/checkout.b2b.savedCarts.another-user": "Cart created by another user: {email}",
+  "store/checkout.b2b.savedCarts.update-history": "Update history",
 
   "store/checkout.b2b.totalizer.boxTitle": "Order Header",
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping",
@@ -179,6 +180,7 @@
   "store/checkout.b2b.import-spreadsheet.cart.help": "Export CSV of current cart for future import",
 
   "store/checkout.b2b.discountKanban.modal": "Approve carts",
+  "store/checkout.b2b.discountKanban.openTable": "View in table format",
   "store/checkout.b2b.discountKanban.approve": "Approve",
   "store/checkout.b2b.discountKanban.deny": "Deny",
   "store/checkout.b2b.discountStatus.open": "Open",

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRuntime } from 'vtex.render-runtime'
 import {
   Button,
   IconArrowDown,
@@ -35,6 +36,7 @@ const RepresentativeBalanceTransactions = ({
   email,
 }: RepresentativeBalanceTransactionsProps) => {
   const { formatMessage } = useIntl()
+  const { locale } = useRuntime().culture
   const formatPrice = useFormatPrice()
 
   const [page, setPage] = useState<number>(1)
@@ -99,7 +101,7 @@ const RepresentativeBalanceTransactions = ({
     createdIn: {
       title: formatMessage(messages.representativeBalanceTransactionCreatedIn),
       cellRenderer: function renderCell({ cellData }: { cellData: string }) {
-        const formatted = new Date(cellData).toLocaleString()
+        const formatted = new Date(cellData).toLocaleString(locale)
 
         return (
           <Tooltip label={formatted}>
@@ -113,7 +115,7 @@ const RepresentativeBalanceTransactions = ({
         messages.representativeBalanceTransactionLastInteraction
       ),
       cellRenderer: function renderCell({ cellData }: { cellData: string }) {
-        const formatted = new Date(cellData).toLocaleString()
+        const formatted = new Date(cellData).toLocaleString(locale)
 
         return (
           <Tooltip label={formatted}>

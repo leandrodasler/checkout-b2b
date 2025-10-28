@@ -35,6 +35,7 @@
   "store/checkout.b2b.savedCarts.status.orderPlaced": "Pedido realizado",
   "store/checkout.b2b.savedCarts.rename": "Renomear carrinho",
   "store/checkout.b2b.savedCarts.another-user": "Carrinho criado por outro usuário: {email}",
+  "store/checkout.b2b.savedCarts.update-history": "Histórico de atualizações",
 
   "store/checkout.b2b.totalizer.boxTitle": "Cabeçalho do Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Entrega",
@@ -179,6 +180,7 @@
   "store/checkout.b2b.import-spreadsheet.cart.help": "Exportar CSV do carrinho atual para importações futuras",
 
   "store/checkout.b2b.discountKanban.modal": "Aprovar carrinhos",
+  "store/checkout.b2b.discountKanban.openTable": "Visualizar em formato de tabela",
   "store/checkout.b2b.discountKanban.approve": "Aprovar",
   "store/checkout.b2b.discountKanban.deny": "Negar",
   "store/checkout.b2b.discountStatus.open": "Em aberto",

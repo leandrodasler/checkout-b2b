@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import type { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
+import { useRuntime } from 'vtex.render-runtime'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -22,6 +23,7 @@ import { messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
 import { CellWrapper, SelectedWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
+import { IconUpdateHistory } from './IconUpdateHistory'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
 import { TruncatedText } from './TruncatedText'
@@ -33,6 +35,7 @@ type SavedCartRow = SavedCart &
     totalItems: unknown
     paymentMethod: unknown
     action: unknown
+    comments: unknown
     loading: boolean
   }>
 
@@ -64,6 +67,7 @@ type Props = {
 
 export function SavedCartsTable(props?: Props) {
   const showToast = useToast()
+  const { locale } = useRuntime().culture
   const { formatMessage } = useIntl()
   const { selectedCart } = useCheckoutB2BContext()
   const [deletingCartId, setDeletingCartId] = useState('')
@@ -167,9 +171,11 @@ export function SavedCartsTable(props?: Props) {
           return (
             <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
               <CellWrapper isChildren={rowData.parentCartId}>
-                <Tooltip label={new Date(rowData.createdIn).toLocaleString()}>
+                <Tooltip
+                  label={new Date(rowData.createdIn).toLocaleString(locale)}
+                >
                   <span className={rowData.parentCartId ? '' : ''}>
-                    {new Date(rowData.createdIn).toLocaleDateString()}
+                    {new Date(rowData.createdIn).toLocaleDateString(locale)}
                   </span>
                 </Tooltip>
               </CellWrapper>
@@ -332,6 +338,29 @@ export function SavedCartsTable(props?: Props) {
                   </CellWrapper>
                 }
               />
+            </SelectedWrapper>
+          )
+        },
+      },
+      comments: {
+        title: ' ',
+        width: 50,
+        cellRenderer: function Column({ rowData }) {
+          return (
+            <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
+              <Tooltip label={formatMessage(messages.savedCartsUpdateHistory)}>
+                <div>
+                  <ButtonWithIcon
+                    size="small"
+                    variation="tertiary"
+                    icon={<IconUpdateHistory />}
+                    onClick={() => {} /* TODO */}
+                    isLoading={false /* TODO */}
+                    disabled={false /* TODO */}
+                    style={{ padding: 0 }}
+                  />
+                </div>
+              </Tooltip>
             </SelectedWrapper>
           )
         },

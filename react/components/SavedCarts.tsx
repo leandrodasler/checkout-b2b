@@ -162,6 +162,7 @@ export function SavedCarts({ onChangeItems }: Props) {
         <DiscountApprovalModal
           open={openDiscountKanbanModal}
           setOpen={setOpenDiscountKanbanModal}
+          setOpenTable={setOpenSavedCartModal}
           onChangeItems={onChangeItems}
         />
       )}

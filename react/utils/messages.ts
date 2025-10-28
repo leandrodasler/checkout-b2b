@@ -107,6 +107,9 @@ export const messages = defineMessages({
     id: 'store/checkout.b2b.savedCarts.rename',
   },
   savedCartsAnotherUser: { id: 'store/checkout.b2b.savedCarts.another-user' },
+  savedCartsUpdateHistory: {
+    id: 'store/checkout.b2b.savedCarts.update-history',
+  },
   requestDiscount: { id: 'store/checkout.b2b.button.requestDiscount' },
   modalRequestDiscount: { id: 'store/checkout.b2b.modal.requestDiscount' },
   modalRequestDiscountConfirmation: {
@@ -323,6 +326,7 @@ export const messages = defineMessages({
   },
 
   discountKanbanModal: { id: 'store/checkout.b2b.discountKanban.modal' },
+  openTable: { id: 'store/checkout.b2b.discountKanban.openTable' },
   discountKanbanModalApprove: {
     id: 'store/checkout.b2b.discountKanban.approve',
   },
