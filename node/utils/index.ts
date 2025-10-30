@@ -1,7 +1,11 @@
-import type { ErrorLike, ServiceContext } from '@vtex/api'
+import type { ErrorLike, EventContext, ServiceContext } from '@vtex/api'
 import { ForbiddenError, ResolverError } from '@vtex/api'
 import { SearchProduct } from '@vtex/clients'
-import { CartComment, SavedCart } from 'ssesandbox04.checkout-b2b'
+import {
+  CartComment,
+  MutationCreateCartCommentArgs,
+  SavedCart,
+} from 'ssesandbox04.checkout-b2b'
 import { CustomData, PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
@@ -99,6 +103,7 @@ export async function getAllSavedCarts({
 
     const savedCartsWithoutRoleId = savedCarts.filter((cart) => !cart.roleId)
     const emailRoleIdMap: Record<string, string> = {}
+    // const updateQuantityMap: Record<string, number> = {}
 
     for await (const cart of savedCartsWithoutRoleId) {
       if (emailRoleIdMap[cart.email]) continue
@@ -122,10 +127,41 @@ export async function getAllSavedCarts({
       emailRoleIdMap[cart.email] = user.roleId
     }
 
+    // for await (const cart of savedCarts) {
+    //   const { pagination } = await masterdata.searchDocumentsWithPaginationInfo(
+    //     {
+    //       dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+    //       schema: SCHEMA_VERSION,
+    //       fields: ['id'],
+    //       pagination: { page: 1, pageSize: 1 },
+    //       where: `savedCartId=${cart.id}`,
+    //     }
+    //   )
+
+    //   console.log(`Atualizando ${cart.id} => Quantity = ${pagination.total}`)
+
+    //   masterdata
+    //     .updatePartialDocument({
+    //       dataEntity: SAVED_CART_ENTITY,
+    //       fields: { updateQuantity: pagination.total },
+    //       id: cart.id,
+    //     })
+    //     .then(() => {
+    //       console.log(
+    //         `${cart.id} atualizado com sucesso para updateQuantity: ${pagination.total}`
+    //       )
+    //     })
+
+    //   updateQuantityMap[cart.id] = pagination.total
+    // }
+
     result.push(
       ...savedCarts.map((cart) => {
         const status = cart.status ?? 'open'
         const roleId = cart.roleId ?? emailRoleIdMap[cart.email]
+        const updateQuantity =
+          /* updateQuantityMap[cart.id] */ cart.updateQuantity ?? 0
+
         let { requestedDiscount } = cart
 
         if (!requestedDiscount) {
@@ -134,7 +170,7 @@ export async function getAllSavedCarts({
           requestedDiscount = getPercentualDiscount(orderForm)
         }
 
-        return { ...cart, status, requestedDiscount, roleId }
+        return { ...cart, status, requestedDiscount, roleId, updateQuantity }
       })
     )
 
@@ -177,6 +213,29 @@ export async function getAllCartComments({
   await fetchComments()
 
   return result
+}
+
+export async function createSavedCartComment(
+  context: EventContext<Clients> | ServiceContext<Clients>,
+  args: MutationCreateCartCommentArgs & {
+    email: string
+    currentUpdateQuantity?: number | null
+  }
+) {
+  const { savedCartId, comment, email, currentUpdateQuantity } = args
+
+  return Promise.all([
+    context.clients.masterdata.createDocument({
+      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+      schema: SCHEMA_VERSION,
+      fields: { comment, savedCartId, email },
+    }),
+    context.clients.masterdata.updatePartialDocument({
+      dataEntity: SAVED_CART_ENTITY,
+      id: savedCartId,
+      fields: { updateQuantity: (currentUpdateQuantity ?? 0) + 1 },
+    }),
+  ])
 }
 
 export async function deleteSavedCart(

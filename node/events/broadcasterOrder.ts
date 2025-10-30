@@ -20,10 +20,10 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
   if (!savedCartId) return
 
   const cart = await context.clients.masterdata.getDocument<
-    Pick<SavedCart, 'status'>
+    Pick<SavedCart, 'status' | 'updateQuantity'>
   >({
     dataEntity: SAVED_CART_ENTITY,
-    fields: ['status'],
+    fields: ['status', 'updateQuantity'],
     id: savedCartId,
   })
 
@@ -33,7 +33,10 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
     context.clients.masterdata.updatePartialDocument({
       dataEntity: SAVED_CART_ENTITY,
       id: savedCartId,
-      fields: { status: 'orderPlaced' },
+      fields: {
+        status: 'orderPlaced',
+        updateQuantity: (cart.updateQuantity ?? 0) + 1,
+      },
     })
 
     commentStatus = `Status: ${cart.status} > orderPlaced. `

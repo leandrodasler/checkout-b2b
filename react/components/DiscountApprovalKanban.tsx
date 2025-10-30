@@ -228,7 +228,11 @@ export function DiscountApprovalKanban({
                           <ButtonWithIcon
                             size="small"
                             variation="tertiary"
-                            icon={<IconUpdateHistory />}
+                            icon={
+                              <IconUpdateHistory
+                                quantity={cart.updateQuantity}
+                              />
+                            }
                             onClick={() => {} /* TODO */}
                             isLoading={false /* TODO */}
                             disabled={false /* TODO */}

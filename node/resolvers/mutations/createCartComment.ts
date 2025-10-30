@@ -1,13 +1,14 @@
-import { ServiceContext } from '@vtex/api'
+import { NotFoundError, ServiceContext } from '@vtex/api'
 import { MutationCreateCartCommentArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
   CHECKOUT_B2B_CART_COMMENT_ENTITY,
   CHECKOUT_B2B_CART_COMMENT_FIELDS,
+  createSavedCartComment,
   getSessionData,
-  SCHEMA_VERSION,
 } from '../../utils'
+import { getCart } from '../queries/getCart'
 
 export async function createCartComment(
   _: unknown,
@@ -15,12 +16,20 @@ export async function createCartComment(
   context: ServiceContext<Clients>
 ) {
   const { email } = await getSessionData(context)
+  const cart = await getCart(null, { id: savedCartId }, context)
 
-  const { DocumentId } = await context.clients.masterdata.createDocument({
-    dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
-    schema: SCHEMA_VERSION,
-    fields: { comment, savedCartId, email },
+  if (!cart) {
+    throw new NotFoundError('cart-not-found')
+  }
+
+  const [createCommentResponse] = await createSavedCartComment(context, {
+    comment,
+    savedCartId,
+    email,
+    currentUpdateQuantity: cart.updateQuantity,
   })
+
+  const { DocumentId } = createCommentResponse
 
   return context.clients.masterdata.getDocument({
     dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,

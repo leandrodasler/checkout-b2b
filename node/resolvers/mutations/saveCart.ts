@@ -5,6 +5,7 @@ import { Clients } from '../../clients'
 import {
   CHECKOUT_B2B_CART_COMMENT_ENTITY,
   CHECKOUT_B2B_CUSTOM_APP_ID,
+  createSavedCartComment,
   getMaxDiscountByRoleId,
   getPercentualDiscount,
   getSessionData,
@@ -81,21 +82,29 @@ export const saveCart = async (
   if (currentCart && currentCart.status !== status) {
     const comment = `Status: ${currentCart.status} > ${status}.`
 
-    context.clients.masterdata.createDocument({
-      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
-      schema: SCHEMA_VERSION,
-      fields: { comment, savedCartId: currentCart.id, email },
+    await createSavedCartComment(context, {
+      comment,
+      savedCartId: currentCart.id,
+      email,
+      currentUpdateQuantity: currentCart.updateQuantity,
     })
   }
 
   if (!currentCart) {
     const comment = `Status: ${status}.`
 
-    context.clients.masterdata.createDocument({
-      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
-      schema: SCHEMA_VERSION,
-      fields: { comment, savedCartId: DocumentId, email },
-    })
+    await Promise.all([
+      context.clients.masterdata.createDocument({
+        dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+        schema: SCHEMA_VERSION,
+        fields: { comment, savedCartId: DocumentId, email },
+      }),
+      context.clients.masterdata.updatePartialDocument({
+        dataEntity: SAVED_CART_ENTITY,
+        id: DocumentId,
+        fields: { updateQuantity: 1 },
+      }),
+    ])
   }
 
   const savedCartPromises = [

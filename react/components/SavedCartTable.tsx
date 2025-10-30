@@ -353,7 +353,9 @@ export function SavedCartsTable(props?: Props) {
                   <ButtonWithIcon
                     size="small"
                     variation="tertiary"
-                    icon={<IconUpdateHistory />}
+                    icon={
+                      <IconUpdateHistory quantity={rowData.updateQuantity} />
+                    }
                     onClick={() => {} /* TODO */}
                     isLoading={false /* TODO */}
                     disabled={false /* TODO */}

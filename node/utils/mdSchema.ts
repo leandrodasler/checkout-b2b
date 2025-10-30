@@ -18,6 +18,7 @@ export const SAVED_CART_FIELDS = [
   'status',
   'requestedDiscount',
   'roleId',
+  'updateQuantity',
 ]
 
 export const REPRESENTATIVE_BALANCE_ENTITY =
@@ -86,6 +87,7 @@ export const schemas = [
         status: { type: ['string', 'null'] },
         requestedDiscount: { type: ['number', 'null'] },
         roleId: { type: ['string', 'null'] },
+        updateQuantity: { type: ['number', 'null'] },
       },
       'v-indexed': [
         'title',

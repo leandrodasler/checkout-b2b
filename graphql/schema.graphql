@@ -40,6 +40,7 @@ type SavedCart {
   status: SavedCartStatus!
   requestedDiscount: Int
   roleId: String
+  updateQuantity: Int!
 }
 
 type CartComment {
