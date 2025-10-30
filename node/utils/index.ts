@@ -103,7 +103,6 @@ export async function getAllSavedCarts({
 
     const savedCartsWithoutRoleId = savedCarts.filter((cart) => !cart.roleId)
     const emailRoleIdMap: Record<string, string> = {}
-    // const updateQuantityMap: Record<string, number> = {}
 
     for await (const cart of savedCartsWithoutRoleId) {
       if (emailRoleIdMap[cart.email]) continue
@@ -127,41 +126,11 @@ export async function getAllSavedCarts({
       emailRoleIdMap[cart.email] = user.roleId
     }
 
-    // for await (const cart of savedCarts) {
-    //   const { pagination } = await masterdata.searchDocumentsWithPaginationInfo(
-    //     {
-    //       dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
-    //       schema: SCHEMA_VERSION,
-    //       fields: ['id'],
-    //       pagination: { page: 1, pageSize: 1 },
-    //       where: `savedCartId=${cart.id}`,
-    //     }
-    //   )
-
-    //   console.log(`Atualizando ${cart.id} => Quantity = ${pagination.total}`)
-
-    //   masterdata
-    //     .updatePartialDocument({
-    //       dataEntity: SAVED_CART_ENTITY,
-    //       fields: { updateQuantity: pagination.total },
-    //       id: cart.id,
-    //     })
-    //     .then(() => {
-    //       console.log(
-    //         `${cart.id} atualizado com sucesso para updateQuantity: ${pagination.total}`
-    //       )
-    //     })
-
-    //   updateQuantityMap[cart.id] = pagination.total
-    // }
-
     result.push(
       ...savedCarts.map((cart) => {
         const status = cart.status ?? 'open'
         const roleId = cart.roleId ?? emailRoleIdMap[cart.email]
-        const updateQuantity =
-          /* updateQuantityMap[cart.id] */ cart.updateQuantity ?? 0
-
+        const updateQuantity = cart.updateQuantity ?? 0
         let { requestedDiscount } = cart
 
         if (!requestedDiscount) {
