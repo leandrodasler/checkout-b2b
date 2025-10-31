@@ -162,7 +162,11 @@ export function SavedCartComments({ cart, isModal }: Props) {
         />
       </div>
       <div className="flex justify-end mt3">
-        <Button onClick={handleAddComment} isLoading={addCommentLoading}>
+        <Button
+          onClick={handleAddComment}
+          isLoading={addCommentLoading}
+          disabled={!inputComment.trim()}
+        >
           {formatMessage(messages.savedCartsAddUpdateHistory)}
         </Button>
       </div>

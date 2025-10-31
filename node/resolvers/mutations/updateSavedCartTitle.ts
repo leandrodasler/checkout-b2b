@@ -30,7 +30,7 @@ export async function updateSavedCartTitle(
 
   if (cart.title !== title) {
     const { email } = await getSessionData(context)
-    const comment = `"${cart.title}" > "${title}".`
+    const comment = `"${cart.title}" > "${title}"`
 
     await createSavedCartComment(context, {
       comment,

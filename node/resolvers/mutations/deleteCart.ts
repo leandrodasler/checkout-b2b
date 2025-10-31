@@ -1,10 +1,13 @@
-import { ServiceContext } from '@vtex/api'
+import { NotFoundError, ServiceContext } from '@vtex/api'
 import type { MutationDeleteCartArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
+  CHECKOUT_B2B_CUSTOM_APP_ID,
   deleteSavedCart,
   getAllSavedCarts,
+  getSavedCartId,
+  getSessionData,
   SAVED_CART_ENTITY,
   SCHEMA_VERSION,
 } from '../../utils'
@@ -15,12 +18,27 @@ export const deleteCart = async (
   { id }: MutationDeleteCartArgs,
   context: ServiceContext<Clients>
 ) => {
-  const { masterdata } = context.clients
+  const { masterdata, checkoutExtension } = context.clients
+  const { orderFormId } = await getSessionData(context)
+
+  if (!orderFormId) throw new NotFoundError('order-form-not-found')
+  checkoutExtension.setOrderFormId(orderFormId)
+
   const current = await getCart(null, { id }, context)
 
   if (!current) return null
 
   await deleteSavedCart(context, id)
+
+  const currentOrderForm = await checkoutExtension.getOrderForm()
+  const currentSavedCartId = getSavedCartId(currentOrderForm.customData)
+
+  if (id === currentSavedCartId) {
+    await context.clients.checkoutExtension.removeCustomField(
+      CHECKOUT_B2B_CUSTOM_APP_ID,
+      'savedCart'
+    )
+  }
 
   if (current.childrenQuantity) {
     const childrenCarts = await getAllSavedCarts({

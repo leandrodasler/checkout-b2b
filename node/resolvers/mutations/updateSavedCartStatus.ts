@@ -29,7 +29,7 @@ export async function updateSavedCartStatus(
 
   if (cart.status !== status) {
     const { email } = await getSessionData(context)
-    const comment = `Status: ${cart.status} > ${status}.`
+    const comment = `Status: ${cart.status} > ${status}`
 
     await createSavedCartComment(context, {
       comment,

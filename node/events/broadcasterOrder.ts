@@ -40,7 +40,9 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
   })
 
   if (cart.status !== 'orderPlaced') {
-    commentStatus = `Status: ${cart.status} > orderPlaced. `
+    commentStatus = `Status: ${cart.status} > orderPlaced > `
+  } else {
+    commentStatus = `Status: ${cart.status} > `
   }
 
   const comment = `${commentStatus}Order ID: ${context.body.orderId}`
