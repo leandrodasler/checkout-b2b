@@ -110,6 +110,12 @@ export const messages = defineMessages({
   savedCartsUpdateHistory: {
     id: 'store/checkout.b2b.savedCarts.update-history',
   },
+  savedCartsEmptyUpdateHistory: {
+    id: 'store/checkout.b2b.savedCarts.update-history.empty',
+  },
+  savedCartsAddUpdateHistory: {
+    id: 'store/checkout.b2b.savedCarts.update-history.add',
+  },
   requestDiscount: { id: 'store/checkout.b2b.button.requestDiscount' },
   modalRequestDiscount: { id: 'store/checkout.b2b.modal.requestDiscount' },
   modalRequestDiscountConfirmation: {

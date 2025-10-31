@@ -119,6 +119,7 @@ export async function getAllSavedCarts({
 
       await masterdata.updatePartialDocument({
         dataEntity: SAVED_CART_ENTITY,
+        schema: SCHEMA_VERSION,
         fields: { roleId: user.roleId },
         id: cart.id,
       })
@@ -193,7 +194,7 @@ export async function createSavedCartComment(
 ) {
   const { savedCartId, comment, email, currentUpdateQuantity } = args
 
-  return Promise.all([
+  const [createCommentResponse] = await Promise.all([
     context.clients.masterdata.createDocument({
       dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
       schema: SCHEMA_VERSION,
@@ -202,9 +203,35 @@ export async function createSavedCartComment(
     context.clients.masterdata.updatePartialDocument({
       dataEntity: SAVED_CART_ENTITY,
       id: savedCartId,
+      schema: SCHEMA_VERSION,
       fields: { updateQuantity: (currentUpdateQuantity ?? 0) + 1 },
     }),
   ])
+
+  const { DocumentId } = createCommentResponse
+
+  let createdDocument: CartComment | null | undefined
+
+  const verifyCreatedDocument = async () => {
+    const searchComment = await context.clients.masterdata.searchDocumentsWithPaginationInfo<CartComment>(
+      {
+        dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+        fields: CHECKOUT_B2B_CART_COMMENT_FIELDS,
+        pagination: { page: 1, pageSize: 1 },
+        where: `id=${DocumentId}`,
+      }
+    )
+
+    createdDocument = searchComment.data?.[0]
+
+    if (!createdDocument) {
+      await verifyCreatedDocument()
+    }
+  }
+
+  await verifyCreatedDocument()
+
+  return createdDocument
 }
 
 export async function deleteSavedCart(

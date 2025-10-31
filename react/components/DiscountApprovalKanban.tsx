@@ -15,8 +15,9 @@ import {
 
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { useDeleteSavedCart, useOrganization, useSavedCart } from '../hooks'
+import { CART_STATUSES } from '../utils'
 import { messages } from '../utils/messages'
-import { IconUpdateHistory } from './IconUpdateHistory'
+import { SavedCartCommentBadge } from './SavedCartCommentBadge'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 
 interface DiscountApprovalKanbanProps {
@@ -25,6 +26,7 @@ interface DiscountApprovalKanbanProps {
   isLoadingChangeCartStatus: boolean
   onUseCart: () => void
   onChangeItems: () => void
+  modalContainer: HTMLElement | null
 }
 
 interface CartData {
@@ -37,20 +39,13 @@ const ROLES = {
   REP: 'sales-representative',
 } as const
 
-const STATUSES: Record<string, SavedCartStatus> = {
-  OPEN: 'open',
-  PENDING: 'pending',
-  APPROVED: 'approved',
-  DENIED: 'denied',
-  ORDER_PLACED: 'orderPlaced',
-}
-
 export function DiscountApprovalKanban({
   requests = [],
   onChangeCartStatus,
   isLoadingChangeCartStatus,
   onUseCart,
   onChangeItems,
+  modalContainer,
 }: DiscountApprovalKanbanProps) {
   const { locale } = useRuntime().culture
   const { formatMessage } = useIntl()
@@ -101,7 +96,7 @@ export function DiscountApprovalKanban({
 
   const filterCartsByUserRole = useCallback(
     (carts: SavedCart[], columnKey: string) => {
-      if (columnKey !== STATUSES.PENDING) return carts
+      if (columnKey !== CART_STATUSES.PENDING) return carts
 
       switch (currentUserRole) {
         case ROLES.ADMIN:
@@ -124,21 +119,24 @@ export function DiscountApprovalKanban({
 
   const columns = useMemo(
     () => [
-      { key: STATUSES.OPEN, label: formatMessage(messages.discountStatusOpen) },
       {
-        key: STATUSES.PENDING,
+        key: CART_STATUSES.OPEN,
+        label: formatMessage(messages.discountStatusOpen),
+      },
+      {
+        key: CART_STATUSES.PENDING,
         label: formatMessage(messages.discountStatusPending),
       },
       {
-        key: STATUSES.APPROVED,
+        key: CART_STATUSES.APPROVED,
         label: formatMessage(messages.discountStatusApproved),
       },
       {
-        key: STATUSES.DENIED,
+        key: CART_STATUSES.DENIED,
         label: formatMessage(messages.discountStatusDenied),
       },
       {
-        key: STATUSES.ORDER_PLACED,
+        key: CART_STATUSES.ORDER_PLACED,
         label: formatMessage(messages.discountStatusOrderApproved),
       },
     ],
@@ -221,25 +219,11 @@ export function DiscountApprovalKanban({
                           {new Date(cart.createdIn).toLocaleString(locale)}
                         </span>
                       </div>
-                      <Tooltip
-                        label={formatMessage(messages.savedCartsUpdateHistory)}
-                      >
-                        <div>
-                          <ButtonWithIcon
-                            size="small"
-                            variation="tertiary"
-                            icon={
-                              <IconUpdateHistory
-                                quantity={cart.updateQuantity}
-                              />
-                            }
-                            onClick={() => {} /* TODO */}
-                            isLoading={false /* TODO */}
-                            disabled={false /* TODO */}
-                            style={{ padding: 0 }}
-                          />
-                        </div>
-                      </Tooltip>
+
+                      <SavedCartCommentBadge
+                        cart={cart}
+                        modalContainer={modalContainer}
+                      />
 
                       <Tooltip label={formatMessage(messages.delete)}>
                         <div>
@@ -306,16 +290,16 @@ export function DiscountApprovalKanban({
                       />
                     </div>
 
-                    {cart.status === STATUSES.PENDING && canManage && (
+                    {cart.status === CART_STATUSES.PENDING && canManage && (
                       <div className="flex justify-between mt2">
                         <ButtonPlain
                           size="small"
                           variant="primary"
                           onClick={handleChangeCartStatus(
                             cart.id,
-                            STATUSES.DENIED
+                            CART_STATUSES.DENIED
                           )}
-                          isLoading={isLoading(cart.id, STATUSES.DENIED)}
+                          isLoading={isLoading(cart.id, CART_STATUSES.DENIED)}
                         >
                           {formatMessage(messages.discountKanbanModalDeny)}
                         </ButtonPlain>
@@ -324,16 +308,16 @@ export function DiscountApprovalKanban({
                           variant="primary"
                           onClick={handleChangeCartStatus(
                             cart.id,
-                            STATUSES.APPROVED
+                            CART_STATUSES.APPROVED
                           )}
-                          isLoading={isLoading(cart.id, STATUSES.APPROVED)}
+                          isLoading={isLoading(cart.id, CART_STATUSES.APPROVED)}
                         >
                           {formatMessage(messages.discountKanbanModalApprove)}
                         </ButtonPlain>
                       </div>
                     )}
 
-                    {[STATUSES.APPROVED, STATUSES.DENIED].includes(
+                    {[CART_STATUSES.APPROVED, CART_STATUSES.DENIED].includes(
                       cart.status
                     ) &&
                       canManage && (
@@ -343,9 +327,12 @@ export function DiscountApprovalKanban({
                             variant="primary"
                             onClick={handleChangeCartStatus(
                               cart.id,
-                              STATUSES.PENDING
+                              CART_STATUSES.PENDING
                             )}
-                            isLoading={isLoading(cart.id, STATUSES.PENDING)}
+                            isLoading={isLoading(
+                              cart.id,
+                              CART_STATUSES.PENDING
+                            )}
                           >
                             {formatMessage(messages.cancel)}
                           </ButtonPlain>

@@ -1,0 +1,8 @@
+fragment SavedCartCommentFields on CartComment
+@context(provider: "ssesandbox04.checkout-b2b") {
+  id
+  savedCartId
+  email
+  comment
+  createdIn
+}

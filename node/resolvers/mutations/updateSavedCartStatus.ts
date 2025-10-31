@@ -6,6 +6,7 @@ import {
   createSavedCartComment,
   getSessionData,
   SAVED_CART_ENTITY,
+  SCHEMA_VERSION,
 } from '../../utils'
 import { getCart } from '../queries/getCart'
 import { getSavedCarts } from '../queries/getSavedCarts'
@@ -21,6 +22,7 @@ export async function updateSavedCartStatus(
 
   await context.clients.masterdata.updatePartialDocument({
     dataEntity: SAVED_CART_ENTITY,
+    schema: SCHEMA_VERSION,
     id,
     fields: { status },
   })

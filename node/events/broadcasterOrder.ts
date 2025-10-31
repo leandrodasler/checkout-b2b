@@ -33,6 +33,7 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
     context.clients.masterdata.updatePartialDocument({
       dataEntity: SAVED_CART_ENTITY,
       id: savedCartId,
+      schema: SCHEMA_VERSION,
       fields: {
         status: 'orderPlaced',
         updateQuantity: (cart.updateQuantity ?? 0) + 1,

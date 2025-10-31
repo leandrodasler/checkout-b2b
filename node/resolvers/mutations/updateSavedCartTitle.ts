@@ -6,6 +6,7 @@ import {
   createSavedCartComment,
   getSessionData,
   SAVED_CART_ENTITY,
+  SCHEMA_VERSION,
 } from '../../utils'
 import { getCart } from '../queries/getCart'
 
@@ -20,9 +21,12 @@ export async function updateSavedCartTitle(
 
   await context.clients.masterdata.updatePartialDocument({
     dataEntity: SAVED_CART_ENTITY,
+    schema: SCHEMA_VERSION,
     id,
     fields: { title },
   })
+
+  let { updateQuantity } = cart
 
   if (cart.title !== title) {
     const { email } = await getSessionData(context)
@@ -34,7 +38,9 @@ export async function updateSavedCartTitle(
       email,
       currentUpdateQuantity: cart.updateQuantity,
     })
+
+    updateQuantity++
   }
 
-  return { ...cart, title }
+  return { ...cart, title, updateQuantity }
 }

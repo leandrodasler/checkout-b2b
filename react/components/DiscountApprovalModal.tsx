@@ -80,6 +80,8 @@ export function DiscountApprovalModal({
     data?.getSavedCarts ??
     []
 
+  const ref = useRef<HTMLDivElement>(null)
+
   return (
     <Modal
       isOpen={open}
@@ -101,22 +103,25 @@ export function DiscountApprovalModal({
         </Button>
       }
     >
-      {networkStatus !== 1 ? (
-        <DiscountApprovalKanban
-          requests={carts}
-          onChangeCartStatus={handleCartStatus}
-          isLoadingChangeCartStatus={updateCartStatusLoading}
-          onUseCart={handleCloseModal}
-          onChangeItems={onChangeItems}
-        />
-      ) : (
-        <div
-          className="flex justify-center items-center"
-          style={{ minHeight: '50vh' }}
-        >
-          <Spinner />
-        </div>
-      )}
+      <div ref={ref}>
+        {networkStatus !== 1 && ref.current ? (
+          <DiscountApprovalKanban
+            requests={carts}
+            onChangeCartStatus={handleCartStatus}
+            isLoadingChangeCartStatus={updateCartStatusLoading}
+            onUseCart={handleCloseModal}
+            onChangeItems={onChangeItems}
+            modalContainer={ref.current}
+          />
+        ) : (
+          <div
+            className="flex justify-center items-center"
+            style={{ minHeight: '50vh' }}
+          >
+            <Spinner />
+          </div>
+        )}
+      </div>
     </Modal>
   )
 }
