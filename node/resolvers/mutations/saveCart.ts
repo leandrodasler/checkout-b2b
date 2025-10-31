@@ -3,7 +3,6 @@ import type { MutationSaveCartArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
-  CHECKOUT_B2B_CART_COMMENT_ENTITY,
   CHECKOUT_B2B_CUSTOM_APP_ID,
   createSavedCartComment,
   getMaxDiscountByRoleId,
@@ -93,18 +92,12 @@ export const saveCart = async (
   if (!currentCart) {
     const comment = `Status: ${status}.`
 
-    await Promise.all([
-      context.clients.masterdata.createDocument({
-        dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
-        schema: SCHEMA_VERSION,
-        fields: { comment, savedCartId: DocumentId, email },
-      }),
-      context.clients.masterdata.updatePartialDocument({
-        dataEntity: SAVED_CART_ENTITY,
-        id: DocumentId,
-        fields: { updateQuantity: 1 },
-      }),
-    ])
+    await createSavedCartComment(context, {
+      comment,
+      savedCartId: DocumentId,
+      email,
+      currentUpdateQuantity: 0,
+    })
   }
 
   const savedCartPromises = [
