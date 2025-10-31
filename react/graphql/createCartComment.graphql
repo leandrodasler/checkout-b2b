@@ -1,0 +1,8 @@
+#import "./fragments/SavedCartCommentFields.graphql"
+
+mutation CreateCartComment($savedCartId: ID!, $comment: String!) {
+  createCartComment(savedCartId: $savedCartId, comment: $comment)
+    @context(provider: "ssesandbox04.checkout-b2b") {
+    ...SavedCartCommentFields
+  }
+}

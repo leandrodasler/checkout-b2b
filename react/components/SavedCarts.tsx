@@ -18,6 +18,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { useOrderFormCustom, usePermissions, useSaveCart } from '../hooks'
 import { messages } from '../utils'
 import { DiscountApprovalModal } from './DiscountApprovalModal'
+import { SavedCartCommentBadge } from './SavedCartCommentBadge'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartsFormModal } from './SavedCartsFormModal'
 import { SavedCartsListModal } from './SavedCartsListModal'
@@ -93,6 +94,7 @@ export function SavedCarts({ onChangeItems }: Props) {
                 />
               </div>
             </Tooltip>
+            <SavedCartCommentBadge cart={selectedCart} />
             <SavedCartStatusBadge status={selectedCart.status} />
             <SavedCartDiscountBadge discount={selectedCart.requestedDiscount} />
           </div>

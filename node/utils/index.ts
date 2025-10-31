@@ -1,7 +1,11 @@
-import type { ErrorLike, ServiceContext } from '@vtex/api'
+import type { ErrorLike, EventContext, ServiceContext } from '@vtex/api'
 import { ForbiddenError, ResolverError } from '@vtex/api'
 import { SearchProduct } from '@vtex/clients'
-import { CartComment, SavedCart } from 'ssesandbox04.checkout-b2b'
+import {
+  CartComment,
+  MutationCreateCartCommentArgs,
+  SavedCart,
+} from 'ssesandbox04.checkout-b2b'
 import { CustomData, PaymentData } from 'vtex.checkout-graphql'
 
 import { Clients } from '../clients'
@@ -115,6 +119,7 @@ export async function getAllSavedCarts({
 
       await masterdata.updatePartialDocument({
         dataEntity: SAVED_CART_ENTITY,
+        schema: SCHEMA_VERSION,
         fields: { roleId: user.roleId },
         id: cart.id,
       })
@@ -126,6 +131,7 @@ export async function getAllSavedCarts({
       ...savedCarts.map((cart) => {
         const status = cart.status ?? 'open'
         const roleId = cart.roleId ?? emailRoleIdMap[cart.email]
+        const updateQuantity = cart.updateQuantity ?? 0
         let { requestedDiscount } = cart
 
         if (!requestedDiscount) {
@@ -134,7 +140,7 @@ export async function getAllSavedCarts({
           requestedDiscount = getPercentualDiscount(orderForm)
         }
 
-        return { ...cart, status, requestedDiscount, roleId }
+        return { ...cart, status, requestedDiscount, roleId, updateQuantity }
       })
     )
 
@@ -177,6 +183,55 @@ export async function getAllCartComments({
   await fetchComments()
 
   return result
+}
+
+export async function createSavedCartComment(
+  context: EventContext<Clients> | ServiceContext<Clients>,
+  args: MutationCreateCartCommentArgs & {
+    email: string
+    currentUpdateQuantity?: number | null
+  }
+) {
+  const { savedCartId, comment, email, currentUpdateQuantity } = args
+
+  const [createCommentResponse] = await Promise.all([
+    context.clients.masterdata.createDocument({
+      dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+      schema: SCHEMA_VERSION,
+      fields: { comment, savedCartId, email },
+    }),
+    context.clients.masterdata.updatePartialDocument({
+      dataEntity: SAVED_CART_ENTITY,
+      id: savedCartId,
+      schema: SCHEMA_VERSION,
+      fields: { updateQuantity: (currentUpdateQuantity ?? 0) + 1 },
+    }),
+  ])
+
+  const { DocumentId } = createCommentResponse
+
+  let createdDocument: CartComment | null | undefined
+
+  const verifyCreatedDocument = async () => {
+    const searchComment = await context.clients.masterdata.searchDocumentsWithPaginationInfo<CartComment>(
+      {
+        dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+        fields: CHECKOUT_B2B_CART_COMMENT_FIELDS,
+        pagination: { page: 1, pageSize: 1 },
+        where: `id=${DocumentId}`,
+      }
+    )
+
+    createdDocument = searchComment.data?.[0]
+
+    if (!createdDocument) {
+      await verifyCreatedDocument()
+    }
+  }
+
+  await verifyCreatedDocument()
+
+  return createdDocument
 }
 
 export async function deleteSavedCart(

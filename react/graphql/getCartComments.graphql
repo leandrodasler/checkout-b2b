@@ -1,0 +1,8 @@
+#import "./fragments/SavedCartCommentFields.graphql"
+
+query GetCartComments($savedCartId: ID!) {
+  getCartComments(savedCartId: $savedCartId)
+    @context(provider: "ssesandbox04.checkout-b2b") {
+    ...SavedCartCommentFields
+  }
+}

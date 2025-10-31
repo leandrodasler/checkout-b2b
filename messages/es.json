@@ -36,6 +36,8 @@
   "store/checkout.b2b.savedCarts.rename": "Renombrar carrito",
   "store/checkout.b2b.savedCarts.another-user": "Carrito creado por otro usuario: {email}",
   "store/checkout.b2b.savedCarts.update-history": "Histórico de actualizaciones",
+  "store/checkout.b2b.savedCarts.update-history.empty": "Sin actualizaciones",
+  "store/checkout.b2b.savedCarts.update-history.add": "Añadir comentario",
 
   "store/checkout.b2b.totalizer.boxTitle": "Encabezado del Pedido",
   "store/checkout.b2b.totalizer.shippingAddress": "Envío",

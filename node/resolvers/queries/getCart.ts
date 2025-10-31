@@ -30,5 +30,9 @@ export const getCart = async (
     return null
   }
 
-  return { ...cart, status: cart.status ?? 'open' }
+  return {
+    ...cart,
+    status: cart.status ?? 'open',
+    updateQuantity: cart.updateQuantity ?? 0,
+  }
 }

@@ -6,6 +6,7 @@ import {
   deleteSavedCart,
   getAllSavedCarts,
   SAVED_CART_ENTITY,
+  SCHEMA_VERSION,
 } from '../../utils'
 import { getCart } from '../queries/getCart'
 
@@ -38,6 +39,7 @@ export const deleteCart = async (
     if (parent?.childrenQuantity) {
       await masterdata.updatePartialDocument({
         dataEntity: SAVED_CART_ENTITY,
+        schema: SCHEMA_VERSION,
         id: parent.id,
         fields: {
           childrenQuantity: parent.childrenQuantity - 1,

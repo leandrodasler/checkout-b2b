@@ -36,6 +36,8 @@
   "store/checkout.b2b.savedCarts.rename": "Rename cart",
   "store/checkout.b2b.savedCarts.another-user": "Cart created by another user: {email}",
   "store/checkout.b2b.savedCarts.update-history": "Update history",
+  "store/checkout.b2b.savedCarts.update-history.empty": "No updates",
+  "store/checkout.b2b.savedCarts.update-history.add": "Add comment",
 
   "store/checkout.b2b.totalizer.boxTitle": "Order Header",
   "store/checkout.b2b.totalizer.shippingAddress": "Shipping",

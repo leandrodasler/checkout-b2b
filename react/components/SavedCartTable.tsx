@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { SavedCart } from 'ssesandbox04.checkout-b2b'
@@ -23,7 +23,7 @@ import { messages } from '../utils'
 import { ActionCellRenderer } from './ActionCellRenderer'
 import { CellWrapper, SelectedWrapper } from './CellWrapper'
 import ChildrenCartsColumn from './ChildrenCartsColumn'
-import { IconUpdateHistory } from './IconUpdateHistory'
+import { SavedCartCommentBadge } from './SavedCartCommentBadge'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
 import { TruncatedText } from './TruncatedText'
@@ -57,6 +57,7 @@ function getEmptySimpleCart(parentCartId: string): SavedCartRow {
     action: '',
     loading: true,
     status: 'open',
+    updateQuantity: 0,
   }
 }
 
@@ -141,6 +142,8 @@ export function SavedCartsTable(props?: Props) {
     },
     [parseCartData]
   )
+
+  const rootRef = useRef<HTMLDivElement>(null)
 
   const tableSchema: TableSchema<SavedCartRow> = {
     properties: {
@@ -348,19 +351,11 @@ export function SavedCartsTable(props?: Props) {
         cellRenderer: function Column({ rowData }) {
           return (
             <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
-              <Tooltip label={formatMessage(messages.savedCartsUpdateHistory)}>
-                <div>
-                  <ButtonWithIcon
-                    size="small"
-                    variation="tertiary"
-                    icon={<IconUpdateHistory />}
-                    onClick={() => {} /* TODO */}
-                    isLoading={false /* TODO */}
-                    disabled={false /* TODO */}
-                    style={{ padding: 0 }}
-                  />
-                </div>
-              </Tooltip>
+              <SavedCartCommentBadge
+                cart={rowData}
+                modalContainer={rootRef.current}
+                loading={rowData.loading}
+              />
             </SelectedWrapper>
           )
         },
@@ -424,14 +419,16 @@ export function SavedCartsTable(props?: Props) {
   }
 
   return (
-    <Table
-      emptyStateLabel={formatMessage(messages.savedCartsUseEmpty)}
-      schema={tableSchema}
-      fullWidth
-      items={savedCarts ?? []}
-      density="high"
-      loading={loading}
-      onRowClick={() => {}}
-    />
+    <div ref={rootRef}>
+      <Table
+        emptyStateLabel={formatMessage(messages.savedCartsUseEmpty)}
+        schema={tableSchema}
+        fullWidth
+        items={savedCarts ?? []}
+        density="high"
+        loading={loading}
+        onRowClick={() => {}}
+      />
+    </div>
   )
 }
