@@ -29,17 +29,17 @@ export async function broadcasterOrder(context: EventContext<Clients>) {
 
   let commentStatus = ''
 
-  if (cart.status !== 'orderPlaced') {
-    context.clients.masterdata.updatePartialDocument({
-      dataEntity: SAVED_CART_ENTITY,
-      id: savedCartId,
-      schema: SCHEMA_VERSION,
-      fields: {
-        status: 'orderPlaced',
-        updateQuantity: (cart.updateQuantity ?? 0) + 1,
-      },
-    })
+  context.clients.masterdata.updatePartialDocument({
+    dataEntity: SAVED_CART_ENTITY,
+    id: savedCartId,
+    schema: SCHEMA_VERSION,
+    fields: {
+      status: 'orderPlaced',
+      updateQuantity: (cart.updateQuantity ?? 0) + 1,
+    },
+  })
 
+  if (cart.status !== 'orderPlaced') {
     commentStatus = `Status: ${cart.status} > orderPlaced. `
   }
 
