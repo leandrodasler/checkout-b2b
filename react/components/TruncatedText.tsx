@@ -9,15 +9,15 @@ type Props = {
 }
 
 export function TruncatedText({ text, label = text, strike, inline }: Props) {
-  return (
-    <Tooltip label={label}>
-      <div
-        className={`truncate${!inline ? ' w-100' : ''}${
-          strike ? ' strike' : ''
-        }`}
-      >
-        {text}
-      </div>
-    </Tooltip>
+  const children = (
+    <div
+      className={`truncate${!inline ? ' w-100' : ''}${strike ? ' strike' : ''}`}
+    >
+      {text}
+    </div>
   )
+
+  if (!label) return children
+
+  return <Tooltip label={label}>{children}</Tooltip>
 }

@@ -1,9 +1,16 @@
 import { IOContext, SegmentData } from '@vtex/api'
-import { OrderForm as OrderFormType } from '@vtex/clients'
+import {
+  LogisticsInfo,
+  OrderForm as OrderFormType,
+  SLAItem,
+} from '@vtex/clients'
 import { Address, CustomData, PaymentData } from 'vtex.checkout-graphql'
 
 declare global {
-  type OrderForm = Omit<OrderFormType, 'items' | 'customData'> & {
+  type OrderForm = Omit<
+    OrderFormType,
+    'items' | 'customData' | 'shippingData'
+  > & {
     paymentData: PaymentData
     customData: CustomData
     items: Array<
@@ -11,6 +18,14 @@ declare global {
         manualPrice?: number
       }
     >
+    shippingData: Omit<OrderFormType['shippingData'], 'logisticsInfo'> & {
+      logisticsInfo: Array<
+        Omit<LogisticsInfo, 'slas'> & {
+          selectedDeliveryChannel: string
+          slas: SLAItem[]
+        }
+      >
+    }
   }
 
   type AddItemsBody = Array<{ seller: string; id: number; quantity: number }>
