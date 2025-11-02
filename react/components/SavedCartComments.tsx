@@ -26,7 +26,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import CREATE_CART_COMMENT from '../graphql/createCartComment.graphql'
 import GET_CART_COMMENTS from '../graphql/getCartComments.graphql'
 import { useToast } from '../hooks'
-import { CART_STATUSES, messages } from '../utils'
+import { CART_STATUSES, messages, POLL_INTERVAL } from '../utils'
 import { GET_CHILDREN_CARTS } from './ChildrenCartsColumn'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
 import { SavedCartStatusBadge } from './SavedCartStatusBadge'
@@ -34,9 +34,13 @@ import { SavedCartStatusBadge } from './SavedCartStatusBadge'
 type QueryGetCartComments = Pick<Query, 'getCartComments'>
 type CreateCartCommentMutation = Pick<Mutation, 'createCartComment'>
 
-type Props = { cart: SavedCart; isModal: boolean }
+type Props = {
+  cart: SavedCart
+  isModal: boolean
+  setQuantity: React.Dispatch<React.SetStateAction<number>>
+}
 
-export function SavedCartComments({ cart, isModal }: Props) {
+export function SavedCartComments({ cart, isModal, setQuantity }: Props) {
   const handles = useCssHandles(['container'])
   const { locale } = useRuntime().culture
   const { formatMessage } = useIntl()
@@ -50,8 +54,12 @@ export function SavedCartComments({ cart, isModal }: Props) {
     QueryGetCartCommentsArgs
   >(GET_CART_COMMENTS, {
     variables: { savedCartId: cart.id },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
+    pollInterval: POLL_INTERVAL,
     onError: showToast,
+    onCompleted({ getCartComments }) {
+      setQuantity(getCartComments.length)
+    },
   })
 
   const [addComment, { loading: addCommentLoading }] = useMutation<
@@ -72,18 +80,19 @@ export function SavedCartComments({ cart, isModal }: Props) {
     ],
     awaitRefetchQueries: true,
     onError: showToast,
+    onCompleted() {
+      setInputComment('')
+
+      if (selectedCart?.id === cart.id) {
+        refetchCurrentSavedCart()
+      }
+    },
   })
 
-  const handleAddComment = async () => {
-    await addComment({
+  const handleAddComment = () => {
+    addComment({
       variables: { comment: inputComment.trim(), savedCartId: cart.id },
     })
-
-    setInputComment('')
-
-    if (selectedCart?.id === cart.id) {
-      refetchCurrentSavedCart()
-    }
   }
 
   return (
