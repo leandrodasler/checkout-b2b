@@ -21,6 +21,7 @@ export const PO_NUMBER_CUSTOM_FIELD = 'purchaseOrderNumber'
 export const CUSTOMER_CREDIT_ID = '64'
 export const SEARCH_TYPE = { CART: 0, STORE: 1 }
 export const MAX_SALES_USERS_TO_SHOW = 3
+export const POLL_INTERVAL = 10 * 1000
 
 export const CART_STATUSES: Record<string, SavedCartStatus> = {
   OPEN: 'open',

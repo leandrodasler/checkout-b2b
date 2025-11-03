@@ -3,7 +3,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useCallback,
-  useRef,
+  useEffect,
   useState,
 } from 'react'
 import { useQuery } from 'react-apollo'
@@ -20,7 +20,7 @@ import CHECK_ORDER_FORM_CONFIGURATION from './graphql/checkOrderFormConfiguratio
 import GET_SAVED_CART from './graphql/getSavedCart.graphql'
 import { useOrderFormCustom } from './hooks'
 import type { WithToast } from './typings'
-import { getOrderFormSavedCart } from './utils'
+import { getOrderFormSavedCart, POLL_INTERVAL } from './utils'
 
 type QueryGetSavedCart = Pick<Query, 'getCart'>
 type QueryCheckOrderFormConfiguration = Pick<
@@ -35,7 +35,7 @@ type CheckoutB2BContextData = {
   setUseCartLoading: Dispatch<SetStateAction<boolean>>
   showToast: WithToast['showToast']
   selectedCart?: SavedCart | null
-  setSelectedCart: Dispatch<SetStateAction<SavedCart | null | undefined>>
+  setSelectedCart: (cart?: SavedCart | null) => void
   getSellingPrice: (item: Item, discount: number) => number
   getDiscountedPrice: (item: Item, discount: number) => number
   discountApplied: number
@@ -67,7 +67,7 @@ function CheckoutB2BProviderWrapper({
   const { query, setQuery } = useRuntime()
   const [pending, setPending] = useState(false)
   const [useCartLoading, setUseCartLoading] = useState(false)
-  const [selectedCart, setSelectedCart] = useState<SavedCart | null>()
+  const [selectedCart, defaultSetSelectedCart] = useState<SavedCart | null>()
   const [discountApplied, setDiscountApplied] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchStore, setSearchStore] = useState(true)
@@ -76,45 +76,50 @@ function CheckoutB2BProviderWrapper({
   const [percentualDiscount, setPercentualDiscount] = useState(0)
   const { orderForm } = useOrderFormCustom()
   const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
-  const savedCartId = query?.savedCart ?? customAppSavedCartId
-  const lastSaveCartQueryRef = useRef<string>()
+  const savedCartId = (query?.savedCart ?? '') || customAppSavedCartId
 
-  const { refetch, loading: loadingCurrentSavedCart } = useQuery<
+  const setSelectedCart = (newSavedCart?: SavedCart | null) => {
+    defaultSetSelectedCart(newSavedCart)
+
+    if (!newSavedCart) {
+      setQuery({ savedCart: undefined })
+    } else {
+      setQuery({ savedCart: newSavedCart.id })
+    }
+  }
+
+  const { refetch, networkStatus, startPolling, stopPolling } = useQuery<
     QueryGetSavedCart,
     QueryGetCartArgs
   >(GET_SAVED_CART, {
     ssr: false,
-    skip:
-      !savedCartId ||
-      (!query?.savedCart && lastSaveCartQueryRef.current === savedCartId),
-    fetchPolicy: 'network-only',
+    skip: !savedCartId,
+    fetchPolicy: 'cache-and-network',
     variables: { id: savedCartId ?? '' },
     notifyOnNetworkStatusChange: true,
     onCompleted({ getCart }) {
       setSelectedCart(getCart)
-
-      if (lastSaveCartQueryRef.current !== getCart?.id) {
-        lastSaveCartQueryRef.current = getCart?.id
-      } else {
-        lastSaveCartQueryRef.current = undefined
-      }
-
-      if (query?.savedCart) {
-        setQuery({ savedCart: undefined })
-      }
     },
     onError() {
       setSelectedCart(null)
-      lastSaveCartQueryRef.current = undefined
-      setQuery({ savedCart: undefined })
     },
   })
+
+  const loadingCurrentSavedCart = networkStatus === 1
+
+  useEffect(() => {
+    if (savedCartId) {
+      startPolling(POLL_INTERVAL)
+    } else {
+      stopPolling()
+    }
+  }, [savedCartId, startPolling, stopPolling])
 
   const refetchCurrentSavedCart = useCallback(
     async (variables?: QueryGetCartArgs) => {
       const result = await refetch(variables)
 
-      setSelectedCart(result.data.getCart)
+      defaultSetSelectedCart(result.data.getCart)
 
       return result
     },

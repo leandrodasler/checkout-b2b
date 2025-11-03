@@ -33,16 +33,19 @@ export function useClearCart(props?: Props) {
       if (!updateOrderForm) return
 
       setOrderForm(clearCart)
-      setSelectedCart(null)
     },
     onError: showToast,
   })
 
   const clearCart = useCallback(() => {
+    if (updateOrderForm) {
+      setSelectedCart(null)
+    }
+
     handlePending(true)
 
     return mutate()
-  }, [handlePending, mutate])
+  }, [handlePending, mutate, setSelectedCart, updateOrderForm])
 
   return { clearCart, isLoading: loading }
 }

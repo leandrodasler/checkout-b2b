@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { ButtonWithIcon, Modal, Tooltip } from 'vtex.styleguide'
@@ -20,19 +20,24 @@ export function SavedCartCommentBadge({
 }: Props) {
   const { formatMessage } = useIntl()
   const [open, setOpen] = useState(false)
-  const labelSuffix = cart.updateQuantity ? `: ${cart.updateQuantity}` : ''
-  const tooltipLabel = `${formatMessage(
+  const [quantity, setQuantity] = useState(cart.updateQuantity)
+  const labelSuffix = cart.updateQuantity ? ` (${quantity})` : ''
+  const title = `${formatMessage(
     messages.savedCartsUpdateHistory
   )}${labelSuffix}`
 
+  useEffect(() => {
+    setQuantity(cart.updateQuantity)
+  }, [cart.updateQuantity])
+
   return (
     <>
-      <Tooltip label={tooltipLabel}>
+      <Tooltip label={title}>
         <div>
           <ButtonWithIcon
             size="small"
             variation="tertiary"
-            icon={<IconUpdateHistory quantity={cart.updateQuantity} />}
+            icon={<IconUpdateHistory quantity={quantity} />}
             onClick={() => setOpen(true)}
             isLoading={loading}
           />
@@ -43,11 +48,17 @@ export function SavedCartCommentBadge({
         isOpen={open}
         onClose={() => setOpen(false)}
         centered
-        title={formatMessage(messages.savedCartsUpdateHistory)}
+        title={title}
         showBottomBarBorder={false}
         container={modalContainer}
       >
-        {open && <SavedCartComments cart={cart} isModal={!!modalContainer} />}
+        {open && (
+          <SavedCartComments
+            cart={cart}
+            isModal={!!modalContainer}
+            setQuantity={setQuantity}
+          />
+        )}
       </Modal>
     </>
   )
