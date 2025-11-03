@@ -395,22 +395,9 @@ export function useTableSchema({
         width: 120,
         title: formatMessage(messages.shippingAddress),
         cellRenderer: makeSafeCell((rowData) => {
-          const selectedSla = rowData.logisticsInfo?.slas?.find(
-            (sla) => rowData.logisticsInfo?.selectedSla === sla?.id
-          )
+          const { strike } = getStrike(rowData, isRemoving(rowData.itemIndex))
 
-          return (
-            <TruncatedText
-              label={selectedSla?.name}
-              text={
-                <ShippingOptionItem
-                  item={rowData}
-                  disabled={isRemoving(rowData.itemIndex)}
-                />
-              }
-              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
-            />
-          )
+          return <ShippingOptionItem item={rowData} disabled={strike} />
         }),
       },
       priceDefinition: {

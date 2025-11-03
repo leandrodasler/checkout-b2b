@@ -3,6 +3,7 @@ import React from 'react'
 import { useUpdateShippingOption } from '../hooks'
 import { CustomItem } from '../typings'
 import { SlaDropdown } from './SlaDrodown'
+import { TruncatedText } from './TruncatedText'
 
 type Props = { item: CustomItem; disabled?: boolean }
 
@@ -12,12 +13,10 @@ export function ShippingOptionItem({ item, disabled }: Props) {
 
   if (!logisticsInfo?.slas?.length) return <>N/A</>
 
-  const options = logisticsInfo.slas
-    .filter((sla) => sla?.deliveryChannel === 'delivery')
-    .map((sla) => ({
-      label: sla?.name ?? '',
-      value: sla?.id,
-    }))
+  const options = logisticsInfo.slas.map((sla) => ({
+    label: sla?.name ?? '',
+    value: sla?.id,
+  }))
 
   const selectedSla = logisticsInfo.slas.find(
     (sla) => sla?.id === logisticsInfo.selectedSla
@@ -32,14 +31,20 @@ export function ShippingOptionItem({ item, disabled }: Props) {
   }
 
   return (
-    <SlaDropdown
-      disabled={disabled}
-      isLoading={loading}
-      options={options}
-      selectedSla={selectedSla}
-      onChange={handleChangeItemShippingOption}
-      variation="inline"
-      showEstimateDate={false}
+    <TruncatedText
+      strike={disabled}
+      label={loading ? null : selectedSla?.name}
+      text={
+        <SlaDropdown
+          disabled={disabled}
+          isLoading={loading}
+          options={options}
+          selectedSla={selectedSla}
+          onChange={handleChangeItemShippingOption}
+          variation="inline"
+          showEstimateDate={false}
+        />
+      }
     />
   )
 }

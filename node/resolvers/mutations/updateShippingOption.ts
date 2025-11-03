@@ -20,16 +20,26 @@ export async function updateShippingOption(
   const { shippingData } = initialOrderForm
   const { logisticsInfo, selectedAddresses } = shippingData
 
-  const newLogisticsInfo = logisticsInfo.map((l) => ({
-    itemIndex: l.itemIndex,
-    addressId: l.addressId,
-    selectedSla:
-      addressId && l.addressId === addressId
-        ? selectedSla
-        : itemIndexes?.includes(l.itemIndex)
-        ? selectedSla
-        : l.selectedSla,
-  }))
+  const newLogisticsInfo = logisticsInfo.map((l) => {
+    const newSla = l.slas.find((sla) => sla.id === selectedSla)
+
+    return {
+      itemIndex: l.itemIndex,
+      addressId: l.addressId,
+      selectedDeliveryChannel:
+        addressId && l.addressId === addressId && newSla
+          ? newSla.deliveryChannel
+          : itemIndexes?.includes(l.itemIndex) && newSla
+          ? newSla.deliveryChannel
+          : l.selectedDeliveryChannel,
+      selectedSla:
+        addressId && l.addressId === addressId
+          ? selectedSla
+          : itemIndexes?.includes(l.itemIndex)
+          ? selectedSla
+          : l.selectedSla,
+    }
+  })
 
   const newOrderForm = await checkoutExtension
     .updateOrderFormShipping({
