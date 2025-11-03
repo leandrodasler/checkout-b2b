@@ -28,11 +28,11 @@ import {
   CheckoutB2BProvider,
   useCheckoutB2BContext,
 } from './CheckoutB2BContext'
-import { ContactInfos } from './components/ContactInfos'
-import ProductAutocomplete from './components/ProductAutocomplete'
-import { SavedCarts } from './components/SavedCarts'
-import { ShareCartPDF } from './components/ShareCartPDF'
-import { UploadSpreadsheetForm } from './components/SpreadsheetUploader'
+import ProductAutocomplete from './components/cart-items/ProductAutocomplete'
+import { ShareCartPDF } from './components/footer-actions/ShareCartPDF'
+import { UploadSpreadsheetForm } from './components/footer-actions/SpreadsheetUploader'
+import { SavedCarts } from './components/saved-carts/SavedCarts'
+import { ContactInfos } from './components/totalizers/ContactInfos'
 import MUTATION_UPDATE_PRICES from './graphql/updatePrices.graphql'
 import {
   useClearCart,
