@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Layout, PageBlock, PageHeader } from 'vtex.styleguide'
 
-import { RepresentativeBalanceSettings } from './components/RepresentativeBalanceSettings'
-import RepresentativeBalancesTable from './components/RepresentativesBalancesTable'
+import { RepresentativeBalanceSettings } from './components/representative-balance/RepresentativeBalanceSettings'
+import RepresentativeBalancesTable from './components/representative-balance/RepresentativesBalancesTable'
 
 const AdminRepresentativeBalances: FC = () => {
   return (
