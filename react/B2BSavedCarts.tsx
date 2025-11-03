@@ -5,7 +5,7 @@ import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import { Layout, PageBlock, PageHeader, ToastProvider } from 'vtex.styleguide'
 
 import { CheckoutB2BProvider } from './CheckoutB2BContext'
-import { SavedCartsTable } from './components/saved-carts/SavedCartTable'
+import { SavedCartsTable } from './components/SavedCartTable'
 import { queryClient } from './services'
 import { messages, welcome } from './utils'
 

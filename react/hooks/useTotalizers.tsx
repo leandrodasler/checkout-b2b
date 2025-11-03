@@ -11,9 +11,9 @@ import {
   useTotalMargin,
 } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
-import { TruncatedText } from '../components/common/TruncatedText'
-import { PaymentData } from '../components/totalizers/PaymentData'
-import { PONumber } from '../components/totalizers/PONumber'
+import { PaymentData } from '../components/PaymentData'
+import { PONumber } from '../components/PONumber'
+import { TruncatedText } from '../components/TruncatedText'
 import { messages } from '../utils'
 
 export function useTotalizers() {
