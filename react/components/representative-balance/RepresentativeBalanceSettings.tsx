@@ -52,7 +52,7 @@ function RepresentativeBalanceSettingsContent({
     MutationSaveRepresentativeBalanceSettings,
     MutationSaveRepresentativeBalanceSettingsArgs
   >(SAVE_REPRESENTATIVE_BALANCE_SETTINGS, {
-    refetchQueries: ['getSettings'],
+    refetchQueries: ['GetRepresentativeBalanceSettings'],
     awaitRefetchQueries: true,
     onError() {
       showToast?.({
