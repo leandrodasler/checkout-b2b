@@ -10,13 +10,11 @@ import {
 import { Button, InputCurrency, Spinner, Table } from 'vtex.styleguide'
 
 import GET_REPRESENTATIVE_BALANCES from '../../graphql/getRepresentativeBalances.graphql'
-import GET_SETTINGS from '../../graphql/getRepresentativeBalanceSettings.graphql'
 import LIST_USERS from '../../graphql/ListUsers.graphql'
 import SAVE_REPRESENTATIVE_BALANCE from '../../graphql/SaveRepresentativeBalance.graphql'
 import { useFormatPrice } from '../../hooks'
 import { getCurrencySymbol, messages } from '../../utils'
-
-type SettingsQuery = Pick<Query, 'getAppSettings'>
+import { useRepresentativeBalanceSettings } from './useRepresentativeBalanceSettings'
 
 type ListUsersQuery = Pick<StorefrontPermissionsQuery, 'listUsers'>
 type GetRepresentativeBalancesQuery = Pick<Query, 'getRepresentativeBalances'>
@@ -45,25 +43,11 @@ const RepresentativeBalancesTable = () => {
     SAVE_REPRESENTATIVE_BALANCE
   )
 
-  // const {
-  //   allowNegativeBalance,
-  //   openingBalance,
-  //   loading: loadingPermissions,
-  // } = usePermissions()
-
-  const { data, loading: loadingPermissions } = useQuery<SettingsQuery>(
-    GET_SETTINGS,
-    {
-      notifyOnNetworkStatusChange: true,
-      ssr: false,
-    }
-  )
-
-  const allowNegativeBalance =
-    data?.getAppSettings.representativeBalance.allowNegativeBalance ?? false
-
-  const openingBalance =
-    data?.getAppSettings.representativeBalance.openingBalance ?? 0
+  const {
+    allowNegativeBalance,
+    openingBalance,
+    loading: loadingPermissions,
+  } = useRepresentativeBalanceSettings()
 
   const [representatives, setRepresentatives] = useState<
     RepresentativeBalance[]
