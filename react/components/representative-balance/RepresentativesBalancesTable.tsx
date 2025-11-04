@@ -13,8 +13,8 @@ import GET_REPRESENTATIVE_BALANCES from '../../graphql/getRepresentativeBalances
 import LIST_USERS from '../../graphql/ListUsers.graphql'
 import SAVE_REPRESENTATIVE_BALANCE from '../../graphql/SaveRepresentativeBalance.graphql'
 import { useFormatPrice } from '../../hooks'
-import { usePermissions } from '../../hooks/usePermissions'
 import { getCurrencySymbol, messages } from '../../utils'
+import { useRepresentativeBalanceSettings } from './useRepresentativeBalanceSettings'
 
 type ListUsersQuery = Pick<StorefrontPermissionsQuery, 'listUsers'>
 type GetRepresentativeBalancesQuery = Pick<Query, 'getRepresentativeBalances'>
@@ -47,7 +47,7 @@ const RepresentativeBalancesTable = () => {
     allowNegativeBalance,
     openingBalance,
     loading: loadingPermissions,
-  } = usePermissions()
+  } = useRepresentativeBalanceSettings()
 
   const [representatives, setRepresentatives] = useState<
     RepresentativeBalance[]

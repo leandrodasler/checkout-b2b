@@ -15,9 +15,9 @@ import {
 } from 'vtex.styleguide'
 
 import SAVE_REPRESENTATIVE_BALANCE_SETTINGS from '../../graphql/saveRepresentativeBalanceSettings.graphql'
-import { usePermissions } from '../../hooks'
 import { WithToast } from '../../typings'
 import { messages } from '../../utils'
+import { useRepresentativeBalanceSettings } from './useRepresentativeBalanceSettings'
 
 type MutationSaveRepresentativeBalanceSettings = Pick<
   Mutation,
@@ -33,7 +33,7 @@ function RepresentativeBalanceSettingsContent({
     representativeBalanceEnabled,
     openingBalance,
     allowNegativeBalance,
-  } = usePermissions()
+  } = useRepresentativeBalanceSettings()
 
   const [enabledInput, setEnabledInput] = useState<boolean>()
   const [
