@@ -1,11 +1,5 @@
 import { ApolloQueryResult } from 'apollo-client'
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import type {
   Query,
@@ -78,16 +72,6 @@ function CheckoutB2BProviderWrapper({
   const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
   const savedCartId = (query?.savedCart ?? '') || customAppSavedCartId
 
-  const setSelectedCart = (newSavedCart?: SavedCart | null) => {
-    defaultSetSelectedCart(newSavedCart)
-
-    if (!newSavedCart) {
-      setQuery({ savedCart: undefined })
-    } else {
-      setQuery({ savedCart: newSavedCart.id })
-    }
-  }
-
   const { refetch, networkStatus, startPolling, stopPolling } = useQuery<
     QueryGetSavedCart,
     QueryGetCartArgs
@@ -107,13 +91,17 @@ function CheckoutB2BProviderWrapper({
 
   const loadingCurrentSavedCart = networkStatus === 1
 
-  useEffect(() => {
-    if (savedCartId) {
+  function setSelectedCart(newSavedCart?: SavedCart | null) {
+    defaultSetSelectedCart(newSavedCart)
+
+    if (newSavedCart) {
+      setQuery({ savedCart: newSavedCart.id })
       startPolling(POLL_INTERVAL)
     } else {
+      setQuery({ savedCart: undefined })
       stopPolling()
     }
-  }, [savedCartId, startPolling, stopPolling])
+  }
 
   const refetchCurrentSavedCart = useCallback(
     async (variables?: QueryGetCartArgs) => {

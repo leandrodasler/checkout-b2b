@@ -81,9 +81,10 @@ function CheckoutB2B() {
     searchStore,
     setSearchStore,
     getDiscountedPrice,
-    setPending,
     refetchCurrentSavedCart,
     selectedCart,
+    setSelectedCart,
+    setUseCartLoading,
   } = useCheckoutB2BContext()
 
   const [itemsAwaitingDeletion, setItemsAwaitingDeletion] = useState<
@@ -195,6 +196,17 @@ function CheckoutB2B() {
     removeLoading,
   })
 
+  const handleUpdateItemsPriceSuccess = useCallback(() => {
+    refetchCurrentSavedCart()
+    setDiscountApplied(0)
+    setIsRequestingDiscount(false)
+    setIsEditing(false)
+
+    showToast?.({
+      message: formatMessage(messages.manualPriceSuccess),
+    })
+  }, [formatMessage, refetchCurrentSavedCart, setDiscountApplied, showToast])
+
   const [updateItemsPrice, { loading: saving }] = useMutation<
     MutationUpdatePrices,
     MutationUpdatePricesArgs
@@ -206,16 +218,15 @@ function CheckoutB2B() {
         customData: updatePrices.customData,
       } as CompleteOrderForm)
 
-      refetchCurrentSavedCart()
-      setDiscountApplied(0)
-      setIsRequestingDiscount(false)
-      setIsEditing(false)
-
-      showToast?.({
-        message: formatMessage(messages.manualPriceSuccess),
-      })
+      handleUpdateItemsPriceSuccess()
     },
     onError: (error) => {
+      if (error.message.includes('code 304')) {
+        handleUpdateItemsPriceSuccess()
+
+        return
+      }
+
       showToast({
         message: formatMessage(messages.manualPriceError, {
           error: error.message,
@@ -225,17 +236,12 @@ function CheckoutB2B() {
   })
 
   const getUpdatedPrices = useCallback(() => {
-    return filteredItems
-      .map((item, index) => ({
-        index,
-        price: Math.round(
-          prices[item.id] ?? item.manualPrice ?? item.sellingPrice
-        ),
-      }))
-      .filter(
-        (updatedPrice) =>
-          filteredItems[updatedPrice.index].sellingPrice !== updatedPrice.price
-      )
+    return filteredItems.map((item, index) => ({
+      index,
+      price: Math.round(
+        prices[item.id] ?? item.manualPrice ?? item.sellingPrice
+      ),
+    }))
   }, [filteredItems, prices])
 
   const handleSavePrices = async () => {
@@ -258,7 +264,8 @@ function CheckoutB2B() {
       date: new Date().toLocaleString(culture.locale),
     })
 
-    setPending(true)
+    setUseCartLoading(true)
+    setSelectedCart(null)
 
     updateItemsPrice({
       variables: {
@@ -266,7 +273,7 @@ function CheckoutB2B() {
         additionalData,
         title,
       },
-    }).then(() => setPending(false))
+    }).then(() => setUseCartLoading(false))
   }
 
   const toggleEditMode = () => {
@@ -487,7 +494,7 @@ function CheckoutB2B() {
             </div>
           </PageBlock>
         </div>
-        {isEditing && (
+        {isEditing && !!items.length && (
           <Slider
             onChange={(values: number[]) => {
               const [newDiscount] = values

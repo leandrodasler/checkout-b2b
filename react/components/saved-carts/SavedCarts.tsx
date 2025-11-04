@@ -116,14 +116,18 @@ export function SavedCarts({ onChangeItems }: Props) {
                 },
               ]
             : []),
-          {
-            label: (
-              <OptionMenuWrapper icon={<IconPlusLines size={12} />}>
-                {formatMessage(messages.savedCartsSaveNew)}
-              </OptionMenuWrapper>
-            ),
-            onClick: handleOpenFormModal,
-          },
+          ...(orderForm.items.length
+            ? [
+                {
+                  label: (
+                    <OptionMenuWrapper icon={<IconPlusLines size={12} />}>
+                      {formatMessage(messages.savedCartsSaveNew)}
+                    </OptionMenuWrapper>
+                  ),
+                  onClick: handleOpenFormModal,
+                },
+              ]
+            : []),
           {
             label: (
               <OptionMenuWrapper icon={<IconShoppingCart size={12} />}>
