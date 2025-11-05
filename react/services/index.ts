@@ -24,7 +24,7 @@ export const queryClient = new QueryClient({
   },
 })
 
-export async function apiRequest<Response extends ApiResponse, Body = unknown>(
+export async function apiRequest<Response = ApiResponse, Body = unknown>(
   url: string,
   method: string,
   body?: Body
@@ -35,9 +35,9 @@ export async function apiRequest<Response extends ApiResponse, Body = unknown>(
     body: JSON.stringify(body),
   })
 
-  const json: Response = await response.json().catch(() => null)
+  const json: Response & ApiResponse = await response.json().catch(() => null)
 
-  if (!response.ok) {
+  if (!response.ok && json.error) {
     throw new Error(
       typeof json?.error === 'object'
         ? json?.error?.message

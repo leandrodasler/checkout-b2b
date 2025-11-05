@@ -292,10 +292,10 @@ export function useTableSchema({
         width: 150,
         title: formatMessage(messages.seller),
         cellRenderer: makeSafeCell((rowData) => {
-          const seller = orderForm.sellers?.find(
-            (s) => rowData.seller === s?.id
-          )
+          const sellerId =
+            rowData.sellerChain?.find((s) => s !== '1') ?? rowData.seller
 
+          const seller = orderForm.sellers?.find((s) => s?.id === sellerId)
           const sellerName = seller?.name ?? rowData.seller ?? 'N/A'
 
           return (
@@ -325,10 +325,10 @@ export function useTableSchema({
           )
         }),
       },
-      ...((hasMargin || prevHasMarginRef) &&
+      ...((hasMargin || prevHasMarginRef.current) &&
         canSeeMargin && {
           listPrice: {
-            width: 100,
+            width: 110,
             title: formatMessage(messages.margin),
             cellRenderer: makeSafeCell((rowData) => {
               const sellingPrice = getSellingPrice(rowData, discount)
@@ -339,6 +339,7 @@ export function useTableSchema({
                     <MarginProductPrice
                       itemId={rowData.id}
                       sellingPrice={sellingPrice}
+                      measurementUnit={rowData.measurementUnit}
                     />
                   }
                   {...getStrike(rowData, isRemoving(rowData.itemIndex))}
@@ -392,7 +393,7 @@ export function useTableSchema({
         },
       }),
       logisticsInfo: {
-        width: 120,
+        width: 150,
         title: formatMessage(messages.shippingAddress),
         cellRenderer: makeSafeCell((rowData) => {
           const { strike } = getStrike(rowData, isRemoving(rowData.itemIndex))

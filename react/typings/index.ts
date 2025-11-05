@@ -62,6 +62,7 @@ export type CustomItem = OrderFormType['items'][number] & { tax?: number } & {
         color: string
       })
     | null
+  sellerChain?: string[]
 }
 
 export type CompleteOrderFormData = ApiResponse &

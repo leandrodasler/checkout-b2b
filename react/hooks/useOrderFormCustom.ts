@@ -15,13 +15,21 @@ export type UseOrderFormReturn = {
   setOrderForm: (orderForm: CompleteOrderForm) => void
 }
 
+type GetRegionSellersResponse = Array<{
+  id: string
+  sellers: Array<{
+    id: string
+    name: string
+  }>
+}>
+
 export function useOrderFormCustom() {
   const { query } = useRuntime()
   const availableCostCenters = useCostCenters()
   const orderFormId = query?.orderFormId ?? ''
 
   const { data, isLoading } = useQuery<CompleteOrderFormData, Error>({
-    queryKey: ['invoiceData', orderFormId],
+    queryKey: [orderFormId],
     queryFn: () =>
       apiRequest<CompleteOrderFormData>(
         `/api/checkout/pub/orderForm/${orderFormId}`,
@@ -37,6 +45,22 @@ export function useOrderFormCustom() {
 
   const invoiceAddress = data?.invoiceData?.address
   const shippingAddress = orderForm?.shipping?.selectedAddress
+
+  const { data: regionSellersData, isLoading: regionSellersLoading } = useQuery<
+    GetRegionSellersResponse,
+    Error
+  >({
+    queryKey: [
+      shippingAddress?.country ?? '',
+      shippingAddress?.postalCode ?? '',
+    ],
+    enabled: !!shippingAddress?.country && !!shippingAddress?.postalCode,
+    queryFn: () =>
+      apiRequest<GetRegionSellersResponse>(
+        `/api/checkout/pub/regions?country=${shippingAddress?.country}&postalCode=${shippingAddress?.postalCode}`,
+        'GET'
+      ),
+  })
 
   const isInvoiceSameAsShipping =
     (invoiceAddress?.city ?? '') === (shippingAddress?.city ?? '') &&
@@ -59,13 +83,14 @@ export function useOrderFormCustom() {
   const shippingData = orderForm.shippingData ?? data?.shippingData
 
   return {
-    loading: loading || isLoading,
+    loading: loading || isLoading || regionSellersLoading,
     orderForm: {
       ...data,
       ...orderForm,
-      clientProfileData: data?.clientProfileData,
+      clientProfileData: orderForm.clientProfileData ?? data?.clientProfileData,
       items: orderForm.items.map((item, index) => ({
         ...item,
+        sellerChain: item.sellerChain ?? data?.items?.[index]?.sellerChain,
         itemIndex: index,
         costCenter: availableCostCenters?.find((costCenter) =>
           isSameAddress(
@@ -81,11 +106,18 @@ export function useOrderFormCustom() {
         logisticsInfo: shippingData?.logisticsInfo.find(
           (l) => l.itemIndex === index
         ),
-        tax: data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
-        components: data?.items.find((i) => i.uniqueId === item.uniqueId)
-          ?.components,
+        tax:
+          orderForm.items.find((i) => i.uniqueId === item.uniqueId)?.tax ??
+          data?.items.find((i) => i.uniqueId === item.uniqueId)?.tax,
+        components:
+          orderForm?.items.find((i) => i.uniqueId === item.uniqueId)
+            ?.components ??
+          data?.items.find((i) => i.uniqueId === item.uniqueId)?.components,
       })),
-      sellers: data?.sellers,
+      sellers: [
+        ...(orderForm.sellers ?? data?.sellers ?? []),
+        ...(regionSellersData?.[0]?.sellers ?? []),
+      ],
       paymentAddress,
       poNumber: getOrderFormPoNumber(orderForm.customData),
     },

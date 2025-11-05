@@ -17,7 +17,7 @@ import { PONumber } from '../components/totalizers/PONumber'
 import { messages } from '../utils'
 
 export function useTotalizers() {
-  const { discountApplied } = useCheckoutB2BContext()
+  const { discountApplied, pending } = useCheckoutB2BContext()
   const { formatMessage } = useIntl()
   const formatPrice = useFormatPrice()
   const { orderForm } = useOrderFormCustom()
@@ -206,7 +206,15 @@ export function useTotalizers() {
             label: formatMessage(messages.totalMargin),
             value: (
               <TruncatedText
-                text={<FormattedPrice value={totalMargin} />}
+                text={
+                  pending ? (
+                    <FormattedPrice value={null} />
+                  ) : totalMargin === 0 ? (
+                    formatPrice(totalMargin)
+                  ) : (
+                    <FormattedPrice value={totalMargin} />
+                  )
+                }
                 inline
               />
             ),
