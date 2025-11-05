@@ -67,7 +67,7 @@
 
   "store/checkout.b2b.column.name": "Nombre",
   "store/checkout.b2b.column.quantity": "Cantidad",
-  "store/checkout.b2b.withoutStock": "Sin stock",
+  "store/checkout.b2b.item-unavailable": "Indisponible",
   "store/checkout.b2b.column.price": "Precio Unitario",
   "store/checkout.b2b.column.totalPrice": "Precio Total",
   "store/checkout.b2b.column.category": "Categoría",

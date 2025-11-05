@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { OrderForm } from 'vtex.order-manager'
 import { useRuntime } from 'vtex.render-runtime'
 
-import { useCostCenters } from '.'
+import { useCostCenters, useOrganization } from '.'
 import { apiRequest } from '../services'
 import type { CompleteOrderForm, CompleteOrderFormData } from '../typings'
 import { getOrderFormPoNumber, isSameAddress } from '../utils'
@@ -27,6 +27,8 @@ export function useOrderFormCustom() {
   const { query } = useRuntime()
   const availableCostCenters = useCostCenters()
   const orderFormId = query?.orderFormId ?? ''
+  const { organization } = useOrganization()
+  const [costCenterAddress] = organization.costCenter?.addresses ?? []
 
   const { data, isLoading } = useQuery<CompleteOrderFormData, Error>({
     queryKey: [orderFormId],
@@ -45,19 +47,20 @@ export function useOrderFormCustom() {
 
   const invoiceAddress = data?.invoiceData?.address
   const shippingAddress = orderForm?.shipping?.selectedAddress
+  const country = shippingAddress?.country ?? costCenterAddress?.country ?? ''
+  const postalCode = shippingAddress?.postalCode?.includes('*')
+    ? costCenterAddress?.postalCode ?? ''
+    : shippingAddress?.postalCode ?? costCenterAddress?.postalCode ?? ''
 
   const { data: regionSellersData, isLoading: regionSellersLoading } = useQuery<
     GetRegionSellersResponse,
     Error
   >({
-    queryKey: [
-      shippingAddress?.country ?? '',
-      shippingAddress?.postalCode ?? '',
-    ],
-    enabled: !!shippingAddress?.country && !!shippingAddress?.postalCode,
+    queryKey: [country, postalCode],
+    enabled: !!country && !!postalCode && !postalCode.includes('*'),
     queryFn: () =>
       apiRequest<GetRegionSellersResponse>(
-        `/api/checkout/pub/regions?country=${shippingAddress?.country}&postalCode=${shippingAddress?.postalCode}`,
+        `/api/checkout/pub/regions?country=${country}&postalCode=${postalCode}`,
         'GET'
       ),
   })

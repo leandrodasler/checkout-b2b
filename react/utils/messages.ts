@@ -54,7 +54,7 @@ export const messages = defineMessages({
   refId: { id: 'store/checkout.b2b.column.refId' },
   seller: { id: 'store/checkout.b2b.column.seller' },
   margin: { id: 'store/checkout.b2b.column.margin' },
-  withoutStock: { id: 'store/checkout.b2b.withoutStock' },
+  itemUnavailable: { id: 'store/checkout.b2b.item-unavailable' },
   emptyCart: { id: 'store/checkout.b2b.empty.cart' },
   clearCart: { id: 'store/checkout.b2b.button.clearCart' },
   deletedSelectedItems: {

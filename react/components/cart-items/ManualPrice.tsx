@@ -12,7 +12,7 @@ import {
 
 import { useFormatPrice } from '../../hooks'
 import { useManualPrice } from '../../hooks/useManualPrice'
-import { messages } from '../../utils'
+import { isItemUnavailable, messages } from '../../utils'
 
 interface ManualPriceProps {
   rowData: Item
@@ -51,6 +51,10 @@ export default function ManualPrice({
     isEditing,
     onUpdatePrice,
   })
+
+  if (isItemUnavailable(rowData)) {
+    return <>---</>
+  }
 
   const tooltipLabel = `${tooltipLabelValue > 0 ? '-' : '+'}${formatPrice(
     Math.abs(tooltipLabelValue)

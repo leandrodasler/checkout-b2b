@@ -6,7 +6,7 @@ import { NumericStepper } from 'vtex.styleguide'
 import { useCheckoutB2BContext } from '../../CheckoutB2BContext'
 import { useToast } from '../../hooks'
 import { CustomItem } from '../../typings'
-import { isWithoutStock, messages } from '../../utils'
+import { isItemUnavailable, messages } from '../../utils'
 
 const { useOrderItems } = OrderItems
 const DELAY = 500
@@ -85,10 +85,10 @@ export function QuantitySelector({ item, disabled, minQuantity = 1 }: Props) {
     }
   }, [disabled])
 
-  if (isWithoutStock(item)) {
+  if (isItemUnavailable(item)) {
     return (
       <div className="w-100 tc c-danger">
-        {formatMessage(messages.withoutStock)}
+        {formatMessage(messages.itemUnavailable)}
       </div>
     )
   }

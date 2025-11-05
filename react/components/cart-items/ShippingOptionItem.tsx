@@ -11,7 +11,8 @@ export function ShippingOptionItem({ item, disabled }: Props) {
   const { logisticsInfo } = item
   const [updateShippingOption, { loading }] = useUpdateShippingOption()
 
-  if (!logisticsInfo?.slas?.length) return <>N/A</>
+  if (!logisticsInfo?.slas?.length)
+    return <div className={disabled ? 'strike' : ''}>N/A</div>
 
   const options = logisticsInfo.slas.map((sla) => ({
     label: sla?.name ?? '',

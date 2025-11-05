@@ -10,7 +10,7 @@ export function useUpdatePayment() {
   const showToast = useToast()
   const { orderForm, setOrderForm } = useOrderFormCustom()
 
-  const [updatePayment, { loading }] = useMutation<
+  const [updatePayment, { loading, error }] = useMutation<
     UpdateOrderFormPaymentMutation,
     { paymentData: PaymentDataInput }
   >(MutationUpdateOrderFormPayment, {
@@ -26,5 +26,5 @@ export function useUpdatePayment() {
     },
   })
 
-  return { updatePayment, loading }
+  return { updatePayment, loading, error }
 }

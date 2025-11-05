@@ -45,8 +45,8 @@ export function normalizeString(str?: string | null) {
   return removeAccents(str)?.replace(/\s/g, '') ?? ''
 }
 
-export function isWithoutStock(item: Item) {
-  return item.availability === 'withoutStock'
+export function isItemUnavailable(item: Item) {
+  return item.availability !== 'available'
 }
 
 export function getFirstInstallmentByPaymentSystem(

@@ -16,12 +16,12 @@ import { CellWrapper } from '../components/common/CellWrapper'
 import { TruncatedText } from '../components/common/TruncatedText'
 import GET_PRODUCTS from '../graphql/productQuery.graphql'
 import type { CustomItem, TableSchema } from '../typings'
-import { isWithoutStock, messages, normalizeString } from '../utils'
+import { isItemUnavailable, messages, normalizeString } from '../utils'
 
 type GetProductsQuery = Pick<Query, 'productsByIdentifier'>
 
 function getStrike(item: CustomItem, isRemoving?: boolean) {
-  return { strike: isWithoutStock(item) || isRemoving }
+  return { strike: isItemUnavailable(item) || isRemoving }
 }
 
 export function useTableSchema({
@@ -332,6 +332,7 @@ export function useTableSchema({
             title: formatMessage(messages.margin),
             cellRenderer: makeSafeCell((rowData) => {
               const sellingPrice = getSellingPrice(rowData, discount)
+              const isUnavailable = isItemUnavailable(rowData)
 
               return (
                 <TruncatedText
@@ -340,6 +341,7 @@ export function useTableSchema({
                       itemId={rowData.id}
                       sellingPrice={sellingPrice}
                       measurementUnit={rowData.measurementUnit}
+                      isUnavailable={isUnavailable}
                     />
                   }
                   {...getStrike(rowData, isRemoving(rowData.itemIndex))}
@@ -411,12 +413,16 @@ export function useTableSchema({
               : getDiscountedPrice(rowData, discount)) / 100
 
           return (
-            discountedPrice && (
-              <TruncatedText
-                text={<FormattedPrice value={discountedPrice} />}
-                {...getStrike(rowData, isRemoving(rowData.itemIndex))}
-              />
-            )
+            <TruncatedText
+              text={
+                isItemUnavailable(rowData) ? (
+                  '---'
+                ) : (
+                  <FormattedPrice value={discountedPrice} />
+                )
+              }
+              {...getStrike(rowData, isRemoving(rowData.itemIndex))}
+            />
           )
         },
       },

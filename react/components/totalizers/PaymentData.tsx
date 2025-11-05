@@ -21,7 +21,7 @@ export function PaymentData() {
   const { formatMessage } = useIntl()
   const { setPending } = useCheckoutB2BContext()
   const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
-  const { updatePayment, loading } = useUpdatePayment()
+  const { updatePayment, loading, error } = useUpdatePayment()
   const { value } = orderForm
   const { paymentSystems = [], payments = [], installmentOptions = [] } =
     orderForm.paymentData ?? {}
@@ -118,6 +118,7 @@ export function PaymentData() {
   useEffect(() => {
     if (
       !loading &&
+      !error &&
       !orderFormLoading &&
       filteredPaymentSystems.length &&
       !validPaymentSystem
@@ -125,6 +126,7 @@ export function PaymentData() {
       setPayment(filteredPaymentSystems[0].stringId)
     }
   }, [
+    error,
     filteredPaymentSystems,
     loading,
     orderFormLoading,

@@ -66,7 +66,7 @@ export function useTotalizers() {
     })
   }
 
-  if (!totalizers.length || !items?.length) return []
+  if (!items?.length) return []
 
   const totalItemsWithoutDiscount =
     totalizers.find((t) => t.id === 'Items')?.value ?? 0
@@ -100,7 +100,7 @@ export function useTotalizers() {
       label: formatMessage(messages.PONumber),
       value: <PONumber />,
     },
-    ...(totalDiscount && canSeeDiscount
+    ...(totalDiscount && Number.isFinite(totalDiscount) && canSeeDiscount
       ? [
           {
             label:

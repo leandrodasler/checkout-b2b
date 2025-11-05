@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CustomItem } from '../typings'
-import { messages, removeAccents } from '../utils'
+import { isItemUnavailable, messages, removeAccents } from '../utils'
 
 type Props = {
   onChangeItems: () => void
@@ -55,6 +55,7 @@ export function useToolbar({ onChangeItems }: Props) {
   }
 
   const filteredItems = handleFilterItems(orderForm.items)
+  const isEveryItemsUnavailable = orderForm.items.every(isItemUnavailable)
 
   const blockedCartStatus =
     selectedCart?.status === 'pending' || selectedCart?.status === 'denied'
@@ -74,6 +75,7 @@ export function useToolbar({ onChangeItems }: Props) {
         pending ||
         useCartLoading ||
         !orderForm.items.length ||
+        isEveryItemsUnavailable ||
         blockedCartStatus ||
         loadingCurrentSavedCart,
       isLoading,

@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { useOrderFormCustom, useOrganization, usePermissions } from '.'
 import { apiRequest } from '../services'
 import type { ApiResponse } from '../typings'
+import { isItemUnavailable } from '../utils'
 
 interface PriceResponse extends ApiResponse {
   itemId: string
@@ -33,7 +34,7 @@ export function useTotalMargin() {
   const { orderForm } = useOrderFormCustom()
   const { organization } = useOrganization()
   const { canSeeMargin } = usePermissions()
-  const { items } = orderForm
+  const items = orderForm.items.filter((item) => !isItemUnavailable(item))
   const priceTable = organization?.priceTables?.[0] ?? '1'
 
   const { data } = useQuery<PriceResponse[], Error>({

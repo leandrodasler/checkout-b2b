@@ -7,12 +7,14 @@ type MarginProductPriceProps = {
   itemId: string
   sellingPrice: number
   measurementUnit?: string | null
+  isUnavailable?: boolean
 }
 
 export function MarginProductPrice({
   itemId,
   sellingPrice,
   measurementUnit,
+  isUnavailable,
 }: MarginProductPriceProps) {
   const { organization } = useOrganization()
   const organizationPrice = organization?.priceTables?.[0] ?? '1'
@@ -23,7 +25,7 @@ export function MarginProductPrice({
   const marginPrice = sellingPrice / 100 - (data?.costPrice ?? 0)
   const marginPriceDefaultFormat = useFormattedPrice(marginPrice)
 
-  if (!data?.costPrice) return <>---</>
+  if (isUnavailable || !data?.costPrice) return <>---</>
 
   return (
     <>
