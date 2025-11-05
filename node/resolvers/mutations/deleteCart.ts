@@ -3,6 +3,7 @@ import type { MutationDeleteCartArgs } from 'ssesandbox04.checkout-b2b'
 
 import { Clients } from '../../clients'
 import {
+  CHECKOUT_B2B_CART_COMMENT_ENTITY,
   CHECKOUT_B2B_CUSTOM_APP_ID,
   deleteSavedCart,
   getAllSavedCarts,
@@ -12,6 +13,7 @@ import {
   SCHEMA_VERSION,
 } from '../../utils'
 import { getCart } from '../queries/getCart'
+import { getCartComments } from '../queries/getCartComments'
 
 export const deleteCart = async (
   _: unknown,
@@ -65,6 +67,17 @@ export const deleteCart = async (
       })
     }
   }
+
+  const cartComments = await getCartComments(null, { savedCartId: id }, context)
+
+  await Promise.all(
+    cartComments.map((comment) =>
+      context.clients.masterdata.deleteDocument({
+        dataEntity: CHECKOUT_B2B_CART_COMMENT_ENTITY,
+        id: comment.id,
+      })
+    )
+  )
 
   return id
 }
