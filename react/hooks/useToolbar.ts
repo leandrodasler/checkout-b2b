@@ -1,6 +1,11 @@
 import { useIntl } from 'react-intl'
 
-import { useOrderFormCustom, useOrganization, usePlaceOrder } from '.'
+import {
+  useOrderFormCustom,
+  useOrganization,
+  usePermissions,
+  usePlaceOrder,
+} from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CustomItem } from '../typings'
 import { isItemUnavailable, messages, removeAccents } from '../utils'
@@ -13,6 +18,7 @@ export function useToolbar({ onChangeItems }: Props) {
   const { formatMessage } = useIntl()
   const { loading: loadingOrganization } = useOrganization()
   const { orderForm, loading: loadingOrderForm } = useOrderFormCustom()
+  const { exceedingDiscount } = usePermissions()
   const {
     pending,
     useCartLoading,
@@ -56,6 +62,8 @@ export function useToolbar({ onChangeItems }: Props) {
 
   const filteredItems = handleFilterItems(orderForm.items)
   const isEveryItemsUnavailable = orderForm.items.every(isItemUnavailable)
+  const isExceedingDiscountWithoutSelectedCart =
+    exceedingDiscount > 0 && !selectedCart
 
   const blockedCartStatus =
     selectedCart?.status === 'pending' || selectedCart?.status === 'denied'
@@ -76,6 +84,7 @@ export function useToolbar({ onChangeItems }: Props) {
         useCartLoading ||
         !orderForm.items.length ||
         isEveryItemsUnavailable ||
+        isExceedingDiscountWithoutSelectedCart ||
         blockedCartStatus ||
         loadingCurrentSavedCart,
       isLoading,
