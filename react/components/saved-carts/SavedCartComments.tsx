@@ -25,7 +25,7 @@ import {
 import { useCheckoutB2BContext } from '../../CheckoutB2BContext'
 import CREATE_CART_COMMENT from '../../graphql/createCartComment.graphql'
 import GET_CART_COMMENTS from '../../graphql/getCartComments.graphql'
-import { useToast } from '../../hooks'
+import { useOrderFormCustom, useToast } from '../../hooks'
 import { CART_STATUSES, messages, POLL_INTERVAL } from '../../utils'
 import { GET_CHILDREN_CARTS } from './ChildrenCartsColumn'
 import { SavedCartDiscountBadge } from './SavedCartDiscountBadge'
@@ -48,6 +48,8 @@ export function SavedCartComments({ cart, isModal, setQuantity }: Props) {
   const [inputComment, setInputComment] = useState('')
   const commentsRef = useRef<HTMLDivElement>(null)
   const { selectedCart, refetchCurrentSavedCart } = useCheckoutB2BContext()
+  const { orderForm } = useOrderFormCustom()
+  const { email } = orderForm.clientProfileData
 
   const { data, networkStatus } = useQuery<
     QueryGetCartComments,
@@ -118,43 +120,49 @@ export function SavedCartComments({ cart, isModal, setQuantity }: Props) {
           </span>
         ) : (
           data?.getCartComments.map((comment: Maybe<CartComment>) => (
-            <Card key={comment?.id}>
-              {comment?.comment
-                .split(/\s+/g)
-                .map((term: string, index: number) => {
-                  if (term === '>') {
-                    return (
-                      <span key={index} className="mh2">
-                        <IconCaretRight size={12} />
-                      </span>
-                    )
-                  }
+            <Card key={comment?.id} noPadding>
+              <div
+                className={`pa6 br2${
+                  email === comment?.email ? ' bg-washed-green' : ''
+                }`}
+              >
+                {comment?.comment
+                  .split(/\s+/g)
+                  .map((term: string, index: number) => {
+                    if (term === '>') {
+                      return (
+                        <span key={index} className="mh2">
+                          <IconCaretRight size={12} />
+                        </span>
+                      )
+                    }
 
-                  if (
-                    comment?.comment.startsWith('Status:') &&
-                    Object.values(
-                      CART_STATUSES as Record<string, string>
-                    ).includes(term.replace('.', ''))
-                  ) {
-                    return (
-                      <span key={index} className="mh2">
-                        <SavedCartStatusBadge
-                          status={term.replace('.', '') as SavedCartStatus}
-                        />
-                      </span>
-                    )
-                  }
+                    if (
+                      comment?.comment.startsWith('Status:') &&
+                      Object.values(
+                        CART_STATUSES as Record<string, string>
+                      ).includes(term.replace('.', ''))
+                    ) {
+                      return (
+                        <span key={index} className="mh2">
+                          <SavedCartStatusBadge
+                            status={term.replace('.', '') as SavedCartStatus}
+                          />
+                        </span>
+                      )
+                    }
 
-                  return <Fragment key={index}>{term} </Fragment>
-                })}
+                    return <Fragment key={index}>{term} </Fragment>
+                  })}
 
-              <div className="mt4 flex flex-wrap justify-between">
-                {comment?.createdIn && (
-                  <span className="c-action-primary">
-                    {new Date(comment.createdIn).toLocaleString(locale)}
-                  </span>
-                )}
-                <span className="c-action-primary">{comment?.email}</span>
+                <div className="mt4 flex flex-wrap justify-between">
+                  <span className="c-action-primary">{comment?.email}</span>
+                  {comment?.createdIn && (
+                    <span className="c-action-primary">
+                      {new Date(comment.createdIn).toLocaleString(locale)}
+                    </span>
+                  )}
+                </div>
               </div>
             </Card>
           ))
