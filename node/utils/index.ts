@@ -1,6 +1,6 @@
 import type { ErrorLike, EventContext, ServiceContext } from '@vtex/api'
 import { ForbiddenError, ResolverError } from '@vtex/api'
-import { SearchProduct } from '@vtex/clients'
+import { SearchArgs, SearchProduct } from '@vtex/clients'
 import {
   CartComment,
   MutationCreateCartCommentArgs,
@@ -419,4 +419,35 @@ export function getSavedCartId(customData?: CustomData): string | undefined {
   )
 
   return checkoutB2BCustomApp?.fields?.savedCart
+}
+
+export async function searchProducts(
+  context: ServiceContext<Clients>,
+  args: Partial<SearchArgs>
+) {
+  return context.clients.search
+    .products({
+      query: '',
+      category: null,
+      specificationFilters: null,
+      collection: null,
+      orderBy: 'OrderByScoreDESC',
+      salesChannel: null,
+      from: 0,
+      to: 1,
+      hideUnavailableItems: false,
+      completeSpecifications: false,
+      simulationBehavior: 'default',
+      ...args,
+    })
+    .catch(() => [])
+}
+
+export function itemHasRefId(
+  item: SearchProduct['items'][number],
+  refId?: string
+) {
+  return item.referenceId.some(
+    (ref) => ref.Key === 'RefId' && ref.Value === refId
+  )
 }

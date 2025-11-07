@@ -12,7 +12,7 @@ export async function getCurrentCartSpreadsheet(ctx: ServiceContext<Clients>) {
   const orderForm = await ctx.clients.checkoutExtension.getOrderForm()
 
   const csvContent = orderForm.items.reduce((acc, item) => {
-    const { name, skuName } = item
+    const { refId, ean, name, skuName } = item
 
     const outputName = normalizeString(skuName).includes(normalizeString(name))
       ? skuName
@@ -20,8 +20,8 @@ export async function getCurrentCartSpreadsheet(ctx: ServiceContext<Clients>) {
       ? name
       : `${name} ${skuName}`
 
-    return `${acc}"${outputName}",${item.quantity}\n`
-  }, 'Item,Quantity\n')
+    return `${acc}"${refId || ean}","${outputName}",${item.quantity}\n`
+  }, 'Ref,Name,Quantity\n')
 
   ctx.set('content-type', 'text/csv')
   ctx.body = csvContent

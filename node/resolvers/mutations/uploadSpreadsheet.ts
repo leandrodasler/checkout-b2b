@@ -6,7 +6,9 @@ import { Clients } from '../../clients'
 import {
   getDefaultSellerOrWithLowestPrice,
   getSessionData,
+  itemHasRefId,
   normalizeString,
+  searchProducts,
 } from '../../utils'
 
 type FileUpload = Promise<{
@@ -26,7 +28,7 @@ export const uploadSpreadsheet = async (
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
   const { createReadStream } = await file
-  const { search, checkoutExtension } = ctx.clients
+  const { checkoutExtension } = ctx.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
 
@@ -39,35 +41,31 @@ export const uploadSpreadsheet = async (
   const orderItems: AddItemsBody = []
 
   for await (const line of lineReader) {
-    const match = line.match(/^"?([^"]+)"?[,;\t](\d+)$/)
+    const match = line.match(/^"?([^"]+)"?[,;\t]("?([^"]*)"?[,;\t])?(\d+)$/)
 
     if (!match) continue
 
-    const [, itemName, quantity] = match
+    const [, refId, , name, quantity] = match
 
-    const [product] = await search
-      .products({
-        query: itemName,
-        category: null,
-        specificationFilters: null,
-        collection: null,
-        orderBy: null,
-        salesChannel: null,
-        from: 0,
-        to: 1,
-        hideUnavailableItems: false,
-        completeSpecifications: false,
-        simulationBehavior: 'default',
-      })
-      .catch(() => [undefined])
+    const [productByRefId] = await searchProducts(ctx, {
+      query: `?fq=alternateIds_RefId:${refId}`,
+      to: 1,
+    })
 
-    const itemNameNormalized = normalizeString(itemName)
+    let sku = productByRefId?.items.find((item) => {
+      return itemHasRefId(item, refId) || item.ean === refId
+    })
 
-    const sku = product?.items.find(
-      (item) =>
-        itemNameNormalized.includes(normalizeString(item.name)) ||
-        itemNameNormalized.includes(normalizeString(item.nameComplete))
-    )
+    if (!sku && name) {
+      const [productByName] = await searchProducts(ctx, { query: name, to: 1 })
+      const itemNameNormalized = normalizeString(name)
+
+      sku = productByName?.items.find(
+        (item) =>
+          itemNameNormalized.includes(normalizeString(item.name)) ||
+          itemNameNormalized.includes(normalizeString(item.nameComplete))
+      )
+    }
 
     if (sku) {
       orderItems.push({
