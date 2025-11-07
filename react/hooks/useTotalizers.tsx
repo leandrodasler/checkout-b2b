@@ -14,7 +14,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { TruncatedText } from '../components/common/TruncatedText'
 import { PaymentData } from '../components/totalizers/PaymentData'
 import { PONumber } from '../components/totalizers/PONumber'
-import { messages } from '../utils'
+import { isItemUnavailable, messages } from '../utils'
 
 export function useTotalizers() {
   const { discountApplied, pending } = useCheckoutB2BContext()
@@ -71,10 +71,9 @@ export function useTotalizers() {
   const totalItemsWithoutDiscount =
     totalizers.find((t) => t.id === 'Items')?.value ?? 0
 
-  const totalItems = items.reduce(
-    (acc, item) => acc + (item.sellingPrice ?? 0) * item.quantity,
-    0
-  )
+  const totalItems = items
+    .filter((item) => !isItemUnavailable(item))
+    .reduce((acc, item) => acc + (item.sellingPrice ?? 0) * item.quantity, 0)
 
   const percentualDiscount = Math.round(
     100 - (totalItems / totalItemsWithoutDiscount) * 100

@@ -11,6 +11,7 @@ import {
 } from '../../hooks'
 import {
   groupShippingOptionsBySeller,
+  isItemUnavailable,
   isSameAddress,
   messages,
 } from '../../utils'
@@ -41,7 +42,10 @@ export function ShippingOption({ address }: Props) {
 
   const shippingOptionsBySeller = useMemo(
     () =>
-      groupShippingOptionsBySeller(logisticsInfoFromAddress, orderForm.items),
+      groupShippingOptionsBySeller(
+        logisticsInfoFromAddress,
+        orderForm.items.filter((item) => !isItemUnavailable(item))
+      ),
     [logisticsInfoFromAddress, orderForm.items]
   )
 
@@ -112,11 +116,13 @@ export function ShippingOption({ address }: Props) {
         {Object.entries(shippingOptionsBySeller).map(
           ([sellerId, options], index) => {
             const quantity = formatMessage(messages.itemCount, {
-              count: orderForm.items.reduce(
-                (acc, item) =>
-                  acc + (item.seller === sellerId ? item.quantity : 0),
-                0
-              ),
+              count: orderForm.items
+                .filter((item) => !isItemUnavailable(item))
+                .reduce(
+                  (acc, item) =>
+                    acc + (item.seller === sellerId ? item.quantity : 0),
+                  0
+                ),
             })
 
             const singlePrice = formatPrice((options.slas[0].price ?? 0) / 100)

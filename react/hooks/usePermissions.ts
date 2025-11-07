@@ -5,6 +5,7 @@ import { Query } from 'ssesandbox04.checkout-b2b'
 import { useOrderFormCustom, useOrganization } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import GET_APP_SETTINGS from '../graphql/getAppSettings.graphql'
+import { isItemUnavailable } from '../utils'
 
 type AppSettingsQuery = Pick<Query, 'getAppSettings'>
 
@@ -64,10 +65,9 @@ export function usePermissions() {
   const totalItemsWithoutDiscount =
     orderForm.totalizers.find((t) => t.id === 'Items')?.value ?? 0
 
-  const totalItems = orderForm.items.reduce(
-    (acc, item) => acc + (item.sellingPrice ?? 0) * item.quantity,
-    0
-  )
+  const totalItems = orderForm.items
+    .filter((item) => !isItemUnavailable(item))
+    .reduce((acc, item) => acc + (item.sellingPrice ?? 0) * item.quantity, 0)
 
   const percentualDiscount = Math.round(
     100 - (totalItems / totalItemsWithoutDiscount) * 100

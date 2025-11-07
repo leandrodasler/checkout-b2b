@@ -50,7 +50,13 @@ import {
 import { queryClient } from './services'
 import './styles.css'
 import { CompleteOrderForm, CustomItem } from './typings'
-import { getOrderFormSavedCart, messages, SEARCH_TYPE, welcome } from './utils'
+import {
+  getOrderFormSavedCart,
+  isItemUnavailable,
+  messages,
+  SEARCH_TYPE,
+  welcome,
+} from './utils'
 
 type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
 
@@ -480,17 +486,21 @@ function CheckoutB2B() {
                   toolbar={toolbar}
                 />
               </div>
-              {!loading && !!filteredItems.length && (
-                <div className="mt4 c-muted-2">
-                  {formatMessage(messages.itemCount, {
-                    count: filteredItems.reduce(
-                      (acc: number, item: CustomItem) =>
-                        acc + (isGrouping && !item.__group ? 0 : item.quantity),
-                      0
-                    ),
-                  })}
-                </div>
-              )}
+              {!loading &&
+                filteredItems.some((item) => !isItemUnavailable(item)) && (
+                  <div className="mt4 c-muted-2">
+                    {formatMessage(messages.itemCount, {
+                      count: filteredItems
+                        .filter((item) => !isItemUnavailable(item))
+                        .reduce(
+                          (acc: number, item: CustomItem) =>
+                            acc +
+                            (isGrouping && !item.__group ? 0 : item.quantity),
+                          0
+                        ),
+                    })}
+                  </div>
+                )}
             </div>
           </PageBlock>
         </div>
