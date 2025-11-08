@@ -10,7 +10,7 @@ type Props = {
   selectedSla?: ShippingSla | null
   options: Array<{
     value?: string | null
-    label: string
+    label: React.ReactNode
   }>
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
   isLoading?: boolean
@@ -18,6 +18,7 @@ type Props = {
   variation?: 'default' | 'inline'
   shippingEstimates?: Array<string | null | undefined>
   disabled?: boolean
+  itemCountBySelectedEstimate?: Record<string, number>
 }
 
 const SlaDropdownSpinner = () => (
@@ -35,6 +36,7 @@ export function SlaDropdown({
   showEstimateDate = true,
   shippingEstimates,
   disabled,
+  itemCountBySelectedEstimate,
 }: Props) {
   const { formatMessage } = useIntl()
 
@@ -57,6 +59,15 @@ export function SlaDropdown({
             <div className="t-mini flex flex-column">
               {shippingEstimates.map((shippingEstimate) => (
                 <span key={shippingEstimate}>
+                  {!!shippingEstimate &&
+                    itemCountBySelectedEstimate?.[shippingEstimate] && (
+                      <>
+                        {formatMessage(messages.itemCount, {
+                          count: itemCountBySelectedEstimate[shippingEstimate],
+                        })}
+                        :{' '}
+                      </>
+                    )}
                   <TranslateEstimate shippingEstimate={shippingEstimate} />
                 </span>
               ))}

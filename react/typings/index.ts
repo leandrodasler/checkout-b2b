@@ -13,6 +13,15 @@ import type {
   OrderForm as OrderFormStore,
 } from 'vtex.store-graphql'
 
+declare global {
+  interface Window {
+    __RUNTIME__: {
+      culture: { locale: string }
+      messages: Record<string, string>
+    }
+  }
+}
+
 type ShowToastArgs = {
   message: string
   horizontalPosition?: 'left' | 'right'

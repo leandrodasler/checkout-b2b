@@ -117,6 +117,11 @@ type RepresentativeBalanceTransactionResponse {
   pagination: Pagination!
 }
 
+input UpdateMultipleShippingOptionsInput {
+  itemIndex: Int!
+  selectedSla: String!
+}
+
 type Query {
   checkOrderFormConfiguration: CheckOrderFormConfigurationResponse!
 
@@ -214,6 +219,10 @@ type Mutation {
     addressId: String
     itemIndexes: [Int!]
     selectedSla: String!
+  ): UpdatedOrderForm!
+
+  updateMultipleShippingOptions(
+    input: [UpdateMultipleShippingOptionsInput!]!
   ): UpdatedOrderForm!
 
   uploadSpreadsheet(file: Upload!): UpdatedOrderForm!

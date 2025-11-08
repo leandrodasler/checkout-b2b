@@ -2,15 +2,11 @@ import { useMemo } from 'react'
 import { ExecutionResult, useMutation } from 'react-apollo'
 import type {
   Mutation,
+  MutationUpdateMultipleShippingOptionsArgs,
   MutationUpdatePricesArgs,
   SavedCart,
 } from 'ssesandbox04.checkout-b2b'
 import { CustomData, Item } from 'vtex.checkout-graphql'
-import type {
-  SelectDeliveryOptionMutation,
-  SelectDeliveryOptionMutationVariables,
-} from 'vtex.checkout-resources'
-import { MutationSelectDeliveryOption } from 'vtex.checkout-resources'
 import { useRuntime } from 'vtex.render-runtime'
 import type {
   LogisticsInfo,
@@ -21,6 +17,7 @@ import type {
 import { useAddItems, useClearCart, useUpdatePayment } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import SET_ORDER_FORM_CUSTOM_DATA from '../graphql/setOrderFormCustomData.graphql'
+import MUTATION_UPDATE_SHIPPING_OPTION from '../graphql/updateMultipleShippingOptions.graphql'
 import MUTATION_UPDATE_PRICES from '../graphql/updatePrices.graphql'
 import type { CompleteOrderForm } from '../typings'
 import { CHECKOUT_B2B_CUSTOM_APP_ID } from '../utils'
@@ -33,6 +30,11 @@ type MutationSetOrderFormCustomData = Pick<
 >
 
 type MutationUpdatePrices = Pick<Mutation, 'updatePrices'>
+
+type MutationUpdateMultipleShippingOptions = Pick<
+  Mutation,
+  'updateMultipleShippingOptions'
+>
 
 type Props = {
   onChangeItems?: () => void
@@ -79,16 +81,17 @@ export function useSavedCart(props?: Props) {
     }
   )
 
-  const [selectDeliveryOption] = useMutation<
-    SelectDeliveryOptionMutation,
-    SelectDeliveryOptionMutationVariables
-  >(MutationSelectDeliveryOption, {
-    onCompleted({ selectDeliveryOption: updatedOrderForm }) {
+  const [updateMultipleShippingOption] = useMutation<
+    MutationUpdateMultipleShippingOptions,
+    MutationUpdateMultipleShippingOptionsArgs
+  >(MUTATION_UPDATE_SHIPPING_OPTION, {
+    onCompleted(data) {
       setOrderForm({
         ...orderForm,
-        ...updatedOrderForm,
-        paymentData: selectedCartData.paymentData,
-      } as CompleteOrderForm)
+        ...data.updateMultipleShippingOptions,
+        paymentAddress: orderForm.paymentAddress,
+        customData: orderForm.customData,
+      })
     },
     onError: showToast,
   })
@@ -132,10 +135,9 @@ export function useSavedCart(props?: Props) {
     )
 
     const { payments } = paymentData
-    const { logisticsInfo } = shippingData ?? {}
-    const selectedDeliveryOption = (logisticsInfo as LogisticsInfo[]).find(
-      (logisticsInfoItem) => !!logisticsInfoItem.selectedSla
-    )?.selectedSla
+    const { logisticsInfo } = (shippingData ?? {}) as {
+      logisticsInfo: LogisticsInfo[]
+    }
 
     setUseCartLoading(true)
 
@@ -170,13 +172,14 @@ export function useSavedCart(props?: Props) {
         })
       }
 
-      if (selectedDeliveryOption) {
-        await selectDeliveryOption({
-          variables: {
-            deliveryOptionId: selectedDeliveryOption,
-          },
-        })
-      }
+      await updateMultipleShippingOption({
+        variables: {
+          input: logisticsInfo.map((l) => ({
+            itemIndex: +(l.itemIndex ?? 0),
+            selectedSla: l.selectedSla as string,
+          })),
+        },
+      })
 
       await setOrderFormCustomData({
         variables: {

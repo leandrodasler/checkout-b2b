@@ -84,9 +84,6 @@ function CheckoutB2BProviderWrapper({
     onCompleted({ getCart }) {
       setSelectedCart(getCart)
     },
-    onError() {
-      setSelectedCart(null)
-    },
   })
 
   const loadingCurrentSavedCart = networkStatus === 1

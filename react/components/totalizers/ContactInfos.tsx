@@ -58,6 +58,7 @@ export function ContactInfos({ onChangeItems }: Props) {
       profileCompleteOnLoading,
       profileErrorOnLoading,
       customerClass,
+      isValid,
       ...inputProfileData
     } = clientProfileData
 

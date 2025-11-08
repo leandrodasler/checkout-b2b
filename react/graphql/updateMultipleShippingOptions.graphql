@@ -1,0 +1,6 @@
+mutation UpdateMultipleShippingOptions(
+  $input: [UpdateMultipleShippingOptionsInput!]!
+) {
+  updateMultipleShippingOptions(input: $input)
+    @context(provider: "ssesandbox04.checkout-b2b")
+}

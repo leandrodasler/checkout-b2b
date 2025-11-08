@@ -494,8 +494,7 @@ function CheckoutB2B() {
                         .filter((item) => !isItemUnavailable(item))
                         .reduce(
                           (acc: number, item: CustomItem) =>
-                            acc +
-                            (isGrouping && !item.__group ? 0 : item.quantity),
+                            acc + (isGrouping && !item.__group ? 0 : 1),
                           0
                         ),
                     })}

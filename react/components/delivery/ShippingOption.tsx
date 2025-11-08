@@ -82,35 +82,36 @@ export function ShippingOption({ address }: Props) {
     }).then(() => setPending(false))
   }
 
-  const packages = Object.keys(shippingOptionsBySeller).length
+  const sellersQuantity = Object.keys(shippingOptionsBySeller).length
 
-  if (packages === 1) {
-    const [singlePackageSlas] = Object.values(shippingOptionsBySeller)
+  if (sellersQuantity === 1) {
+    const [singleSellerSlas] = Object.values(shippingOptionsBySeller)
     const [seller] = Object.keys(shippingOptionsBySeller)
 
-    if (singlePackageSlas.slas.length > 1) {
+    if (singleSellerSlas.slas.length > 1) {
       return (
         <SlaDropdown
-          selectedSla={
-            singlePackageSlas.selectedSla ?? singlePackageSlas.slas[0]
+          selectedSla={singleSellerSlas.selectedSla ?? singleSellerSlas.slas[0]}
+          itemCountBySelectedEstimate={
+            singleSellerSlas.itemCountBySelectedEstimate
           }
-          options={singlePackageSlas.slas.map((sla) => ({
+          options={singleSellerSlas.slas.map((sla) => ({
             value: sla.id,
             label: `${sla.name}${
               sla.price ? ` - ${formatPrice((sla.price ?? 0) / 100)}` : ''
             }`,
           }))}
-          shippingEstimates={singlePackageSlas.shippingEstimates}
+          shippingEstimates={singleSellerSlas.shippingEstimates}
           onChange={handleChange(seller)}
           isLoading={loading}
         />
       )
     }
 
-    return <Sla highlightName sla={singlePackageSlas.slas[0]} />
+    return <Sla highlightName sla={singleSellerSlas.slas[0]} />
   }
 
-  if (packages > 1) {
+  if (sellersQuantity > 1) {
     return (
       <ol className={`${handles.shippingEstimates} flex flex-wrap`}>
         {Object.entries(shippingOptionsBySeller).map(
@@ -119,8 +120,7 @@ export function ShippingOption({ address }: Props) {
               count: orderForm.items
                 .filter((item) => !isItemUnavailable(item))
                 .reduce(
-                  (acc, item) =>
-                    acc + (item.seller === sellerId ? item.quantity : 0),
+                  (acc, item) => acc + (item.seller === sellerId ? 1 : 0),
                   0
                 ),
             })
@@ -147,6 +147,9 @@ export function ShippingOption({ address }: Props) {
                 {options.slas.length > 1 ? (
                   <SlaDropdown
                     selectedSla={options.selectedSla ?? options.slas[0]}
+                    itemCountBySelectedEstimate={
+                      options.itemCountBySelectedEstimate
+                    }
                     options={options.slas.map((sla) => ({
                       value: sla.id,
                       label: `${sla.name}${

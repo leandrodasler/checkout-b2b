@@ -233,6 +233,36 @@ export function groupShippingOptionsBySeller(
     (li) => li.slas?.find((sla) => sla?.id === li.selectedSla)?.shippingEstimate
   )
 
+  const itemCountBySelectedEstimateBySeller: Record<
+    string,
+    Record<string, number>
+  > = {}
+
+  for (const item of items) {
+    const seller = item.seller ?? '1'
+
+    if (!itemCountBySelectedEstimateBySeller[seller]) {
+      itemCountBySelectedEstimateBySeller[seller] = {}
+    }
+
+    const logisticsInfoItem = logisticsInfoFromAddress.find(
+      (li) => li.itemIndex === item.itemIndex
+    )
+
+    if (!logisticsInfoItem?.selectedSla) continue
+
+    const estimate = logisticsInfoItem.slas?.find(
+      (sla) => sla?.id === logisticsInfoItem.selectedSla
+    )?.shippingEstimate
+
+    if (estimate) {
+      const currentCount =
+        itemCountBySelectedEstimateBySeller[seller][estimate] ?? 0
+
+      itemCountBySelectedEstimateBySeller[seller][estimate] = currentCount + 1
+    }
+  }
+
   return logisticsInfoFromAddress.reduce<
     Record<
       string,
@@ -240,6 +270,7 @@ export function groupShippingOptionsBySeller(
         selectedSla: ShippingSla
         slas: ShippingSla[]
         shippingEstimates?: Array<string | null | undefined>
+        itemCountBySelectedEstimate?: Record<string, number>
       }
     >
   >((acc, l) => {
@@ -249,23 +280,39 @@ export function groupShippingOptionsBySeller(
 
     const seller = item.seller ?? '1'
 
-    const selectedSla =
+    const hasMultipleSelectedSlas =
       distinctSelectedSlaIdsBySeller[seller].length > 1
+
+    const hasMultipleShippingEstimates =
+      distinctSelectedSlaShippingEstimatesBySeller[seller].length > 1
+
+    const selectedSla =
+      hasMultipleSelectedSlas || hasMultipleShippingEstimates
         ? ({
             name: distinctSelectedSlaNamesBySeller[seller].join(', '),
             id: distinctSelectedSlaIdsBySeller[seller].join(),
           } as ShippingSla)
         : l.slas?.find((sla) => sla?.id === l.selectedSla)
 
-    acc[seller] = acc[seller] ?? { selectedSla, slas: [] }
+    acc[seller] = acc[seller] ?? {
+      selectedSla,
+      slas: [],
+      itemCountBySelectedEstimate:
+        itemCountBySelectedEstimateBySeller[seller] ?? {},
+    }
 
-    if (distinctSelectedSlaIdsBySeller[seller].length > 1) {
+    if (hasMultipleSelectedSlas) {
       acc[seller].slas = [
         {
           name: distinctSelectedSlaNamesBySeller[seller].join(', '),
           id: distinctSelectedSlaIdsBySeller[seller].join(),
         },
       ]
+    }
+
+    if (hasMultipleSelectedSlas || hasMultipleShippingEstimates) {
+      acc[seller].shippingEstimates =
+        distinctSelectedSlaShippingEstimatesBySeller[seller]
     }
 
     l.slas?.forEach((sla) => {
@@ -294,24 +341,17 @@ export function groupShippingOptionsBySeller(
 
         acc[seller].slas[addedSlaIndex] = {
           ...addedSla,
-          price:
-            distinctSelectedSlaIdsBySeller[seller].length > 1
-              ? 0
-              : (addedSla.price ?? 0) + (sla.price ?? 0),
+          price: hasMultipleSelectedSlas
+            ? 0
+            : (addedSla.price ?? 0) + (sla.price ?? 0),
           deliveryIds: mergedDeliveryIds,
         }
       } else {
         acc[seller].slas.push({
           ...sla,
-          price:
-            distinctSelectedSlaIdsBySeller[seller].length > 1 ? 0 : sla.price,
+          price: hasMultipleSelectedSlas ? 0 : sla.price,
           deliveryIds: sla.deliveryIds?.map((d) => ({ ...d })) ?? [],
         })
-
-        if (distinctSelectedSlaIdsBySeller[seller].length > 1) {
-          acc[seller].shippingEstimates =
-            distinctSelectedSlaShippingEstimatesBySeller[seller]
-        }
       }
     })
 

@@ -10,6 +10,7 @@ import { saveRepresentativeBalance } from './mutations/saveRepresentativeBalance
 import { saveRepresentativeBalanceSettings } from './mutations/saveRepresentativeBalanceSettings'
 import { shareCart } from './mutations/shareCart'
 import { updateItemsQuantity } from './mutations/updateItemsQuantity'
+import { updateMultipleShippingOptions } from './mutations/updateMultipleShippingOptions'
 import { updatePrices } from './mutations/updatePrices'
 import { updateSavedCartStatus } from './mutations/updateSavedCartStatus'
 import { updateSavedCartTitle } from './mutations/updateSavedCartTitle'
@@ -52,6 +53,7 @@ export default {
       updateItemsQuantity,
       addAddressToCart,
       updateShippingOption,
+      updateMultipleShippingOptions,
       createCartComment,
     },
   },
