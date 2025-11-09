@@ -14,6 +14,7 @@ import { updateMultipleShippingOptions } from './mutations/updateMultipleShippin
 import { updatePrices } from './mutations/updatePrices'
 import { updateSavedCartStatus } from './mutations/updateSavedCartStatus'
 import { updateSavedCartTitle } from './mutations/updateSavedCartTitle'
+import { updateSelectedAddresses } from './mutations/updateSelectedAddresses'
 import { updateShippingOption } from './mutations/updateShippingOption'
 import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
 import { checkOrderFormConfiguration } from './queries/checkOrderFormConfiguration'
@@ -52,6 +53,7 @@ export default {
       addItemsToCart,
       updateItemsQuantity,
       addAddressToCart,
+      updateSelectedAddresses,
       updateShippingOption,
       updateMultipleShippingOptions,
       createCartComment,

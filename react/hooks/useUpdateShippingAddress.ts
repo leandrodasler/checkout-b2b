@@ -1,28 +1,30 @@
 import { useMutation } from 'react-apollo'
-import type {
-  UpdateSelectedAddressMutation,
-  UpdateSelectedAddressMutationVariables,
-} from 'vtex.checkout-resources'
-import { MutationUpdateSelectedAddress } from 'vtex.checkout-resources'
+import {
+  Mutation,
+  MutationUpdateSelectedAddressesArgs,
+} from 'ssesandbox04.checkout-b2b'
 
 import { useOrderFormCustom, useToast } from '.'
+import MUTATION_UPDATE_SELECTED_ADDRESSES from '../graphql/updateSelectedAddresses.graphql'
 import type { CompleteOrderForm } from '../typings'
+
+type MutationUpdateSelectedAddresses = Pick<Mutation, 'updateSelectedAddresses'>
 
 export function useUpdateShippingAddress() {
   const showToast = useToast()
   const { orderForm, setOrderForm } = useOrderFormCustom()
 
   return useMutation<
-    UpdateSelectedAddressMutation,
-    UpdateSelectedAddressMutationVariables
-  >(MutationUpdateSelectedAddress, {
-    onCompleted({ updateSelectedAddress }) {
+    MutationUpdateSelectedAddresses,
+    MutationUpdateSelectedAddressesArgs
+  >(MUTATION_UPDATE_SELECTED_ADDRESSES, {
+    onCompleted({ updateSelectedAddresses }) {
       setOrderForm({
         ...orderForm,
         paymentAddress:
           orderForm.paymentAddress ??
-          updateSelectedAddress.shipping.selectedAddress,
-        ...updateSelectedAddress,
+          updateSelectedAddresses.shippingData.address,
+        ...updateSelectedAddresses,
       } as CompleteOrderForm)
     },
     onError({ message }) {

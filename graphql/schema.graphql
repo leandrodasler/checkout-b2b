@@ -215,6 +215,8 @@ type Mutation {
 
   addAddressToCart(address: Address!): UpdatedOrderForm!
 
+  updateSelectedAddresses(selectedAddresses: [Address!]!): UpdatedOrderForm!
+
   updateShippingOption(
     addressId: String
     itemIndexes: [Int!]

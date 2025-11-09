@@ -378,6 +378,8 @@ export function isSameAddress<
     | null
     | undefined
 >(a: T, b: T) {
+  if (a?.addressId && b?.addressId && a.addressId === b.addressId) return true
+
   return (
     (a?.addressType ?? '') === (b?.addressType ?? '') &&
     (a?.city ?? '') === (b?.city ?? '') &&

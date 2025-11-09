@@ -78,34 +78,31 @@ export function CostCentersShipping({ onChangeItems }: Props) {
 
   useEffect(() => {
     if (
-      orderForm.items.length ||
       !costCenterAddress ||
-      isSameAddress(costCenterAddress, orderForm.shippingData.address)
+      (orderForm.shippingData.address &&
+        isSameAddress(costCenterAddress, orderForm.shippingData.address))
     )
       return
 
     updateShippingAddress({
       variables: {
-        address: {
-          ...costCenterAddress,
-          city: costCenterAddress.city ?? '',
-          complement: costCenterAddress.complement ?? '',
-          country: costCenterAddress.country ?? '',
-          neighborhood: costCenterAddress.neighborhood ?? '',
-          number: costCenterAddress.number ?? '',
-          postalCode: costCenterAddress.postalCode ?? '',
-          state: costCenterAddress.state ?? '',
-          street: costCenterAddress.street ?? '',
-          addressType: costCenterAddress.addressType as AddressType,
-        },
+        selectedAddresses: [
+          {
+            ...costCenterAddress,
+            city: costCenterAddress.city ?? '',
+            complement: costCenterAddress.complement ?? '',
+            country: costCenterAddress.country ?? '',
+            neighborhood: costCenterAddress.neighborhood ?? '',
+            number: costCenterAddress.number ?? '',
+            postalCode: costCenterAddress.postalCode ?? '',
+            state: costCenterAddress.state ?? '',
+            street: costCenterAddress.street ?? '',
+            addressType: costCenterAddress.addressType as AddressType,
+          },
+        ],
       },
     })
-  }, [
-    costCenterAddress,
-    orderForm.items.length,
-    orderForm.shippingData.address,
-    updateShippingAddress,
-  ])
+  }, [costCenterAddress, orderForm.shippingData.address, updateShippingAddress])
 
   const handleCheckCostCenter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target
@@ -134,7 +131,7 @@ export function CostCentersShipping({ onChangeItems }: Props) {
       })
     } else {
       setAddressToBeDeleted(
-        selectedAddresses.find((a) =>
+        selectedAddresses?.find((a) =>
           isSameAddress(a, selectedCostCenter?.address)
         )
       )
