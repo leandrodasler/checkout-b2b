@@ -31,9 +31,17 @@ export function ContactInfos({ onChangeItems }: Props) {
   } = useOrderFormCustom()
 
   const { representativeBalanceEnabled } = usePermissions()
-  const { costCenter, tradeName, name, roleName } = organization
+  const { costCenter, tradeName, name, roleName, users } = organization
   const costCenterPhone = costCenter?.phoneNumber ?? ''
   const clientProfilePhone = clientProfileData?.phone
+  const currentOrganizationUser = users?.find(
+    (user) => user?.email === clientProfileData.email
+  )
+
+  const [currentOrganizationUserFirstName, ...restOfOrganizationUserName] =
+    currentOrganizationUser?.name?.split(/\s+/) ?? []
+
+  const currentOrganizationUserLastName = restOfOrganizationUserName.join(' ')
 
   const organizationName = useMemo(() => (tradeName ?? '') || name, [
     name,
@@ -51,7 +59,13 @@ export function ContactInfos({ onChangeItems }: Props) {
   >(MutationUpdateOrderFormProfile)
 
   useEffect(() => {
-    if (!clientProfileData || clientProfileData?.tradeName) return
+    if (
+      !clientProfileData ||
+      (clientProfileData?.tradeName &&
+        clientProfileData?.firstName === currentOrganizationUserFirstName &&
+        clientProfileData?.lastName === currentOrganizationUserLastName)
+    )
+      return
 
     const {
       corporatePhone,
@@ -64,10 +78,22 @@ export function ContactInfos({ onChangeItems }: Props) {
 
     updateProfile({
       variables: {
-        profile: { ...inputProfileData, tradeName: organizationName },
+        profile: {
+          ...inputProfileData,
+          firstName: currentOrganizationUserFirstName,
+          lastName: currentOrganizationUserLastName,
+          tradeName: organizationName,
+        },
       },
     })
-  }, [clientProfileData, organizationName, phone, updateProfile])
+  }, [
+    clientProfileData,
+    currentOrganizationUserLastName,
+    currentOrganizationUserFirstName,
+    organizationName,
+    phone,
+    updateProfile,
+  ])
 
   if (!clientProfileData) return null
 
@@ -106,7 +132,8 @@ export function ContactInfos({ onChangeItems }: Props) {
       <>
         <div className="mb1 flex items-center flex-wrap">
           <span>
-            {firstName} {lastName}
+            {(firstName ?? '') || currentOrganizationUserFirstName}{' '}
+            {(lastName ?? '') || currentOrganizationUserLastName}
           </span>
           <Tag size="small">{roleName}</Tag>
         </div>
