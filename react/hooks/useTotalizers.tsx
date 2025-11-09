@@ -224,13 +224,13 @@ export function useTotalizers() {
       ? [
           {
             label: shippingTotalizer.name,
-            value: formatPrice(shippingTotalizer.value / 100),
+            value: <FormattedPrice value={shippingTotalizer.value / 100} />,
           },
         ]
       : []),
     {
       label: formatMessage(messages.total),
-      value: formatPrice(total / 100),
+      value: <FormattedPrice value={total / 100} />,
     },
   ]
 }
