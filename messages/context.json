@@ -1,6 +1,7 @@
 {
   "store/checkout.b2b.order": "Order",
   "store/checkout.b2b.itemCount": "{count, plural, one {1 item} other {{count} items}}",
+  "store/checkout.b2b.productCount": "{count, plural, one {1 product} other {{count} products}}",
   "store/checkout.b2b.confirm": "Confirm",
   "store/checkout.b2b.delete": "Delete",
   "store/checkout.b2b.cancel": "Cancel",

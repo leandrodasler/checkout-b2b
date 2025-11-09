@@ -373,6 +373,14 @@ function CheckoutB2B() {
 
   const pdfElementRef = useRef<HTMLDivElement>(null)
 
+  const itemCount =
+    (!searchStore ? toolbar?.filteredItems : items)?.filter(
+      (item) => !isItemUnavailable(item)
+    )?.length ?? 0
+
+  const productCount =
+    filteredItems.filter((item) => !!item.__group)?.length ?? 0
+
   return (
     <div className={handles.container}>
       <Layout
@@ -486,20 +494,18 @@ function CheckoutB2B() {
                   toolbar={toolbar}
                 />
               </div>
-              {!loading &&
-                filteredItems.some((item) => !isItemUnavailable(item)) && (
-                  <div className="mt4 c-muted-2">
-                    {formatMessage(messages.itemCount, {
-                      count: filteredItems
-                        .filter((item) => !isItemUnavailable(item))
-                        .reduce(
-                          (acc: number, item: CustomItem) =>
-                            acc + (isGrouping && !item.__group ? 0 : 1),
-                          0
-                        ),
+              {!loading && !!itemCount && (
+                <div className="mt4 c-muted-2">
+                  {isGrouping &&
+                    formatMessage(messages.productCount, {
+                      count: productCount,
                     })}
-                  </div>
-                )}
+                  {isGrouping && ' / '}
+                  {formatMessage(messages.itemCount, {
+                    count: itemCount,
+                  })}
+                </div>
+              )}
             </div>
           </PageBlock>
         </div>

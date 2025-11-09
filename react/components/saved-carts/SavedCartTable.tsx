@@ -2,7 +2,6 @@ import React, { useCallback, useRef, useState } from 'react'
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import type { SavedCart } from 'ssesandbox04.checkout-b2b'
-import { Item } from 'vtex.checkout-graphql'
 import { FormattedPrice } from 'vtex.formatted-price'
 import { useRuntime } from 'vtex.render-runtime'
 import {
@@ -307,10 +306,7 @@ export function SavedCartsTable(props?: Props) {
           return (
             <SelectedWrapper isSelected={selectedCart?.id === rowData.id}>
               <CellWrapper isChildren={rowData.parentCartId}>
-                {cartData?.items?.reduce(
-                  (acc: number, item: Item) => acc + item.quantity,
-                  0
-                )}
+                {cartData?.items?.length ?? 0}
               </CellWrapper>
             </SelectedWrapper>
           )

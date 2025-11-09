@@ -4,6 +4,7 @@ import { SavedCartStatus } from 'ssesandbox04.checkout-b2b'
 export const messages = defineMessages({
   order: { id: 'store/checkout.b2b.order' },
   itemCount: { id: 'store/checkout.b2b.itemCount' },
+  productCount: { id: 'store/checkout.b2b.productCount' },
   cancel: { id: 'store/checkout.b2b.cancel' },
   showMore: { id: 'store/checkout.b2b.show-more' },
   showLess: { id: 'store/checkout.b2b.show-less' },
