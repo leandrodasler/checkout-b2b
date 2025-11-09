@@ -21,6 +21,13 @@
   gap: var(--small-gap);
 }
 
+.container
+  :global(.vtex-pageHeader__container)
+  :global(.flex-wrap):not(:global(.justify-center)) {
+  justify-content: end;
+  align-items: center;
+}
+
 .container .table :global(#toolbar) {
   gap: var(--base-font-size);
   flex-wrap: wrap;

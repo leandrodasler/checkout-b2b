@@ -57,7 +57,7 @@ export function SavedCarts({ onChangeItems }: Props) {
   if (!isSalesUser) return null
 
   return (
-    <div className="flex items-center justify-center flex-wrap pl4">
+    <div className="flex items-center justify-end flex-wrap">
       {loading && <Spinner size={20} />}
       {selectedCart && !loading && (
         <Tag variation="low">
