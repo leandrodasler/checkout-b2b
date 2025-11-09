@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
-import { OrderItems } from 'vtex.order-items'
 import { NumericStepper } from 'vtex.styleguide'
 
 import { useCheckoutB2BContext } from '../../CheckoutB2BContext'
-import { useToast } from '../../hooks'
+import { useToast, useUpdateItemsQuantity } from '../../hooks'
 import { CustomItem } from '../../typings'
 import { isItemUnavailable, messages } from '../../utils'
 
-const { useOrderItems } = OrderItems
 const DELAY = 500
 
 type Props = { item: CustomItem; disabled?: boolean; minQuantity?: number }
@@ -17,7 +15,7 @@ export function QuantitySelector({ item, disabled, minQuantity = 1 }: Props) {
   const showToast = useToast()
   const { formatMessage } = useIntl()
   const timeout = useRef<number>()
-  const { updateQuantity } = useOrderItems()
+  const [updateQuantity] = useUpdateItemsQuantity()
   const { setPending } = useCheckoutB2BContext()
   const [newQuantity, setNewQuantity] = React.useState(item.quantity)
   const handleFinish = useCallback(() => setPending(false), [setPending])
@@ -33,13 +31,13 @@ export function QuantitySelector({ item, disabled, minQuantity = 1 }: Props) {
 
       timeout.current = window.setTimeout(() => {
         updateQuantity({
-          index: item.itemIndex,
-          seller: item.seller ?? '1',
-          quantity: value,
+          variables: {
+            orderItems: [{ index: item.itemIndex, quantity: value }],
+          },
         }).then(handleFinish, handleFinish)
       }, DELAY)
     },
-    [handleFinish, item.itemIndex, item.seller, setPending, updateQuantity]
+    [handleFinish, item.itemIndex, setPending, updateQuantity]
   )
 
   useEffect(() => {
@@ -52,9 +50,9 @@ export function QuantitySelector({ item, disabled, minQuantity = 1 }: Props) {
     })
 
     updateQuantity({
-      index: item.itemIndex,
-      seller: item.seller ?? '1',
-      quantity: minQuantity,
+      variables: {
+        orderItems: [{ index: item.itemIndex, quantity: minQuantity }],
+      },
     })
   }, [
     formatMessage,
