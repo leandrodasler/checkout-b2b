@@ -31,7 +31,7 @@ export function ShippingOptionItem({ item, disabled }: Props) {
     })
   }
 
-  if (!options) {
+  if (!options?.length) {
     return <div className={disabled ? 'strike' : ''}>N/A</div>
   }
 
