@@ -1,4 +1,4 @@
-import { useMutation } from 'react-apollo'
+import { MutationHookOptions, useMutation } from 'react-apollo'
 import {
   Mutation,
   MutationUpdateItemsQuantityArgs,
@@ -10,21 +10,33 @@ import { useToast } from './useToast'
 
 type UpdateItemsQuantityMutation = Pick<Mutation, 'updateItemsQuantity'>
 
-export function useUpdateItemsQuantity() {
+export function useUpdateItemsQuantity(
+  options?: MutationHookOptions<
+    UpdateItemsQuantityMutation,
+    MutationUpdateItemsQuantityArgs
+  >
+) {
   const { orderForm, setOrderForm } = useOrderFormCustom()
+  const showToast = useToast()
 
   return useMutation<
     UpdateItemsQuantityMutation,
     MutationUpdateItemsQuantityArgs
   >(UPDATE_ITEMS_QUANTITY_MUTATION, {
-    onError: useToast(),
-    onCompleted({ updateItemsQuantity }) {
+    ...options,
+    onError(e) {
+      showToast(e)
+      options?.onError?.(e)
+    },
+    onCompleted(data) {
       setOrderForm({
         ...orderForm,
-        ...updateItemsQuantity,
+        ...data.updateItemsQuantity,
         paymentAddress: orderForm.paymentAddress,
         customData: orderForm.customData,
       })
+
+      options?.onCompleted?.(data)
     },
   })
 }
