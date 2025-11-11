@@ -31,6 +31,7 @@ import {
 import ProductAutocomplete from './components/cart-items/ProductAutocomplete'
 import { ShareCartPDF } from './components/footer-actions/ShareCartPDF'
 import { UploadSpreadsheetForm } from './components/footer-actions/SpreadsheetUploader'
+import { Promotions } from './components/promotions/promotions'
 import { SavedCarts } from './components/saved-carts/SavedCarts'
 import { ContactInfos } from './components/totalizers/ContactInfos'
 import MUTATION_UPDATE_PRICES from './graphql/updatePrices.graphql'
@@ -399,6 +400,7 @@ function CheckoutB2B() {
       >
         <div ref={pdfElementRef}>
           <PageBlock>
+            <Promotions />
             {!loading && (
               <div className="mb4">
                 <Box title={formatMessage(messages.totalizerBoxTitle)}>

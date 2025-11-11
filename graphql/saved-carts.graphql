@@ -1,0 +1,33 @@
+enum SavedCartStatus {
+  open
+  pending
+  approved
+  denied
+  orderPlaced
+}
+
+type SavedCart {
+  id: ID!
+  createdIn: String!
+  lastInteractionIn: String!
+  title: String!
+  email: String!
+  orderFormId: String!
+  organizationId: String!
+  costCenterId: String!
+  data: String!
+  parentCartId: String
+  childrenQuantity: Int
+  status: SavedCartStatus!
+  requestedDiscount: Int
+  roleId: String
+  updateQuantity: Int!
+}
+
+type CartComment {
+  id: ID!
+  savedCartId: ID!
+  email: String!
+  comment: String!
+  createdIn: String!
+}
