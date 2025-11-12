@@ -131,12 +131,14 @@
 }
 
 .promotionsContainer {
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px;
+  scroll-behavior: smooth;
 }
 
 .promotionCard {
-  max-width: 200px;
+  max-width: 300px;
+  min-width: 300px;
 }
 
 .promotionCard :global(.vtex-card) {

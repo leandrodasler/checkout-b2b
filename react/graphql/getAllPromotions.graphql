@@ -1,10 +1,13 @@
 query GetAllPromotions {
   getAllPromotions @context(provider: "ssesandbox04.checkout-b2b") {
     idCalculatorConfiguration
+    name
+    description
     percentualShippingDiscountValue
     percentualDiscountValue
     nominalDiscountValue
     totalValueFloor
+    totalValueCeling
     accumulateWithManualPrice
     paymentsMethods {
       name
@@ -12,8 +15,22 @@ query GetAllPromotions {
     scope {
       allCatalog
       categoriesAreInclusive
+      brandsAreInclusive
+      collectionsAreInclusive
     }
     categories {
+      name
+    }
+    brands {
+      name
+    }
+    brands {
+      name
+    }
+    collections {
+      name
+    }
+    campaigns {
       name
     }
   }

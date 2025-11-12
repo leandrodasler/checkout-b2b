@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
-import { useQuery } from 'react-apollo'
+import { QueryHookOptions, useQuery } from 'react-apollo'
+import { useIntl } from 'react-intl'
 import {
   Promotion,
   PromotionCategory,
@@ -25,11 +26,19 @@ type PromotionCardData = {
   descriptionParts: DescriptionPart[]
 }
 
-function parsePromotion(
-  promotion: Promotion,
-  priceFormatter: (value: number) => string,
+type ParsePromotionArgs = {
+  promotion: Promotion
   orderForm: CompleteOrderForm
-): PromotionCardData | null {
+  priceFormatter: (value: number) => string
+  listFormatter: (value: React.ReactNode[]) => React.ReactNode
+}
+
+function parsePromotion({
+  promotion,
+  orderForm,
+  priceFormatter,
+  listFormatter,
+}: ParsePromotionArgs): PromotionCardData | null {
   const isFreeShipping = promotion.percentualShippingDiscountValue === 100
   const isDiscount =
     promotion.percentualDiscountValue > 0 || promotion.nominalDiscountValue > 0
@@ -38,6 +47,8 @@ function parsePromotion(
 
   const totalizerItems = orderForm.totalizers.find((t) => t.id === 'Items')
   const totalizerItemsValue = totalizerItems?.value ?? 0
+  const totalizerDiscounts = orderForm.totalizers.find((t) => t.id === 'Items')
+  const totalizerDiscountsValue = totalizerDiscounts?.value ?? 0
 
   const totalCartItems = orderForm.items
     .filter((item) => !isItemUnavailable(item))
@@ -61,29 +72,77 @@ function parsePromotion(
       ? `${discountValue}% de desconto`
       : `${priceFormatter(discountValue)} de desconto`
 
-  const minValue =
-    promotion.totalValueFloor > 0 ? promotion.totalValueFloor : undefined
+  const minValue = promotion.totalValueFloor > 0 && promotion.totalValueFloor
+  const maxValue = promotion.totalValueCeling > 0 && promotion.totalValueCeling
 
   const paymentMethods =
     promotion.paymentsMethods?.map(
       (m: PromotionPaymentMethod | null) => m?.name
     ) ?? []
 
-  const appliesToAllCatalog = promotion.scope?.allCatalog
+  const appliesToAllCatalog = promotion.scope.allCatalog
   const appliesToCategories =
-    promotion.categories?.map((c: PromotionCategory | null) => {
-      const splittedCategoryName = c?.name?.split(/\s+\|\s+/)
+    promotion.categories.map((c: PromotionCategory, index: number) => {
+      const splittedCategoryName = c.name.split(/\s+\|\s+/)
+      const finalCategoryName = splittedCategoryName?.[
+        splittedCategoryName?.length - 1
+      ]?.replace(/\s*\(\d+\)/, '')
 
-      return splittedCategoryName?.[splittedCategoryName?.length - 1]
+      return (
+        <span key={index} className="b ml1">
+          {finalCategoryName}
+        </span>
+      )
+    }) ?? []
+
+  const appliesToBrands =
+    promotion.brands.map((c: PromotionCategory, index: number) => {
+      const finalCategoryName = c.name.replace(/\s*\(\d+\)/, '')
+
+      return (
+        <span key={index} className="b ml1">
+          {finalCategoryName}
+        </span>
+      )
+    }) ?? []
+
+  const appliesToCollections =
+    promotion.collections.map((c: PromotionCategory, index: number) => {
+      const finalCategoryName = c.name.replace(/\s*\(\d+\)/, '')
+
+      return (
+        <span key={index} className="b ml1">
+          {finalCategoryName}
+        </span>
+      )
     }) ?? []
 
   const descriptionParts: DescriptionPart[] = []
+
+  if (promotion.name && !promotion.description) {
+    descriptionParts.push({ text: promotion.name, type: 'info' })
+  }
+
+  if (promotion.description) {
+    descriptionParts.push({ text: promotion.description, type: 'info' })
+  }
 
   if (paymentMethods.length) {
     descriptionParts.push({
       text: (
         <>
-          Pagando com <span className="b">{paymentMethods.join(', ')}</span>
+          Pagando com <span className="b">{listFormatter(paymentMethods)}</span>
+        </>
+      ),
+      type: 'info',
+    })
+  }
+
+  if (maxValue && !minValue) {
+    descriptionParts.push({
+      text: (
+        <>
+          Em compras até <span className="b">{priceFormatter(maxValue)}</span>
         </>
       ),
       type: 'info',
@@ -91,21 +150,48 @@ function parsePromotion(
   }
 
   if (minValue) {
-    descriptionParts.push({
-      text: (
-        <>
-          Em compras acima de{' '}
-          <span className="b">{priceFormatter(minValue)}</span>
-        </>
-      ),
-      type: 'info',
+    if (maxValue) {
+      descriptionParts.push({
+        text: (
+          <>
+            Em compras entre{' '}
+            <span className="b">{priceFormatter(minValue)}</span>
+            {' e '}
+            <span className="b">{priceFormatter(maxValue)}</span>
+          </>
+        ),
+        type: 'info',
+      })
+    } else {
+      descriptionParts.push({
+        text: (
+          <>
+            Em compras acima de{' '}
+            <span className="b">{priceFormatter(minValue)}</span>
+          </>
+        ),
+        type: 'info',
+      })
+    }
+
+    // eslint-disable-next-line no-console
+    console.log({
+      title,
+      totalCartItems,
+      totalizerItemsValue,
+      appliesToAllCatalog,
+      'orderForm.totalizers': orderForm.totalizers,
     })
 
-    const itemsTotalValue = appliesToAllCatalog
-      ? totalCartItems / 100
-      : totalizerItemsValue / 100
+    const itemsTotalValue =
+      appliesToAllCatalog && !maxValue && !totalizerDiscountsValue
+        ? totalCartItems / 100
+        : totalizerItemsValue / 100
 
-    if (/* itemsTotalValue &&  */ itemsTotalValue < minValue) {
+    if (
+      itemsTotalValue < minValue &&
+      (!maxValue || itemsTotalValue < maxValue)
+    ) {
       const diff = minValue - itemsTotalValue
       const percentValue = (diff / minValue) * 100
       const percent = Number.isFinite(percentValue)
@@ -124,20 +210,87 @@ function parsePromotion(
       })
     }
 
-    if (/* itemsTotalValue &&  */ itemsTotalValue >= minValue) {
+    if (
+      itemsTotalValue >= minValue &&
+      (!maxValue || itemsTotalValue < maxValue)
+    ) {
       descriptionParts.push({ text: 'Objetivo atingido', type: 'success' })
     }
   }
 
   if (!appliesToAllCatalog && appliesToCategories.length) {
-    if (promotion.scope?.categoriesAreInclusive) {
+    if (promotion.scope.categoriesAreInclusive) {
       descriptionParts.push({
-        text: `Válido apenas para ${appliesToCategories.join(', ')}.`,
+        text: (
+          <>
+            Válido apenas{' '}
+            {appliesToCategories.length > 1 ? 'as categorias' : 'a categoria'}{' '}
+            {listFormatter(appliesToCategories)}.
+          </>
+        ),
         type: 'warning',
       })
     } else {
       descriptionParts.push({
-        text: `Não é válido para ${appliesToCategories.join(', ')}.`,
+        text: (
+          <>
+            Não é válido para{' '}
+            {appliesToCategories.length > 1 ? 'as categorias' : 'a categoria'}{' '}
+            {listFormatter(appliesToCategories)}.
+          </>
+        ),
+        type: 'warning',
+      })
+    }
+  }
+
+  if (!appliesToAllCatalog && appliesToBrands.length) {
+    if (promotion.scope.brandsAreInclusive) {
+      descriptionParts.push({
+        text: (
+          <>
+            Válido apenas para{' '}
+            {appliesToBrands.length > 1 ? 'as marcas' : 'a marca'}{' '}
+            {listFormatter(appliesToBrands)}.
+          </>
+        ),
+        type: 'warning',
+      })
+    } else {
+      descriptionParts.push({
+        text: (
+          <>
+            Não é válido para{' '}
+            {appliesToBrands.length > 1 ? 'as marcas' : 'a marca'}{' '}
+            {listFormatter(appliesToBrands)}.
+          </>
+        ),
+        type: 'warning',
+      })
+    }
+  }
+
+  if (!appliesToAllCatalog && appliesToCollections.length) {
+    if (promotion.scope.collectionsAreInclusive) {
+      descriptionParts.push({
+        text: (
+          <>
+            Válido apenas para{' '}
+            {appliesToCollections.length > 1 ? 'as coleções' : 'a coleção'}{' '}
+            {listFormatter(appliesToCollections)}.
+          </>
+        ),
+        type: 'warning',
+      })
+    } else {
+      descriptionParts.push({
+        text: (
+          <>
+            Não é válido para{' '}
+            {appliesToCollections.length > 1 ? 'as coleções' : 'a coleção'}{' '}
+            {listFormatter(appliesToCollections)}.
+          </>
+        ),
         type: 'warning',
       })
     }
@@ -148,7 +301,9 @@ function parsePromotion(
     !promotion.accumulateWithManualPrice
   ) {
     descriptionParts.push({
-      text: `Não é válido quando o carrinho possui desconto de uma negociação.`,
+      text: (
+        <>Não é válido quando o carrinho possui desconto de uma negociação.</>
+      ),
       type: 'warning',
     })
   }
@@ -160,24 +315,36 @@ function parsePromotion(
   }
 }
 
-export function usePromotions() {
+export function usePromotions(
+  options?: QueryHookOptions<QueryGetAllPromotions>
+) {
   const { data, loading } = useQuery<QueryGetAllPromotions>(
-    QUERY_GET_ALL_PROMOTIONS
+    QUERY_GET_ALL_PROMOTIONS,
+    options
   )
 
   const { orderForm, loading: orderFormLoading } = useOrderFormCustom()
-  const formatPrice = useFormatPrice()
+  const priceFormatter = useFormatPrice()
+  const { formatList: listFormatter } = useIntl()
+
   const promotionItems = data?.getAllPromotions
 
   const promotions: PromotionCardData[] = useMemo(() => {
     if (!promotionItems) return []
 
     return promotionItems
-      .map((p: Promotion) => parsePromotion(p, formatPrice, orderForm))
+      .map((p: Promotion) =>
+        parsePromotion({
+          promotion: p,
+          orderForm,
+          priceFormatter,
+          listFormatter,
+        })
+      )
       .filter((p: PromotionCardData | null): p is PromotionCardData =>
         Boolean(p)
       )
-  }, [formatPrice, orderForm, promotionItems])
+  }, [listFormatter, orderForm, priceFormatter, promotionItems])
 
   return { promotions, loading: loading || orderFormLoading }
 }

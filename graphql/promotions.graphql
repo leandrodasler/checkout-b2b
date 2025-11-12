@@ -1,17 +1,17 @@
-type Scope {
-  allCatalog: Boolean
-  skus: Int
-  skusAreInclusive: Boolean
-  products: Int
-  productsAreInclusive: Boolean
-  collections: Int
-  collectionsAreInclusive: Boolean
-  categories: Int
-  categoriesAreInclusive: Boolean
-  brands: Int
-  brandsAreInclusive: Boolean
-  sellers: Int
-  sellersAreInclusive: Boolean
+type PromotionScope {
+  allCatalog: Boolean!
+  skus: Int!
+  skusAreInclusive: Boolean!
+  products: Int!
+  productsAreInclusive: Boolean!
+  collections: Int!
+  collectionsAreInclusive: Boolean!
+  categories: Int!
+  categoriesAreInclusive: Boolean!
+  brands: Int!
+  brandsAreInclusive: Boolean!
+  sellers: Int!
+  sellersAreInclusive: Boolean!
 }
 
 type PromotionSkusGift {
@@ -19,13 +19,13 @@ type PromotionSkusGift {
 }
 
 type PromotionPaymentMethod {
-  id: String
-  name: String
+  id: String!
+  name: String!
 }
 
 type PromotionCategory {
-  id: String
-  name: String
+  id: String!
+  name: String!
 }
 
 type Promotion {
@@ -45,10 +45,9 @@ type Promotion {
   isArchived: Boolean
   hasMaxPricePerItem: Boolean
   isTax: Boolean
-  Campaigns: [String]
   activateGiftsMultiplier: Boolean
   effectType: String
-  scope: Scope
+  scope: PromotionScope!
   maxUsage: Int
   idsSalesChannel: [String]
   areSalesChannelIdsExclusive: Boolean
@@ -86,13 +85,13 @@ type Promotion {
   idSellerIsInclusive: Boolean
   marketingTags: [String]
   marketingTagsAreNotInclusive: Boolean
-  paymentsMethods: [PromotionPaymentMethod]
+  paymentsMethods: [PromotionPaymentMethod!]!
   stores: [String]
-  campaigns: [String]
+  campaigns: [PromotionCategory!]!
   storesAreInclusive: Boolean
-  categories: [PromotionCategory]
+  categories: [PromotionCategory!]!
   categoriesAreInclusive: Boolean
-  brands: [String]
+  brands: [PromotionCategory!]!
   brandsAreInclusive: Boolean
   products: [String]
   productsAreInclusive: Boolean
@@ -110,7 +109,7 @@ type Promotion {
   totalValueCeling: Float!
   totalValueIncludeAllItems: Boolean
   totalValueMode: String
-  collections: [String]
+  collections: [PromotionCategory!]!
   collectionsIsInclusive: Boolean
   restrictionsBins: [String]
   cardIssuers: [String]
