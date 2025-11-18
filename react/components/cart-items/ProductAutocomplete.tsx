@@ -8,6 +8,7 @@ import React, {
 import { useQuery } from 'react-apollo'
 import { useIntl } from 'react-intl'
 import { MutationUpdateItemsQuantityArgs } from 'ssesandbox04.checkout-b2b'
+import { FormattedPrice } from 'vtex.formatted-price'
 import {
   AutocompleteInput,
   ButtonWithIcon,
@@ -148,14 +149,16 @@ const ProductAutocomplete = ({ onChangeItems }: Props) => {
         type: 'product',
       })
 
-      product.items.forEach((item) => {
-        options.push({
-          label: `${item.name}`,
-          value: item.itemId,
-          item,
-          type: 'sku',
+      if (product.items.length > 1) {
+        product.items.forEach((item) => {
+          options.push({
+            label: `${item.name}`,
+            value: item.itemId,
+            item,
+            type: 'sku',
+          })
         })
-      })
+      }
     })
 
     return options
@@ -243,14 +246,18 @@ const ProductAutocomplete = ({ onChangeItems }: Props) => {
           ? props.value.item.every(orderFormHasItem)
           : orderFormHasItem(props.value.item)
 
+      const productItemsOutOfOrderForm =
+        props.value.type === 'product'
+          ? props.value.item.filter((item) => !orderFormHasItem(item))
+          : []
+
       const loading =
         !mutationError &&
         (props.value.type === 'product'
-          ? props.value.item
-              .filter((item) => !orderFormHasItem(item))
-              .every((i) =>
-                itemsQueue.some((itemQueue) => i.itemId === itemQueue.itemId)
-              )
+          ? !!productItemsOutOfOrderForm.length &&
+            productItemsOutOfOrderForm.every((i) =>
+              itemsQueue.some((itemQueue) => i.itemId === itemQueue.itemId)
+            )
           : itemsQueue.some(
               (itemQueue) =>
                 props.value.type === 'sku' &&
@@ -317,6 +324,19 @@ function CustomOption(props: CustomOptionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const searchWords = searchTerm.trim().split(/\s+/).filter(Boolean)
   const labelSplitted = value.label.split(/\s+/)
+  const mainItem =
+    value.type === 'product'
+      ? value.item.length === 1
+        ? value.item[0]
+        : null
+      : value.item
+
+  const itemPrice = mainItem && (
+    <FormattedPrice
+      value={mainItem.sellers.sort(sortSellersByPrice)[0].commertialOffer.Price}
+    />
+  )
+
   const highlightedLabel = labelSplitted.map((part, index) => (
     <Fragment key={index}>
       {searchWords.some(
@@ -333,7 +353,7 @@ function CustomOption(props: CustomOptionProps) {
   const buttonClasses = `bn w-100 tl pointer pa4 f6 outline-0 ${
     selected || (highlightOption && !inserted)
       ? 'bg-muted-4'
-      : value.type === 'product'
+      : value.type === 'product' && !loading
       ? 'bg-muted-5'
       : loading || removeLoading
       ? 'bg-washed-blue'
@@ -401,40 +421,52 @@ function CustomOption(props: CustomOptionProps) {
     >
       <div className="flex items-center justify-between">
         <span className="truncate">
-          {value.type === 'sku' && (
+          {mainItem && (
             <img
               width="30"
-              src={transformImageUrl(value.item.images[0].imageUrl, 30)}
-              alt={value.item.name}
+              src={transformImageUrl(mainItem.images[0].imageUrl, 30)}
+              alt={mainItem.name}
               className="mr2 v-mid"
             />
           )}
           {highlightedLabel}
         </span>
         <div className="flex items-center">
-          {loading && !inserted && <Spinner size={16} />}
+          {itemPrice}
+          {loading && !inserted && (
+            <div className="ml2">
+              <Spinner size={16} />
+            </div>
+          )}
           {inserted && (
-            <ButtonWithIcon
-              isLoading={removeLoading}
-              size="small"
-              icon={<IconDelete />}
-              variation="danger-tertiary"
-              onClick={handleRemoveItem}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                if (e.key !== 'Enter' && e.key !== ' ') return
-                e.preventDefault()
-                e.stopPropagation()
-                handleRemoveItem(e)
-              }}
-              aria-label={formatMessage(messages.removeItem)}
-            />
+            <div className="ml2">
+              <ButtonWithIcon
+                isLoading={removeLoading}
+                size="small"
+                icon={<IconDelete />}
+                variation="danger-tertiary"
+                onClick={handleRemoveItem}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key !== 'Enter' && e.key !== ' ') return
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleRemoveItem(e)
+                }}
+                aria-label={formatMessage(messages.removeItem)}
+              />
+            </div>
           )}
         </div>
       </div>
     </div>
   )
 
-  if (value.type === 'product' && !inserted) {
+  if (
+    value.type === 'product' &&
+    value.item.length > 1 &&
+    !inserted &&
+    !loading
+  ) {
     return (
       <Tooltip label={formatMessage(messages.searchProductsAddAll)}>
         {mainElement}

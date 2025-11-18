@@ -130,6 +130,10 @@
   align-items: center;
 }
 
+.container :global(.vtex-styleguide-9-x-scroll) {
+  z-index: 9999;
+}
+
 .promotionsContainer {
   gap: 16px;
   padding: 10px;

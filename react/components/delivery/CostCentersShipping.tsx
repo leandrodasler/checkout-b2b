@@ -50,7 +50,7 @@ export function CostCentersShipping({ onChangeItems }: Props) {
 
   const lastCostCenterUpdateIndexRef = useRef<string | null>(null)
   const [updateShippingAddress] = useUpdateShippingAddress()
-  const { selectedAddresses, logisticsInfo } = orderForm.shippingData
+  const { selectedAddresses, logisticsInfo } = orderForm.shippingData ?? {}
   const { costCenter } = organization
   const [costCenterAddress] = costCenter?.addresses ?? []
 
