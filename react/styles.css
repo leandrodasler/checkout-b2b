@@ -129,3 +129,29 @@
 .container :global(.vtex-checkbox__line-container) {
   align-items: center;
 }
+
+.promotionsContainer {
+  gap: 16px;
+  padding: 10px;
+  scroll-behavior: smooth;
+}
+
+.promotionCard {
+  max-width: 300px;
+  min-width: 300px;
+}
+
+.promotionCard :global(.vtex-card) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.promotionCard .promotionDescriptionContainer {
+  gap: 0.75rem;
+}
+
+.promotionCard :global(.vtex-styleguide-9-x-progressHeight) {
+  transition: width ease 0.5s;
+}

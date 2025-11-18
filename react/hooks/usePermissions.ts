@@ -75,7 +75,8 @@ export function usePermissions() {
 
   const totalDiscount = Math.round(percentualDiscount + discountApplied)
 
-  const exceedingDiscount = totalDiscount - maximumRoleDiscount
+  const exceedingDiscount =
+    totalDiscount - (maximumRoleDiscount || totalDiscount)
 
   const canSeeMargin = useMemo(
     () => appSettings?.rolesAllowedToSeeMargin.includes(role) ?? false,

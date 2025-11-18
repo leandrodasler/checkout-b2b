@@ -356,6 +356,57 @@ export const messages = defineMessages({
   noRequests: {
     id: 'store/checkout.b2b.discountStatus.noRequests',
   },
+  promotionsTitle: {
+    id: 'store/checkout.b2b.promotions.title',
+  },
+  promotionsFreeDelivery: {
+    id: 'store/checkout.b2b.promotions.free-delivery',
+  },
+  promotionsPercentualDiscount: {
+    id: 'store/checkout.b2b.promotions.percentual-discount',
+  },
+  promotionsNominalDiscount: {
+    id: 'store/checkout.b2b.promotions.nominal-discount',
+  },
+  promotionsPaymentMethod: {
+    id: 'store/checkout.b2b.promotions.payment-method',
+  },
+  promotionsMaxValue: {
+    id: 'store/checkout.b2b.promotions.max-value',
+  },
+  promotionsMinMaxValue: {
+    id: 'store/checkout.b2b.promotions.min-max-value',
+  },
+  promotionsMinValue: {
+    id: 'store/checkout.b2b.promotions.min-value',
+  },
+  promotionsDiff: {
+    id: 'store/checkout.b2b.promotions.diff',
+  },
+  promotionsReachedGoal: {
+    id: 'store/checkout.b2b.promotions.reached-goal',
+  },
+  promotionsCategoriesOnly: {
+    id: 'store/checkout.b2b.promotions.categories-only',
+  },
+  promotionsCategoriesExclude: {
+    id: 'store/checkout.b2b.promotions.categories-exclude',
+  },
+  promotionsBrandsOnly: {
+    id: 'store/checkout.b2b.promotions.brands-only',
+  },
+  promotionsBrandsExclude: {
+    id: 'store/checkout.b2b.promotions.brands-exclude',
+  },
+  promotionsCollectionsOnly: {
+    id: 'store/checkout.b2b.promotions.collections-only',
+  },
+  promotionsCollectionsExclude: {
+    id: 'store/checkout.b2b.promotions.collections-exclude',
+  },
+  promotionsManualPriceExclude: {
+    id: 'store/checkout.b2b.promotions.manual-price-exclude',
+  },
 })
 
 export const savedCartStatusMessages = defineMessages<

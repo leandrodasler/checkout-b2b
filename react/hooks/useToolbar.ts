@@ -8,7 +8,12 @@ import {
 } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { CustomItem } from '../typings'
-import { isItemUnavailable, messages, removeAccents } from '../utils'
+import {
+  hasSomeManualPrice,
+  isItemUnavailable,
+  messages,
+  removeAccents,
+} from '../utils'
 
 type Props = {
   onChangeItems: () => void
@@ -63,7 +68,9 @@ export function useToolbar({ onChangeItems }: Props) {
   const filteredItems = handleFilterItems(orderForm.items)
   const isEveryItemsUnavailable = orderForm.items.every(isItemUnavailable)
   const isExceedingDiscountWithoutSelectedCart =
-    exceedingDiscount > 0 && !selectedCart
+    hasSomeManualPrice(orderForm.items) &&
+    exceedingDiscount > 0 &&
+    !selectedCart
 
   const blockedCartStatus =
     selectedCart?.status === 'pending' || selectedCart?.status === 'denied'

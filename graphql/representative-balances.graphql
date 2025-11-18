@@ -1,0 +1,28 @@
+type RepresentativeBalanceSettings {
+  enabled: Boolean!
+  openingBalance: Float
+  allowNegativeBalance: Boolean!
+}
+
+type RepresentativeBalance {
+  id: ID!
+  email: String!
+  balance: Float!
+  createdIn: String!
+  lastInteractionIn: String!
+}
+
+type RepresentativeBalanceTransaction {
+  id: ID!
+  email: String!
+  oldBalance: Float!
+  newBalance: Float!
+  orderGroup: String!
+  createdIn: String!
+  lastInteractionIn: String!
+}
+
+type RepresentativeBalanceTransactionResponse {
+  data: [RepresentativeBalanceTransaction]!
+  pagination: Pagination!
+}

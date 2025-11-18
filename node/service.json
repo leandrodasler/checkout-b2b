@@ -13,6 +13,10 @@
     "getCurrentCartSpreadsheet": {
       "path": "/_v/checkout-b2b/cart.csv",
       "public": true
+    },
+    "getAllPromotions": {
+      "path": "/_v/checkout-b2b/promotions",
+      "public": true
     }
   },
   "events": {

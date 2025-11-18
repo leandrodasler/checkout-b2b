@@ -1,0 +1,35 @@
+scalar InvoiceData
+scalar UpdatedOrderForm
+scalar Address
+scalar OrderFormConfiguration
+
+enum OrderFormConfigurationState {
+  ready
+  updated
+}
+
+type CheckOrderFormConfigurationResponse {
+  state: OrderFormConfigurationState!
+  data: OrderFormConfiguration!
+}
+
+input ItemsUpdatePriceInput {
+  index: Int!
+  price: Int!
+}
+
+input AddItemsToCartInput {
+  seller: String!
+  id: Int!
+  quantity: Int!
+}
+
+input UpdateItemsQuantityInput {
+  index: Int!
+  quantity: Int!
+}
+
+input UpdateMultipleShippingOptionsInput {
+  itemIndex: Int!
+  selectedSla: String!
+}

@@ -18,6 +18,7 @@ import { updateSelectedAddresses } from './mutations/updateSelectedAddresses'
 import { updateShippingOption } from './mutations/updateShippingOption'
 import { uploadSpreadsheet } from './mutations/uploadSpreadsheet'
 import { checkOrderFormConfiguration } from './queries/checkOrderFormConfiguration'
+import { getAllPromotions } from './queries/getAllPromotions'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
 import { getCartComments } from './queries/getCartComments'
@@ -37,6 +38,7 @@ export default {
       getRepresentativeBalanceByEmail,
       getRepresentativeBalanceTransactions,
       getCartComments,
+      getAllPromotions,
     },
     Mutation: {
       clearCart,

@@ -8,7 +8,7 @@ import {
   useOrganization,
 } from '../../hooks'
 import { useFetchRepresentativeBalance } from '../../hooks/useFetchRepresentativeBalance'
-import { messages } from '../../utils'
+import { hasSomeManualPrice, messages } from '../../utils'
 
 export function RepresentativeBalanceData() {
   const { formatMessage } = useIntl()
@@ -20,9 +20,7 @@ export function RepresentativeBalanceData() {
     orderForm: { items, clientProfileData, totalizers = [] },
   } = useOrderFormCustom()
 
-  const hasManualPrice = items?.some(
-    (item) => item.manualPrice && item.manualPrice !== item.price
-  )
+  const hasManualPrice = hasSomeManualPrice(items)
 
   const discountTotalizerValue =
     totalizers.find((totalizer) => totalizer.id === 'Discounts')?.value ?? 0

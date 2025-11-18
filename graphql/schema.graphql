@@ -1,62 +1,5 @@
 directive @CheckSchemas on FIELD | FIELD_DEFINITION
 
-scalar CostCenter
-scalar InvoiceData
-scalar CostCenterDeliveryOptions
-scalar UpdatedOrderForm
-scalar Address
-scalar OrderFormConfiguration
-
-enum SavedCartStatus {
-  open
-  pending
-  approved
-  denied
-  orderPlaced
-}
-
-enum OrderFormConfigurationState {
-  ready
-  updated
-}
-
-type CheckOrderFormConfigurationResponse {
-  state: OrderFormConfigurationState!
-  data: OrderFormConfiguration!
-}
-
-type SavedCart {
-  id: ID!
-  createdIn: String!
-  lastInteractionIn: String!
-  title: String!
-  email: String!
-  orderFormId: String!
-  organizationId: String!
-  costCenterId: String!
-  data: String!
-  parentCartId: String
-  childrenQuantity: Int
-  status: SavedCartStatus!
-  requestedDiscount: Int
-  roleId: String
-  updateQuantity: Int!
-}
-
-type CartComment {
-  id: ID!
-  savedCartId: ID!
-  email: String!
-  comment: String!
-  createdIn: String!
-}
-
-type RepresentativeBalanceSettings {
-  enabled: Boolean!
-  openingBalance: Float
-  allowNegativeBalance: Boolean!
-}
-
 type AppSettings {
   salesRepresentative: Int!
   salesManager: Int!
@@ -72,54 +15,10 @@ type B2BOrder {
   value: Float!
 }
 
-input ItemsUpdatePriceInput {
-  index: Int!
-  price: Int!
-}
-
-type RepresentativeBalance {
-  id: ID!
-  email: String!
-  balance: Float!
-  createdIn: String!
-  lastInteractionIn: String!
-}
-
-type RepresentativeBalanceTransaction {
-  id: ID!
-  email: String!
-  oldBalance: Float!
-  newBalance: Float!
-  orderGroup: String!
-  createdIn: String!
-  lastInteractionIn: String!
-}
-
-input AddItemsToCartInput {
-  seller: String!
-  id: Int!
-  quantity: Int!
-}
-
-input UpdateItemsQuantityInput {
-  index: Int!
-  quantity: Int!
-}
-
 type Pagination {
   total: Int!
   page: Int!
   pageSize: Int!
-}
-
-type RepresentativeBalanceTransactionResponse {
-  data: [RepresentativeBalanceTransaction]!
-  pagination: Pagination!
-}
-
-input UpdateMultipleShippingOptionsInput {
-  itemIndex: Int!
-  selectedSla: String!
 }
 
 type Query {
@@ -144,6 +43,8 @@ type Query {
     pageSize: Int
     sort: String
   ): RepresentativeBalanceTransactionResponse! @CheckSchemas
+
+  getAllPromotions: [Promotion!]!
 }
 
 type Mutation {

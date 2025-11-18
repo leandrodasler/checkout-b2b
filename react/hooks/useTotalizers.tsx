@@ -14,7 +14,7 @@ import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { TruncatedText } from '../components/common/TruncatedText'
 import { PaymentData } from '../components/totalizers/PaymentData'
 import { PONumber } from '../components/totalizers/PONumber'
-import { isItemUnavailable, messages } from '../utils'
+import { hasSomeManualPrice, isItemUnavailable, messages } from '../utils'
 
 export function useTotalizers() {
   const { discountApplied, pending } = useCheckoutB2BContext()
@@ -24,14 +24,7 @@ export function useTotalizers() {
   const { totalizers = [], items, value: total } = orderForm
   const { isSalesUser, exceedingDiscount } = usePermissions()
 
-  const hasQuotationDiscount = useMemo(
-    () =>
-      items?.some(
-        (item) => item.manualPrice && item.manualPrice !== item.price
-      ),
-    [items]
-  )
-
+  const hasQuotationDiscount = useMemo(() => hasSomeManualPrice(items), [items])
   const { totalMargin } = useTotalMargin()
   const prevMarginRef = useRef(totalMargin)
 
@@ -109,7 +102,7 @@ export function useTotalizers() {
             value: (
               <>
                 {Math.abs(totalDiscount)}%
-                {exceedingDiscount > 0 && (
+                {exceedingDiscount > 0 && hasQuotationDiscount && (
                   <div className="t-mini mt1">
                     (
                     {formatMessage(messages.discountAbove, {
