@@ -191,5 +191,23 @@
   "store/checkout.b2b.discountStatus.approved": "Nivel aprobado",
   "store/checkout.b2b.discountStatus.denied": "Nivel rechazado",
   "store/checkout.b2b.discountStatus.orderApproved": "Pedido realizado",
-  "store/checkout.b2b.discountStatus.noRequests": "No hay solicitudes"
+  "store/checkout.b2b.discountStatus.noRequests": "No hay solicitudes",
+
+  "store/checkout.b2b.promotions.title": "Promociones disponibles en la tienda",
+  "store/checkout.b2b.promotions.free-delivery": "Envío gratis",
+  "store/checkout.b2b.promotions.percentual-discount": "{value}% de descuento",
+  "store/checkout.b2b.promotions.nominal-discount": "{value} de descuento",
+  "store/checkout.b2b.promotions.payment-method": "Pagando con {paymentMethods}",
+  "store/checkout.b2b.promotions.max-value": "En compras de hasta {value}",
+  "store/checkout.b2b.promotions.min-max-value": "En compras entre {minValue} y {maxValue}",
+  "store/checkout.b2b.promotions.min-value": "En compras a partir de {value}",
+  "store/checkout.b2b.promotions.diff": "Agrega {value} al carrito para aprovechar la promoción",
+  "store/checkout.b2b.promotions.reached-goal": "Objetivo alcanzado",
+  "store/checkout.b2b.promotions.categories-only": "Válido solo para {count, plural, one {la categoría} other {las categorías}} {categories}.",
+  "store/checkout.b2b.promotions.categories-exclude": "No es válido para {count, plural, one {la categoría} other {las categorías}} {categories}.",
+  "store/checkout.b2b.promotions.brands-only": "Válido solo para {count, plural, one {la marca} other {las marcas}} {brands}.",
+  "store/checkout.b2b.promotions.brands-exclude": "No es válido para {count, plural, one {la marca} other {las marcas}} {brands}.",
+  "store/checkout.b2b.promotions.collections-only": "Válido solo para {count, plural, one {la colección} other {las colecciones}} {collections}.",
+  "store/checkout.b2b.promotions.collections-exclude": "No es válido para {count, plural, one {la colección} other {las colecciones}} {collections}.",
+  "store/checkout.b2b.promotions.manual-price-exclude": "No es válido cuando el carrito tiene un descuento de una negociación."
 }

@@ -19,15 +19,15 @@ query GetAllPromotions {
       collectionsAreInclusive
     }
     categories {
+      id
       name
     }
     brands {
-      name
-    }
-    brands {
+      id
       name
     }
     collections {
+      id
       name
     }
     campaigns {

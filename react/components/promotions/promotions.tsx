@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 import {
   ButtonWithIcon,
@@ -7,12 +8,14 @@ import {
   IconCaretRight,
 } from 'vtex.styleguide'
 
+import { messages } from '../../utils'
 import { PromotionDescriptionPart } from './promotionDescriptionPart'
 import { usePromotions } from './usePromotions'
 
 const OFFSET_SCROLL = 316
 
 export function Promotions() {
+  const { formatMessage } = useIntl()
   const handles = useCssHandles([
     'promotionsContainer',
     'promotionCard',
@@ -116,7 +119,9 @@ export function Promotions() {
 
   return (
     <>
-      <h3 className="t-heading-4 mt0 tc">Promoções disponíveis na loja</h3>
+      <h3 className="t-heading-4 mt0 tc">
+        {formatMessage(messages.promotionsTitle)}
+      </h3>
       <div className="flex mb4 items-center justify-center">
         {scrollStatus !== 'hidden' && (
           <ButtonWithIcon

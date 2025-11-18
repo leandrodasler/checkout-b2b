@@ -60,6 +60,12 @@ export function getFirstInstallmentByPaymentSystem(
   return installmentOption?.installments[0]
 }
 
+export function hasSomeManualPrice(items: CompleteOrderForm['items']) {
+  return items.some(
+    (item) => item.manualPrice && item.manualPrice !== item.price
+  )
+}
+
 export function toggleAddress(
   data: PaymentAddressType,
   enabled: boolean

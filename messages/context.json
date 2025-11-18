@@ -191,5 +191,23 @@
   "store/checkout.b2b.discountStatus.approved": "Tier Approved",
   "store/checkout.b2b.discountStatus.denied": "Tier Denied",
   "store/checkout.b2b.discountStatus.orderApproved": "Order Placed",
-  "store/checkout.b2b.discountStatus.noRequests": "No requests"
+  "store/checkout.b2b.discountStatus.noRequests": "No requests",
+
+  "store/checkout.b2b.promotions.title": "Available store promotions",
+  "store/checkout.b2b.promotions.free-delivery": "Free shipping",
+  "store/checkout.b2b.promotions.percentual-discount": "{value}% off",
+  "store/checkout.b2b.promotions.nominal-discount": "{value} off",
+  "store/checkout.b2b.promotions.payment-method": "Paying with {paymentMethods}",
+  "store/checkout.b2b.promotions.max-value": "For purchases up to {value}",
+  "store/checkout.b2b.promotions.min-max-value": "For purchases between {minValue} and {maxValue}",
+  "store/checkout.b2b.promotions.min-value": "For purchases starting at {value}",
+  "store/checkout.b2b.promotions.diff": "Add {value} to your cart to enjoy this promotion",
+  "store/checkout.b2b.promotions.reached-goal": "Goal reached",
+  "store/checkout.b2b.promotions.categories-only": "Valid only for {count, plural, one {the category} other {the categories}} {categories}.",
+  "store/checkout.b2b.promotions.categories-exclude": "Not valid for {count, plural, one {the category} other {the categories}} {categories}.",
+  "store/checkout.b2b.promotions.brands-only": "Valid only for {count, plural, one {the brand} other {the brands}} {brands}.",
+  "store/checkout.b2b.promotions.brands-exclude": "Not valid for {count, plural, one {the brand} other {the brands}} {brands}.",
+  "store/checkout.b2b.promotions.collections-only": "Valid only for {count, plural, one {the collection} other {the collections}} {collections}.",
+  "store/checkout.b2b.promotions.collections-exclude": "Not valid for {count, plural, one {the collection} other {the collections}} {collections}.",
+  "store/checkout.b2b.promotions.manual-price-exclude": "Not valid when the cart contains a negotiated discount."
 }

@@ -72,6 +72,9 @@ export type CustomItem = OrderFormType['items'][number] & { tax?: number } & {
       })
     | null
   sellerChain?: string[]
+  additionalInfo?: OrderFormType['items'][number]['additionalInfo'] & {
+    brandId?: string
+  }
 }
 
 export type CompleteOrderFormData = ApiResponse &
