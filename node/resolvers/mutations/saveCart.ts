@@ -78,6 +78,8 @@ export const saveCart = async (
     },
   })
 
+  let currentUpdateQuantity = currentCart?.updateQuantity ?? 0
+
   if (currentCart && currentCart.status !== status) {
     const comment = `Status: ${currentCart.status} > ${status}.`
 
@@ -85,7 +87,20 @@ export const saveCart = async (
       comment,
       savedCartId: currentCart.id,
       email,
-      currentUpdateQuantity: currentCart.updateQuantity,
+      currentUpdateQuantity,
+    })
+
+    currentUpdateQuantity++
+  }
+
+  if (currentCart && currentCart.requestedDiscount !== percentualDiscount) {
+    const comment = `Discount: ${currentCart.requestedDiscount} > ${percentualDiscount}.`
+
+    await createSavedCartComment(context, {
+      comment,
+      savedCartId: currentCart.id,
+      email,
+      currentUpdateQuantity,
     })
   }
 
