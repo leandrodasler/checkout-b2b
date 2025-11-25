@@ -152,6 +152,21 @@ export function SavedCartComments({ cart, isModal, setQuantity }: Props) {
                       )
                     }
 
+                    if (term === 'Discount:') {
+                      return `${formatMessage(messages.savedCartsDiscount)}:`
+                    }
+
+                    if (
+                      comment?.comment.startsWith('Discount:') &&
+                      Number.isInteger(+term)
+                    ) {
+                      return (
+                        <span key={index} className="mh2">
+                          <SavedCartDiscountBadge discount={+term} />
+                        </span>
+                      )
+                    }
+
                     return <Fragment key={index}>{term} </Fragment>
                   })}
 
