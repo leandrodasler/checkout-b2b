@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import type { SavedCart } from 'ssesandbox04.checkout-b2b'
-import { ButtonWithIcon, Modal, Tooltip } from 'vtex.styleguide'
+import { ButtonWithIcon, Tooltip } from 'vtex.styleguide'
 
 import { messages } from '../../utils'
 import { IconUpdateHistory } from './IconUpdateHistory'
@@ -44,22 +44,54 @@ export function SavedCartCommentBadge({
         </div>
       </Tooltip>
 
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        centered
-        title={title}
-        showBottomBarBorder={false}
-        container={modalContainer}
-      >
-        {open && (
-          <SavedCartComments
-            cart={cart}
-            isModal={!!modalContainer}
-            setQuantity={setQuantity}
+      {open && (
+        <div
+          className="fixed top-0 left-0 w-100 h-100"
+          style={{ zIndex: 9999 }}
+        >
+          <div
+            role="button"
+            tabIndex={0}
+            className="absolute top-0 left-0 w-100 h-100 bg-black-50"
+            onClick={() => setOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setOpen(false)
+              }
+            }}
           />
-        )}
-      </Modal>
+
+          <div
+            className="fixed top-0 right-0 h-100 bg-base shadow-5"
+            style={{ width: '360px', maxWidth: '90vw' }}
+          >
+            <div className="pa4 bb b--muted-4 flex justify-between items-center">
+              <span className="b">
+                {formatMessage(messages.savedCartsUpdateHistory)}
+              </span>
+              <button
+                type="button"
+                className="bn bg-transparent pointer"
+                onClick={() => setOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div
+              className="pa4 overflow-auto"
+              style={{ maxHeight: 'calc(100vh - 64px)' }}
+            >
+              <SavedCartComments
+                cart={cart}
+                isModal={!!modalContainer}
+                setQuantity={setQuantity}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
