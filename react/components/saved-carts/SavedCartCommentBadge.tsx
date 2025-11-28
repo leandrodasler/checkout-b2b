@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import type { SavedCart } from 'ssesandbox04.checkout-b2b'
 import { ButtonWithIcon, Tooltip } from 'vtex.styleguide'
@@ -14,7 +15,7 @@ type Props = {
 }
 
 const SIDEBAR_HEADER_HEIGHT = 'calc(100vh - 64px)'
-const SIDEBAR_Z_INDEX = 9999
+const SIDEBAR_Z_INDEX = 2147483647
 
 export function SavedCartCommentBadge({
   cart,
@@ -59,58 +60,60 @@ export function SavedCartCommentBadge({
         </div>
       </Tooltip>
 
-      {open && (
-        <div
-          className="fixed top-0 left-0 w-100 h-100"
-          style={{ zIndex: SIDEBAR_Z_INDEX }}
-        >
+      {open &&
+        createPortal(
           <div
-            role="button"
-            tabIndex={0}
-            className="absolute top-0 left-0 w-100 h-100 bg-black-50"
-            aria-label="Close sidebar"
-            onClick={() => setOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setOpen(false)
-              }
-            }}
-          />
-
-          <div
-            className="fixed top-0 right-0 h-100 bg-base shadow-5"
-            style={{ width: '360px', maxWidth: '90vw' }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="saved-cart-update-history-title"
+            className="fixed top-0 left-0 w-100 h-100"
+            style={{ zIndex: SIDEBAR_Z_INDEX }}
           >
-            <div className="pa4 bb b--muted-4 flex justify-between items-center">
-              <span className="b">
-                {formatMessage(messages.savedCartsUpdateHistory)}
-              </span>
-              <button
-                type="button"
-                className="bn bg-transparent pointer"
-                aria-label="close sidebar"
-                onClick={() => setOpen(false)}
-              >
-                ×
-              </button>
-            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              className="absolute top-0 left-0 w-100 h-100 bg-black-50"
+              aria-label="Close sidebar"
+              onClick={() => setOpen(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setOpen(false)
+                }
+              }}
+            />
 
             <div
-              className="pa4 overflow-auto"
-              style={{ maxHeight: SIDEBAR_HEADER_HEIGHT }}
+              className="fixed top-0 right-0 h-100 bg-base shadow-5"
+              style={{ width: '360px', maxWidth: '90vw' }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="saved-cart-update-history-title"
             >
-              <SavedCartComments
-                cart={cart}
-                isModal={!!modalContainer}
-                setQuantity={setQuantity}
-              />
+              <div className="pa4 bb b--muted-4 flex justify-between items-center">
+                <span className="b">
+                  {formatMessage(messages.savedCartsUpdateHistory)}
+                </span>
+                <button
+                  type="button"
+                  className="bn bg-transparent pointer"
+                  aria-label="close sidebar"
+                  onClick={() => setOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div
+                className="pa4 overflow-auto"
+                style={{ maxHeight: SIDEBAR_HEADER_HEIGHT }}
+              >
+                <SavedCartComments
+                  cart={cart}
+                  isModal={!!modalContainer}
+                  setQuantity={setQuantity}
+                />
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   )
 }
