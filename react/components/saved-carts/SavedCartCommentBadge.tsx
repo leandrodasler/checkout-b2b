@@ -13,6 +13,9 @@ type Props = {
   loading?: boolean
 }
 
+const SIDEBAR_HEADER_HEIGHT = 'calc(100vh - 64px)'
+const SIDEBAR_Z_INDEX = 9999
+
 export function SavedCartCommentBadge({
   cart,
   modalContainer,
@@ -29,6 +32,18 @@ export function SavedCartCommentBadge({
   useEffect(() => {
     setQuantity(cart.updateQuantity)
   }, [cart.updateQuantity])
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+
+    return undefined
+  }, [open])
 
   return (
     <>
@@ -47,16 +62,16 @@ export function SavedCartCommentBadge({
       {open && (
         <div
           className="fixed top-0 left-0 w-100 h-100"
-          style={{ zIndex: 9999 }}
+          style={{ zIndex: SIDEBAR_Z_INDEX }}
         >
           <div
             role="button"
             tabIndex={0}
             className="absolute top-0 left-0 w-100 h-100 bg-black-50"
+            aria-label="Close sidebar"
             onClick={() => setOpen(false)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
+              if (e.key === 'Escape') {
                 setOpen(false)
               }
             }}
@@ -65,6 +80,9 @@ export function SavedCartCommentBadge({
           <div
             className="fixed top-0 right-0 h-100 bg-base shadow-5"
             style={{ width: '360px', maxWidth: '90vw' }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="saved-cart-update-history-title"
           >
             <div className="pa4 bb b--muted-4 flex justify-between items-center">
               <span className="b">
@@ -73,6 +91,7 @@ export function SavedCartCommentBadge({
               <button
                 type="button"
                 className="bn bg-transparent pointer"
+                aria-label="close sidebar"
                 onClick={() => setOpen(false)}
               >
                 ×
@@ -81,7 +100,7 @@ export function SavedCartCommentBadge({
 
             <div
               className="pa4 overflow-auto"
-              style={{ maxHeight: 'calc(100vh - 64px)' }}
+              style={{ maxHeight: SIDEBAR_HEADER_HEIGHT }}
             >
               <SavedCartComments
                 cart={cart}
