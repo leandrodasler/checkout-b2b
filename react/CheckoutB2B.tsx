@@ -12,6 +12,7 @@ import {
   ButtonWithIcon,
   IconDelete,
   IconDownload,
+  Input,
   Layout,
   ModalDialog,
   PageBlock,
@@ -120,6 +121,12 @@ function CheckoutB2B() {
   const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
   const { handleUseSavedCart, loading: useCartLoading } = useSavedCart()
 
+  const [newCartTitle, setNewCartTitle] = useState<string>(
+    formatMessage(messages.savedCartsSaveDefaultTitle, {
+      date: new Date().toLocaleString(culture.locale),
+    }) || ''
+  )
+
   useEffect(() => {
     if (
       query?.savedCart &&
@@ -136,6 +143,18 @@ function CheckoutB2B() {
     selectedCart,
     useCartLoading,
   ])
+
+  useEffect(() => {
+    if (selectedCart?.title) {
+      setNewCartTitle(selectedCart.title)
+    }
+
+    setNewCartTitle(
+      formatMessage(messages.savedCartsSaveDefaultTitle, {
+        date: new Date().toLocaleString(culture.locale),
+      })
+    )
+  }, [culture.locale, formatMessage, selectedCart?.title])
 
   const loading = useMemo(() => orderFormLoading || organizationLoading, [
     orderFormLoading,
@@ -267,12 +286,16 @@ function CheckoutB2B() {
       customData: orderForm.customData,
     })
 
-    const title = formatMessage(messages.savedCartsSaveDefaultTitle, {
-      date: new Date().toLocaleString(culture.locale),
-    })
-
     setUseCartLoading(true)
     setSelectedCart(null)
+
+    const title = selectedCart
+      ? selectedCart.title
+      : newCartTitle ||
+        formatMessage(messages.savedCartsSaveDefaultTitle, {
+          date: new Date().toLocaleString(culture.locale),
+        }) ||
+        ''
 
     updateItemsPrice({
       variables: {
@@ -547,11 +570,11 @@ function CheckoutB2B() {
                 {isEditing && (
                   <Button
                     variation="primary"
-                    onClick={
-                      isExceedingDiscount
-                        ? () => setIsRequestingDiscount(true)
-                        : handleSavePrices
-                    }
+                    onClick={() => {
+                      !selectedCart?.title || isExceedingDiscount
+                        ? setIsRequestingDiscount(true)
+                        : handleSavePrices()
+                    }}
                     isLoading={saving}
                     disabled={saving}
                   >
@@ -624,7 +647,11 @@ function CheckoutB2B() {
         </div>
         <ModalDialog
           centered
-          title={formatMessage(messages.modalRequestDiscount)}
+          title={
+            isExceedingDiscount
+              ? formatMessage(messages.modalRequestDiscount)
+              : formatMessage(messages.savedCartsSaveNew)
+          }
           loading={saving}
           confirmation={{
             onClick: handleSavePrices,
@@ -637,7 +664,21 @@ function CheckoutB2B() {
           onClose={() => setIsRequestingDiscount(false)}
           isOpen={isRequestingDiscount}
         >
-          <p>{formatMessage(messages.modalRequestDiscountConfirmation)}</p>
+          {isExceedingDiscount && (
+            <p>{formatMessage(messages.modalRequestDiscountConfirmation)}</p>
+          )}
+          {!selectedCart?.title && (
+            <Input
+              size="small"
+              disabled={saving}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setNewCartTitle(e.target.value)
+              }
+              value={newCartTitle}
+              label={formatMessage(messages.savedCartsSaveTitle)}
+              placeholder={formatMessage(messages.savedCartsSavePlaceholder)}
+            />
+          )}
         </ModalDialog>
       </Layout>
     </div>
