@@ -94,7 +94,9 @@ export const saveCart = async (
   }
 
   if (currentCart && currentCart.requestedDiscount !== percentualDiscount) {
-    const comment = `Discount: ${currentCart.requestedDiscount} > ${percentualDiscount}.`
+    const comment = `Discount: ${
+      currentCart.requestedDiscount && `${currentCart.requestedDiscount} > `
+    }${percentualDiscount}.`
 
     await createSavedCartComment(context, {
       comment,
