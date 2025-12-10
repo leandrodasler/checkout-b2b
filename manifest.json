@@ -12,7 +12,7 @@
     "store": "0.x",
     "checkout-ui-custom": "0.x",
     "node": "7.x",
-    "graphql": "1.x"
+    "graphql": "2.x"
   },
   "dependencies": {
     "vtex.order-manager": "0.x",

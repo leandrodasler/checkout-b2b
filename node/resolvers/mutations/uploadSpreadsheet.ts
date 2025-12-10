@@ -11,23 +11,25 @@ import {
   searchProducts,
 } from '../../utils'
 
-type FileUpload = Promise<{
-  filename: string
-  mimetype: string
-  encoding: string
-  createReadStream: () => NodeJS.ReadableStream
-}>
+type FileUpload = {
+  file: {
+    filename: string
+    mimetype: string
+    encoding: string
+    createReadStream: () => NodeJS.ReadableStream
+  }
+}
 
 export const uploadSpreadsheet = async (
   _: unknown,
-  { file }: { file: FileUpload },
+  { file: input }: { file: FileUpload },
   ctx: ServiceContext<Clients>
 ) => {
   const { orderFormId } = await getSessionData(ctx)
 
   if (!orderFormId) throw new NotFoundError('order-form-not-found')
 
-  const { createReadStream } = await file
+  const { createReadStream } = input.file
   const { checkoutExtension } = ctx.clients
 
   checkoutExtension.setOrderFormId(orderFormId)
