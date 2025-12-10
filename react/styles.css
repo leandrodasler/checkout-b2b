@@ -142,7 +142,7 @@
 
 .promotionCard {
   max-width: 300px;
-  min-width: 300px;
+  min-width: min(300px, 90%);
 }
 
 .promotionCard :global(.vtex-card) {
