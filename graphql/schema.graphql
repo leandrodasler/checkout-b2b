@@ -1,4 +1,5 @@
 directive @CheckSchemas on FIELD | FIELD_DEFINITION
+scalar GraphqlUpload
 
 type AppSettings {
   salesRepresentative: Int!
@@ -23,18 +24,26 @@ type Pagination {
 
 type Query {
   checkOrderFormConfiguration: CheckOrderFormConfigurationResponse!
+    @auth(scope: PUBLIC)
 
-  getCart(id: ID!): SavedCart @CheckSchemas
+  getCart(id: ID!): SavedCart @auth(scope: PUBLIC) @CheckSchemas
 
-  getSavedCarts(parentCartId: ID, getAll: Boolean): [SavedCart!]! @CheckSchemas
+  getSavedCarts(parentCartId: ID, getAll: Boolean): [SavedCart!]!
+    @auth(scope: PUBLIC)
+    @CheckSchemas
 
-  getCartComments(savedCartId: ID!): [CartComment]! @CheckSchemas
+  getCartComments(savedCartId: ID!): [CartComment]!
+    @auth(scope: PUBLIC)
+    @CheckSchemas
 
-  getAppSettings: AppSettings!
+  getAppSettings: AppSettings! @auth(scope: PUBLIC)
 
-  getRepresentativeBalances: [RepresentativeBalance]! @CheckSchemas
+  getRepresentativeBalances: [RepresentativeBalance]!
+    @auth(scope: PUBLIC)
+    @CheckSchemas
 
   getRepresentativeBalanceByEmail(email: String): RepresentativeBalance
+    @auth(scope: PUBLIC)
     @CheckSchemas
 
   getRepresentativeBalanceTransactions(
@@ -42,9 +51,11 @@ type Query {
     page: Int
     pageSize: Int
     sort: String
-  ): RepresentativeBalanceTransactionResponse! @CheckSchemas
+  ): RepresentativeBalanceTransactionResponse!
+    @auth(scope: PUBLIC)
+    @CheckSchemas
 
-  getAllPromotions: [Promotion!]!
+  getAllPromotions: [Promotion!]! @auth(scope: PUBLIC)
 }
 
 type Mutation {
@@ -53,40 +64,45 @@ type Mutation {
     title: String
     additionalData: String
     parentCartId: String
-  ): SavedCart! @CheckSchemas
+  ): SavedCart! @auth(scope: PUBLIC) @CheckSchemas
 
   updateSavedCartStatus(id: ID!, status: SavedCartStatus!): [SavedCart!]!
+    @auth(scope: PUBLIC)
     @CheckSchemas
 
-  updateSavedCartTitle(id: ID!, title: String!): SavedCart! @CheckSchemas
+  updateSavedCartTitle(id: ID!, title: String!): SavedCart!
+    @auth(scope: PUBLIC)
+    @CheckSchemas
 
   createCartComment(savedCartId: ID!, comment: String!): CartComment!
+    @auth(scope: PUBLIC)
     @CheckSchemas
 
-  deleteCart(id: ID!): ID @CheckSchemas
+  deleteCart(id: ID!): ID @auth(scope: PUBLIC) @CheckSchemas
 
-  clearCart: UpdatedOrderForm!
+  clearCart: UpdatedOrderForm! @auth(scope: PUBLIC)
 
   placeOrder(poNumber: String, invoiceData: InvoiceData): String
+    @auth(scope: PUBLIC)
 
   updatePrices(
     items: [ItemsUpdatePriceInput]!
     title: String
     additionalData: String
-  ): UpdatedOrderForm!
+  ): UpdatedOrderForm! @auth(scope: PUBLIC)
 
   saveRepresentativeBalance(
     email: String
     balance: Float!
     orderGroup: String!
     overwrite: Boolean
-  ): RepresentativeBalance! @CheckSchemas
+  ): RepresentativeBalance! @auth(scope: PUBLIC) @CheckSchemas
 
   saveRepresentativeBalanceSettings(
     enabled: Boolean!
     openingBalance: Float
     allowNegativeBalance: Boolean!
-  ): RepresentativeBalanceSettings!
+  ): RepresentativeBalanceSettings! @auth(scope: PUBLIC)
 
   shareCart(
     email: String!
@@ -106,27 +122,30 @@ type Mutation {
     sentByCostCenter: String!
     footerLine1: String!
     footerLine2: String!
-  ): String!
+  ): String! @auth(scope: PUBLIC)
 
   addItemsToCart(orderItems: [AddItemsToCartInput!]!): UpdatedOrderForm!
+    @auth(scope: PUBLIC)
 
   updateItemsQuantity(
     orderItems: [UpdateItemsQuantityInput!]!
-  ): UpdatedOrderForm!
+  ): UpdatedOrderForm! @auth(scope: PUBLIC)
 
-  addAddressToCart(address: Address!): UpdatedOrderForm!
+  addAddressToCart(address: Address!): UpdatedOrderForm! @auth(scope: PUBLIC)
 
   updateSelectedAddresses(selectedAddresses: [Address!]!): UpdatedOrderForm!
+    @auth(scope: PUBLIC)
 
   updateShippingOption(
     addressId: String
     itemIndexes: [Int!]
     selectedSla: String!
-  ): UpdatedOrderForm!
+  ): UpdatedOrderForm! @auth(scope: PUBLIC)
 
   updateMultipleShippingOptions(
     input: [UpdateMultipleShippingOptionsInput!]!
-  ): UpdatedOrderForm!
+  ): UpdatedOrderForm! @auth(scope: PUBLIC)
 
-  uploadSpreadsheet(file: Upload!): UpdatedOrderForm!
+  uploadSpreadsheet(file: GraphqlUpload!): UpdatedOrderForm!
+    @auth(scope: PUBLIC)
 }
