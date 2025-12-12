@@ -8,11 +8,10 @@ import {
   IconCaretRight,
 } from 'vtex.styleguide'
 
+import { useHorizontalTouch } from '../../hooks'
 import { messages } from '../../utils'
 import { PromotionDescriptionPart } from './promotionDescriptionPart'
 import { usePromotions } from './usePromotions'
-
-const OFFSET_SCROLL = 316
 
 export function Promotions() {
   const { formatMessage } = useIntl()
@@ -26,6 +25,10 @@ export function Promotions() {
   const [scrollStatus, setScrollStatus] = useState<
     'hidden' | 'start' | 'middle' | 'end'
   >('hidden')
+
+  const getOffsetScroll = () => {
+    return (containerRef.current?.firstElementChild?.clientWidth ?? 300) + 16
+  }
 
   const getContainerWidth = () =>
     Math.round(containerRef.current?.clientWidth ?? 0)
@@ -85,15 +88,13 @@ export function Promotions() {
     return () => window.removeEventListener('resize', resizeListener)
   }, [])
 
-  if (!promotions.length || loading) return null
-
   const handleScrollLeft = () => {
     if (!containerRef.current) return
 
     const containerScrollLeft = getContainerScrollLeft()
     const newContainerScrollLeft =
-      containerScrollLeft >= OFFSET_SCROLL
-        ? containerScrollLeft - OFFSET_SCROLL
+      containerScrollLeft >= getOffsetScroll()
+        ? containerScrollLeft - getOffsetScroll()
         : 0
 
     containerRef.current.scrollLeft = newContainerScrollLeft
@@ -109,13 +110,20 @@ export function Promotions() {
     const containerScrollWidth = getContainerScrollWidth()
     const newContainerScrollLeft =
       containerScrollLeft < containerScrollWidth - containerWidth
-        ? containerScrollLeft + OFFSET_SCROLL
-        : containerScrollWidth - OFFSET_SCROLL
+        ? containerScrollLeft + getOffsetScroll()
+        : containerScrollWidth - getOffsetScroll()
 
     containerRef.current.scrollLeft = newContainerScrollLeft
 
     handleScrollStatus(newContainerScrollLeft)
   }
+
+  const touchHandlers = useHorizontalTouch({
+    onTouchToLeft: handleScrollRight,
+    onTouchToRight: handleScrollLeft,
+  })
+
+  if (!promotions.length || loading) return null
 
   return (
     <>
@@ -133,6 +141,7 @@ export function Promotions() {
         <div
           ref={containerRef}
           className={`${handles.promotionsContainer} flex items-stretch overflow-hidden`}
+          {...touchHandlers}
         >
           {promotions.map((promotion) => (
             <div key={promotion.id} className={handles.promotionCard}>

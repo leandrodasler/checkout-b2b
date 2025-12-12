@@ -138,6 +138,7 @@
   gap: 16px;
   padding: 10px;
   scroll-behavior: smooth;
+  touch-action: pan-y;
 }
 
 .promotionCard {
