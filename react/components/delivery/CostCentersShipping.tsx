@@ -165,8 +165,8 @@ export function CostCentersShipping({ onChangeItems }: Props) {
       const hasItems = !!orderForm.items.length
 
       const hasCostCenter =
-        selectedAddresses?.some((a) =>
-          isSameAddress(a, availableCostCenter.address)
+        selectedAddresses?.some((selectedAddress) =>
+          isSameAddress(selectedAddress, address)
         ) && hasItems
 
       const isChecked = (!hasItems && isCurrentCostCenter) || hasCostCenter

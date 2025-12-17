@@ -9,6 +9,8 @@ export async function getComputedPrices(
   { skuIds }: QueryGetComputedPricesArgs,
   context: ServiceContext<Clients>
 ) {
+  if (!skuIds.length) return []
+
   const { priceTables } = await getSessionData(context)
   const [priceTableId = '1'] = priceTables
   const { pricing } = context.clients

@@ -8,14 +8,21 @@ export async function getAllPromotions(
   context: ServiceContext<Clients>
 ) {
   const { promotions: promotionsClient } = context.clients
-  const allPromotionsResponse = await promotionsClient.getAllBenefits()
+
+  const allPromotionsResponse = await promotionsClient.getAllBenefits(
+    'AUTH_TOKEN'
+  )
+
   const activePromotions = allPromotionsResponse.items.filter(
     (item) => item.isActive && item.status === 'active'
   )
 
   const promotionsData = await Promise.all(
     activePromotions.map((promotion) =>
-      promotionsClient.getPromotionById(promotion.idCalculatorConfiguration)
+      promotionsClient.getPromotionById(
+        promotion.idCalculatorConfiguration,
+        'AUTH_TOKEN'
+      )
     )
   )
 

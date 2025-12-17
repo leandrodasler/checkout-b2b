@@ -162,6 +162,15 @@
     },
     {
       "name": "send-message"
+    },
+    {
+      "name": "GerenciarPromocoesETarifas"
+    },
+    {
+      "name": "ListPolicies"
+    },
+    {
+      "name": "GerenciarPolicies"
     }
   ],
   "billingOptions": {
