@@ -56,6 +56,8 @@ type Query {
     @CheckSchemas
 
   getAllPromotions: [Promotion!]! @auth(scope: PUBLIC)
+
+  getComputedPrices(skuIds: [ID!]!): [ComputedPrice!]! @auth(scope: PUBLIC)
 }
 
 type Mutation {

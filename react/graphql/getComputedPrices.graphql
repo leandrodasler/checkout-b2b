@@ -1,0 +1,8 @@
+query GetComputedPrices($skuIds: [ID!]!) {
+  getComputedPrices(skuIds: $skuIds)
+    @context(provider: "ssesandbox04.checkout-b2b") {
+    skuId
+    costPrice
+    sellingPrice
+  }
+}

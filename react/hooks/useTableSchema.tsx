@@ -5,7 +5,7 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { Query, QueryProductsByIdentifierArgs } from 'vtex.search-graphql'
 import { ButtonWithIcon, IconCheck, IconDelete, Tooltip } from 'vtex.styleguide'
 
-import { useOrderFormCustom, usePermissions, useTotalMargin } from '.'
+import { useComputedPrices, useOrderFormCustom, usePermissions } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import ChildrenProductsColumn from '../components/cart-items/ChildrenProductsColumn'
 import ManualPrice from '../components/cart-items/ManualPrice'
@@ -45,7 +45,8 @@ export function useTableSchema({
   removeLoading: boolean
   onUpdatePrice: (id: string, newPrice: number) => void
 }): TableSchema<CustomItem> {
-  const { hasMargin } = useTotalMargin()
+  const { totalMargin } = useComputedPrices()
+  const hasMargin = !!totalMargin
   const { orderForm } = useOrderFormCustom()
   const { formatMessage } = useIntl()
   const { canSeeMargin } = usePermissions()

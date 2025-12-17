@@ -38,6 +38,7 @@ export async function getSessionData(context: ServiceContext<Clients>) {
     sessionData: { namespaces },
   } = await clients.session.getSession(sessionToken, [
     'storefront-permissions.userId',
+    'storefront-permissions.priceTables',
     'checkout.orderFormId',
   ])
 
@@ -61,6 +62,11 @@ export async function getSessionData(context: ServiceContext<Clients>) {
   const orderFormId: string | undefined =
     namespaces.checkout?.orderFormId?.value
 
+  const priceTablesAsString: string | undefined =
+    namespaces['storefront-permissions']?.priceTables?.value
+
+  const priceTables = priceTablesAsString?.split(',') ?? []
+
   const {
     email,
     name,
@@ -69,7 +75,15 @@ export async function getSessionData(context: ServiceContext<Clients>) {
     orgId: organizationId,
   } = user
 
-  return { orderFormId, email, name, roleId, organizationId, costCenterId }
+  return {
+    orderFormId,
+    email,
+    name,
+    roleId,
+    organizationId,
+    costCenterId,
+    priceTables,
+  }
 }
 
 type GetAllDataArgs = {

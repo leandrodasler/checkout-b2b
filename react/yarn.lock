@@ -4995,10 +4995,6 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-"ssesandbox04.checkout-b2b@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.73/public/@types/ssesandbox04.checkout-b2b":
-  version "1.0.73"
-  resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.checkout-b2b@1.0.73/public/@types/ssesandbox04.checkout-b2b#bf4a09e8b811a561c5e2c16da449776be057d3f8"
-
 "ssesandbox04.file-manager@http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager":
   version "0.7.7"
   resolved "http://ssesandbox04.vtexassets.com/_v/public/typings/v1/ssesandbox04.file-manager@0.7.7/public/@types/ssesandbox04.file-manager#97eef27e249866699d479efbd75528d81b4a5888"
@@ -5403,9 +5399,9 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-"vtex.address-form@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.27.0/public/@types/vtex.address-form":
-  version "4.27.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.27.0/public/@types/vtex.address-form#9e9d3992dd98aa2fbfdac347f9454876a02fb436"
+"vtex.address-form@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.28.0/public/@types/vtex.address-form":
+  version "4.28.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.address-form@4.28.0/public/@types/vtex.address-form#fb65939bb76335f0d56646b515cd635bef173388"
 
 "vtex.apps-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@3.18.0/public/@types/vtex.apps-graphql":
   version "3.18.0"
@@ -5459,13 +5455,13 @@ verror@1.10.0:
   version "8.136.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.136.1/public/@types/vtex.render-runtime#f163acbdb0fcc9be2065a34eb4fc797093f6d0ce"
 
-"vtex.rich-text@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text":
-  version "0.16.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.0/public/@types/vtex.rich-text#0cdcaccffb37ae0d025894ba7055f69bc3c9aa30"
+"vtex.rich-text@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.1/public/@types/vtex.rich-text":
+  version "0.16.1"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.rich-text@0.16.1/public/@types/vtex.rich-text#26d53b5bdfb7da97a2e884f85167ead458be9e1d"
 
-"vtex.search-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.3/public/@types/vtex.search-graphql":
-  version "0.69.3"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.3/public/@types/vtex.search-graphql#ebbeb1e1572e664f0537dda424ad1ee175434249"
+"vtex.search-graphql@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.4/public/@types/vtex.search-graphql":
+  version "0.69.4"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.search-graphql@0.69.4/public/@types/vtex.search-graphql#e1a758806eab8d1cb695e5cb091e722f8a1cd48f"
 
 "vtex.session-client@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.session-client@1.0.4/public/@types/vtex.session-client":
   version "1.0.4"
@@ -5479,9 +5475,9 @@ verror@1.10.0:
   version "2.173.2"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store-graphql@2.173.2/public/@types/vtex.store-graphql#360e850342917047ffc2aed978c988b0e57a9281"
 
-"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.143.0/public/@types/vtex.store":
-  version "2.143.0"
-  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.143.0/public/@types/vtex.store#040f75b157319fc854b749fcfcc4c7714b01e66a"
+"vtex.store@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.145.0/public/@types/vtex.store":
+  version "2.145.0"
+  resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.store@2.145.0/public/@types/vtex.store#403061001ada6cfe4c0ed310572fe5c65d74d0a5"
 
 "vtex.storefront-permissions-ui@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.storefront-permissions-ui@1.2.2/public/@types/vtex.storefront-permissions-ui":
   version "1.2.2"

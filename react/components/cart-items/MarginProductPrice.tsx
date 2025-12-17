@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFormattedPrice } from 'vtex.formatted-price'
 
-import { useFetchPrices, useFormatPrice, useOrganization } from '../../hooks'
+import { useComputedPrices, useFormatPrice } from '../../hooks'
 
 type MarginProductPriceProps = {
   itemId: string
@@ -16,16 +16,17 @@ export function MarginProductPrice({
   measurementUnit,
   isUnavailable,
 }: MarginProductPriceProps) {
-  const { organization } = useOrganization()
-  const organizationPrice = organization?.priceTables?.[0] ?? '1'
-
-  const { data } = useFetchPrices(itemId, organizationPrice)
-
   const formatPrice = useFormatPrice()
-  const marginPrice = sellingPrice / 100 - (data?.costPrice ?? 0)
+  const { computedPrices } = useComputedPrices()
+
+  const costPrice =
+    computedPrices.find((computedPrice) => computedPrice.skuId === itemId)
+      ?.costPrice ?? 0
+
+  const marginPrice = sellingPrice / 100 - costPrice
   const marginPriceDefaultFormat = useFormattedPrice(marginPrice)
 
-  if (isUnavailable || !data?.costPrice) return <>---</>
+  if (isUnavailable || !costPrice) return <>---</>
 
   return (
     <>

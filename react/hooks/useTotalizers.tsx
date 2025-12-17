@@ -4,11 +4,11 @@ import { FormattedPrice } from 'vtex.formatted-price'
 import { IconHelp, Tooltip } from 'vtex.styleguide'
 
 import {
+  useComputedPrices,
   useFormatPrice,
   useOrderFormCustom,
   usePermissions,
   useTaxes,
-  useTotalMargin,
 } from '.'
 import { useCheckoutB2BContext } from '../CheckoutB2BContext'
 import { TruncatedText } from '../components/common/TruncatedText'
@@ -25,7 +25,7 @@ export function useTotalizers() {
   const { isSalesUser, exceedingDiscount } = usePermissions()
 
   const hasQuotationDiscount = useMemo(() => hasSomeManualPrice(items), [items])
-  const { totalMargin } = useTotalMargin()
+  const { totalMargin } = useComputedPrices()
   const prevMarginRef = useRef(totalMargin)
 
   useEffect(() => {

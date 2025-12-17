@@ -22,6 +22,7 @@ import { getAllPromotions } from './queries/getAllPromotions'
 import { getAppSettings } from './queries/getAppSettings'
 import { getCart } from './queries/getCart'
 import { getCartComments } from './queries/getCartComments'
+import { getComputedPrices } from './queries/getComputedPrices'
 import { getRepresentativeBalanceByEmail } from './queries/getRepresentativeBalanceByEmail'
 import { getRepresentativeBalances } from './queries/getRepresentativeBalances'
 import { getRepresentativeBalanceTransactions } from './queries/getRepresentativeBalanceTransactions'
@@ -39,6 +40,7 @@ export default {
       getRepresentativeBalanceTransactions,
       getCartComments,
       getAllPromotions,
+      getComputedPrices,
     },
     Mutation: {
       clearCart,

@@ -1,0 +1,5 @@
+type ComputedPrice {
+  skuId: ID!
+  costPrice: Float!
+  sellingPrice: Float!
+}
