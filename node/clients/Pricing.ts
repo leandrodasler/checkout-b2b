@@ -13,9 +13,12 @@ type ComputedPrice = {
 
 export default class Pricing extends ExternalClient {
   constructor(ctx: IOContext, options?: InstanceOptions) {
-    super(`https://api.vtex.com/${ctx.account}/pricing/prices`, ctx, {
+    super(`http://api.vtex.com/${ctx.account}/pricing/prices`, ctx, {
       ...options,
-      headers: { VtexIdclientAutCookie: ctx.authToken },
+      headers: {
+        ...options?.headers,
+        VtexIdclientAutCookie: ctx.authToken,
+      },
     })
   }
 
