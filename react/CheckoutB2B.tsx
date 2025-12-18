@@ -99,7 +99,14 @@ function CheckoutB2B() {
     CustomItem[]
   >([])
 
-  const handleClearAwaitingDeletion = () => setItemsAwaitingDeletion([])
+  const [isChangingCurrentCart, setIsChangingCurrentCart] = useState(false)
+  const [newCartTitle, setNewCartTitle] = useState('')
+
+  const handleClearAwaitingDeletion = () => {
+    setItemsAwaitingDeletion([])
+    setIsChangingCurrentCart(false)
+    setNewCartTitle('')
+  }
 
   const { clearCart, isLoading: clearCartLoading } = useClearCart({
     onChangeItems: handleClearAwaitingDeletion,
@@ -121,12 +128,6 @@ function CheckoutB2B() {
   const customAppSavedCartId = getOrderFormSavedCart(orderForm.customData)
   const { handleUseSavedCart, loading: useCartLoading } = useSavedCart()
 
-  const [newCartTitle, setNewCartTitle] = useState<string>(
-    formatMessage(messages.savedCartsSaveDefaultTitle, {
-      date: new Date().toLocaleString(culture.locale),
-    }) || ''
-  )
-
   useEffect(() => {
     if (
       query?.savedCart &&
@@ -143,18 +144,6 @@ function CheckoutB2B() {
     selectedCart,
     useCartLoading,
   ])
-
-  useEffect(() => {
-    if (selectedCart?.title) {
-      setNewCartTitle(selectedCart.title)
-    }
-
-    setNewCartTitle(
-      formatMessage(messages.savedCartsSaveDefaultTitle, {
-        date: new Date().toLocaleString(culture.locale),
-      })
-    )
-  }, [culture.locale, formatMessage, selectedCart?.title])
 
   const loading = useMemo(() => orderFormLoading || organizationLoading, [
     orderFormLoading,
@@ -287,6 +276,7 @@ function CheckoutB2B() {
     })
 
     setUseCartLoading(true)
+    setIsChangingCurrentCart(!!selectedCart)
     setSelectedCart(null)
 
     const title = selectedCart
@@ -667,7 +657,7 @@ function CheckoutB2B() {
           {isExceedingDiscount && (
             <p>{formatMessage(messages.modalRequestDiscountConfirmation)}</p>
           )}
-          {!selectedCart?.title && (
+          {!selectedCart?.title && !isChangingCurrentCart && (
             <Input
               size="small"
               disabled={saving}
