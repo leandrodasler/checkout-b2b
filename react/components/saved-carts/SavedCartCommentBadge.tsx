@@ -87,9 +87,7 @@ export function SavedCartCommentBadge({
               aria-labelledby="saved-cart-update-history-title"
             >
               <div className="pa4 bb b--muted-4 flex justify-between items-center">
-                <span className="b">
-                  {formatMessage(messages.savedCartsUpdateHistory)}
-                </span>
+                <span className="b">{title}</span>
                 <button
                   type="button"
                   className="bn bg-transparent pointer"
