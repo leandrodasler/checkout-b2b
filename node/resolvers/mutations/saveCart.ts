@@ -78,42 +78,34 @@ export const saveCart = async (
     },
   })
 
-  let currentUpdateQuantity = currentCart?.updateQuantity ?? 0
+  const comments: string[] = []
 
-  if (currentCart && currentCart.status !== status) {
-    const comment = `Status: ${currentCart.status} > ${status}.`
+  if (currentCart) {
+    if (currentCart.status !== status) {
+      comments.push(`Status: ${currentCart.status} > ${status}.`)
+    }
 
-    await createSavedCartComment(context, {
-      comment,
-      savedCartId: currentCart.id,
-      email,
-      currentUpdateQuantity,
-    })
+    if (currentCart.requestedDiscount !== percentualDiscount) {
+      comments.push(
+        `Discount: ${
+          currentCart.requestedDiscount && `${currentCart.requestedDiscount} > `
+        }${percentualDiscount}.`
+      )
+    }
+  } else {
+    comments.push(`Status: ${status}.`)
 
-    currentUpdateQuantity++
+    if (percentualDiscount) {
+      comments.push(`Discount: ${percentualDiscount}.`)
+    }
   }
 
-  if (currentCart && currentCart.requestedDiscount !== percentualDiscount) {
-    const comment = `Discount: ${
-      currentCart.requestedDiscount && `${currentCart.requestedDiscount} > `
-    }${percentualDiscount}.`
-
+  if (comments.length) {
     await createSavedCartComment(context, {
-      comment,
-      savedCartId: currentCart.id,
-      email,
-      currentUpdateQuantity,
-    })
-  }
-
-  if (!currentCart) {
-    const comment = `Status: ${status}.`
-
-    await createSavedCartComment(context, {
-      comment,
+      comment: comments.join('\n\n'),
       savedCartId: DocumentId,
       email,
-      currentUpdateQuantity: 0,
+      currentUpdateQuantity: currentCart?.updateQuantity ?? 0,
     })
   }
 

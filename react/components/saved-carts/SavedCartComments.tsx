@@ -127,48 +127,61 @@ export function SavedCartComments({ cart, isModal, setQuantity }: Props) {
                 }`}
               >
                 {comment?.comment
-                  .split(/\s+/g)
-                  .map((term: string, index: number) => {
-                    if (term === '>') {
-                      return (
-                        <span key={index} className="mh2">
-                          <IconCaretRight size={12} />
-                        </span>
-                      )
-                    }
+                  .split(/\n/g)
+                  .map(
+                    (line: string, lineIndex: number, arrayLines: string[]) => (
+                      <Fragment key={lineIndex}>
+                        {line
+                          .split(/\s+/g)
+                          .map((term: string, index: number) => {
+                            if (term === '>') {
+                              return (
+                                <span key={index} className="mh2">
+                                  <IconCaretRight size={12} />
+                                </span>
+                              )
+                            }
 
-                    if (
-                      comment?.comment.startsWith('Status:') &&
-                      Object.values(
-                        CART_STATUSES as Record<string, string>
-                      ).includes(term.replace('.', ''))
-                    ) {
-                      return (
-                        <span key={index} className="mh2">
-                          <SavedCartStatusBadge
-                            status={term.replace('.', '') as SavedCartStatus}
-                          />
-                        </span>
-                      )
-                    }
+                            if (
+                              line.startsWith('Status:') &&
+                              Object.values(
+                                CART_STATUSES as Record<string, string>
+                              ).includes(term.replace('.', ''))
+                            ) {
+                              return (
+                                <span key={index} className="mh2">
+                                  <SavedCartStatusBadge
+                                    status={
+                                      term.replace('.', '') as SavedCartStatus
+                                    }
+                                  />
+                                </span>
+                              )
+                            }
 
-                    if (term === 'Discount:') {
-                      return `${formatMessage(messages.savedCartsDiscount)}:`
-                    }
+                            if (term === 'Discount:') {
+                              return `${formatMessage(
+                                messages.savedCartsDiscount
+                              )}:`
+                            }
 
-                    if (
-                      comment?.comment.startsWith('Discount:') &&
-                      Number.isInteger(+term)
-                    ) {
-                      return (
-                        <span key={index} className="mh2">
-                          <SavedCartDiscountBadge discount={+term} />
-                        </span>
-                      )
-                    }
+                            if (
+                              line.startsWith('Discount:') &&
+                              Number.isInteger(+term)
+                            ) {
+                              return (
+                                <span key={index} className="mh2">
+                                  <SavedCartDiscountBadge discount={+term} />
+                                </span>
+                              )
+                            }
 
-                    return <Fragment key={index}>{term} </Fragment>
-                  })}
+                            return <Fragment key={index}>{term} </Fragment>
+                          })}
+                        {lineIndex + 1 < arrayLines.length && <br />}
+                      </Fragment>
+                    )
+                  )}
 
                 <div className="mt4 flex flex-wrap justify-between">
                   <span className="c-action-primary">{comment?.email}</span>
