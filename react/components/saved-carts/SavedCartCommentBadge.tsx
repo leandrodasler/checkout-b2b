@@ -81,7 +81,7 @@ export function SavedCartCommentBadge({
 
             <div
               className="fixed top-0 right-0 h-100 bg-base shadow-5"
-              style={{ width: '360px', maxWidth: '90vw' }}
+              style={{ width: 600, maxWidth: '90vw' }}
               role="dialog"
               aria-modal="true"
               aria-labelledby="saved-cart-update-history-title"
