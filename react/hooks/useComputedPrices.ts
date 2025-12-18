@@ -9,7 +9,6 @@ import {
 import GET_COMPUTED_PRICES from '../graphql/getComputedPrices.graphql'
 import { isItemUnavailable } from '../utils'
 import { useOrderFormCustom } from './useOrderFormCustom'
-import { useToast } from './useToast'
 
 type GetComputedPricesQuery = Pick<Query, 'getComputedPrices'>
 
@@ -24,7 +23,6 @@ export function useComputedPrices() {
   >(GET_COMPUTED_PRICES, {
     skip: !uniqueSkuIds.size,
     variables: { skuIds: [...uniqueSkuIds] },
-    onError: useToast,
   })
 
   const computedPrices: ComputedPrice[] = useMemo(
