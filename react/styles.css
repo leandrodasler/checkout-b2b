@@ -142,7 +142,7 @@
 }
 
 .promotionCard {
-  max-width: 300px;
+  width: 300px;
   min-width: min(300px, 100%);
 }
 
